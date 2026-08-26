@@ -46,4 +46,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/admin/dashboard', function () {
         return view ('admin.dashboard');
     })->name('admin.dashboard');
+        // Kelola User 1 Halaman (Tampil + Simpan)
+    Route::get('/admin/users', [\App\Http\Controllers\Admin\UserController::class, 'index'])->name('admin.users.index');
+    Route::post('/admin/users', [\App\Http\Controllers\Admin\UserController::class, 'store'])->name('admin.users.store');
 });
