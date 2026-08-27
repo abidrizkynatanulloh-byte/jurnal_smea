@@ -49,4 +49,8 @@ Route::middleware('auth')->group(function () {
         // Kelola User 1 Halaman (Tampil + Simpan)
     Route::get('/admin/users', [\App\Http\Controllers\Admin\UserController::class, 'index'])->name('admin.users.index');
     Route::post('/admin/users', [\App\Http\Controllers\Admin\UserController::class, 'store'])->name('admin.users.store');
+
+        // Dashboard & Form Input Dispen Guru Piket
+    Route::get('/piket/dashboard', [\App\Http\Controllers\PiketController::class, 'index'])->name('piket.dashboard');
+    Route::post('/piket/dispen', [\App\Http\Controllers\PiketController::class, 'storeDispen'])->name('piket.dispen.store');
 });
