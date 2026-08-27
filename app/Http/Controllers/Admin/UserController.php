@@ -2,27 +2,23 @@
 
 namespace App\Http\Controllers\Admin;
 
-// Mengimpor kelas Request bawaan Laravel
 use Illuminate\Http\Request;
-// Mengimpor Model-Model yang dibutuhkan
 use App\Models\User;
 use App\Models\StafTu;
 use App\Models\Satpam;
 use App\Models\Guru;
 use App\Models\Siswa;
-// Mengimpor Hash untuk enkripsi password
 use Illuminate\Support\Facades\Hash;
-// Mengimpor DB Transaction untuk keamanan data
 use Illuminate\Support\Facades\DB;
 
 class UserController
 {
     /**
-     * Menampilkan 1 halaman yang berisi FORM TAMBAH USER + TABEL DAFTAR USER.
+     * Menampilkan Form Tambah User + Tabel Daftar User dengan FITUR SEARCH.
      */
-    public function index()
+    public function index(Request $request)
     {
-        // 1. Data daftar role untuk dropdown form tambah user
+        // 1. Pilihan Role untuk Form
         $roles = [
             'staf_tu'        => 'Staf TU / Admin',
             'satpam'         => 'Satpam',
@@ -34,21 +30,48 @@ class UserController
             'wali_murid'     => 'Wali Murid / Orang Tua',
         ];
 
-        // 2. Data daftar user untuk tabel di bawah form
-        $users = User::with(['guru', 'stafTu', 'satpam', 'siswa'])
-                    ->latest()
-                    ->paginate(10);
+        // 2. Query Data User dengan Fitur Search
+        $query = User::with(['guru', 'stafTu', 'satpam', 'siswa']);
 
-        // Mengirim data $roles dan $users ke 1 file view
+        // Jika kolom pencarian diisi oleh admin
+        if ($request->filled('search')) {
+            $keyword = trim($request->search);
+
+            $query->where(function ($q) use ($keyword) {
+                // Cari berdasarkan Username / NIP / NISN
+                $q->where('username', 'LIKE', "%{$keyword}%")
+                  // Atau cari berdasarkan Role
+                  ->orWhere('role', 'LIKE', "%{$keyword}%")
+                  // Atau cari berdasarkan Nama Guru
+                  ->orWhereHas('guru', function ($g) use ($keyword) {
+                      $g->where('nama_guru', 'LIKE', "%{$keyword}%");
+                  })
+                  // Atau cari berdasarkan Nama Siswa
+                  ->orWhereHas('siswa', function ($s) use ($keyword) {
+                      $s->where('nama_siswa', 'LIKE', "%{$keyword}%");
+                  })
+                  // Atau cari berdasarkan Nama Satpam
+                  ->orWhereHas('satpam', function ($sat) use ($keyword) {
+                      $sat->where('nama_satpam', 'LIKE', "%{$keyword}%");
+                  })
+                  // Atau cari berdasarkan Nama Staf TU
+                  ->orWhereHas('stafTu', function ($stf) use ($keyword) {
+                      $stf->where('nama_staf', 'LIKE', "%{$keyword}%");
+                  });
+            });
+        }
+
+        // Pagination 10 data per halaman (mempertahankan kata kunci search saat ganti halaman)
+        $users = $query->latest()->paginate(10)->withQueryString();
+
         return view('admin.users.index', compact('roles', 'users'));
     }
 
     /**
-     * Memproses penyimpanan user baru.
+     * Menyimpan User Baru ke Database.
      */
     public function store(Request $request)
     {
-        // 1. Validasi Input Form
         $validated = $request->validate([
             'role'     => 'required|in:staf_tu,satpam,guru,guru_piket,kepala_sekolah,wakasis_siswa,wakasis_guru,wali_murid',
             'nama'     => 'required|string|max:150',
@@ -59,7 +82,7 @@ class UserController
             'role.required'     => 'Role wajib dipilih.',
             'nama.required'     => 'Nama lengkap wajib diisi.',
             'username.required' => 'NIP / NISN / Username wajib diisi.',
-            'username.unique'   => 'Username / NIP / NISN ini sudah terdaftar di sistem.',
+            'username.unique'   => 'Username ini sudah terdaftar di sistem.',
             'password.required' => 'Password wajib diisi.',
             'password.min'      => 'Password minimal 4 karakter.',
         ]);
@@ -72,7 +95,6 @@ class UserController
             $idSatpam = null;
             $nisnSiswa = null;
 
-            // 2. Simpan data profil sesuai role
             if ($validated['role'] === 'staf_tu') {
                 $staf = StafTu::create([
                     'nip'       => $validated['username'],
@@ -104,7 +126,6 @@ class UserController
                 $nisnSiswa = $validated['username'];
             }
 
-            // 3. Simpan akun ke tabel users
             User::create([
                 'username'   => $validated['username'],
                 'password'   => Hash::make($validated['password']),
@@ -118,12 +139,86 @@ class UserController
 
             DB::commit();
 
-            // Redirect kembali ke halaman yang sama dengan pesan sukses
             return redirect()->route('admin.users.index')->with('success', 'User baru berhasil ditambahkan!');
 
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->withInput()->withErrors(['error' => 'Gagal menyimpan user: ' . $e->getMessage()]);
         }
+    }
+
+    /**
+     * Menampilkan Form Edit User (Username, Password, Role).
+     */
+    public function edit($id)
+    {
+        $user = User::with(['guru', 'stafTu', 'satpam', 'siswa'])->findOrFail($id);
+
+        $roles = [
+            'staf_tu'        => 'Staf TU / Admin',
+            'satpam'         => 'Satpam',
+            'guru'           => 'Guru Mata Pelajaran',
+            'guru_piket'     => 'Guru Piket',
+            'kepala_sekolah' => 'Kepala Sekolah',
+            'wakasis_siswa'  => 'Wakil Kesiswaan (Siswa)',
+            'wakasis_guru'   => 'Wakil Kesiswaan (Guru)',
+            'wali_murid'     => 'Wali Murid / Orang Tua',
+        ];
+
+        return view('admin.users.edit', compact('user', 'roles'));
+    }
+
+    /**
+     * Menyimpan Perubahan Akun User.
+     */
+    public function update(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+
+        // 1. Validasi Input Edit
+        $validated = $request->validate([
+            'username'  => 'required|string|max:50|unique:users,username,' . $user->id, // Username unik kecuali untuk user ini sendiri
+            'role'      => 'required|in:staf_tu,satpam,guru,guru_piket,kepala_sekolah,wakasis_siswa,wakasis_guru,wali_murid',
+            'password'  => 'nullable|string|min:4', // Password opsional (hanya diisi jika mau ganti password)
+            'is_active' => 'required|boolean',
+        ], [
+            'username.required' => 'Username / NIP / NISN wajib diisi.',
+            'username.unique'   => 'Username ini sudah digunakan akun lain.',
+            'password.min'      => 'Password baru minimal 4 karakter.',
+        ]);
+
+        // 2. Data yang akan di-update
+        $updateData = [
+            'username'  => $validated['username'],
+            'role'      => $validated['role'],
+            'is_active' => $validated['is_active'],
+        ];
+
+        // 3. Jika password baru diisi, enkripsi dan simpan
+        if (!empty($validated['password'])) {
+            $updateData['password'] = Hash::make($validated['password']);
+        }
+
+        $user->update($updateData);
+
+        return redirect()->route('admin.users.index')->with('success', 'Akun pengguna ' . $user->username . ' berhasil diperbarui!');
+    }
+
+    /**
+     * Menghapus Akun User (SOFT DELETE - Data tidak hilang permanen).
+     */
+    public function destroy($id)
+    {
+        $user = User::findOrFail($id);
+
+        // Mencegah admin menghapus akunnya sendiri yang sedang login
+        if ($user->id === auth()->id()) {
+            return back()->withErrors(['error' => 'Anda tidak dapat menghapus akun Anda sendiri yang sedang aktif digunakan.']);
+        }
+
+        // Soft Delete (hanya mengisi kolom deleted_at di database)
+        $user->delete();
+
+        return redirect()->route('admin.users.index')->with('success', 'Akun ' . $user->username . ' berhasil dinonaktifkan / dihapus (Soft Delete).');
     }
 }
