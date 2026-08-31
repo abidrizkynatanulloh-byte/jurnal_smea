@@ -30,7 +30,7 @@
     <!-- BAGIAN 1: FORM TAMBAH USER BARU (DI ATAS)                   -->
     <!-- ========================================================== -->
     <fieldset style="margin-bottom: 25px;">
-        <legend><h3>➕ Form Tambah User Baru</h3></legend>
+        <legend><h3>➕ Form Tambah User Baruuuuu</h3></legend>
 
         <form action="{{ route('admin.users.store') }}" method="POST">
             @csrf
