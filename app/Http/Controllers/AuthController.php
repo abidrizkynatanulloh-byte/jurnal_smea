@@ -2,79 +2,62 @@
 
 namespace App\Http\Controllers;
 
-// Mengimpor kelas Request untuk membaca data form login
 use Illuminate\Http\Request;
-// Mengimpor Facade Auth untuk mengelola session autentikasi
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
-// Mengimpor kelas exception untuk mengembalikan pesan error validasi
 use Illuminate\Validation\ValidationException;
+use App\Models\GuruPiket; // ← Tambahkan ini
+use Carbon\Carbon;         // ← Tambahkan ini
 
 class AuthController extends Controller
 {
     /**
-     * Menampilkan form login dan mengirimkan daftar pilihan role dropdown.
+     * Menampilkan form login (tanpa dropdown role).
      */
     public function showLoginForm()
     {
-        // Daftar role yang tersedia untuk ditampilkan pada elemen dropdown
-        $roles = [
-            'guru'           => 'Guru Mata Pelajaran',
-            'guru_piket'     => 'Guru Piket',
-            'staf_tu'        => 'Staf TU / Admin',
-            'satpam'         => 'Satpam',
-            'wali_murid'     => 'Wali Murid / Orang Tua',
-            'kepala_sekolah' => 'Kepala Sekolah',
-            'wakasis_siswa'  => 'Wakil Kesiswaan (Siswa)',
-            'wakasis_guru'   => 'Wakil Kesiswaan (Guru)',
-        ];
-
-        // Memanggil view resources/views/auth/login.blade.php
-        return view('auth.login', compact('roles'));
+        return view('auth.login');
     }
 
     /**
      * Memproses data input login (POST /login).
+     * Role ditentukan otomatis dari database, bukan dari input user.
      */
     public function login(Request $request)
     {
-        // 1. Validasi input form
-        $credentials = $request->validate([
-            'role'     => 'required|in:guru,guru_piket,staf_tu,satpam,wali_murid,kepala_sekolah,wakasis_siswa,wakasis_guru',
+        // 1. Validasi input — hanya username & password
+        $request->validate([
             'username' => 'required|string',
             'password' => 'required|string',
         ], [
-            'role.required'     => 'Silakan pilih role Anda terlebih dahulu.',
-            'role.in'           => 'Pilihan role tidak valid.',
             'username.required' => 'NIP / NISN / Username wajib diisi.',
             'password.required' => 'Password wajib diisi.',
         ]);
 
-        // 2. Kriteria autentikasi ke database
+        // 2. Coba login dengan username + password + is_active
         $attemptData = [
-            'username'  => $credentials['username'],
-            'password'  => $credentials['password'],
-            'role'      => $credentials['role'],
+            'username'  => $request->username,
+            'password'  => $request->password,
             'is_active' => 1,
         ];
 
-        // 3. Proses pengecekan kecocokan akun
         if (Auth::attempt($attemptData, $request->boolean('remember'))) {
             $request->session()->regenerate();
 
             $user = Auth::user();
 
-            return redirect()->intended($this->redirectToDashboard($user->role));
+            // 3. Redirect otomatis ke dashboard sesuai role user
+            return redirect()->intended($this->redirectToDashboard($user));
         }
 
         // 4. Jika login gagal
         throw ValidationException::withMessages([
-            'username' => 'NIP/NISN/Username, password, atau role yang dipilih tidak cocok.',
+            'username' => 'Username atau password salah, atau akun tidak aktif.',
         ]);
     }
 
     /**
-     * Memproses logout user (POST /logout).
+     * Memproses logout user.
      */
     public function logout(Request $request)
     {
@@ -87,20 +70,58 @@ class AuthController extends Controller
     }
 
     /**
-     * Helper: Menentukan rute dashboard tujuan berdasarkan nama role.
+     * Helper: Menentukan rute dashboard tujuan berdasarkan role.
+     * Jika role 'guru' dan hari ini dia jadwal piket → otomatis ke piket dashboard.
      */
-    private function redirectToDashboard(string $role): string
+    private function redirectToDashboard($user): string
     {
-        return match ($role) {
+        // Khusus role 'guru' → cek apakah hari ini dia ada jadwal piket
+        if ($user->role === 'guru' && $user->id_guru !== null) {
+
+            $hariIni     = Carbon::now()->locale('id')->isoFormat('dddd'); // Senin, Selasa, dst
+            $tanggalHari = Carbon::today()->toDateString();                // 2026-08-31
+
+            // Daftar nama hari dalam bahasa Indonesia
+            $hariMap = [
+                'Monday'    => 'Senin',
+                'Tuesday'   => 'Selasa',
+                'Wednesday' => 'Rabu',
+                'Thursday'  => 'Kamis',
+                'Friday'    => 'Jumat',
+            ];
+
+            $namaHariEn  = Carbon::now()->format('l'); // Nama hari dalam Bahasa Inggris
+            $namaHariId  = $hariMap[$namaHariEn] ?? 'Senin';
+
+            // Cek di tabel guru_piket:
+            // Ada jadwal piket hari ini? (berdasarkan nama hari ATAU tanggal khusus)
+            $jadwalPiket = GuruPiket::where('id_guru', $user->id_guru)
+                ->where(function ($q) use ($namaHariId, $tanggalHari) {
+                    $q->where('hari', $namaHariId)
+                      ->orWhere('tanggal_khusus', $tanggalHari);
+                })
+                ->whereNull('deleted_at')
+                ->first();
+
+            if ($jadwalPiket) {
+                // Ada jadwal piket hari ini → arahkan ke dashboard piket
+                return route('piket.dashboard');
+            }
+
+            // Tidak ada jadwal piket → ke dashboard guru biasa
+            return route('guru.dashboard');
+        }
+
+        // Role lainnya langsung ke dashboard masing-masing
+        return match ($user->role) {
             'staf_tu'        => route('admin.dashboard'),
-            'guru'           => route('guru.dashboard'),
             'guru_piket'     => route('piket.dashboard'),
             'wali_murid'     => route('wali.dashboard'),
             'satpam'         => route('satpam.dashboard'),
             'kepala_sekolah' => route('kepsek.dashboard'),
             'wakasis_siswa'  => route('wakasis.siswa.dashboard'),
             'wakasis_guru'   => route('wakasis.guru.dashboard'),
-            default          => '/',
+            default          => route('admin.dashboard'),
         };
     }
 }

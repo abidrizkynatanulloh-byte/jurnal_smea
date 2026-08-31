@@ -9,9 +9,9 @@ class JurnalDetailKetidakhadiran extends Model
 {
     use SoftDeletes;
 
-    protected $table = 'jurnal_detail_ketidakhadiran';
+    protected $table      = 'jurnal_detail_ketidakhadiran';
     protected $primaryKey = 'id_detail';
-    public $timestamps = false;
+    public $timestamps    = false;
 
     protected $fillable = [
         'id_jurnal',
@@ -21,8 +21,13 @@ class JurnalDetailKetidakhadiran extends Model
         'dicatat_oleh',
     ];
 
-    public function jurnalMengajar()
+    public function jurnal()
     {
         return $this->belongsTo(JurnalMengajar::class, 'id_jurnal', 'id_jurnal');
+    }
+
+    public function siswa()
+    {
+        return $this->belongsTo(Siswa::class, 'id_siswa', 'nis');
     }
 }

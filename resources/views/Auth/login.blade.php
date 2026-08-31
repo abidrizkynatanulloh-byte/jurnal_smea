@@ -1,94 +1,127 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="h-full bg-[#fdfdfc]">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Jurnal Esemkita</title>
+    
+    <!-- Vite Assets -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    
+    <!-- Lucide Icons CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/lucide/dist/umd/lucide.min.js"></script>
 </head>
-<body>
+<body class="h-full font-sans antialiased bg-[#fdfdfc] text-[#1b1b18] flex items-center justify-center p-6">
 
-    <h2>Login Sistem Jurnal Esemkita</h2>
-
-    {{-- Menampilkan pesan error jika login gagal atau ada validasi yang salah --}}
-    @if ($errors->any())
-        <div style="color: red; margin-bottom: 15px;">
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
+    <div class="w-full max-w-md">
+        <!-- Logo and Heading -->
+        <div class="text-center mb-8">
+            <div class="inline-flex p-3.5 bg-brand/10 text-brand rounded-2xl mb-4 shadow-sm">
+                <i data-lucide="book-open" class="w-8 h-8"></i>
+            </div>
+            <h1 class="text-2xl font-extrabold tracking-tight text-dark">Jurnal Esemkita</h1>
+            <p class="text-sm text-gray-500 mt-1.5">Sistem Jurnal & Kehadiran Mengajar Sekolah</p>
         </div>
-    @endif
 
-    {{-- Menampilkan pesan sukses (misalnya setelah logout) --}}
-    @if (session('success'))
-        <div style="color: green; margin-bottom: 15px;">
-            {{ session('success') }}
+        <!-- Login Card -->
+        <div class="bg-white border border-[#19140015] rounded-2xl shadow-sm p-8">
+
+            <!-- Flash Message Banner -->
+            @if (session('success'))
+                <div class="mb-5 p-4 bg-green-50 border-l-4 border-green-500 rounded-r-xl text-green-700 flex items-start space-x-3">
+                    <i data-lucide="check-circle" class="w-5 h-5 flex-shrink-0 mt-0.5"></i>
+                    <p class="text-xs font-medium">{{ session('success') }}</p>
+                </div>
+            @endif
+
+            @if ($errors->any())
+                <div class="mb-5 p-4 bg-red-50 border-l-4 border-red-500 rounded-r-xl text-red-700">
+                    <div class="flex items-start space-x-3">
+                        <i data-lucide="alert-circle" class="w-5 h-5 flex-shrink-0 mt-0.5"></i>
+                        <div class="text-xs font-medium">
+                            <p class="font-semibold">Login Gagal:</p>
+                            <ul class="list-disc list-inside mt-1 space-y-0.5">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
+            <!-- Form -->
+            <form action="{{ route('login.post') }}" method="POST" class="space-y-5">
+                @csrf
+
+                {{-- ✅ DROPDOWN ROLE DIHAPUS — Role ditentukan otomatis dari database --}}
+
+                <!-- Username Input -->
+                <div>
+                    <label for="username" class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2">Username / NIP / NISN</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                            <i data-lucide="user" class="w-5 h-5"></i>
+                        </div>
+                        <input 
+                            type="text" 
+                            name="username" 
+                            id="username" 
+                            value="{{ old('username') }}" 
+                            placeholder="Masukkan NIP / NISN / USN" 
+                            required
+                            autofocus
+                            class="block w-full pl-11 pr-4 py-3 bg-[#fdfdfc] border border-gray-200 rounded-xl text-sm text-dark placeholder-gray-400 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all"
+                        >
+                    </div>
+                </div>
+
+                <!-- Password Input -->
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        <label for="password" class="block text-xs font-semibold uppercase tracking-wider text-gray-500">Password</label>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                            <i data-lucide="key-round" class="w-5 h-5"></i>
+                        </div>
+                        <input 
+                            type="password" 
+                            name="password" 
+                            id="password" 
+                            placeholder="Masukkan Password" 
+                            required
+                            class="block w-full pl-11 pr-4 py-3 bg-[#fdfdfc] border border-gray-200 rounded-xl text-sm text-dark placeholder-gray-400 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all"
+                        >
+                    </div>
+                </div>
+
+                <!-- Remember Me -->
+                <div class="flex items-center justify-between pt-1">
+                    <label class="flex items-center space-x-2.5 cursor-pointer">
+                        <input type="checkbox" name="remember" value="1" class="w-4 h-4 rounded border-gray-300 text-brand focus:ring-brand accent-brand">
+                        <span class="text-xs font-medium text-gray-500">Ingat Saya</span>
+                    </label>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="w-full py-3 px-4 bg-brand hover:bg-brand-hover text-white rounded-xl font-bold text-sm transition-colors shadow-sm flex items-center justify-center space-x-2">
+                    <span>Masuk ke Sistem</span>
+                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </button>
+            </form>
         </div>
-    @endif
-
-    {{-- Form pengiriman login via method POST ke rute 'login.post' --}}
-    <form action="{{ route('login.post') }}" method="POST">
         
-        {{-- Wajib: Token keamanan CSRF bawaan Laravel --}}
-        @csrf
+        <p class="text-center text-xs text-gray-400 mt-6">&copy; {{ date('Y') }} SMK Negeri 1 Jurnal Esemkita. All rights reserved.</p>
+    </div>
 
-        {{-- 1. Dropdown Pilihan Role --}}
-        <div>
-            <label for="role">Pilih Peran (Role):</label><br>
-            <select name="role" id="role" required>
-                <option value="">-- Pilih Role Anda --</option>
-                {{-- Melakukan perulangan daftar $roles yang dikirim dari AuthController --}}
-                @foreach ($roles as $key => $label)
-                    <option value="{{ $key }}" {{ old('role') == $key ? 'selected' : '' }}>
-                        {{ $label }}
-                    </option>
-                @endforeach
-            </select>
-        </div>
-        <br>
-
-        {{-- 2. Input Username (NIP / NISN / USN) --}}
-        <div>
-            <label for="username">NIP / NISN / Username:</label><br>
-            <input 
-                type="text" 
-                name="username" 
-                id="username" 
-                value="{{ old('username') }}" 
-                placeholder="Masukkan NIP / NISN / USN" 
-                required
-            >
-        </div>
-        <br>
-
-        {{-- 3. Input Password --}}
-        <div>
-            <label for="password">Password:</label><br>
-            <input 
-                type="password" 
-                name="password" 
-                id="password" 
-                placeholder="Masukkan Password" 
-                required
-            >
-        </div>
-        <br>
-
-        {{-- 4. Checkbox Ingat Saya (Remember Me) --}}
-        <div>
-            <label>
-                <input type="checkbox" name="remember" value="1"> Ingat Saya
-            </label>
-        </div>
-        <br>
-
-        {{-- 5. Tombol Submit Login --}}
-        <div>
-            <button type="submit">Masuk (Login)</button>
-        </div>
-
-    </form>
-
+    <!-- Initialize Lucide Icons -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        });
+    </script>
 </body>
 </html>

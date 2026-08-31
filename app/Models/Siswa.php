@@ -23,5 +23,16 @@ class Siswa extends Model
         'nisn',
         'nama_siswa',
         'id_kelas',
+        'kota_lahir',
+        'tanggal_lahir',
+        'alamat',
     ];
+
+    /**
+     * Relasi ke Model Kelas (Mengambil nama kelas siswa).
+     */
+    public function kelas()
+    {
+        return $this->belongsTo(Kelas::class, 'id_kelas', 'id_kelas');
+    }
 }
