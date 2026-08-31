@@ -1,129 +1,144 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <title>Dashboard Guru Piket</title>
-</head>
-<body>
+@extends('layouts.app')
 
-    <h1>Dashboard Guru Piket</h1>
-    <p>Halo, <b>{{ Auth::user()->username }}</b> (Guru Piket)</p>
+@section('title', 'Piket Dashboard - Jurnal Esemkita')
 
-    {{-- Tombol Logout --}}
-    <form action="{{ route('logout') }}" method="POST" style="display:inline;">
-        @csrf
-        <button type="submit">Keluar (Logout)</button>
-    </form>
-    <hr>
-
-    {{-- Notifikasi Sukses / Error --}}
-    @if (session('success'))
-        <p style="color: green;"><b>{{ session('success') }}</b></p>
-    @endif
-
-    @if ($errors->any())
-        <div style="color: red;">
-            <ul>
-                @foreach ($errors->all() as $err)
-                    <li>{{ $err }}</li>
-                @endforeach
-            </ul>
+@section('content')
+<div class="space-y-8">
+    <!-- Page Header -->
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-2xl font-extrabold text-dark tracking-tight">Dashboard Guru Piket</h1>
+            <p class="text-sm text-gray-500 mt-1">
+                Selamat datang kembali, <span class="font-semibold text-brand">{{ Auth::user()->username }}</span>
+            </p>
         </div>
-    @endif
+    </div>
 
-    <!-- ========================================================== -->
-    <!-- BAGIAN 1: FORM INPUT PENGAJUAN DISPEN SISWA               -->
-    <!-- ========================================================== -->
-    <fieldset style="margin-bottom: 25px;">
-        <legend><h3>📝 Input Pengajuan Dispensasi Siswa</h3></legend>
+    <!-- Responsive Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+        
+        <!-- BAGIAN 1: FORM INPUT PENGAJUAN DISPEN SISWA -->
+        <div class="bg-white border border-[#19140015] rounded-2xl shadow-sm p-6 lg:sticky lg:top-8">
+            <h3 class="font-bold text-dark text-base mb-4 flex items-center space-x-2">
+                <i data-lucide="file-plus-2" class="w-5 h-5 text-brand"></i>
+                <span>Input Pengajuan Dispensasi</span>
+            </h3>
+            
+            <form action="{{ route('piket.dispen.store') }}" method="POST" class="space-y-4">
+                @csrf
 
-        <form action="{{ route('piket.dispen.store') }}" method="POST">
-            @csrf
+                <div>
+                    <label for="nis" class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Pilih Siswa</label>
+                    <select name="nis" id="nis" required 
+                        class="block w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-dark focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all cursor-pointer">
+                        <option value="">-- Pilih Siswa --</option>
+                        @foreach ($daftarSiswa as $s)
+                            <option value="{{ $s->nis }}" {{ old('nis') == $s->nis ? 'selected' : '' }}>
+                                {{ $s->nis }} - {{ $s->nama_siswa }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
 
-            {{-- 1. Pilih Siswa --}}
-            <div>
-                <label for="nis">Pilih Siswa yang Datang:</label><br>
-                <select name="nis" id="nis" required style="width: 350px;">
-                    <option value="">-- Pilih Siswa --</option>
-                    @foreach ($daftarSiswa as $s)
-                        <option value="{{ $s->nis }}" {{ old('nis') == $s->nis ? 'selected' : '' }}>
-                            {{ $s->nis }} - {{ $s->nama_siswa }}
-                        </option>
-                    @endforeach
-                </select>
+                <div>
+                    <label for="keperluan" class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Alasan / Keperluan Dispensasi</label>
+                    <textarea name="keperluan" id="keperluan" rows="3" placeholder="Contoh: Mengikuti perwakilan lomba cerdas cermat di tingkat kecamatan..." required
+                        class="block w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-dark placeholder-gray-400 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all resize-none">{{ old('keperluan') }}</textarea>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="jam_keluar_rencana" class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Jam Keluar</label>
+                        <input type="time" name="jam_keluar_rencana" id="jam_keluar_rencana" required
+                            class="block w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-dark focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all cursor-pointer">
+                    </div>
+                    <div>
+                        <label for="jam_kembali_rencana" class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Jam Kembali (Opsional)</label>
+                        <input type="time" name="jam_kembali_rencana" id="jam_kembali_rencana"
+                            class="block w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-dark focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all cursor-pointer">
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full mt-2 py-3 px-4 bg-brand hover:bg-brand-hover text-white rounded-xl font-bold text-sm transition-colors shadow-sm flex items-center justify-center space-x-2 cursor-pointer">
+                    <i data-lucide="send" class="w-4 h-4"></i>
+                    <span>Kirim Pengajuan Kesiswaan</span>
+                </button>
+            </form>
+        </div>
+
+        <!-- BAGIAN 2: DAFTAR DISPEN HARI INI -->
+        <div class="lg:col-span-2">
+            
+            <!-- TABLE CARD -->
+            <div class="bg-white border border-[#19140015] rounded-2xl shadow-sm overflow-hidden">
+                <div class="px-6 py-5 border-b border-[#19140015]">
+                    <h3 class="font-bold text-dark text-base flex items-center space-x-2">
+                        <i data-lucide="clipboard-list" class="w-5 h-5 text-gray-600"></i>
+                        <span>Pengajuan Dispensasi Hari Ini</span>
+                    </h3>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-50 text-gray-500 text-xs font-semibold uppercase tracking-wider border-b border-[#19140015]">
+                                <th class="py-4 px-6 text-center w-16">No</th>
+                                <th class="py-4 px-6 w-28">NIS</th>
+                                <th class="py-4 px-6">Nama Siswa</th>
+                                <th class="py-4 px-6 w-48">Jam Keluar/Kembali</th>
+                                <th class="py-4 px-6">Alasan Keperluan</th>
+                                <th class="py-4 px-6 w-48 text-center">Status Persetujuan</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-[#19140010] text-sm text-gray-600">
+                            @forelse ($dispenHariIni as $index => $d)
+                                <tr class="hover:bg-gray-50/50 transition-colors">
+                                    <td class="py-4 px-6 text-center font-medium text-gray-400">{{ $index + 1 }}</td>
+                                    <td class="py-4 px-6 font-semibold text-dark">{{ $d->nis }}</td>
+                                    <td class="py-4 px-6 font-bold text-gray-800">{{ $d->siswa ? $d->siswa->nama_siswa : '-' }}</td>
+                                    <td class="py-4 px-6 text-xs leading-normal">
+                                        <div class="flex items-center space-x-1.5">
+                                            <span class="font-semibold text-gray-700">Rencana Keluar:</span>
+                                            <span class="text-gray-500">{{ substr($d->jam_keluar_rencana, 0, 5) ?? '-' }}</span>
+                                        </div>
+                                        <div class="flex items-center space-x-1.5 mt-0.5">
+                                            <span class="font-semibold text-gray-700">Rencana Kembali:</span>
+                                            <span class="text-gray-500">{{ $d->jam_kembali_rencana ? substr($d->jam_kembali_rencana, 0, 5) : 'Tidak kembali' }}</span>
+                                        </div>
+                                    </td>
+                                    <td class="py-4 px-6 text-xs text-gray-500 max-w-xs truncate" title="{{ $d->keperluan }}">{{ $d->keperluan }}</td>
+                                    <td class="py-4 px-6 text-center">
+                                        @if ($d->status === 'Menunggu')
+                                            <span class="inline-flex items-center px-2.5 py-1 bg-amber-50 text-amber-700 text-xs font-semibold rounded-full space-x-1 animate-pulse">
+                                                <span class="w-1.5 h-1.5 bg-amber-500 rounded-full"></span>
+                                                <span>Menunggu ACC Wakasis</span>
+                                            </span>
+                                        @elseif ($d->status === 'Disetujui')
+                                            <span class="inline-flex items-center px-2.5 py-1 bg-green-50 text-green-700 text-xs font-semibold rounded-full space-x-1">
+                                                <span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
+                                                <span>Disetujui Wakasis</span>
+                                            </span>
+                                        @else
+                                            <span class="inline-flex items-center px-2.5 py-1 bg-red-50 text-red-750 text-xs font-semibold rounded-full space-x-1">
+                                                <span class="w-1.5 h-1.5 bg-red-500 rounded-full"></span>
+                                                <span>Ditolak Wakasis</span>
+                                            </span>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="6" class="py-8 text-center text-gray-400 italic">
+                                        <i data-lucide="inbox" class="w-8 h-8 mx-auto mb-2 text-gray-300"></i>
+                                        Belum ada pengajuan dispensasi untuk hari ini.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
             </div>
-            <br>
-
-            {{-- 2. Alasan / Keperluan Dispen --}}
-            <div>
-                <label for="keperluan">Alasan / Keperluan Dispensasi:</label><br>
-                <textarea name="keperluan" id="keperluan" rows="3" cols="45" placeholder="Contoh: Mengikuti lomba olimpiade matematika di dinas pendidikan" required>{{ old('keperluan') }}</textarea>
-            </div>
-            <br>
-
-            {{-- 3. Jam Rencana Keluar & Kembali --}}
-            <div>
-                <label for="jam_keluar_rencana">Rencana Jam Keluar:</label>
-                <input type="time" name="jam_keluar_rencana" id="jam_keluar_rencana" required>
-
-                &nbsp;&nbsp;&nbsp;
-
-                <label for="jam_kembali_rencana">Rencana Jam Kembali (Opsional):</label>
-                <input type="time" name="jam_kembali_rencana" id="jam_kembali_rencana">
-            </div>
-            <br>
-
-            {{-- Tombol Kirim ke Kesiswaan --}}
-            <button type="submit" style="padding: 6px 15px; font-weight: bold; cursor: pointer;">
-                🚀 Kirim Pengajuan ke Kesiswaan (ACC)
-            </button>
-        </form>
-    </fieldset>
-
-    <!-- ========================================================== -->
-    <!-- BAGIAN 2: STATUS DISPEN HARI INI                          -->
-    <!-- ========================================================== -->
-    <h3>📋 Daftar Pengajuan Dispensasi Hari Ini</h3>
-
-    <table border="1" cellpadding="8" cellspacing="0" width="100%">
-        <thead>
-            <tr bgcolor="#f0f0f0">
-                <th>No</th>
-                <th>NIS</th>
-                <th>Nama Siswa</th>
-                <th>Jam Keluar / Kembali</th>
-                <th>Keperluan</th>
-                <th>Status Persetujuan</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse ($dispenHariIni as $index => $d)
-                <tr>
-                    <td>{{ $index + 1 }}</td>
-                    <td>{{ $d->nis }}</td>
-                    <td><b>{{ $d->siswa ? $d->siswa->nama_siswa : '-' }}</b></td>
-                    <td>
-                        Keluar: {{ $d->jam_keluar_rencana ?? '-' }} <br>
-                        Kembali: {{ $d->jam_kembali_rencana ?? 'Tidak kembali' }}
-                    </td>
-                    <td>{{ $d->keperluan }}</td>
-                    <td>
-                        @if ($d->status === 'Menunggu')
-                            <span style="color: orange; font-weight: bold;">⏳ Menunggu ACC Wakasis</span>
-                        @elseif ($d->status === 'Disetujui')
-                            <span style="color: green; font-weight: bold;">✓ Disetujui Kesiswaan</span>
-                        @else
-                            <span style="color: red; font-weight: bold;">✕ Ditolak Kesiswaan</span>
-                        @endif
-                    </td>
-                </tr>
-            @empty
-                <tr>
-                    <td colspan="6" align="center"><i>Belum ada pengajuan dispen hari ini.</i></td>
-                </tr>
-            @endforelse
-        </tbody>
-    </table>
-
-</body>
-</html>
+        </div>
+    </div>
+</div>
+@endsection
