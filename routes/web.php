@@ -1,8 +1,22 @@
 <?php
 
-// Mengimpor AuthController
+// -------------------------------------------------------------------------
+// Import Controller
+// -------------------------------------------------------------------------
 use App\Http\Controllers\AuthController;
-// Mengimpor Facade Route
+use App\Http\Controllers\PiketController;
+use App\Http\Controllers\WakasisSiswaController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\GuruController;
+use App\Http\Controllers\Admin\SiswaController;
+use App\Http\Controllers\Admin\MapelController;
+use App\Http\Controllers\Admin\JamPelajaranController;
+use App\Http\Controllers\Admin\JadwalController;
+use App\Http\Controllers\Admin\RekapJurnalController;
+
+// Import Facade Laravel
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -11,46 +25,100 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-// Redirect URL utama (/) langsung ke halaman login
+// Redirect Halaman Utama (/)
 Route::get('/', function () {
-    // Jika sudah login, arahkan ke dashboard admin (atau dashboard role-nya)
     if (Auth::check()) {
         return redirect()->route('admin.dashboard');
     }
-
-    // Jika belum login, barulah diarahkan ke form login
     return redirect()->route('login');
 });
 
 // =========================================================================
-// Rute untuk Tamu / Belum Login (Guest)
+// RUTE GUEST (Khusus yang Belum Login)
 // =========================================================================
 Route::middleware('guest')->group(function () {
-    // Menampilkan halaman login
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-
-    // Menerima kiriman form login
     Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 });
 
 // =========================================================================
-// Rute untuk Pengguna yang Sudah Login (Auth)
+// RUTE AUTH (Khusus Pengguna yang Sudah Login)
 // =========================================================================
 Route::middleware('auth')->group(function () {
-    // Logout sistem
+    
+    // Logout Sistem
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    // Tempat mendaftarkan rute dashboard masing-masing role nanti saat siap:
-    // Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
-    // Route::get('/guru/dashboard', [GuruController::class, 'index'])->name('guru.dashboard');
-        Route::get('/admin/dashboard', function () {
-        return view ('admin.dashboard');
-    })->name('admin.dashboard');
-        // Kelola User 1 Halaman (Tampil + Simpan)
-    Route::get('/admin/users', [\App\Http\Controllers\Admin\UserController::class, 'index'])->name('admin.users.index');
-    Route::post('/admin/users', [\App\Http\Controllers\Admin\UserController::class, 'store'])->name('admin.users.store');
+    // ---------------------------------------------------------------------
+    // 1. DASHBOARD UTAMA TATA USAHA (ADMIN)
+    // ---------------------------------------------------------------------
+    Route::get('/admin/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
 
-        // Dashboard & Form Input Dispen Guru Piket
-    Route::get('/piket/dashboard', [\App\Http\Controllers\PiketController::class, 'index'])->name('piket.dashboard');
-    Route::post('/piket/dispen', [\App\Http\Controllers\PiketController::class, 'storeDispen'])->name('piket.dispen.store');
+    // ---------------------------------------------------------------------
+    // 2. DATA GURU & PEGAWAI
+    // ---------------------------------------------------------------------
+    Route::get('/admin/guru', [GuruController::class, 'index'])->name('admin.guru.index');
+    Route::post('/admin/guru', [GuruController::class, 'store'])->name('admin.guru.store');
+    Route::delete('/admin/guru/{id}', [GuruController::class, 'destroy'])->name('admin.guru.destroy');
+    Route::get('/admin/guru/trash', [GuruController::class, 'trash'])->name('admin.guru.trash');
+    Route::post('/admin/guru/{id}/restore', [GuruController::class, 'restore'])->name('admin.guru.restore');
+
+    // ---------------------------------------------------------------------
+    // 3. DATA SISWA
+    // ---------------------------------------------------------------------
+    Route::get('/admin/siswa', [SiswaController::class, 'index'])->name('admin.siswa.index');
+    Route::post('/admin/siswa', [SiswaController::class, 'store'])->name('admin.siswa.store');
+    Route::delete('/admin/siswa/{nis}', [SiswaController::class, 'destroy'])->name('admin.siswa.destroy');
+    Route::get('/admin/siswa/trash', [SiswaController::class, 'trash'])->name('admin.siswa.trash');
+    Route::post('/admin/siswa/{nis}/restore', [SiswaController::class, 'restore'])->name('admin.siswa.restore');
+
+    // ---------------------------------------------------------------------
+    // 4. DATA MATA PELAJARAN
+    // ---------------------------------------------------------------------
+    Route::get('/admin/mapel', [MapelController::class, 'index'])->name('admin.mapel.index');
+    Route::post('/admin/mapel', [MapelController::class, 'store'])->name('admin.mapel.store');
+    Route::delete('/admin/mapel/{kode}', [MapelController::class, 'destroy'])->name('admin.mapel.destroy');
+
+    // ---------------------------------------------------------------------
+    // 5. MASTER JAM PELAJARAN
+    // ---------------------------------------------------------------------
+    Route::get('/admin/jam-pelajaran', [JamPelajaranController::class, 'index'])->name('admin.jam.index');
+    Route::post('/admin/jam-pelajaran', [JamPelajaranController::class, 'store'])->name('admin.jam.store');
+    Route::put('/admin/jam-pelajaran/{id}', [JamPelajaranController::class, 'update'])->name('admin.jam.update');
+    Route::delete('/admin/jam-pelajaran/{id}', [JamPelajaranController::class, 'destroy'])->name('admin.jam.destroy');
+
+    // ---------------------------------------------------------------------
+    // 6. JADWAL MENGAJAR
+    // ---------------------------------------------------------------------
+    Route::get('/admin/jadwal', [JadwalController::class, 'index'])->name('admin.jadwal.index');
+    Route::post('/admin/jadwal', [JadwalController::class, 'store'])->name('admin.jadwal.store');
+    Route::delete('/admin/jadwal/{id}', [JadwalController::class, 'destroy'])->name('admin.jadwal.destroy');
+
+    // ---------------------------------------------------------------------
+    // 7. REKAP JURNAL & KEHADIRAN
+    // ---------------------------------------------------------------------
+    Route::get('/admin/rekap-jurnal', [RekapJurnalController::class, 'index'])->name('admin.rekap.index');
+
+    // ---------------------------------------------------------------------
+    // 8. KELOLA USER & PENGGUNA
+    // ---------------------------------------------------------------------
+    Route::get('/admin/users', [UserController::class, 'index'])->name('admin.users.index');
+    Route::post('/admin/users', [UserController::class, 'store'])->name('admin.users.store');
+    Route::get('/admin/users/{id}/edit', [UserController::class, 'edit'])->name('admin.users.edit');
+    Route::put('/admin/users/{id}', [UserController::class, 'update'])->name('admin.users.update');
+    Route::delete('/admin/users/{id}', [UserController::class, 'destroy'])->name('admin.users.destroy');
+
+    // ---------------------------------------------------------------------
+    // 9. MENU GURU PIKET
+    // ---------------------------------------------------------------------
+    Route::get('/piket/dashboard', [PiketController::class, 'index'])->name('piket.dashboard');
+    Route::post('/piket/dispen', [PiketController::class, 'storeDispen'])->name('piket.dispen.store');
+
+    // ---------------------------------------------------------------------
+    // 10. MENU WAKIL KESISWAAN (SISWA)
+    // ---------------------------------------------------------------------
+    Route::get('/wakasis-siswa/dashboard', [WakasisSiswaController::class, 'index'])->name('wakasis.siswa.dashboard');
+    Route::post('/wakasis-siswa/dispen/{id}/approve', [WakasisSiswaController::class, 'approve'])->name('wakasis.siswa.dispen.approve');
+    Route::post('/wakasis-siswa/dispen/{id}/reject', [WakasisSiswaController::class, 'reject'])->name('wakasis.siswa.dispen.reject');
+
 });
