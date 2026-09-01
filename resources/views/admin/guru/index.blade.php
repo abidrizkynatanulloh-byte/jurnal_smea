@@ -14,6 +14,18 @@
         </div>
     </div>
 
+    @if (session('success'))
+        <div class="p-4 bg-green-50 border border-green-200 text-green-700 rounded-xl text-sm font-semibold">
+            ✅ {{ session('success') }}
+        </div>
+    @endif
+
+    @if ($errors->any())
+        <div class="p-4 bg-red-50 border border-red-200 text-red-700 rounded-xl text-sm font-semibold">
+            {{ $errors->first() }}
+        </div>
+    @endif
+
     <!-- Responsive Grid: Form on Left/Top, List on Right/Bottom -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
         

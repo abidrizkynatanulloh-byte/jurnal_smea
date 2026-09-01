@@ -29,7 +29,7 @@ class GuruDashboardController
         $tanggalTeks    = Carbon::now()->locale('id')->isoFormat('dddd, D MMMM Y');
 
         // Jadwal hari ini milik guru ini
-        $jadwalHariIni = Jadwal::with(['kelas', 'mapel', 'ruangan'])
+        $jadwalHariIni = Jadwal::with(['kelas', 'mapel', 'ruangan', 'jamMulaiData', 'jamSelesaiData'])
             ->where('id_guru', $guru->id_guru)
             ->where('hari', $namaHariIni)
             ->orderBy('jam_mulai')

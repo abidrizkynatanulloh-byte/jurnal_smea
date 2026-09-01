@@ -14,10 +14,16 @@
         </div>
     </div>
 
+    @if (session('success'))
+        <div class="p-4 bg-green-50 border border-green-200 text-green-700 rounded-xl text-sm font-semibold">
+            ✅ {{ session('success') }}
+        </div>
+    @endif
+
     <!-- Responsive Grid -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
         
-        <!-- BAGIAN 1: FORM TAMBAH JADWAL MELEBAR -->
+        <!-- BAGIAN 1: FORM TAMBAH JADWAL -->
         <div class="bg-white border border-[#19140015] rounded-2xl shadow-sm p-6 lg:sticky lg:top-8">
             <h3 class="font-bold text-dark text-base mb-4 flex items-center space-x-2">
                 <i data-lucide="calendar-plus" class="w-5 h-5 text-brand"></i>
@@ -27,8 +33,11 @@
             <form action="{{ route('admin.jadwal.store') }}" method="POST" class="space-y-4">
                 @csrf
 
+                <!-- Pilih Kelas dengan Pencarian Cepat -->
                 <div>
                     <label for="id_kelas" class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Kelas</label>
+                    <input type="text" id="search_kelas_input" placeholder="🔍 Ketik cari kelas..." 
+                        class="block w-full px-3 py-1.5 mb-2 bg-gray-50 border border-gray-200 rounded-lg text-xs text-dark placeholder-gray-400 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand">
                     <select name="id_kelas" id="id_kelas" required
                         class="block w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-dark focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all cursor-pointer">
                         <option value="">-- Pilih Kelas --</option>
@@ -117,6 +126,7 @@
             <!-- FILTER CARD -->
             <div class="bg-white border border-[#19140015] rounded-2xl shadow-sm p-5">
                 <form action="{{ route('admin.jadwal.index') }}" method="GET" class="flex flex-col sm:flex-row gap-4 items-end">
+                    
                     <div class="w-full sm:w-48">
                         <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Filter Hari</label>
                         <select name="hari" 
@@ -129,18 +139,17 @@
                             <option value="Jumat" {{ request('hari') == 'Jumat' ? 'selected' : '' }}>Jumat</option>
                         </select>
                     </div>
-                    
+
+                    <!-- Search Kelas Input -->
                     <div class="flex-1 w-full">
-                        <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Filter Kelas</label>
-                        <select name="id_kelas" 
-                            class="block w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm text-dark focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all cursor-pointer">
-                            <option value="">-- Semua Kelas --</option>
-                            @foreach ($kelasList as $k)
-                                <option value="{{ $k->id_kelas }}" {{ request('id_kelas') == $k->id_kelas ? 'selected' : '' }}>
-                                    {{ $k->nama_kelas }}
-                                </option>
-                            @endforeach
-                        </select>
+                        <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Search Kelas</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                                <i data-lucide="search" class="w-4 h-4"></i>
+                            </div>
+                            <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama kelas misal: X RPL 1..." 
+                                class="block w-full pl-9 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm text-dark placeholder-gray-400 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all">
+                        </div>
                     </div>
 
                     <div class="flex space-x-2 w-full sm:w-auto">
@@ -148,7 +157,7 @@
                             <i data-lucide="filter" class="w-4 h-4"></i>
                             <span>Filter</span>
                         </button>
-                        @if (request('hari') || request('id_kelas'))
+                        @if (request('hari') || request('search'))
                             <a href="{{ route('admin.jadwal.index') }}" class="px-4 py-2 border border-gray-200 hover:bg-gray-50 text-gray-500 hover:text-dark rounded-xl text-sm font-semibold transition-colors flex items-center justify-center">
                                 Reset
                             </a>
@@ -229,4 +238,30 @@
         </div>
     </div>
 </div>
+
+<!-- SCRIPT PENCARIAN CEPAT KELAS PADA DROPDOWN -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchInput = document.getElementById('search_kelas_input');
+        const selectKelas = document.getElementById('id_kelas');
+
+        if (searchInput && selectKelas) {
+            searchInput.addEventListener('input', function () {
+                const filter = this.value.toLowerCase();
+                const options = selectKelas.options;
+
+                for (let i = 0; i < options.length; i++) {
+                    const text = options[i].text.toLowerCase();
+                    if (i === 0) continue; // Jangan sembunyikan option "-- Pilih Kelas --"
+
+                    if (text.includes(filter)) {
+                        options[i].style.display = '';
+                    } else {
+                        options[i].style.display = 'none';
+                    }
+                }
+            });
+        }
+    });
+</script>
 @endsection

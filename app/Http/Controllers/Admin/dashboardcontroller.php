@@ -71,7 +71,7 @@ class DashboardController
 
         // B. Siswa alpa hari ini
         $siswaAlpaHariIni = JurnalDetailKetidakhadiran::where('keterangan', 'Alpa')
-            ->whereHas('jurnalMengajar', function ($q) use ($todayDate) {
+            ->whereHas('jurnal', function ($q) use ($todayDate) {
                 $q->whereDate('tanggal', $todayDate);
             })->count();
 

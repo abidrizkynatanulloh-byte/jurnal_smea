@@ -84,10 +84,12 @@ Route::middleware('auth')->group(function () {
     // ---------------------------------------------------------------------
     // 5. MASTER JAM PELAJARAN
     // ---------------------------------------------------------------------
-    Route::get('/admin/jam-pelajaran',           [JamPelajaranController::class, 'index']  )->name('admin.jam.index');
-    Route::post('/admin/jam-pelajaran',          [JamPelajaranController::class, 'store']  )->name('admin.jam.store');
-    Route::put('/admin/jam-pelajaran/{id}',      [JamPelajaranController::class, 'update'] )->name('admin.jam.update');
-    Route::delete('/admin/jam-pelajaran/{id}',   [JamPelajaranController::class, 'destroy'])->name('admin.jam.destroy');
+    Route::get('/admin/jam-pelajaran',                        [JamPelajaranController::class, 'index']      )->name('admin.jam.index');
+    Route::post('/admin/jam-pelajaran',                       [JamPelajaranController::class, 'store']      )->name('admin.jam.store');
+    Route::put('/admin/jam-pelajaran/{id}',                   [JamPelajaranController::class, 'update']     )->name('admin.jam.update');
+    Route::delete('/admin/jam-pelajaran/{id}',                [JamPelajaranController::class, 'destroy']    )->name('admin.jam.destroy');
+    Route::post('/admin/jam-pelajaran/{id}/nonaktifkan',      [JamPelajaranController::class, 'nonaktifkan'])->name('admin.jam.nonaktifkan');
+    Route::post('/admin/jam-pelajaran/{id}/aktifkan',         [JamPelajaranController::class, 'aktifkan']   )->name('admin.jam.aktifkan');
 
     // ---------------------------------------------------------------------
     // 6. JADWAL MENGAJAR (ADMIN)
@@ -100,6 +102,7 @@ Route::middleware('auth')->group(function () {
     // 7. REKAP JURNAL & KEHADIRAN (ADMIN)
     // ---------------------------------------------------------------------
     Route::get('/admin/rekap-jurnal',            [RekapJurnalController::class, 'index'])->name('admin.rekap.index');
+    Route::get('/admin/rekap-jurnal/{id}',       [RekapJurnalController::class, 'show'] )->name('admin.rekap.show');
 
     // ---------------------------------------------------------------------
     // 8. KELOLA USER & PENGGUNA (ADMIN)

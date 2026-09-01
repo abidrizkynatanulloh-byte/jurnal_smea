@@ -20,14 +20,27 @@ class JadwalController
 
         $query = Jadwal::with(['kelas', 'guru', 'mapel', 'ruangan']);
 
+        // Filter berdasarkan Hari
         if ($request->filled('hari')) {
             $query->where('hari', $request->hari);
         }
+
+        // Filter berdasarkan ID Kelas
         if ($request->filled('id_kelas')) {
             $query->where('id_kelas', $request->id_kelas);
         }
 
-        $jadwalList = $query->orderBy('hari')->orderBy('jam_mulai')->paginate(10)->withQueryString();
+        // Pencarian Teks (Nama Kelas / Guru / Mapel)
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('kelas', fn($k) => $k->where('nama_kelas', 'like', "%{$search}%"))
+                  ->orWhereHas('guru', fn($g) => $g->where('nama_guru', 'like', "%{$search}%"))
+                  ->orWhereHas('mapel', fn($m) => $m->where('nama_mapel', 'like', "%{$search}%"));
+            });
+        }
+
+        $jadwalList = $query->orderBy('hari')->orderBy('jam_mulai')->paginate(15)->withQueryString();
 
         return view('admin.jadwal.index', compact('jadwalList', 'kelasList', 'guruList', 'mapelList', 'ruanganList'));
     }
