@@ -3,29 +3,107 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Siswa;
 use App\Models\DispenSiswa;
+use App\Models\Jadwal;
+use App\Models\JurnalMengajar;
+use App\Models\TugasKelasKosong;
+use App\Models\IzinGuru;
+use App\Models\AuditLog;
 use App\Models\Notifikasi;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
-class PiketController
+class PiketController extends Controller
 {
     /**
      * Menampilkan Dashboard Guru Piket (Form Input Dispen & Pantauan Hari Ini).
      */
     public function index()
     {
-        // 1. Ambil daftar semua siswa untuk pilihan dropdown
         $daftarSiswa = Siswa::orderBy('nama_siswa', 'asc')->get();
 
-        // 2. Ambil daftar dispen yang diajukan hari ini
-        $dispenHariIni = DispenSiswa::with('siswa')
-                            ->whereDate('tanggal', date('Y-m-d'))
-                            ->orderBy('created_at', 'desc')
-                            ->get();
+        $dispenHariIni = DispenSiswa::with(['siswa.kelas', 'disetujuiOleh'])
+            ->whereDate('tanggal', date('Y-m-d'))
+            ->orderBy('created_at', 'desc')
+            ->get();
 
         return view('piket.dashboard', compact('daftarSiswa', 'dispenHariIni'));
+    }
+
+    /**
+     * Layar Monitoring Kondisi Seluruh Kelas Hari Ini Real-Time.
+     */
+    public function monitoringKelas()
+    {
+        $hariIni = Carbon::today()->toDateString();
+        $hariMap = [
+            'Monday'    => 'Senin',
+            'Tuesday'   => 'Selasa',
+            'Wednesday' => 'Rabu',
+            'Thursday'  => 'Kamis',
+            'Friday'    => 'Jumat',
+            'Saturday'  => 'Sabtu',
+            'Sunday'    => 'Minggu',
+        ];
+        $namaHari = $hariMap[Carbon::now()->format('l')] ?? 'Senin';
+
+        // Ambil semua jadwal KBM hari ini
+        $jadwalHariIni = Jadwal::with(['guru', 'kelas', 'mapel', 'ruangan'])
+            ->where('hari', $namaHari)
+            ->orderBy('jam_mulai')
+            ->get();
+
+        // Cek guru yang punya izin sah hari ini
+        $guruIzinHariIni = IzinGuru::where('status_akhir', 'Disetujui')
+            ->where('tanggal_mulai', '<=', $hariIni)
+            ->where('tanggal_selesai', '>=', $hariIni)
+            ->pluck('id_guru')
+            ->toArray();
+
+        // Ambil tugas kelas kosong yang telah tercatat
+        $tugasList = TugasKelasKosong::with(['guru', 'kelas'])
+            ->where('tanggal', $hariIni)
+            ->get();
+
+        return view('piket.monitoring-kelas', compact(
+            'jadwalHariIni',
+            'hariIni',
+            'namaHari',
+            'guruIzinHariIni',
+            'tugasList'
+        ));
+    }
+
+    /**
+     * Guru piket / sekolah mencatat tugas untuk kelas yang gurunya tidak hadir / alpa.
+     */
+    public function storeTugasKelas(Request $request)
+    {
+        $request->validate([
+            'id_guru'         => 'required',
+            'id_kelas'        => 'required',
+            'deskripsi_tugas' => 'required|string',
+        ]);
+
+        TugasKelasKosong::create([
+            'id_jadwal'       => $request->id_jadwal,
+            'tanggal'         => Carbon::today()->toDateString(),
+            'id_guru'         => $request->id_guru,
+            'id_kelas'        => $request->id_kelas,
+            'deskripsi_tugas' => $request->deskripsi_tugas,
+            'status'          => 'Diberikan',
+        ]);
+
+        AuditLog::log(
+            'Pencatatan Tugas Kelas Kosong',
+            "Guru Piket mencatat tugas untuk kelas ID: {$request->id_kelas}"
+        );
+
+        return back()->with('success', 'Tugas belajar untuk kelas tersebut berhasil dicatat dan dipublikasikan.');
     }
 
     /**
@@ -33,7 +111,6 @@ class PiketController
      */
     public function storeDispen(Request $request)
     {
-        // 1. Validasi input
         $request->validate([
             'nis'                 => 'required|exists:siswa,nis',
             'keperluan'           => 'required|string|max:255',
@@ -48,7 +125,6 @@ class PiketController
         DB::beginTransaction();
 
         try {
-            // 2. Simpan pengajuan ke tabel dispen_siswa
             $dispen = DispenSiswa::create([
                 'nis'                 => $request->nis,
                 'keperluan'           => $request->keperluan,
@@ -58,31 +134,21 @@ class PiketController
                 'status'              => 'Menunggu',
             ]);
 
-            // 3. Ambil data siswa untuk teks notifikasi
-            $siswa = Siswa::where('nis', $request->nis)->first();
-
-            // 4. Cari user Wakasis Siswa untuk dikirimi notifikasi
-            $wakasisList = User::where('role', 'wakasis_siswa')->get();
-
-            foreach ($wakasisList as $wakasis) {
-                Notifikasi::create([
-                    'untuk_user_id' => $wakasis->id,
-                    'judul'         => 'Pengajuan Dispen Siswa Baru',
-                    'pesan'         => 'Siswa ' . $siswa->nama_siswa . ' (NIS: ' . $siswa->nis . ') mengajukan dispen: "' . $request->keperluan . '" jam ' . $request->jam_keluar_rencana,
-                    'jenis'         => 'dispen_siswa',
-                    'ref_id'        => $dispen->id,
-                    'sudah_dibaca'  => 0,
-                    'created_at'    => now(),
-                ]);
-            }
+            AuditLog::log(
+                'Pengajuan Dispen Siswa',
+                "Guru Piket mengajukan dispen untuk siswa NIS: {$request->nis} ({$request->keperluan})"
+            );
 
             DB::commit();
 
-            return redirect()->route('piket.dashboard')->with('success', 'Pengajuan dispen untuk siswa ' . $siswa->nama_siswa . ' berhasil dikirim ke Kesiswaan!');
+            return redirect()->route('piket.dashboard')
+                             ->with('success', 'Pengajuan dispen siswa berhasil dikirim ke Waka Kesiswaan.');
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->withInput()->withErrors(['error' => 'Gagal mengajukan dispen: ' . $e->getMessage()]);
+            return redirect()->back()
+                             ->withInput()
+                             ->with('error', 'Terjadi kesalahan sistem: ' . $e->getMessage());
         }
     }
 }
