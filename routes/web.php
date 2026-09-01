@@ -19,6 +19,7 @@ use App\Http\Controllers\Admin\MapelController;
 use App\Http\Controllers\Admin\JamPelajaranController;
 use App\Http\Controllers\Admin\JadwalController;
 use App\Http\Controllers\Admin\RekapJurnalController;
+use App\Http\Controllers\Admin\AdminGuruPiketController;
 use App\Http\Controllers\Guru\GuruDashboardController;
 use App\Http\Controllers\Guru\JurnalController;
 
@@ -129,13 +130,21 @@ Route::middleware('auth')->group(function () {
     Route::put('/admin/users/{id}',              [UserController::class, 'update'] )->name('admin.users.update');
     Route::delete('/admin/users/{id}',           [UserController::class, 'destroy'])->name('admin.users.destroy');
 
+    // Kelola Guru Piket (Admin)
+    Route::get('/admin/guru-piket',              [AdminGuruPiketController::class, 'index']  )->name('admin.guru-piket.index');
+    Route::post('/admin/guru-piket',             [AdminGuruPiketController::class, 'store']  )->name('admin.guru-piket.store');
+    Route::delete('/admin/guru-piket/{id}',      [AdminGuruPiketController::class, 'destroy'])->name('admin.guru-piket.destroy');
+
     // ---------------------------------------------------------------------
-    // 9. GURU PIKET (DISPEN & MONITORING KELAS)
+    // 9. GURU PIKET (DISPEN & MONITORING KELAS & SISWA TELAT)
     // ---------------------------------------------------------------------
     Route::get('/piket/dashboard',               [PiketController::class, 'index']          )->name('piket.dashboard');
     Route::post('/piket/dispen',                 [PiketController::class, 'storeDispen']    )->name('piket.dispen.store');
+    Route::post('/piket/siswa-telat',            [PiketController::class, 'storeSiswaTelat'])->name('piket.siswa-telat.store');
     Route::get('/piket/monitoring-kelas',        [PiketController::class, 'monitoringKelas'])->name('piket.monitoring-kelas');
     Route::post('/piket/tugas-kelas',            [PiketController::class, 'storeTugasKelas'])->name('piket.tugas-kelas.store');
+    Route::post('/piket/izin-guru/{id}/approve', [PiketController::class, 'approveIzinGuru'])->name('piket.izin-guru.approve');
+    Route::post('/piket/izin-guru/{id}/reject',  [PiketController::class, 'rejectIzinGuru'] )->name('piket.izin-guru.reject');
 
     // ---------------------------------------------------------------------
     // 10. WAKIL KESISWAAN (DISPEN SISWA)

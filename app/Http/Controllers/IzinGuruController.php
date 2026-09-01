@@ -45,7 +45,10 @@ class IzinGuruController extends Controller
             'alasan'          => 'required|string',
             'keterangan'      => 'nullable|string',
             'kelas_terdampak' => 'nullable|string',
-            'bukti_foto'      => 'nullable|image|max:2048',
+            'bukti_foto'      => 'required|image|mimes:jpeg,png,jpg|max:2048',
+        ], [
+            'bukti_foto.required' => 'Unggah bukti pendukung (surat dokter / foto bukti) wajib dilampirkan.',
+            'bukti_foto.image'    => 'File bukti pendukung harus berupa gambar (JPG, JPEG, PNG).',
         ]);
 
         $buktiPath = null;
@@ -65,7 +68,8 @@ class IzinGuruController extends Controller
             'kelas_terdampak' => $request->kelas_terdampak,
             'bukti_foto'      => $buktiPath,
             'status_waka'     => 'Menunggu',
-            'status_sdm'      => 'Menunggu',
+            'status_sdm'      => 'Disetujui',
+            'status_piket'    => 'Menunggu',
             'status_kepsek'   => 'Menunggu',
             'status_akhir'    => 'Diajukan',
         ]);

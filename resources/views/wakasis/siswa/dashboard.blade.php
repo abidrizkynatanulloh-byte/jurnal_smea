@@ -38,9 +38,13 @@
                         <tr class="hover:bg-gray-50/50 transition-colors">
                             <td class="py-4 px-6">
                                 <div class="font-bold text-[#1E2538]">{{ $d->siswa ? $d->siswa->nama_siswa : '-' }}</div>
-                                <div class="text-xs text-gray-400 mt-0.5">NIS: {{ $d->nis }}</div>
+                                <div class="text-xs text-gray-400 mt-0.5">NISN: {{ $d->siswa ? $d->siswa->nisn ?? '-' : '-' }} | NIS: {{ $d->nis }}</div>
+                                <div class="text-xs text-[#405078] font-semibold">{{ $d->siswa && $d->siswa->kelas ? $d->siswa->kelas->nama_kelas : '-' }}</div>
                             </td>
                             <td class="py-4 px-6 text-xs leading-normal">
+                                @if($d->jam_ke)
+                                    <div class="font-bold text-[#1E2538] mb-0.5">{{ $d->jam_ke }}</div>
+                                @endif
                                 <div class="flex items-center space-x-1.5">
                                     <span class="font-semibold text-gray-700">Keluar:</span>
                                     <span class="text-gray-500 font-medium">{{ substr($d->jam_keluar_rencana, 0, 5) ?? '-' }}</span>

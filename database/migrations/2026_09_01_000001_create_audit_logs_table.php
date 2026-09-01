@@ -8,14 +8,16 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('audit_logs', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
-            $table->string('action', 100);
-            $table->text('description')->nullable();
-            $table->string('ip_address', 45)->nullable();
-            $table->timestamp('created_at')->useCurrent();
-        });
+        if (!Schema::hasTable('audit_logs')) {
+            Schema::create('audit_logs', function (Blueprint $table) {
+                $table->id();
+                $table->unsignedBigInteger('user_id')->nullable()->index();
+                $table->string('action', 100);
+                $table->text('description')->nullable();
+                $table->string('ip_address', 45)->nullable();
+                $table->timestamp('created_at')->useCurrent();
+            });
+        }
     }
 
     public function down(): void

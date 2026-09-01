@@ -95,8 +95,10 @@
                                     {{ $item->siswa && $item->siswa->kelas ? $item->siswa->kelas->nama_kelas : '-' }}
                                 </span>
                             </div>
+                            <p class="text-[11px] text-gray-500">NISN: <span class="font-semibold text-gray-700">{{ $item->siswa ? $item->siswa->nisn ?? '-' : '-' }}</span> | NIS: <span class="font-semibold text-gray-700">{{ $item->nis }}</span></p>
                             <p class="text-xs text-gray-500 leading-snug"><span class="font-semibold text-gray-700">Keperluan:</span> {{ $item->keperluan }}</p>
-                            <p class="text-[11px] text-[#405078] font-medium">
+                            <p class="text-[11px] text-[#405078] font-semibold">
+                                @if($item->jam_ke) <span class="bg-[#405078]/10 text-[#405078] px-2 py-0.5 rounded font-bold mr-1">{{ $item->jam_ke }}</span> @endif
                                 Estimasi: {{ substr($item->jam_keluar_rencana, 0, 5) }} s/d {{ $item->jam_kembali_rencana ? substr($item->jam_kembali_rencana, 0, 5) : 'Selesai' }}
                             </p>
                         </div>

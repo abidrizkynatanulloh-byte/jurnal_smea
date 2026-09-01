@@ -7,6 +7,7 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Siswa;
 use App\Models\DispenSiswa;
+use App\Models\SiswaTelat;
 use App\Models\Jadwal;
 use App\Models\JurnalMengajar;
 use App\Models\TugasKelasKosong;
@@ -20,18 +21,36 @@ use Carbon\Carbon;
 class PiketController extends Controller
 {
     /**
-     * Menampilkan Dashboard Guru Piket (Form Input Dispen & Pantauan Hari Ini).
+     * Menampilkan Dashboard Guru Piket (Form Input Dispen & Siswa Telat & Pantauan Hari Ini).
      */
     public function index()
     {
-        $daftarSiswa = Siswa::orderBy('nama_siswa', 'asc')->get();
+        $user = Auth::user();
+        if ($user->role === 'guru' && $user->guru) {
+            if (!$user->guru->isPiketHariIni()) {
+                return redirect()->route('guru.dashboard')->with('error', 'Akses ditolak. Anda tidak terdaftar bertugas piket hari ini.');
+            }
+        }
+
+        $daftarSiswa = Siswa::with('kelas')->orderBy('nama_siswa', 'asc')->get();
 
         $dispenHariIni = DispenSiswa::with(['siswa.kelas', 'disetujuiOleh'])
             ->whereDate('tanggal', date('Y-m-d'))
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return view('piket.dashboard', compact('daftarSiswa', 'dispenHariIni'));
+        $siswaTelatHariIni = SiswaTelat::with(['siswa.kelas', 'guruPiket'])
+            ->whereDate('tanggal', date('Y-m-d'))
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $izinGuruPending = IzinGuru::with('guru')
+            ->where('status_piket', 'Menunggu')
+            ->where('status_akhir', '!=', 'Ditolak')
+            ->orderBy('id', 'desc')
+            ->get();
+
+        return view('piket.dashboard', compact('daftarSiswa', 'dispenHariIni', 'siswaTelatHariIni', 'izinGuruPending'));
     }
 
     /**
@@ -114,6 +133,7 @@ class PiketController extends Controller
         $request->validate([
             'nis'                 => 'required|exists:siswa,nis',
             'keperluan'           => 'required|string|max:255',
+            'jam_ke'              => 'nullable|string|max:50',
             'jam_keluar_rencana'  => 'required',
             'jam_kembali_rencana' => 'nullable',
         ], [
@@ -128,6 +148,7 @@ class PiketController extends Controller
             $dispen = DispenSiswa::create([
                 'nis'                 => $request->nis,
                 'keperluan'           => $request->keperluan,
+                'jam_ke'              => $request->jam_ke,
                 'tanggal'             => date('Y-m-d'),
                 'jam_keluar_rencana'  => $request->jam_keluar_rencana,
                 'jam_kembali_rencana' => $request->jam_kembali_rencana,
@@ -150,5 +171,82 @@ class PiketController extends Controller
                              ->withInput()
                              ->with('error', 'Terjadi kesalahan sistem: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Guru Piket mencatat siswa yang datang terlambat (telat).
+     */
+    public function storeSiswaTelat(Request $request)
+    {
+        $request->validate([
+            'nis'           => 'required|exists:siswa,nis',
+            'jam_terlambat' => 'required',
+            'alasan'        => 'nullable|string|max:255',
+            'tindakan'      => 'nullable|string|max:255',
+        ], [
+            'nis.required'           => 'Silakan pilih siswa yang terlambat.',
+            'jam_terlambat.required' => 'Jam kedatangan terlambat wajib diisi.',
+        ]);
+
+        try {
+            $idGuruPiket = Auth::user()->id_guru ?? null;
+
+            SiswaTelat::create([
+                'nis'           => $request->nis,
+                'tanggal'       => date('Y-m-d'),
+                'jam_terlambat' => $request->jam_terlambat,
+                'alasan'        => $request->alasan,
+                'tindakan'      => $request->tindakan,
+                'id_guru_piket' => $idGuruPiket,
+            ]);
+
+            AuditLog::log(
+                'Pencatatan Siswa Terlambat',
+                "Guru Piket mencatat keterlambatan siswa NIS: {$request->nis} pada jam {$request->jam_terlambat}"
+            );
+
+            return redirect()->route('piket.dashboard')
+                             ->with('success', 'Data siswa terlambat berhasil dicatat.');
+
+        } catch (\Exception $e) {
+            return redirect()->back()
+                             ->withInput()
+                             ->with('error', 'Terjadi kesalahan sistem: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Guru Piket menyetujui izin guru.
+     */
+    public function approveIzinGuru($id)
+    {
+        $izin = \App\Models\IzinGuru::findOrFail($id);
+        $izin->status_piket = 'Disetujui';
+        $izin->cekDanUpdateStatusAkhir();
+
+        AuditLog::log(
+            'Persetujuan Izin Guru oleh Guru Piket',
+            "Guru Piket menyetujui izin Guru: {$izin->guru->nama_guru} ({$izin->alasan})"
+        );
+
+        return back()->with('success', "Izin Guru {$izin->guru->nama_guru} telah disetujui oleh Guru Piket.");
+    }
+
+    /**
+     * Guru Piket menolak izin guru.
+     */
+    public function rejectIzinGuru(Request $request, $id)
+    {
+        $izin = \App\Models\IzinGuru::findOrFail($id);
+        $izin->status_piket = 'Ditolak';
+        $izin->catatan_penolakan = $request->input('catatan', 'Ditolak oleh Guru Piket');
+        $izin->cekDanUpdateStatusAkhir();
+
+        AuditLog::log(
+            'Penolakan Izin Guru oleh Guru Piket',
+            "Guru Piket menolak izin Guru: {$izin->guru->nama_guru}."
+        );
+
+        return back()->with('info', "Izin Guru {$izin->guru->nama_guru} telah ditolak oleh Guru Piket.");
     }
 }

@@ -47,24 +47,23 @@ class WakasisGuruController extends Controller
     public function approveWaka($id)
     {
         $izin = IzinGuru::findOrFail($id);
-        $izin->update(['status_waka' => 'Disetujui']);
+        $izin->status_waka = 'Disetujui';
+        $izin->cekDanUpdateStatusAkhir();
 
         AuditLog::log('Persetujuan Izin Guru - Waka Kurikulum', "Waka Kurikulum menyetujui izin {$izin->guru->nama_guru}");
 
-        return back()->with('success', "Izin Guru {$izin->guru->nama_guru} disetujui oleh Waka Kurikulum dan diteruskan ke SDM.");
+        return back()->with('success', "Izin Guru {$izin->guru->nama_guru} disetujui oleh Waka Kurikulum.");
     }
 
     /**
-     * Waka Kurikulum menolak tahap 1.
+     * Waka Kurikulum menolak.
      */
     public function rejectWaka(Request $request, $id)
     {
         $izin = IzinGuru::findOrFail($id);
-        $izin->update([
-            'status_waka'       => 'Ditolak',
-            'status_akhir'      => 'Ditolak',
-            'catatan_penolakan' => $request->input('catatan', 'Ditolak oleh Waka Kurikulum'),
-        ]);
+        $izin->status_waka = 'Ditolak';
+        $izin->catatan_penolakan = $request->input('catatan', 'Ditolak oleh Waka Kurikulum');
+        $izin->cekDanUpdateStatusAkhir();
 
         AuditLog::log('Penolakan Izin Guru - Waka Kurikulum', "Waka Kurikulum menolak izin {$izin->guru->nama_guru}");
 

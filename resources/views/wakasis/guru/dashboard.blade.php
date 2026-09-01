@@ -52,6 +52,16 @@
                             @if($mw->kelas_terdampak)
                                 <p><span class="font-semibold text-gray-500">Kelas Terdampak:</span> {{ $mw->kelas_terdampak }}</p>
                             @endif
+                            <div class="pt-1">
+                                @if($mw->bukti_foto)
+                                    <a href="{{ asset('storage/' . $mw->bukti_foto) }}" target="_blank" class="inline-flex items-center space-x-1 text-xs text-[#405078] hover:underline font-bold bg-[#405078]/10 px-2.5 py-1 rounded-lg">
+                                        <i data-lucide="image" class="w-3.5 h-3.5"></i>
+                                        <span>Lihat Bukti Foto (Surat)</span>
+                                    </a>
+                                @else
+                                    <span class="text-xs text-rose-500 font-bold">Tanpa Bukti Foto</span>
+                                @endif
+                            </div>
                         </div>
 
                         <div class="flex items-center space-x-2 pt-1">

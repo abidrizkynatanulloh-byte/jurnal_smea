@@ -13,7 +13,7 @@
             </a>
         </div>
         <h1 class="text-2xl font-extrabold text-[#1E2538] tracking-tight">Formulir Pengajuan Izin Guru</h1>
-        <p class="text-xs text-gray-500 mt-0.5">Pengajuan izin ketidakhadiran akan diverifikasi bertahap oleh Waka Kurikulum, SDM, dan Kepala Sekolah</p>
+        <p class="text-xs text-gray-500 mt-0.5">Pengajuan izin ketidakhadiran akan diverifikasi bertahap oleh Waka Kurikulum, Guru Piket, dan Kepala Sekolah</p>
     </div>
 
     <!-- Form Card -->
@@ -60,8 +60,8 @@
             </div>
 
             <div>
-                <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Unggah Bukti Pendukung (Surat / Foto - Opsional)</label>
-                <input type="file" name="bukti_foto" accept="image/*"
+                <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Unggah Bukti Pendukung (Surat Dokter / Foto Bukti) * <span class="text-rose-600 font-extrabold">(WAJIB)</span></label>
+                <input type="file" name="bukti_foto" accept="image/*" required
                     class="block w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-[#405078]/10 file:text-[#405078] hover:file:bg-[#405078]/20 cursor-pointer">
             </div>
 

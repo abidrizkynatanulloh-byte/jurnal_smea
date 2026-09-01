@@ -139,7 +139,6 @@
                                 <th class="py-4 px-6">Nama Pegawai</th>
                                 <th class="py-4 px-6">Jabatan</th>
                                 <th class="py-4 px-6">No HP</th>
-                                <th class="py-4 px-6">Mapel</th>
                                 <th class="py-4 px-6 text-center w-24">Aksi</th>
                             </tr>
                         </thead>
@@ -154,7 +153,6 @@
                                         </span>
                                     </td>
                                     <td class="py-4 px-6 text-gray-500">{{ $g->no_hp ?? '-' }}</td>
-                                    <td class="py-4 px-6 font-semibold text-gray-700">{{ $g->kode_mapel ?? '-' }}</td>
                                     <td class="py-4 px-6 text-center">
                                         <form action="{{ route('admin.guru.destroy', $g->id_guru) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus pegawai ini?');" class="inline-block">
                                             @csrf

@@ -20,7 +20,7 @@
         </div>
     </div>
 
-    <!-- 1. Statistik Grid (Empat Kartu Modern) -->
+    <!-- 1. Statistik Grid Utama -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         <!-- Card 1: Siswa -->
         <div class="bg-white border border-[#D1D9EB] rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow flex items-start space-x-4">
@@ -71,12 +71,74 @@
         </div>
     </div>
 
-    <!-- 2. Tabel Jadwal Hari Ini (Slide 10 Data per Tampilan) -->
+    <!-- 2. REKAP ABSENSI SISWA HARI INI -->
+    <div class="bg-white border border-[#D1D9EB] rounded-2xl shadow-sm p-6">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="font-bold text-[#1E2538] text-base flex items-center space-x-2">
+                <i data-lucide="user-check" class="w-5 h-5 text-[#405078]"></i>
+                <span>Data Absensi Siswa Hari Ini</span>
+            </h3>
+            <span class="text-xs text-gray-500 font-semibold">{{ $tanggalHariIniTeks }}</span>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <!-- Hadir -->
+            <div class="p-4 bg-emerald-50/60 border border-emerald-200/80 rounded-xl flex items-center space-x-3.5">
+                <div class="p-2.5 bg-emerald-100 text-emerald-700 rounded-lg">
+                    <i data-lucide="user-check" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <p class="text-[11px] font-bold uppercase tracking-wider text-emerald-800">Hadir</p>
+                    <h4 class="text-xl font-extrabold text-emerald-900 mt-0.5">{{ $siswaHadirHariIni }}</h4>
+                    <p class="text-[10px] text-emerald-700">Siswa mengikuti KBM</p>
+                </div>
+            </div>
+
+            <!-- Sakit -->
+            <div class="p-4 bg-amber-50/60 border border-amber-200/80 rounded-xl flex items-center space-x-3.5">
+                <div class="p-2.5 bg-amber-100 text-amber-700 rounded-lg">
+                    <i data-lucide="stethoscope" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <p class="text-[11px] font-bold uppercase tracking-wider text-amber-800">Sakit</p>
+                    <h4 class="text-xl font-extrabold text-amber-900 mt-0.5">{{ $siswaSakitHariIni }}</h4>
+                    <p class="text-[10px] text-amber-700">Terdata sakit hari ini</p>
+                </div>
+            </div>
+
+            <!-- Izin / Dispen -->
+            <div class="p-4 bg-blue-50/60 border border-blue-200/80 rounded-xl flex items-center space-x-3.5">
+                <div class="p-2.5 bg-blue-100 text-blue-700 rounded-lg">
+                    <i data-lucide="file-badge" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <p class="text-[11px] font-bold uppercase tracking-wider text-blue-800">Izin / Dispen</p>
+                    <h4 class="text-xl font-extrabold text-blue-900 mt-0.5">{{ $siswaIzinTotal }}</h4>
+                    <p class="text-[10px] text-blue-700">Izin & dispen sah</p>
+                </div>
+            </div>
+
+            <!-- Alpa -->
+            <div class="p-4 bg-rose-50/60 border border-rose-200/80 rounded-xl flex items-center space-x-3.5">
+                <div class="p-2.5 bg-rose-100 text-rose-700 rounded-lg">
+                    <i data-lucide="user-x" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <p class="text-[11px] font-bold uppercase tracking-wider text-rose-800">Alpa</p>
+                    <h4 class="text-xl font-extrabold text-rose-900 mt-0.5">{{ $siswaAlpaHariIni }}</h4>
+                    <p class="text-[10px] text-rose-700">Tanpa keterangan</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Tabel Jadwal Hari Ini (Urutan: ALPA lebih dulu!) -->
     <div class="bg-white border border-[#D1D9EB] rounded-2xl shadow-sm overflow-hidden">
         <div class="px-6 py-5 border-b border-[#D1D9EB] flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
             <div class="flex items-center space-x-3">
                 <div class="w-2.5 h-2.5 bg-[#405078] rounded-full animate-pulse"></div>
                 <h3 class="font-bold text-[#1E2538] text-base">Jadwal Mengajar Hari Ini ({{ $namaHariIni }})</h3>
+                <span class="text-xs font-bold text-rose-600 bg-rose-50 border border-rose-200 px-2.5 py-0.5 rounded-full">Diurutkan dari Alpa</span>
             </div>
             
             <div class="flex items-center space-x-4">
@@ -107,7 +169,7 @@
                 </thead>
                 <tbody id="jadwalTbody" class="divide-y divide-gray-100 text-sm text-gray-600">
                     @forelse ($jadwalHariIni as $index => $j)
-                        <tr class="jadwal-row hover:bg-gray-50/50 transition-colors" data-index="{{ $index }}" style="{{ $index >= 10 ? 'display: none;' : '' }}">
+                        <tr class="jadwal-row hover:bg-gray-50/50 transition-colors {{ $j->status_jurnal === 'Alpa' ? 'bg-rose-50/20' : '' }}" data-index="{{ $index }}" style="{{ $index >= 10 ? 'display: none;' : '' }}">
                             <td class="py-4 px-6 text-center font-medium text-gray-400">{{ $index + 1 }}</td>
                             <td class="py-4 px-6 font-semibold text-[#1E2538]">Jam ke {{ $j->jam_mulai }} - {{ $j->jam_selesai }}</td>
                             <td class="py-4 px-6"><span class="px-2.5 py-1 bg-gray-100 rounded-md text-xs font-bold text-gray-700">{{ $j->kelas ? $j->kelas->nama_kelas : '-' }}</span></td>
@@ -116,12 +178,22 @@
                             <td class="py-4 px-6"><span class="inline-flex items-center space-x-1"><i data-lucide="map-pin" class="w-3.5 h-3.5 text-gray-400"></i><span>{{ $j->ruangan ? $j->ruangan->nama_ruangan : '-' }}</span></span></td>
                             <td class="py-4 px-6 text-center">
                                 @if ($j->status_jurnal === 'Selesai')
-                                    <span class="inline-flex items-center px-2.5 py-1 bg-emerald-50 text-emerald-700 text-xs font-semibold rounded-full space-x-1">
+                                    <span class="inline-flex items-center px-2.5 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold rounded-full space-x-1">
                                         <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
                                         <span>Selesai</span>
                                     </span>
+                                @elseif ($j->status_jurnal === 'Alpa')
+                                    <span class="inline-flex items-center px-2.5 py-1 bg-rose-100 text-rose-700 border border-rose-300 text-xs font-extrabold rounded-full space-x-1">
+                                        <span class="w-1.5 h-1.5 bg-rose-600 rounded-full animate-ping"></span>
+                                        <span>Alpa (Belum Diisi)</span>
+                                    </span>
+                                @elseif (str_contains($j->status_jurnal, 'Sah'))
+                                    <span class="inline-flex items-center px-2.5 py-1 bg-blue-50 text-blue-700 border border-blue-200 text-xs font-bold rounded-full space-x-1">
+                                        <span class="w-1.5 h-1.5 bg-blue-500 rounded-full"></span>
+                                        <span>{{ $j->status_jurnal }}</span>
+                                    </span>
                                 @else
-                                    <span class="inline-flex items-center px-2.5 py-1 bg-amber-50 text-amber-700 text-xs font-semibold rounded-full space-x-1 animate-pulse">
+                                    <span class="inline-flex items-center px-2.5 py-1 bg-amber-50 text-amber-700 border border-amber-200 text-xs font-semibold rounded-full space-x-1">
                                         <span class="w-1.5 h-1.5 bg-amber-500 rounded-full"></span>
                                         <span>Terjadwal</span>
                                     </span>
@@ -141,40 +213,168 @@
         </div>
     </div>
 
-    <!-- 3. Perlu Tindakan Widget -->
+    <!-- 4. Perhatian Operasional (Klik untuk membuka daftar detail) -->
     <div class="bg-white border border-[#D1D9EB] rounded-2xl shadow-sm p-6">
         <h3 class="font-bold text-[#1E2538] text-base mb-4 flex items-center space-x-2">
             <i data-lucide="alert-triangle" class="w-5 h-5 text-[#405078]"></i>
-            <span>Perhatian Operasional</span>
+            <span>Perhatian Operasional (Klik Kartu untuk Melihat List Guru)</span>
         </h3>
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- Warning 1 -->
-            <div class="p-4 bg-amber-50/60 border border-amber-200/80 rounded-xl flex items-start space-x-3.5">
-                <div class="p-2 bg-amber-100 text-amber-800 rounded-lg">
+            <!-- Warning 1: Jurnal Kemarin -->
+            <div onclick="openModalKemarin()" class="p-4 bg-amber-50/60 border border-amber-200/80 rounded-xl flex items-start space-x-3.5 hover:shadow-md transition-all cursor-pointer group">
+                <div class="p-2 bg-amber-100 text-amber-800 rounded-lg group-hover:scale-105 transition-transform">
                     <i data-lucide="book-x" class="w-5 h-5"></i>
                 </div>
-                <div>
-                    <h4 class="text-sm font-bold text-amber-900">Jurnal Mengajar Kemarin</h4>
+                <div class="flex-1">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-sm font-bold text-amber-900">Jurnal Mengajar Kemarin</h4>
+                        <span class="text-[11px] text-amber-700 font-bold underline flex items-center space-x-0.5">
+                            <span>Lihat List</span>
+                            <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                        </span>
+                    </div>
                     <p class="text-xs text-amber-700 mt-0.5"><span class="font-bold text-[#405078]">{{ $guruBelumIsiKemarin }} sesi mengajar</span> terdeteksi belum mengisi jurnal kemarin.</p>
                 </div>
             </div>
 
-            <!-- Warning 2 -->
-            <div class="p-4 bg-rose-50/40 border border-rose-200/80 rounded-xl flex items-start space-x-3.5">
-                <div class="p-2 bg-rose-100/80 text-rose-800 rounded-lg">
+            <!-- Warning 2: Guru Alpa Hari Ini -->
+            <div onclick="openModalAlpa()" class="p-4 bg-rose-50/60 border border-rose-200/80 rounded-xl flex items-start space-x-3.5 hover:shadow-md transition-all cursor-pointer group">
+                <div class="p-2 bg-rose-100/80 text-rose-800 rounded-lg group-hover:scale-105 transition-transform">
                     <i data-lucide="user-x" class="w-5 h-5"></i>
                 </div>
-                <div>
-                    <h4 class="text-sm font-bold text-rose-900">Guru Alpa Hari Ini</h4>
-                    <p class="text-xs text-rose-700 mt-0.5"><span class="font-bold text-rose-800">{{ $guruAlpaHariIni }} guru</span> dilaporkan tidak hadir tanpa keterangan.</p>
+                <div class="flex-1">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-sm font-bold text-rose-900">Guru Alpa Hari Ini</h4>
+                        <span class="text-[11px] text-rose-700 font-bold underline flex items-center space-x-0.5">
+                            <span>Lihat List Alpa</span>
+                            <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                        </span>
+                    </div>
+                    <p class="text-xs text-rose-700 mt-0.5"><span class="font-bold text-rose-800">{{ $guruAlpaHariIni }} guru / {{ count($listGuruAlpaHariIni) }} sesi</span> terdeteksi Alpa (jam mengajar lewat).</p>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- SCRIPT SLIDER 10 JADWAL -->
+<!-- MODAL 1: LIST GURU ALPA HARI INI -->
+<div id="modalAlpa" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center hidden p-4">
+    <div class="bg-white border border-[#D1D9EB] rounded-2xl max-w-3xl w-full shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
+        <div class="px-6 py-4 border-b border-[#D1D9EB] bg-rose-50 flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <i data-lucide="user-x" class="w-5 h-5 text-rose-600"></i>
+                <h3 class="font-bold text-[#1E2538] text-base">Daftar Guru Alpa / Belum Isi Jurnal Hari Ini</h3>
+            </div>
+            <button onclick="closeModalAlpa()" class="text-gray-400 hover:text-gray-600 p-1 cursor-pointer">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+        <div class="p-6 overflow-y-auto space-y-4">
+            <p class="text-xs text-gray-500">Berikut daftar sesi mengajar hari ini yang jam mengajarnya telah berakhir namun belum ada catatan jurnal mengajar:</p>
+            <div class="overflow-x-auto border border-[#D1D9EB] rounded-xl">
+                <table class="w-full text-left text-xs text-gray-600">
+                    <thead class="bg-[#F8FAFC] text-gray-500 font-semibold border-b border-[#D1D9EB]">
+                        <tr>
+                            <th class="py-3 px-4 text-center w-12">No</th>
+                            <th class="py-3 px-4">Nama Guru</th>
+                            <th class="py-3 px-4">Kelas & Mapel</th>
+                            <th class="py-3 px-4 text-center">Jam Ke-</th>
+                            <th class="py-3 px-4">Ruangan</th>
+                            <th class="py-3 px-4 text-center">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        @forelse ($listGuruAlpaHariIni as $idx => $g)
+                            <tr class="hover:bg-rose-50/20">
+                                <td class="py-3 px-4 text-center font-medium text-gray-400">{{ $idx + 1 }}</td>
+                                <td class="py-3 px-4 font-bold text-[#1E2538]">{{ $g->guru ? $g->guru->nama_guru : '-' }}</td>
+                                <td class="py-3 px-4">
+                                    <div class="font-semibold text-gray-700">{{ $g->kelas ? $g->kelas->nama_kelas : '-' }}</div>
+                                    <div class="text-[10px] text-gray-400">{{ $g->mapel ? $g->mapel->nama_mapel : '-' }}</div>
+                                </td>
+                                <td class="py-3 px-4 text-center font-bold text-rose-700">Jam {{ $g->jam_mulai }} - {{ $j->jam_selesai ?? $g->jam_selesai }}</td>
+                                <td class="py-3 px-4 text-gray-600">{{ $g->ruangan ? $g->ruangan->nama_ruangan : '-' }}</td>
+                                <td class="py-3 px-4 text-center">
+                                    <span class="px-2 py-0.5 bg-rose-100 text-rose-700 font-extrabold rounded-md text-[10px]">ALPA</span>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="6" class="py-6 text-center text-gray-400 italic">
+                                    Tidak ada guru yang terdeteksi Alpa hari ini.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="px-6 py-3.5 border-t border-[#D1D9EB] bg-gray-50 flex justify-end">
+            <button onclick="closeModalAlpa()" class="px-4 py-2 bg-[#405078] hover:bg-[#2F3C5C] text-white text-xs font-bold rounded-xl cursor-pointer">
+                Tutup
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL 2: LIST GURU BELUM ISI KEMARIN -->
+<div id="modalKemarin" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center hidden p-4">
+    <div class="bg-white border border-[#D1D9EB] rounded-2xl max-w-3xl w-full shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
+        <div class="px-6 py-4 border-b border-[#D1D9EB] bg-amber-50 flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <i data-lucide="book-x" class="w-5 h-5 text-amber-700"></i>
+                <h3 class="font-bold text-[#1E2538] text-base">Daftar Sesi Mengajar Belum Diisi (Kemarin)</h3>
+            </div>
+            <button onclick="closeModalKemarin()" class="text-gray-400 hover:text-gray-600 p-1 cursor-pointer">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+        <div class="p-6 overflow-y-auto space-y-4">
+            <p class="text-xs text-gray-500">Berikut daftar sesi mengajar kemarin yang belum diisi oleh guru pengampu:</p>
+            <div class="overflow-x-auto border border-[#D1D9EB] rounded-xl">
+                <table class="w-full text-left text-xs text-gray-600">
+                    <thead class="bg-[#F8FAFC] text-gray-500 font-semibold border-b border-[#D1D9EB]">
+                        <tr>
+                            <th class="py-3 px-4 text-center w-12">No</th>
+                            <th class="py-3 px-4">Nama Guru</th>
+                            <th class="py-3 px-4">Kelas & Mapel</th>
+                            <th class="py-3 px-4 text-center">Jam Ke-</th>
+                            <th class="py-3 px-4">Ruangan</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        @forelse ($listGuruBelumIsiKemarin as $idx => $g)
+                            <tr class="hover:bg-amber-50/20">
+                                <td class="py-3 px-4 text-center font-medium text-gray-400">{{ $idx + 1 }}</td>
+                                <td class="py-3 px-4 font-bold text-[#1E2538]">{{ $g->guru ? $g->guru->nama_guru : '-' }}</td>
+                                <td class="py-3 px-4">
+                                    <div class="font-semibold text-gray-700">{{ $g->kelas ? $g->kelas->nama_kelas : '-' }}</div>
+                                    <div class="text-[10px] text-gray-400">{{ $g->mapel ? $g->mapel->nama_mapel : '-' }}</div>
+                                </td>
+                                <td class="py-3 px-4 text-center font-bold text-amber-700">Jam {{ $g->jam_mulai }} - {{ $g->jam_selesai }}</td>
+                                <td class="py-3 px-4 text-gray-600">{{ $g->ruangan ? $g->ruangan->nama_ruangan : '-' }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" class="py-6 text-center text-gray-400 italic">
+                                    Semua jurnal mengajar kemarin telah diisi lengkap.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="px-6 py-3.5 border-t border-[#D1D9EB] bg-gray-50 flex justify-end">
+            <button onclick="closeModalKemarin()" class="px-4 py-2 bg-[#405078] hover:bg-[#2F3C5C] text-white text-xs font-bold rounded-xl cursor-pointer">
+                Tutup
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- SCRIPT SLIDER & MODAL -->
 <script>
     let slideSekarang = 0;
     const perSlide = 10;
@@ -197,6 +397,20 @@
         const awalTeks = totalData === 0 ? 0 : awal + 1;
         document.getElementById('slideInfo').innerText = 
             `Menampilkan ${awalTeks}-${akhirTeks} dari ${totalData} sesi`;
+    }
+
+    function openModalAlpa() {
+        document.getElementById('modalAlpa').classList.remove('hidden');
+    }
+    function closeModalAlpa() {
+        document.getElementById('modalAlpa').classList.add('hidden');
+    }
+
+    function openModalKemarin() {
+        document.getElementById('modalKemarin').classList.remove('hidden');
+    }
+    function closeModalKemarin() {
+        document.getElementById('modalKemarin').classList.add('hidden');
     }
 </script>
 @endsection

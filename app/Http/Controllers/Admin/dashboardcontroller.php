@@ -11,6 +11,7 @@ use App\Models\Jadwal;
 use App\Models\Kelas;
 use App\Models\JurnalMengajar;
 use App\Models\JurnalDetailKetidakhadiran;
+use App\Models\DispenSiswa;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -43,46 +44,98 @@ class DashboardController
         $jurnalTerisiHariIni = JurnalMengajar::whereDate('tanggal', $todayDate)->count();
         $persentaseKepatuhan = $totalJadwalHariIni > 0 ? round(($jurnalTerisiHariIni / $totalJadwalHariIni) * 100) : 0;
 
-        // 2. DATA TABEL JADWAL HARI INI (Semua sesi hari ini diambil untuk di-slide per 10 data)
-        $jadwalHariIni = Jadwal::with(['kelas', 'guru', 'mapel', 'ruangan'])
+        // 2. DATA TABEL JADWAL HARI INI (Diurutkan dari yang ALPA lebih dulu!)
+        $jadwalHariIniUnsorted = Jadwal::with(['kelas', 'guru', 'mapel', 'ruangan'])
             ->where('hari', $namaHariIni)
-            ->orderBy('jam_mulai', 'asc')
             ->get()
             ->map(function ($j) use ($todayDate) {
                 $jurnal = JurnalMengajar::where('id_jadwal', $j->id_jadwal)
                     ->whereDate('tanggal', $todayDate)
                     ->first();
 
-                $j->status_jurnal = $jurnal ? 'Selesai' : 'Terjadwal';
+                if ($jurnal) {
+                    $j->status_jurnal = 'Selesai';
+                    $j->sort_order = 4;
+                } else {
+                    $izin = \App\Models\IzinGuru::where('id_guru', $j->id_guru)
+                        ->where('status_akhir', 'Disetujui')
+                        ->whereDate('tanggal_mulai', '<=', $todayDate)
+                        ->whereDate('tanggal_selesai', '>=', $todayDate)
+                        ->first();
+
+                    if ($izin) {
+                        $j->status_jurnal = $izin->alasan . ' (Sah)';
+                        $j->sort_order = 3;
+                    } else {
+                        // Jika jam mengajar telah lewat / telat mengisi -> ALPA
+                        $statusWaktu = $j->statusWaktuMengajar();
+                        if ($statusWaktu === 'telat') {
+                            $j->status_jurnal = 'Alpa';
+                            $j->sort_order = 1; // Prioritas utama di paling atas
+                        } else {
+                            $j->status_jurnal = 'Terjadwal';
+                            $j->sort_order = 2;
+                        }
+                    }
+                }
 
                 return $j;
             });
 
-        // 3. PERLU TINDAKAN
-        // A. Guru belum isi jurnal kemarin
+        // Urutkan: ALPA (1) -> Terjadwal (2) -> Izin Sah (3) -> Selesai (4)
+        $jadwalHariIni = $jadwalHariIniUnsorted->sortBy(function ($item) {
+            return sprintf('%d-%02d', $item->sort_order, $item->jam_mulai);
+        })->values();
+
+        // 3. PERLU TINDAKAN & LIST GURU ALPA / BELUM ISI
         $kemarin = Carbon::yesterday();
         $namaHariKemarin = $hariMap[$kemarin->format('l')] ?? null;
         $guruBelumIsiKemarin = 0;
+        $listGuruBelumIsiKemarin = collect();
+
         if ($namaHariKemarin && in_array($namaHariKemarin, ['Senin','Selasa','Rabu','Kamis','Jumat'])) {
-            $jadwalKemarinIds = Jadwal::where('hari', $namaHariKemarin)->pluck('id_jadwal');
-            $jurnalKemarinIds = JurnalMengajar::whereDate('tanggal', $kemarin->format('Y-m-d'))->pluck('id_jadwal');
-            $guruBelumIsiKemarin = $jadwalKemarinIds->diff($jurnalKemarinIds)->count();
+            $jadwalKemarin = Jadwal::with(['guru', 'kelas', 'mapel', 'ruangan'])
+                ->where('hari', $namaHariKemarin)
+                ->get();
+            $jurnalKemarinIds = JurnalMengajar::whereDate('tanggal', $kemarin->format('Y-m-d'))->pluck('id_jadwal')->toArray();
+
+            $listGuruBelumIsiKemarin = $jadwalKemarin->filter(function ($j) use ($jurnalKemarinIds) {
+                return !in_array($j->id_jadwal, $jurnalKemarinIds);
+            })->values();
+
+            $guruBelumIsiKemarin = $listGuruBelumIsiKemarin->count();
         }
 
-        // B. Siswa alpa hari ini
+        // List Guru Alpa Hari Ini
+        $listGuruAlpaHariIni = $jadwalHariIni->filter(function ($j) {
+            return $j->status_jurnal === 'Alpa';
+        })->values();
+        $guruAlpaHariIni = $listGuruAlpaHariIni->pluck('id_guru')->unique()->count();
+
+        // 4. DATA REKAP ABSENSI SISWA HARI INI
+        $siswaSakitHariIni = JurnalDetailKetidakhadiran::where('keterangan', 'Sakit')
+            ->whereHas('jurnal', function ($q) use ($todayDate) {
+                $q->whereDate('tanggal', $todayDate);
+            })->count();
+
+        $siswaIzinHariIni = JurnalDetailKetidakhadiran::where('keterangan', 'Izin')
+            ->whereHas('jurnal', function ($q) use ($todayDate) {
+                $q->whereDate('tanggal', $todayDate);
+            })->count();
+        
+        $dispenActiveCount = DispenSiswa::whereDate('tanggal', $todayDate)
+            ->whereIn('status', ['Disetujui', 'Sedang di Luar'])
+            ->count();
+        $siswaIzinTotal = $siswaIzinHariIni + $dispenActiveCount;
+
         $siswaAlpaHariIni = JurnalDetailKetidakhadiran::where('keterangan', 'Alpa')
             ->whereHas('jurnal', function ($q) use ($todayDate) {
                 $q->whereDate('tanggal', $todayDate);
             })->count();
 
-        // C. Deteksi bentrok ruangan
-        $bentrokRuangan = Jadwal::with(['ruangan', 'kelas'])
-            ->select('hari', 'id_ruangan', 'jam_mulai', DB::raw('COUNT(*) as total'))
-            ->groupBy('hari', 'id_ruangan', 'jam_mulai')
-            ->having('total', '>', 1)
-            ->first();
+        $siswaHadirHariIni = max(0, $totalSiswa - ($siswaSakitHariIni + $siswaIzinTotal + $siswaAlpaHariIni));
 
-        // 4. PENGISIAN JURNAL PER KELAS MINGGU INI
+        // 5. PENGISIAN JURNAL PER KELAS MINGGU INI
         $startOfWeek = Carbon::now()->startOfWeek();
         $endOfWeek = Carbon::now()->endOfWeek();
 
@@ -117,8 +170,13 @@ class DashboardController
             'persentaseKepatuhan',
             'jadwalHariIni',
             'guruBelumIsiKemarin',
+            'listGuruBelumIsiKemarin',
+            'guruAlpaHariIni',
+            'listGuruAlpaHariIni',
+            'siswaHadirHariIni',
+            'siswaSakitHariIni',
+            'siswaIzinTotal',
             'siswaAlpaHariIni',
-            'bentrokRuangan',
             'pengisianPerKelas'
         ));
     }

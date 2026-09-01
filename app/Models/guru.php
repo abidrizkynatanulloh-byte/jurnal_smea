@@ -30,4 +30,41 @@ class Guru extends Model
         'email',
         'foto_profil',
     ];
+
+    /**
+     * Cek apakah guru ini terdaftar sebagai wali kelas dari kelas manapun.
+     */
+    public function isWaliKelas()
+    {
+        return \App\Models\Kelas::where('wali_kelas', $this->nip)
+            ->orWhere('wali_kelas', $this->id_guru)
+            ->orWhere('wali_kelas', $this->nama_guru)
+            ->exists();
+    }
+
+    /**
+     * Cek apakah guru ini bertugas sebagai guru piket hari ini.
+     */
+    public function isPiketHariIni()
+    {
+        $hariMap = [
+            'Monday'    => 'Senin',
+            'Tuesday'   => 'Selasa',
+            'Wednesday' => 'Rabu',
+            'Thursday'  => 'Kamis',
+            'Friday'    => 'Jumat',
+            'Saturday'  => 'Sabtu',
+            'Sunday'    => 'Minggu',
+        ];
+        $namaHariIni = $hariMap[\Carbon\Carbon::now()->format('l')] ?? 'Senin';
+        $tanggalHari = \Carbon\Carbon::today()->toDateString();
+
+        return \App\Models\GuruPiket::where('id_guru', $this->id_guru)
+            ->where(function ($q) use ($namaHariIni, $tanggalHari) {
+                $q->where('hari', $namaHariIni)
+                  ->orWhere('tanggal_khusus', $tanggalHari);
+            })
+            ->whereNull('deleted_at')
+            ->exists();
+    }
 }

@@ -136,6 +136,10 @@
                     <i data-lucide="calendar" class="w-4 h-4 text-[#8697C3]"></i>
                     <span>Jadwal Mengajar</span>
                 </a>
+                <a href="{{ route('admin.guru-piket.index') }}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150 {{ Route::is('admin.guru-piket.*') ? 'bg-[#405078] text-white shadow-sm' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
+                    <i data-lucide="user-check" class="w-4 h-4 text-[#8697C3]"></i>
+                    <span>Kelola Guru Piket</span>
+                </a>
 
                 <div class="pt-4 pb-1.5">
                     <span class="px-3 text-[10px] font-bold text-[#8697C3]/70 uppercase tracking-wider">Laporan & Pengguna</span>
@@ -162,14 +166,30 @@
                     <i data-lucide="history" class="w-4 h-4 text-[#8697C3]"></i>
                     <span>Riwayat Jurnal Saya</span>
                 </a>
-                <a href="{{ route('guru.wali-kelas') }}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150 {{ Route::is('guru.wali-kelas') ? 'bg-[#405078] text-white shadow-sm' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
-                    <i data-lucide="users-2" class="w-4 h-4 text-[#8697C3]"></i>
-                    <span>Rekap Wali Kelas</span>
-                </a>
+                @if(Auth::user()->guru && Auth::user()->guru->isWaliKelas())
+                    <a href="{{ route('guru.wali-kelas') }}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150 {{ Route::is('guru.wali-kelas') ? 'bg-[#405078] text-white shadow-sm' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
+                        <i data-lucide="users-2" class="w-4 h-4 text-[#8697C3]"></i>
+                        <span>Rekap Wali Kelas</span>
+                    </a>
+                @endif
                 <a href="{{ route('guru.izin.index') }}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150 {{ Route::is('guru.izin.*') ? 'bg-[#405078] text-white shadow-sm' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
                     <i data-lucide="calendar-off" class="w-4 h-4 text-[#8697C3]"></i>
                     <span>Pengajuan Izin Mengajar</span>
                 </a>
+
+                @if(Auth::user()->guru && Auth::user()->guru->isPiketHariIni())
+                    <div class="pt-4 pb-1.5">
+                        <span class="px-3 text-[10px] font-bold text-[#8697C3]/70 uppercase tracking-wider">Guru Piket Hari Ini</span>
+                    </div>
+                    <a href="{{ route('piket.dashboard') }}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150 {{ Route::is('piket.dashboard') ? 'bg-[#405078] text-white shadow-sm' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
+                        <i data-lucide="clipboard-list" class="w-4 h-4 text-[#8697C3]"></i>
+                        <span>Input Dispen & Siswa Telat</span>
+                    </a>
+                    <a href="{{ route('piket.monitoring-kelas') }}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150 {{ Route::is('piket.monitoring-kelas') ? 'bg-[#405078] text-white shadow-sm' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
+                        <i data-lucide="monitor" class="w-4 h-4 text-[#8697C3]"></i>
+                        <span>Monitoring Kondisi Kelas</span>
+                    </a>
+                @endif
 
             {{-- ROLE 3: GURU PIKET --}}
             @elseif(Auth::user()->role === 'guru_piket')
@@ -354,5 +374,6 @@
             }
         });
     </script>
+    @stack('scripts')
 </body>
 </html>

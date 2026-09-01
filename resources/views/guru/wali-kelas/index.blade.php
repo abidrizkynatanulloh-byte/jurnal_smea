@@ -19,19 +19,26 @@
             </p>
         </div>
 
-        <!-- Filter Kelas -->
+        <!-- Filter / Info Kelas Binaan -->
         <div>
-            <form action="{{ route('guru.wali-kelas') }}" method="GET" class="flex items-center space-x-2">
-                <label class="text-xs font-bold text-gray-500">Pilih Kelas:</label>
-                <select name="kelas_id" onchange="this.form.submit()"
-                    class="px-3.5 py-2 bg-white border border-[#D1D9EB] rounded-xl text-xs font-bold text-[#1E2538] focus:outline-none focus:border-[#405078] shadow-xs cursor-pointer">
-                    @foreach($daftarKelas as $k)
-                        <option value="{{ $k->id_kelas }}" {{ $kelasAktif && $kelasAktif->id_kelas == $k->id_kelas ? 'selected' : '' }}>
-                            {{ $k->nama_kelas }}
-                        </option>
-                    @endforeach
-                </select>
-            </form>
+            @if($daftarKelas->count() > 1)
+                <form action="{{ route('guru.wali-kelas') }}" method="GET" class="flex items-center space-x-2">
+                    <label class="text-xs font-bold text-gray-500">Pilih Kelas Binaan:</label>
+                    <select name="kelas_id" onchange="this.form.submit()"
+                        class="px-3.5 py-2 bg-white border border-[#D1D9EB] rounded-xl text-xs font-bold text-[#1E2538] focus:outline-none focus:border-[#405078] shadow-xs cursor-pointer">
+                        @foreach($daftarKelas as $k)
+                            <option value="{{ $k->id_kelas }}" {{ $kelasAktif && $kelasAktif->id_kelas == $k->id_kelas ? 'selected' : '' }}>
+                                {{ $k->nama_kelas }}
+                            </option>
+                        @endforeach
+                    </select>
+                </form>
+            @elseif($kelasAktif)
+                <div class="px-4 py-2 bg-white border border-[#D1D9EB] rounded-xl shadow-xs text-xs font-bold text-[#1E2538] flex items-center space-x-2">
+                    <i data-lucide="shield-check" class="w-4 h-4 text-[#405078]"></i>
+                    <span>Kelas Binaan: {{ $kelasAktif->nama_kelas }}</span>
+                </div>
+            @endif
         </div>
     </div>
 
