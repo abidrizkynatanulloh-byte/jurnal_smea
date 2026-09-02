@@ -36,7 +36,10 @@ class GuruController
             $query->where('kode_mapel', $request->kode_mapel);
         }
 
-        $guruList = $query->orderBy('nama_guru')->paginate(10)->withQueryString();
+        $perPage = (int) $request->input('per_page', 30);
+        if ($perPage <= 0) $perPage = 30;
+
+        $guruList = $query->orderBy('nama_guru')->paginate($perPage)->withQueryString();
         $totalGuru = Guru::count();
 
         return view('admin.guru.index', compact('guruList', 'mapelList', 'totalGuru'));

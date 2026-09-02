@@ -170,11 +170,8 @@
                     </table>
                 </div>
 
-                @if ($users->hasPages())
-                    <div class="px-6 py-4 bg-[#F8FAFC] border-t border-[#D1D9EB]">
-                        {{ $users->links() }}
-                    </div>
-                @endif
+                <!-- PAGINATION BAR (SESUAI GAMBAR FIGMA 1) -->
+                <x-pagination-bar :paginator="$users" />
             </div>
         </div>
     </div>

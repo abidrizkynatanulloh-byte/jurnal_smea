@@ -48,11 +48,45 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            // Memastikan enkripsi password otomatis saat diisi
             'password'  => 'hashed',
-            // Membaca kolom is_active sebagai nilai boolean (true/false)
             'is_active' => 'boolean',
         ];
+    }
+
+    /**
+     * Accessor untuk nama tampilan pengguna (agar tidak ada yang kosong)
+     */
+    public function getNamaDisplayAttribute(): string
+    {
+        if ($this->role === 'guru' || $this->role === 'guru_piket' || $this->role === 'kepala_sekolah' || $this->role === 'wakasis_siswa' || $this->role === 'wakasis_guru') {
+            if ($this->guru && $this->guru->nama_guru) {
+                return $this->guru->nama_guru;
+            }
+        }
+        if ($this->role === 'staf_tu') {
+            if ($this->stafTu && $this->stafTu->nama_staf) {
+                return $this->stafTu->nama_staf;
+            }
+        }
+        if ($this->role === 'satpam') {
+            if ($this->satpam && $this->satpam->nama_satpam) {
+                return $this->satpam->nama_satpam;
+            }
+        }
+        if ($this->role === 'wali_murid') {
+            if ($this->siswa && $this->siswa->nama_siswa) {
+                return 'Wali dari ' . $this->siswa->nama_siswa;
+            }
+        }
+
+        // Fallbacks
+        if ($this->guru) return $this->guru->nama_guru;
+        if ($this->stafTu) return $this->stafTu->nama_staf;
+        if ($this->satpam) return $this->satpam->nama_satpam;
+        if ($this->siswa) return 'Wali dari ' . $this->siswa->nama_siswa;
+
+        if ($this->username === '0000001') return 'Administrator TU';
+        return ucfirst(str_replace('_', ' ', $this->role ?? 'Pengguna')) . ' (' . $this->username . ')';
     }
 
     /**

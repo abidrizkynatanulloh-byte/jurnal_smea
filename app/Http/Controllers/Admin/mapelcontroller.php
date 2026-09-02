@@ -20,7 +20,10 @@ class MapelController
                   ->orWhere('kode_mapel', 'LIKE', "%{$keyword}%");
         }
 
-        $mapelList = $query->orderBy('kode_mapel')->paginate(10)->withQueryString();
+        $perPage = (int) $request->input('per_page', 30);
+        if ($perPage <= 0) $perPage = 30;
+
+        $mapelList = $query->orderBy('kode_mapel')->paginate($perPage)->withQueryString();
         $totalMapel = Mapel::count();
 
         return view('admin.mapel.index', compact('mapelList', 'totalMapel'));

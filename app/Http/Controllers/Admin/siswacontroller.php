@@ -20,7 +20,7 @@ class SiswaController
         // 1. Data Kelas untuk Dropdown Pilihan
         $kelasList = Kelas::orderBy('nama_kelas')->get();
 
-        // 2. Query Siswa dengan Search
+        // 2. Query Siswa dengan Search & Filter Kelas
         $query = Siswa::with('kelas');
 
         if ($request->filled('search')) {
@@ -36,7 +36,10 @@ class SiswaController
             $query->where('id_kelas', $request->id_kelas);
         }
 
-        $siswaList = $query->orderBy('nama_siswa')->paginate(15)->withQueryString();
+        $perPage = (int) $request->input('per_page', 30);
+        if ($perPage <= 0) $perPage = 30;
+
+        $siswaList = $query->orderBy('nama_siswa')->paginate($perPage)->withQueryString();
         $totalSiswa = Siswa::count();
 
         return view('admin.siswa.index', compact('siswaList', 'kelasList', 'totalSiswa'));
@@ -54,9 +57,6 @@ class SiswaController
             'id_kelas'      => 'required|exists:kelas,id_kelas',
             'jenis_kelamin' => 'nullable|in:L,P',
             'no_hp_wali'    => 'nullable|string|max:25',
-            'kota_lahir'    => 'nullable|string|max:100',
-            'tanggal_lahir' => 'nullable|date',
-            'alamat'        => 'nullable|string',
         ], [
             'nis.required'        => 'Nomor Induk Siswa (NIS) wajib diisi.',
             'nis.unique'          => 'NIS ini sudah terdaftar.',
@@ -68,14 +68,17 @@ class SiswaController
 
         DB::beginTransaction();
         try {
-            // Filter hanya kolom yang benar-benar ada di tabel agar aman
-            $dataToSave = $validated;
-            if (!Schema::hasColumn('siswa', 'jenis_kelamin')) {
-                unset($dataToSave['jenis_kelamin']);
-            }
-            if (!Schema::hasColumn('siswa', 'no_hp_wali')) {
-                unset($dataToSave['no_hp_wali']);
-            }
+            $dataToSave = [
+                'nis'           => $validated['nis'],
+                'nisn'          => $validated['nisn'],
+                'nama_siswa'    => $validated['nama_siswa'],
+                'id_kelas'      => $validated['id_kelas'],
+                'jenis_kelamin' => $validated['jenis_kelamin'] ?? 'L',
+                'no_hp_wali'    => $validated['no_hp_wali'] ?? null,
+            ];
+
+            if (!Schema::hasColumn('siswa', 'jenis_kelamin')) unset($dataToSave['jenis_kelamin']);
+            if (!Schema::hasColumn('siswa', 'no_hp_wali')) unset($dataToSave['no_hp_wali']);
 
             // 1. Simpan profil siswa
             $siswa = Siswa::create($dataToSave);
@@ -104,32 +107,32 @@ class SiswaController
      */
     public function update(Request $request, $nis)
     {
-        $siswa = Siswa::findOrFail($nis);
+        $siswa = Siswa::where('nis', $nis)->firstOrFail();
 
         $validated = $request->validate([
             'nama_siswa'    => 'required|string|max:100',
-            'id_kelas'      => 'nullable|exists:kelas,id_kelas',
+            'nisn'          => 'required|string|max:20|unique:siswa,nisn,' . $siswa->nis . ',nis',
+            'id_kelas'      => 'required|exists:kelas,id_kelas',
             'jenis_kelamin' => 'nullable|in:L,P',
             'no_hp_wali'    => 'nullable|string|max:25',
-            'kota_lahir'    => 'nullable|string|max:100',
-            'tanggal_lahir' => 'nullable|date',
-            'alamat'        => 'nullable|string',
-        ], [
-            'nama_siswa.required' => 'Nama lengkap siswa wajib diisi.',
         ]);
 
-        // Filter kolom yang ada di database agar tidak terjadi SQL Column Not Found
-        $dataToUpdate = $validated;
-        if (!Schema::hasColumn('siswa', 'jenis_kelamin')) {
-            unset($dataToUpdate['jenis_kelamin']);
+        $updateData = [
+            'nama_siswa' => $validated['nama_siswa'],
+            'nisn'       => $validated['nisn'],
+            'id_kelas'   => $validated['id_kelas'],
+        ];
+
+        if (Schema::hasColumn('siswa', 'jenis_kelamin') && isset($validated['jenis_kelamin'])) {
+            $updateData['jenis_kelamin'] = $validated['jenis_kelamin'];
         }
-        if (!Schema::hasColumn('siswa', 'no_hp_wali')) {
-            unset($dataToUpdate['no_hp_wali']);
+        if (Schema::hasColumn('siswa', 'no_hp_wali')) {
+            $updateData['no_hp_wali'] = $validated['no_hp_wali'] ?? null;
         }
 
-        $siswa->update($dataToUpdate);
+        $siswa->update($updateData);
 
-        return redirect()->route('admin.siswa.index')->with('success', "Data siswa {$siswa->nama_siswa} berhasil diperbarui.");
+        return redirect()->route('admin.siswa.index')->with('success', 'Data siswa berhasil diperbarui!');
     }
 
     /**
@@ -137,27 +140,28 @@ class SiswaController
      */
     public function destroy($nis)
     {
-        $siswa = Siswa::findOrFail($nis);
-        User::where('nisn_siswa', $siswa->nisn)->delete();
+        $siswa = Siswa::where('nis', $nis)->firstOrFail();
         $siswa->delete();
 
-        return redirect()->route('admin.siswa.index')->with('success', 'Data siswa berhasil dihapus (Soft Delete).');
+        return redirect()->route('admin.siswa.index')->with('success', 'Data siswa berhasil dipindahkan ke sampah.');
     }
 
     /**
-     * Tong Sampah Siswa.
+     * Menampilkan Data Siswa yang Ada di Sampah (Trash).
      */
     public function trash()
     {
-        $trashList = Siswa::onlyTrashed()->paginate(15);
-        return view('admin.siswa.trash', compact('trashList'));
+        $trashSiswa = Siswa::onlyTrashed()->with('kelas')->paginate(30);
+        return view('admin.siswa.trash', compact('trashSiswa'));
     }
 
+    /**
+     * Memulihkan Data Siswa dari Sampah (Restore).
+     */
     public function restore($nis)
     {
-        $siswa = Siswa::onlyTrashed()->findOrFail($nis);
+        $siswa = Siswa::onlyTrashed()->where('nis', $nis)->firstOrFail();
         $siswa->restore();
-        User::withTrashed()->where('nisn_siswa', $siswa->nisn)->restore();
 
         return redirect()->route('admin.siswa.trash')->with('success', 'Data siswa berhasil dipulihkan!');
     }

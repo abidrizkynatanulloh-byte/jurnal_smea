@@ -40,7 +40,10 @@ class JadwalController
             });
         }
 
-        $jadwalList = $query->orderBy('hari')->orderBy('jam_mulai')->paginate(15)->withQueryString();
+        $perPage = (int) $request->input('per_page', 30);
+        if ($perPage <= 0) $perPage = 30;
+
+        $jadwalList = $query->orderBy('hari')->orderBy('jam_mulai')->paginate($perPage)->withQueryString();
 
         return view('admin.jadwal.index', compact('jadwalList', 'kelasList', 'guruList', 'mapelList', 'ruanganList'));
     }

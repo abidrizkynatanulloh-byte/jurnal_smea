@@ -147,11 +147,8 @@
                     </table>
                 </div>
 
-                @if ($mapelList->hasPages())
-                    <div class="px-6 py-4 bg-[#F8FAFC] border-t border-[#D1D9EB]">
-                        {{ $mapelList->links() }}
-                    </div>
-                @endif
+                <!-- PAGINATION BAR (SESUAI GAMBAR FIGMA 1) -->
+                <x-pagination-bar :paginator="$mapelList" />
             </div>
         </div>
     </div>

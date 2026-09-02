@@ -61,8 +61,11 @@ class UserController
             });
         }
 
-        // Pagination 10 data per halaman (mempertahankan kata kunci search saat ganti halaman)
-        $users = $query->latest()->paginate(10)->withQueryString();
+        $perPage = (int) $request->input('per_page', 30);
+        if ($perPage <= 0) $perPage = 30;
+
+        // Pagination data per halaman (mempertahankan kata kunci search saat ganti halaman)
+        $users = $query->latest()->paginate($perPage)->withQueryString();
 
         return view('admin.users.index', compact('roles', 'users'));
     }

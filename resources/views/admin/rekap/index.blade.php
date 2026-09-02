@@ -182,10 +182,10 @@
             </div>
         </div>
 
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto max-h-[580px] overflow-y-auto">
             <table class="w-full text-left border-collapse" id="tabelJurnal">
-                <thead>
-                    <tr class="bg-[#F8FAFC] text-gray-500 text-xs font-semibold uppercase tracking-wider border-b border-[#D1D9EB]">
+                <thead class="sticky top-0 bg-[#F8FAFC] z-10">
+                    <tr class="text-gray-500 text-xs font-semibold uppercase tracking-wider border-b border-[#D1D9EB]">
                         <th class="py-4 px-6 w-16 text-center">No</th>
                         <th class="py-4 px-6">Guru & Mapel</th>
                         <th class="py-4 px-6 w-32">Kelas</th>

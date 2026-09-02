@@ -207,11 +207,8 @@
                     </table>
                 </div>
 
-                @if ($jadwalList->hasPages())
-                    <div class="px-6 py-4 bg-[#F8FAFC] border-t border-[#D1D9EB]">
-                        {{ $jadwalList->links() }}
-                    </div>
-                @endif
+                <!-- PAGINATION BAR (SESUAI GAMBAR FIGMA 1) -->
+                <x-pagination-bar :paginator="$jadwalList" />
             </div>
         </div>
     </div>
