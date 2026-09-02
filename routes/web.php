@@ -78,15 +78,24 @@ Route::middleware('auth')->group(function () {
     // ---------------------------------------------------------------------
     Route::get('/admin/guru',                    [GuruController::class, 'index']  )->name('admin.guru.index');
     Route::post('/admin/guru',                   [GuruController::class, 'store']  )->name('admin.guru.store');
+    Route::put('/admin/guru/{id}',               [GuruController::class, 'update'] )->name('admin.guru.update');
     Route::delete('/admin/guru/{id}',            [GuruController::class, 'destroy'])->name('admin.guru.destroy');
     Route::get('/admin/guru/trash',              [GuruController::class, 'trash']  )->name('admin.guru.trash');
     Route::post('/admin/guru/{id}/restore',      [GuruController::class, 'restore'])->name('admin.guru.restore');
+
+    // ---------------------------------------------------------------------
+    // 2B. KELOLA WAKA
+    // ---------------------------------------------------------------------
+    Route::get('/admin/waka',                    [\App\Http\Controllers\Admin\WakaController::class, 'index']  )->name('admin.waka.index');
+    Route::post('/admin/waka',                   [\App\Http\Controllers\Admin\WakaController::class, 'store']  )->name('admin.waka.store');
+    Route::delete('/admin/waka/{id}',            [\App\Http\Controllers\Admin\WakaController::class, 'destroy'])->name('admin.waka.destroy');
 
     // ---------------------------------------------------------------------
     // 3. DATA SISWA
     // ---------------------------------------------------------------------
     Route::get('/admin/siswa',                   [SiswaController::class, 'index']  )->name('admin.siswa.index');
     Route::post('/admin/siswa',                  [SiswaController::class, 'store']  )->name('admin.siswa.store');
+    Route::put('/admin/siswa/{nis}',             [SiswaController::class, 'update'] )->name('admin.siswa.update');
     Route::delete('/admin/siswa/{nis}',          [SiswaController::class, 'destroy'])->name('admin.siswa.destroy');
     Route::get('/admin/siswa/trash',             [SiswaController::class, 'trash']  )->name('admin.siswa.trash');
     Route::post('/admin/siswa/{nis}/restore',    [SiswaController::class, 'restore'])->name('admin.siswa.restore');
@@ -96,6 +105,7 @@ Route::middleware('auth')->group(function () {
     // ---------------------------------------------------------------------
     Route::get('/admin/mapel',                   [MapelController::class, 'index']  )->name('admin.mapel.index');
     Route::post('/admin/mapel',                  [MapelController::class, 'store']  )->name('admin.mapel.store');
+    Route::put('/admin/mapel/{kode}',            [MapelController::class, 'update'] )->name('admin.mapel.update');
     Route::delete('/admin/mapel/{kode}',         [MapelController::class, 'destroy'])->name('admin.mapel.destroy');
 
     // ---------------------------------------------------------------------

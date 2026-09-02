@@ -151,7 +151,11 @@
                                         </span>
                                     </td>
                                     <td class="py-4 px-6 text-gray-500">{{ $s->no_hp_wali ?? '-' }}</td>
-                                    <td class="py-4 px-6 text-center">
+                                    <td class="py-4 px-6 text-center" x-data="{ editModal: false }">
+                                        <button @click="editModal = true" type="button" class="p-1.5 text-blue-500 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors cursor-pointer mr-1" title="Edit Siswa">
+                                            <i data-lucide="edit" class="w-4 h-4"></i>
+                                        </button>
+
                                         <form action="{{ route('admin.siswa.destroy', $s->nis) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus siswa ini?');" class="inline-block">
                                             @csrf
                                             @method('DELETE')
@@ -159,6 +163,58 @@
                                                 <i data-lucide="trash-2" class="w-4 h-4"></i>
                                             </button>
                                         </form>
+
+                                        <!-- Edit Modal -->
+                                        <div x-show="editModal" style="display: none;" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+                                            <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                                                <div x-show="editModal" @click="editModal = false" x-transition.opacity class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+                                                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                                                <div x-show="editModal" x-transition class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                                                    <form action="{{ route('admin.siswa.update', $s->nis) }}" method="POST">
+                                                        @csrf
+                                                        @method('PUT')
+                                                        <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                                                            <div class="sm:flex sm:items-start">
+                                                                <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                                                                    <h3 class="text-lg leading-6 font-bold text-gray-900" id="modal-title">
+                                                                        Edit Data Siswa
+                                                                    </h3>
+                                                                    <div class="mt-4 space-y-4 text-left">
+                                                                        <div>
+                                                                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">NIS (Tidak bisa diubah)</label>
+                                                                            <input type="text" value="{{ $s->nis }}" readonly class="block w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-xl text-sm text-gray-500 cursor-not-allowed">
+                                                                        </div>
+                                                                        <div>
+                                                                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Nama Lengkap</label>
+                                                                            <input type="text" name="nama_siswa" value="{{ $s->nama_siswa }}" required class="block w-full px-3 py-2 bg-white border border-gray-300 rounded-xl text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                                                                        </div>
+                                                                        <div>
+                                                                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Jenis Kelamin</label>
+                                                                            <select name="jenis_kelamin" required class="block w-full px-3 py-2 bg-white border border-gray-300 rounded-xl text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                                                                                <option value="L" {{ $s->jenis_kelamin == 'L' ? 'selected' : '' }}>Laki-laki (L)</option>
+                                                                                <option value="P" {{ $s->jenis_kelamin == 'P' ? 'selected' : '' }}>Perempuan (P)</option>
+                                                                            </select>
+                                                                        </div>
+                                                                        <div>
+                                                                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">No HP / WA Wali Murid</label>
+                                                                            <input type="text" name="no_hp_wali" value="{{ $s->no_hp_wali }}" class="block w-full px-3 py-2 bg-white border border-gray-300 rounded-xl text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                                                            <button type="submit" class="w-full inline-flex justify-center rounded-xl border border-transparent shadow-sm px-4 py-2 bg-[#405078] text-base font-medium text-white hover:bg-[#2F3C5C] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#405078] sm:ml-3 sm:w-auto sm:text-sm">
+                                                                Simpan Perubahan
+                                                            </button>
+                                                            <button type="button" @click="editModal = false" class="mt-3 w-full inline-flex justify-center rounded-xl border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#405078] sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                                                                Batal
+                                                            </button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </td>
                                 </tr>
                             @empty
@@ -199,4 +255,7 @@
         </div>
     </div>
 </div>
+@push('scripts')
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+@endpush
 @endsection

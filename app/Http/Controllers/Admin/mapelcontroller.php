@@ -46,6 +46,28 @@ class MapelController
     }
 
     /**
+     * Memperbarui Mata Pelajaran.
+     */
+    public function update(Request $request, $kode)
+    {
+        $validated = $request->validate([
+            'kode_mapel' => 'required|string|max:10|unique:mapel,kode_mapel,' . $kode . ',kode_mapel',
+            'nama_mapel' => 'required|string|max:150',
+        ], [
+            'kode_mapel.required' => 'Kode mapel wajib diisi.',
+            'kode_mapel.unique'   => 'Kode mapel ini sudah digunakan.',
+            'nama_mapel.required' => 'Nama mata pelajaran wajib diisi.',
+        ]);
+
+        \Illuminate\Support\Facades\DB::table('mapel')->where('kode_mapel', $kode)->update([
+            'kode_mapel' => $validated['kode_mapel'],
+            'nama_mapel' => $validated['nama_mapel'],
+        ]);
+
+        return redirect()->route('admin.mapel.index')->with('success', 'Mata pelajaran berhasil diperbarui!');
+    }
+
+    /**
      * Soft Delete Mapel.
      */
     public function destroy($kode)

@@ -140,6 +140,10 @@
                     <i data-lucide="user-check" class="w-4 h-4 text-[#8697C3]"></i>
                     <span>Kelola Guru Piket</span>
                 </a>
+                <a href="{{ route('admin.waka.index') }}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150 {{ Route::is('admin.waka.*') ? 'bg-[#405078] text-white shadow-sm' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
+                    <i data-lucide="crown" class="w-4 h-4 text-[#8697C3]"></i>
+                    <span>Kelola Waka</span>
+                </a>
 
                 <div class="pt-4 pb-1.5">
                     <span class="px-3 text-[10px] font-bold text-[#8697C3]/70 uppercase tracking-wider">Laporan & Pengguna</span>
@@ -153,9 +157,11 @@
                     <span>Kelola Pengguna</span>
                 </a>
 
-            {{-- ROLE 2: GURU MATA PELAJARAN --}}
-            @elseif(Auth::user()->role === 'guru')
-                <div class="pb-1.5">
+            @endif
+
+            {{-- ROLE 2: GURU MATA PELAJARAN (Juga untuk Wakasis karena mereka tetap mengajar) --}}
+            @if(in_array(Auth::user()->role, ['guru', 'wakasis_siswa', 'wakasis_guru']))
+                <div class="pb-1.5 pt-4">
                     <span class="px-3 text-[10px] font-bold text-[#8697C3]/70 uppercase tracking-wider">Pembelajaran</span>
                 </div>
                 <a href="{{ route('guru.dashboard') }}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150 {{ Route::is('guru.dashboard') ? 'bg-[#405078] text-white shadow-sm' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
@@ -190,10 +196,11 @@
                         <span>Monitoring Kondisi Kelas</span>
                     </a>
                 @endif
+            @endif
 
-            {{-- ROLE 3: GURU PIKET --}}
-            @elseif(Auth::user()->role === 'guru_piket')
-                <div class="pb-1.5">
+            {{-- ROLE 3: GURU PIKET (Eksklusif) --}}
+            @if(Auth::user()->role === 'guru_piket')
+                <div class="pb-1.5 pt-4">
                     <span class="px-3 text-[10px] font-bold text-[#8697C3]/70 uppercase tracking-wider">Piket Monitoring</span>
                 </div>
                 <a href="{{ route('piket.dashboard') }}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150 {{ Route::is('piket.dashboard') ? 'bg-[#405078] text-white shadow-sm' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
@@ -204,20 +211,22 @@
                     <i data-lucide="monitor" class="w-4 h-4 text-[#8697C3]"></i>
                     <span>Monitoring Kondisi Kelas</span>
                 </a>
+            @endif
 
             {{-- ROLE 4: WAKIL KESISWAAN (SISWA) --}}
-            @elseif(Auth::user()->role === 'wakasis_siswa')
-                <div class="pb-1.5">
+            @if(Auth::user()->role === 'wakasis_siswa')
+                <div class="pb-1.5 pt-4">
                     <span class="px-3 text-[10px] font-bold text-[#8697C3]/70 uppercase tracking-wider">Kesiswaan</span>
                 </div>
                 <a href="{{ route('wakasis.siswa.dashboard') }}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150 {{ Route::is('wakasis.siswa.dashboard') ? 'bg-[#405078] text-white shadow-sm' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
                     <i data-lucide="check-square" class="w-4 h-4 text-[#8697C3]"></i>
                     <span>Persetujuan Dispensasi</span>
                 </a>
+            @endif
 
             {{-- ROLE 5: WAKA KURIKULUM & SDM (IZIN GURU) --}}
-            @elseif(Auth::user()->role === 'wakasis_guru')
-                <div class="pb-1.5">
+            @if(Auth::user()->role === 'wakasis_guru')
+                <div class="pb-1.5 pt-4">
                     <span class="px-3 text-[10px] font-bold text-[#8697C3]/70 uppercase tracking-wider">Kurikulum & SDM</span>
                 </div>
                 <a href="{{ route('wakasis.guru.dashboard') }}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150 {{ Route::is('wakasis.guru.dashboard') ? 'bg-[#405078] text-white shadow-sm' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
@@ -225,29 +234,33 @@
                     <span>Verifikasi Izin Guru</span>
                 </a>
 
+            @endif
+
             {{-- ROLE 6: KEPALA SEKOLAH --}}
-            @elseif(Auth::user()->role === 'kepala_sekolah')
-                <div class="pb-1.5">
+            @if(Auth::user()->role === 'kepala_sekolah')
+                <div class="pb-1.5 pt-4">
                     <span class="px-3 text-[10px] font-bold text-[#8697C3]/70 uppercase tracking-wider">Pimpinan</span>
                 </div>
                 <a href="{{ route('kepsek.dashboard') }}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150 {{ Route::is('kepsek.dashboard') ? 'bg-[#405078] text-white shadow-sm' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
                     <i data-lucide="pie-chart" class="w-4 h-4 text-[#8697C3]"></i>
                     <span>Executive Dashboard</span>
                 </a>
+            @endif
 
             {{-- ROLE 7: SATPAM (POS KEAMANAN) --}}
-            @elseif(Auth::user()->role === 'satpam')
-                <div class="pb-1.5">
+            @if(Auth::user()->role === 'satpam')
+                <div class="pb-1.5 pt-4">
                     <span class="px-3 text-[10px] font-bold text-[#8697C3]/70 uppercase tracking-wider">Keamanan</span>
                 </div>
                 <a href="{{ route('satpam.dashboard') }}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150 {{ Route::is('satpam.dashboard') ? 'bg-[#405078] text-white shadow-sm' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
                     <i data-lucide="shield" class="w-4 h-4 text-[#8697C3]"></i>
                     <span>Validasi Gerbang Siswa</span>
                 </a>
+            @endif
 
             {{-- ROLE 8: WALI MURID / ORANG TUA --}}
-            @elseif(Auth::user()->role === 'wali_murid')
-                <div class="pb-1.5">
+            @if(Auth::user()->role === 'wali_murid')
+                <div class="pb-1.5 pt-4">
                     <span class="px-3 text-[10px] font-bold text-[#8697C3]/70 uppercase tracking-wider">Wali Murid</span>
                 </div>
                 <a href="{{ route('wali.dashboard') }}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150 {{ Route::is('wali.dashboard') ? 'bg-[#405078] text-white shadow-sm' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">

@@ -31,6 +31,10 @@ class SiswaController
             });
         }
 
+        if ($request->filled('id_kelas')) {
+            $query->where('id_kelas', $request->id_kelas);
+        }
+
         $siswaList = $query->orderBy('nama_siswa')->paginate(10)->withQueryString();
         $totalSiswa = Siswa::count();
 
@@ -79,6 +83,27 @@ class SiswaController
             DB::rollBack();
             return back()->withInput()->withErrors(['error' => 'Gagal: ' . $e->getMessage()]);
         }
+    }
+
+    /**
+     * Memperbarui Data Siswa.
+     */
+    public function update(Request $request, $nis)
+    {
+        $siswa = Siswa::findOrFail($nis);
+
+        $validated = $request->validate([
+            'nama_siswa'    => 'required|string|max:100',
+            'jenis_kelamin' => 'required|in:L,P',
+            'no_hp_wali'    => 'nullable|string|max:20',
+        ], [
+            'nama_siswa.required' => 'Nama lengkap siswa wajib diisi.',
+            'jenis_kelamin.required'=> 'Pilih jenis kelamin.',
+        ]);
+
+        $siswa->update($validated);
+
+        return redirect()->route('admin.siswa.index')->with('success', 'Data siswa berhasil diperbarui.');
     }
 
     /**

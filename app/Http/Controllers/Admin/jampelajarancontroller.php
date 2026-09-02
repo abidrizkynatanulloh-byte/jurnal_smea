@@ -10,10 +10,8 @@ class JamPelajaranController
 {
     public function index()
     {
-        $jamReguler = JamPelajaran::where('kelompok_hari', 'Reguler')
-            ->orderBy('jam_ke', 'asc')->get();
-        $jamJumat = JamPelajaran::where('kelompok_hari', 'Jumat')
-            ->orderBy('jam_ke', 'asc')->get();
+        $jamReguler = JamPelajaran::where('kelompok_hari', 'Reguler')->orderBy('jam_ke', 'asc')->get();
+        $jamJumat = JamPelajaran::where('kelompok_hari', 'Jumat')->orderBy('jam_ke', 'asc')->get();
 
         return view('admin.jam_pelajaran.index', compact('jamReguler', 'jamJumat'));
     }

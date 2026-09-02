@@ -115,13 +115,66 @@ class OrtuController extends Controller
             $rekapBulanIni['alpa']  = $ketidakhadiranList->where('keterangan', 'Alpa')->count();
         }
 
+        // 5. Riwayat Ketidakhadiran (Semua Waktu) dikelompokkan per tanggal
+        $riwayatAbsen = [];
+        if ($siswa) {
+            $semuaKetidakhadiran = JurnalDetailKetidakhadiran::with(['jurnal.jadwal.jamMulaiData', 'jurnal.jadwal.jamSelesaiData'])
+                ->where('id_siswa', $siswa->nis)
+                ->get();
+                
+            $groupedByDate = [];
+            foreach ($semuaKetidakhadiran as $kh) {
+                if (!$kh->jurnal) continue;
+                $tgl = $kh->jurnal->tanggal;
+                $keterangan = $kh->keterangan;
+                $jamM = $kh->jurnal->jadwal->jamMulaiData->jam_ke ?? '?';
+                $jamS = $kh->jurnal->jadwal->jamSelesaiData->jam_ke ?? '?';
+                
+                $teksJam = $jamM == $jamS ? "Jam ke-$jamM" : "Jam ke-$jamM-$jamS";
+                
+                if (!isset($groupedByDate[$tgl])) {
+                    $groupedByDate[$tgl] = [];
+                }
+                if (!isset($groupedByDate[$tgl][$keterangan])) {
+                    $groupedByDate[$tgl][$keterangan] = [];
+                }
+                $groupedByDate[$tgl][$keterangan][] = $teksJam;
+            }
+            
+            // Format for view
+            foreach ($groupedByDate as $tgl => $ketGroups) {
+                foreach ($ketGroups as $ket => $jams) {
+                    // Check if they are absent for all periods? Actually, we don't know the exact number of periods for that day easily here.
+                    // But if there are many, we can just list them. "Jam ke-1, Jam ke-2, Jam ke-3..."
+                    // A simple heuristic: if count > 4, maybe call it "Hampir Full / Full", or just list them.
+                    $jamText = implode(', ', $jams);
+                    if (count($jams) >= 4) {
+                        $jamText = "1 Hari Full (" . count($jams) . " Sesi)";
+                    } else {
+                        $jamText = "Di " . $jamText;
+                    }
+                    
+                    $riwayatAbsen[] = [
+                        'tanggal' => $tgl,
+                        'keterangan' => $ket,
+                        'detail_jam' => $jamText
+                    ];
+                }
+            }
+            // Sort by tanggal desc
+            usort($riwayatAbsen, function($a, $b) {
+                return strtotime($b['tanggal']) - strtotime($a['tanggal']);
+            });
+        }
+
         return view('ortu.dashboard', compact(
             'siswa',
             'hariIni',
             'namaHari',
             'presensiPerJp',
             'dispenHariIni',
-            'rekapBulanIni'
+            'rekapBulanIni',
+            'riwayatAbsen'
         ));
     }
 }

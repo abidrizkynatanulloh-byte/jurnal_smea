@@ -132,9 +132,49 @@ class GuruDashboardController extends Controller
             $siswaList = Siswa::where('id_kelas', $kelasAktif->id_kelas)->orderBy('nama_siswa')->get();
 
             foreach ($siswaList as $s) {
-                $alpaCount = JurnalDetailKetidakhadiran::where('id_siswa', $s->nis)->where('keterangan', 'Alpa')->count();
-                $sakitCount = JurnalDetailKetidakhadiran::where('id_siswa', $s->nis)->where('keterangan', 'Sakit')->count();
-                $izinCount = JurnalDetailKetidakhadiran::where('id_siswa', $s->nis)->where('keterangan', 'Izin')->count();
+                $semuaKetidakhadiran = JurnalDetailKetidakhadiran::with(['jurnal.jadwal.jamMulaiData', 'jurnal.jadwal.jamSelesaiData'])
+                    ->where('id_siswa', $s->nis)
+                    ->get();
+
+                $alpaCount = 0; $sakitCount = 0; $izinCount = 0;
+                $groupedByDate = [];
+                
+                foreach ($semuaKetidakhadiran as $kh) {
+                    if ($kh->keterangan == 'Alpa') $alpaCount++;
+                    elseif ($kh->keterangan == 'Sakit') $sakitCount++;
+                    elseif ($kh->keterangan == 'Izin') $izinCount++;
+
+                    if (!$kh->jurnal) continue;
+                    $tgl = $kh->jurnal->tanggal;
+                    $jamM = $kh->jurnal->jadwal->jamMulaiData->jam_ke ?? '?';
+                    $jamS = $kh->jurnal->jadwal->jamSelesaiData->jam_ke ?? '?';
+                    $teksJam = $jamM == $jamS ? "Jam ke-$jamM" : "Jam ke-$jamM-$jamS";
+                    
+                    if (!isset($groupedByDate[$tgl])) $groupedByDate[$tgl] = [];
+                    if (!isset($groupedByDate[$tgl][$kh->keterangan])) $groupedByDate[$tgl][$kh->keterangan] = [];
+                    $groupedByDate[$tgl][$kh->keterangan][] = $teksJam;
+                }
+
+                $riwayatAbsen = [];
+                foreach ($groupedByDate as $tgl => $ketGroups) {
+                    foreach ($ketGroups as $ket => $jams) {
+                        $jamText = implode(', ', $jams);
+                        if (count($jams) >= 4) {
+                            $jamText = "1 Hari Full (" . count($jams) . " Sesi)";
+                        } else {
+                            $jamText = "Di " . $jamText;
+                        }
+                        $riwayatAbsen[] = [
+                            'tanggal' => $tgl,
+                            'keterangan' => $ket,
+                            'detail_jam' => $jamText
+                        ];
+                    }
+                }
+                usort($riwayatAbsen, function($a, $b) {
+                    return strtotime($b['tanggal']) - strtotime($a['tanggal']);
+                });
+
                 $dispenCount = DispenSiswa::where('nis', $s->nis)->count();
 
                 $rekapSiswa->push([
@@ -146,6 +186,7 @@ class GuruDashboardController extends Controller
                     'dispen'       => $dispenCount,
                     'total_absen'  => $alpaCount + $sakitCount + $izinCount,
                     'perlu_atensi' => $alpaCount >= 3,
+                    'riwayat_absen'=> $riwayatAbsen,
                 ]);
             }
             $rekapSiswa = $rekapSiswa->sortByDesc('total_absen')->values();

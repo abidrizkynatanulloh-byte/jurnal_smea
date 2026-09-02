@@ -112,26 +112,34 @@ class DashboardController
         })->values();
         $guruAlpaHariIni = $listGuruAlpaHariIni->pluck('id_guru')->unique()->count();
 
-        // 4. DATA REKAP ABSENSI SISWA HARI INI
-        $siswaSakitHariIni = JurnalDetailKetidakhadiran::where('keterangan', 'Sakit')
+        // 4. DATA REKAP ABSENSI SISWA HARI INI (dengan detail list siswa)
+        $listSiswaSakitHariIni = JurnalDetailKetidakhadiran::with(['siswa.kelas', 'jurnal.jadwal.kelas', 'jurnal.jadwal.mapel'])
+            ->where('keterangan', 'Sakit')
             ->whereHas('jurnal', function ($q) use ($todayDate) {
                 $q->whereDate('tanggal', $todayDate);
-            })->count();
+            })->get();
+        $siswaSakitHariIni = $listSiswaSakitHariIni->count();
 
-        $siswaIzinHariIni = JurnalDetailKetidakhadiran::where('keterangan', 'Izin')
+        $listSiswaIzinHariIni = JurnalDetailKetidakhadiran::with(['siswa.kelas', 'jurnal.jadwal.kelas', 'jurnal.jadwal.mapel'])
+            ->where('keterangan', 'Izin')
             ->whereHas('jurnal', function ($q) use ($todayDate) {
                 $q->whereDate('tanggal', $todayDate);
-            })->count();
+            })->get();
+        $siswaIzinHariIni = $listSiswaIzinHariIni->count();
         
-        $dispenActiveCount = DispenSiswa::whereDate('tanggal', $todayDate)
+        $listDispenActive = DispenSiswa::with(['siswa.kelas'])
+            ->whereDate('tanggal', $todayDate)
             ->whereIn('status', ['Disetujui', 'Sedang di Luar'])
-            ->count();
+            ->get();
+        $dispenActiveCount = $listDispenActive->count();
         $siswaIzinTotal = $siswaIzinHariIni + $dispenActiveCount;
 
-        $siswaAlpaHariIni = JurnalDetailKetidakhadiran::where('keterangan', 'Alpa')
+        $listSiswaAlpaHariIni = JurnalDetailKetidakhadiran::with(['siswa.kelas', 'jurnal.jadwal.kelas', 'jurnal.jadwal.mapel'])
+            ->where('keterangan', 'Alpa')
             ->whereHas('jurnal', function ($q) use ($todayDate) {
                 $q->whereDate('tanggal', $todayDate);
-            })->count();
+            })->get();
+        $siswaAlpaHariIni = $listSiswaAlpaHariIni->count();
 
         $siswaHadirHariIni = max(0, $totalSiswa - ($siswaSakitHariIni + $siswaIzinTotal + $siswaAlpaHariIni));
 
@@ -175,8 +183,12 @@ class DashboardController
             'listGuruAlpaHariIni',
             'siswaHadirHariIni',
             'siswaSakitHariIni',
+            'listSiswaSakitHariIni',
             'siswaIzinTotal',
+            'listSiswaIzinHariIni',
+            'listDispenActive',
             'siswaAlpaHariIni',
+            'listSiswaAlpaHariIni',
             'pengisianPerKelas'
         ));
     }
