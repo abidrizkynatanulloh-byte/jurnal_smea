@@ -86,15 +86,17 @@
             </div>
         </div>
 
-        <!-- BAGIAN 2: ABSENSI SISWA -->
+        <!-- BAGIAN 2: ABSENSI SISWA (MENGGUNAKAN RADIO BUTTON & AUTO-STATUS) -->
         <div class="bg-white border border-[#D1D9EB] rounded-2xl shadow-sm overflow-hidden">
             <div class="px-6 py-5 border-b border-[#D1D9EB] flex items-center justify-between">
                 <div>
                     <h3 class="font-bold text-[#1E2538] text-base flex items-center space-x-2">
                         <i data-lucide="users-check" class="w-5 h-5 text-[#405078]"></i>
-                        <span>Presensi Siswa di Jam Ini</span>
+                        <span>Presensi Siswa di Jam Mapel Ini</span>
                     </h3>
-                    <p class="text-[11px] text-gray-400 mt-0.5">Tandai siswa yang TIDAK HADIR saja. Siswa yang tidak ditandai otomatis dihitung <b>Hadir</b>.</p>
+                    <p class="text-[11px] text-gray-400 mt-0.5">
+                        Pilih status kehadiran siswa menggunakan tombol radio di bawah. Siswa yang sakit/izin di jam sebelumnya atau sedang dispensasi telah otomatis terisi.
+                    </p>
                 </div>
                 <span class="px-3 py-1 bg-[#405078]/10 text-[#405078] rounded-full text-xs font-bold">
                     {{ count($siswaDiKelas) }} Siswa
@@ -110,36 +112,73 @@
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="bg-[#F8FAFC] text-gray-500 text-xs font-semibold uppercase tracking-wider border-b border-[#D1D9EB]">
-                                <th class="py-3.5 px-6 text-center w-16">No</th>
-                                <th class="py-3.5 px-6">Nama Siswa</th>
-                                <th class="py-3.5 px-6 w-32">NIS</th>
-                                <th class="py-3.5 px-6 w-48">Info Izin Hari Ini</th>
-                                <th class="py-3.5 px-6 w-48 text-center">Status Kehadiran</th>
+                                <th class="py-3.5 px-6 text-center w-14">No</th>
+                                <th class="py-3.5 px-6">Nama Lengkap & NIS</th>
+                                <th class="py-3.5 px-6">Status / Keterangan Sebelumnya</th>
+                                <th class="py-3.5 px-6 text-center w-80">Pilihan Kehadiran (Radio Button)</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100 text-sm text-gray-600">
                             @foreach ($siswaDiKelas as $idx => $s)
                                 <tr class="hover:bg-gray-50/50 transition-colors">
-                                    <td class="py-3.5 px-6 text-center font-medium text-gray-400">{{ $idx + 1 }}</td>
-                                    <td class="py-3.5 px-6 font-bold text-[#1E2538]">{{ $s->nama_siswa }}</td>
-                                    <td class="py-3.5 px-6 text-gray-500 text-xs">{{ $s->nis }}</td>
+                                    <td class="py-3.5 px-6 text-center font-medium text-gray-400 text-xs">{{ $idx + 1 }}</td>
                                     <td class="py-3.5 px-6">
-                                        @if ($s->izin_hari_ini)
-                                            <span class="inline-flex items-center px-2 py-0.5 bg-blue-50 text-blue-700 text-xs font-bold rounded-full space-x-1">
-                                                <span>📋 Izin: {{ $s->izin_hari_ini->jenis_izin }}</span>
+                                        <p class="font-bold text-[#1E2538] text-xs">{{ $s->nama_siswa }}</p>
+                                        <p class="text-[11px] text-gray-400">NIS: {{ $s->nis }}</p>
+                                    </td>
+                                    <td class="py-3.5 px-6">
+                                        @if ($s->info_status)
+                                            <span class="inline-flex items-center px-2.5 py-1 bg-amber-50 border border-amber-200 text-amber-800 text-xs font-bold rounded-lg space-x-1">
+                                                <i data-lucide="info" class="w-3.5 h-3.5"></i>
+                                                <span>{{ $s->info_status }}</span>
                                             </span>
                                         @else
-                                            <span class="text-gray-400 text-xs">-</span>
+                                            <span class="text-gray-400 text-xs font-medium">Siap KBM</span>
                                         @endif
                                     </td>
                                     <td class="py-3.5 px-6 text-center">
-                                        <select name="ketidakhadiran[{{ $s->nis }}]" 
-                                            class="block w-full px-3 py-1.5 bg-[#F8FAFC] border border-[#D1D9EB] rounded-lg text-xs text-[#1E2538] font-medium focus:outline-none focus:border-[#405078] focus:ring-1 focus:ring-[#405078] cursor-pointer">
-                                            <option value="">✅ Hadir</option>
-                                            <option value="Sakit" {{ $s->izin_hari_ini && $s->izin_hari_ini->jenis_izin == 'Sakit' ? 'selected' : '' }}>🤒 Sakit</option>
-                                            <option value="Izin" {{ $s->izin_hari_ini && $s->izin_hari_ini->jenis_izin == 'Izin' ? 'selected' : '' }}>📄 Izin</option>
-                                            <option value="Alpa">❌ Alpa</option>
-                                        </select>
+                                        <!-- RADIO BUTTON GROUP PRESENSI (Poin 9) -->
+                                        <div class="inline-flex items-center p-1 bg-gray-100/90 rounded-xl space-x-1 border border-gray-200">
+                                            <!-- HADIR -->
+                                            <label class="cursor-pointer select-none">
+                                                <input type="radio" name="ketidakhadiran[{{ $s->nis }}]" value="Hadir" {{ $s->auto_status === 'Hadir' ? 'checked' : '' }} class="peer sr-only">
+                                                <span class="px-2.5 py-1 rounded-lg text-xs font-bold text-gray-500 peer-checked:bg-emerald-600 peer-checked:text-white transition-all inline-flex items-center space-x-1 shadow-2xs">
+                                                    <span>Hadir</span>
+                                                </span>
+                                            </label>
+
+                                            <!-- SAKIT -->
+                                            <label class="cursor-pointer select-none">
+                                                <input type="radio" name="ketidakhadiran[{{ $s->nis }}]" value="Sakit" {{ $s->auto_status === 'Sakit' ? 'checked' : '' }} class="peer sr-only">
+                                                <span class="px-2.5 py-1 rounded-lg text-xs font-bold text-gray-500 peer-checked:bg-blue-600 peer-checked:text-white transition-all inline-flex items-center space-x-1 shadow-2xs">
+                                                    <span>Sakit</span>
+                                                </span>
+                                            </label>
+
+                                            <!-- IZIN -->
+                                            <label class="cursor-pointer select-none">
+                                                <input type="radio" name="ketidakhadiran[{{ $s->nis }}]" value="Izin" {{ $s->auto_status === 'Izin' ? 'checked' : '' }} class="peer sr-only">
+                                                <span class="px-2.5 py-1 rounded-lg text-xs font-bold text-gray-500 peer-checked:bg-amber-500 peer-checked:text-white transition-all inline-flex items-center space-x-1 shadow-2xs">
+                                                    <span>Izin</span>
+                                                </span>
+                                            </label>
+
+                                            <!-- ALPA (Per Sesi / Jam Mapel) -->
+                                            <label class="cursor-pointer select-none">
+                                                <input type="radio" name="ketidakhadiran[{{ $s->nis }}]" value="Alpa" class="peer sr-only">
+                                                <span class="px-2.5 py-1 rounded-lg text-xs font-bold text-gray-500 peer-checked:bg-rose-600 peer-checked:text-white transition-all inline-flex items-center space-x-1 shadow-2xs">
+                                                    <span>Alpa</span>
+                                                </span>
+                                            </label>
+
+                                            <!-- DISPEN -->
+                                            <label class="cursor-pointer select-none">
+                                                <input type="radio" name="ketidakhadiran[{{ $s->nis }}]" value="Dispen" {{ $s->auto_status === 'Dispen' ? 'checked' : '' }} class="peer sr-only">
+                                                <span class="px-2.5 py-1 rounded-lg text-xs font-bold text-gray-500 peer-checked:bg-purple-600 peer-checked:text-white transition-all inline-flex items-center space-x-1 shadow-2xs">
+                                                    <span>Dispen</span>
+                                                </span>
+                                            </label>
+                                        </div>
                                     </td>
                                 </tr>
                             @endforeach

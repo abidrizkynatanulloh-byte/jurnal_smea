@@ -62,27 +62,9 @@
                     </div>
                 </div>
 
-                @if ($jurnal->kegiatan)
-                <div>
-                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Kegiatan Pembelajaran</h3>
-                    <div class="p-4 bg-[#F8FAFC] border border-[#D1D9EB] rounded-xl text-sm text-[#1E2538] font-medium leading-relaxed">
-                        {{ $jurnal->kegiatan }}
-                    </div>
-                </div>
-                @endif
-
-                @if ($jurnal->tugas)
-                <div>
-                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Tugas yang Diberikan</h3>
-                    <div class="p-4 bg-amber-50/50 border border-amber-200/60 rounded-xl text-sm text-amber-900 font-medium leading-relaxed">
-                        {{ $jurnal->tugas }}
-                    </div>
-                </div>
-                @endif
-
                 @if ($jurnal->catatan)
                 <div>
-                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Catatan Khusus</h3>
+                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Catatan Khusus Guru</h3>
                     <div class="p-4 bg-gray-50 border border-gray-200/60 rounded-xl text-sm text-gray-600 italic leading-relaxed">
                         "{{ $jurnal->catatan }}"
                     </div>
@@ -91,9 +73,13 @@
 
                 <!-- Foto Bukti Pembelajaran -->
                 <div>
-                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Dokumentasi Foto Kelas</h3>
-                    @if ($jurnal->foto_kegiatan)
-                        <div class="rounded-xl overflow-hidden border border-[#D1D9EB] max-w-md">
+                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Dokumentasi Foto Kamera Kelas</h3>
+                    @if ($jurnal->foto && $jurnal->foto->foto_path)
+                        <div class="rounded-xl overflow-hidden border border-[#D1D9EB] max-w-md shadow-sm">
+                            <img src="{{ asset('storage/' . $jurnal->foto->foto_path) }}" alt="Foto Pembelajaran Live" class="w-full h-auto object-cover">
+                        </div>
+                    @elseif ($jurnal->foto_kegiatan)
+                        <div class="rounded-xl overflow-hidden border border-[#D1D9EB] max-w-md shadow-sm">
                             <img src="{{ asset('storage/' . $jurnal->foto_kegiatan) }}" alt="Foto Kegiatan" class="w-full h-auto object-cover">
                         </div>
                     @else
@@ -106,15 +92,20 @@
             </div>
         </div>
 
-        <!-- Rekap Absensi Siswa di Jam Ini -->
+        <!-- Rekap Ketidakhadiran Siswa di Jam Ini -->
         <div class="space-y-6">
             <div class="bg-white border border-[#D1D9EB] rounded-2xl shadow-sm overflow-hidden">
                 <div class="px-5 py-4 border-b border-[#D1D9EB] flex items-center justify-between">
-                    <h3 class="font-bold text-[#1E2538] text-sm flex items-center space-x-2">
-                        <i data-lucide="users" class="w-4 h-4 text-[#405078]"></i>
-                        <span>Presensi Siswa</span>
-                    </h3>
-                    <span class="text-xs text-gray-400 font-medium">{{ count($jurnal->absensi ?? []) }} Siswa</span>
+                    <div>
+                        <h3 class="font-bold text-[#1E2538] text-sm flex items-center space-x-2">
+                            <i data-lucide="users" class="w-4 h-4 text-[#405078]"></i>
+                            <span>Ketidakhadiran Siswa Sesi Ini</span>
+                        </h3>
+                        <p class="text-[10px] text-gray-400">Siswa yang tidak hadir di jam mapel ini</p>
+                    </div>
+                    <span class="text-xs text-rose-600 font-bold bg-rose-50 px-2 py-0.5 rounded-full">
+                        {{ count($jurnal->detailKetidakhadiran ?? []) }} Siswa
+                    </span>
                 </div>
 
                 <div class="max-h-[500px] overflow-y-auto">
@@ -122,34 +113,35 @@
                         <thead>
                             <tr class="bg-[#F8FAFC] text-gray-400 uppercase tracking-wider border-b border-[#D1D9EB]">
                                 <th class="py-3 px-4">Nama Siswa</th>
-                                <th class="py-3 px-4 text-center w-24">Status</th>
+                                <th class="py-3 px-4 text-center w-36">Status</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100">
-                            @forelse ($jurnal->absensi as $abs)
+                            @forelse ($jurnal->detailKetidakhadiran as $det)
                                 <tr>
-                                    <td class="py-2.5 px-4">
-                                        <p class="font-bold text-[#1E2538]">{{ $abs->siswa ? $abs->siswa->nama_siswa : '-' }}</p>
-                                        <p class="text-[10px] text-gray-400">NIS: {{ $abs->nis }}</p>
+                                    <td class="py-3 px-4">
+                                        <p class="font-bold text-[#1E2538]">{{ $det->siswa ? $det->siswa->nama_siswa : '-' }}</p>
+                                        <p class="text-[10px] text-gray-400">NIS: {{ $det->id_siswa }}</p>
                                     </td>
-                                    <td class="py-2.5 px-4 text-center">
-                                        @if ($abs->status === 'Hadir')
-                                            <span class="px-2 py-0.5 bg-emerald-50 text-emerald-700 font-bold rounded">H</span>
-                                        @elseif ($abs->status === 'Sakit')
-                                            <span class="px-2 py-0.5 bg-blue-50 text-blue-700 font-bold rounded">S</span>
-                                        @elseif ($abs->status === 'Izin')
-                                            <span class="px-2 py-0.5 bg-amber-50 text-amber-700 font-bold rounded">I</span>
-                                        @elseif ($abs->status === 'Dispen')
-                                            <span class="px-2 py-0.5 bg-purple-50 text-purple-700 font-bold rounded">D</span>
+                                    <td class="py-3 px-4 text-center">
+                                        @if ($det->keterangan === 'Sakit')
+                                            <span class="px-2.5 py-1 bg-blue-50 text-blue-700 font-bold rounded-lg inline-block text-[11px]">Sakit</span>
+                                        @elseif ($det->keterangan === 'Izin')
+                                            <span class="px-2.5 py-1 bg-amber-50 text-amber-700 font-bold rounded-lg inline-block text-[11px]">Izin</span>
+                                        @elseif ($det->keterangan === 'Alpa')
+                                            <span class="px-2.5 py-1 bg-rose-50 text-rose-700 font-bold rounded-lg inline-block text-[11px]" title="Alpa pada jam mata pelajaran ini">
+                                                Alpa Jam Mapel
+                                            </span>
                                         @else
-                                            <span class="px-2 py-0.5 bg-rose-50 text-rose-700 font-bold rounded">A</span>
+                                            <span class="px-2.5 py-1 bg-gray-100 text-gray-700 font-bold rounded-lg inline-block text-[11px]">{{ $det->keterangan }}</span>
                                         @endif
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="2" class="py-6 text-center text-gray-400 italic">
-                                        Tidak ada catatan absensi siswa.
+                                    <td colspan="2" class="py-8 text-center text-gray-400 italic">
+                                        <i data-lucide="check-circle" class="w-6 h-6 mx-auto mb-1 text-emerald-500"></i>
+                                        Semua siswa hadir di jam pelajaran ini.
                                     </td>
                                 </tr>
                             @endforelse

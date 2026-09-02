@@ -14,6 +14,7 @@ class DispenSiswa extends Model
     protected $fillable = [
         'nis',
         'keperluan',
+        'jam_ke',
         'tanggal',
         'jam_keluar_rencana',
         'jam_kembali_rencana',

@@ -19,19 +19,26 @@
             </p>
         </div>
 
-        <!-- Filter Kelas -->
+        <!-- Filter / Info Kelas Binaan -->
         <div>
-            <form action="{{ route('guru.wali-kelas') }}" method="GET" class="flex items-center space-x-2">
-                <label class="text-xs font-bold text-gray-500">Pilih Kelas:</label>
-                <select name="kelas_id" onchange="this.form.submit()"
-                    class="px-3.5 py-2 bg-white border border-[#D1D9EB] rounded-xl text-xs font-bold text-[#1E2538] focus:outline-none focus:border-[#405078] shadow-xs cursor-pointer">
-                    @foreach($daftarKelas as $k)
-                        <option value="{{ $k->id_kelas }}" {{ $kelasAktif && $kelasAktif->id_kelas == $k->id_kelas ? 'selected' : '' }}>
-                            {{ $k->nama_kelas }}
-                        </option>
-                    @endforeach
-                </select>
-            </form>
+            @if($daftarKelas->count() > 1)
+                <form action="{{ route('guru.wali-kelas') }}" method="GET" class="flex items-center space-x-2">
+                    <label class="text-xs font-bold text-gray-500">Pilih Kelas Binaan:</label>
+                    <select name="kelas_id" onchange="this.form.submit()"
+                        class="px-3.5 py-2 bg-white border border-[#D1D9EB] rounded-xl text-xs font-bold text-[#1E2538] focus:outline-none focus:border-[#405078] shadow-xs cursor-pointer">
+                        @foreach($daftarKelas as $k)
+                            <option value="{{ $k->id_kelas }}" {{ $kelasAktif && $kelasAktif->id_kelas == $k->id_kelas ? 'selected' : '' }}>
+                                {{ $k->nama_kelas }}
+                            </option>
+                        @endforeach
+                    </select>
+                </form>
+            @elseif($kelasAktif)
+                <div class="px-4 py-2 bg-white border border-[#D1D9EB] rounded-xl shadow-xs text-xs font-bold text-[#1E2538] flex items-center space-x-2">
+                    <i data-lucide="shield-check" class="w-4 h-4 text-[#405078]"></i>
+                    <span>Kelas Binaan: {{ $kelasAktif->nama_kelas }}</span>
+                </div>
+            @endif
         </div>
     </div>
 
@@ -80,7 +87,7 @@
                         <th class="py-4 px-6 text-center w-24">Izin</th>
                         <th class="py-4 px-6 text-center w-24">Alpa</th>
                         <th class="py-4 px-6 text-center w-24">Dispen</th>
-                        <th class="py-4 px-6 text-center w-36">Status Atensi</th>
+                        <th class="py-4 px-6 text-center w-36">Status & Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100 text-sm text-gray-600">
@@ -93,20 +100,74 @@
                             <td class="py-4 px-6 text-center text-xs font-medium text-amber-600">{{ $s['izin'] }}</td>
                             <td class="py-4 px-6 text-center text-xs font-bold {{ $s['alpa'] > 0 ? 'text-rose-600' : 'text-gray-400' }}">{{ $s['alpa'] }}</td>
                             <td class="py-4 px-6 text-center text-xs font-medium text-[#405078]">{{ $s['dispen'] }}</td>
-                            <td class="py-4 px-6 text-center">
-                                @if($s['perlu_atensi'])
-                                    <span class="inline-flex items-center px-2.5 py-0.5 bg-rose-100 text-rose-800 text-[11px] font-bold rounded-full">
-                                        Perlu Tindak Lanjut
-                                    </span>
-                                @elseif($s['total_absen'] == 0)
-                                    <span class="inline-flex items-center px-2.5 py-0.5 bg-emerald-50 text-emerald-700 text-[11px] font-bold rounded-full">
-                                        Rajin (100%)
-                                    </span>
-                                @else
-                                    <span class="inline-flex items-center px-2.5 py-0.5 bg-gray-100 text-gray-600 text-[11px] font-medium rounded-full">
-                                        Normal
-                                    </span>
-                                @endif
+                            <td class="py-4 px-6 text-center" x-data="{ modalTerbuka: false }">
+                                <div class="flex items-center justify-center space-x-2">
+                                    @if($s['perlu_atensi'])
+                                        <span class="inline-flex items-center px-2.5 py-0.5 bg-rose-100 text-rose-800 text-[11px] font-bold rounded-full">
+                                            Perlu Atensi
+                                        </span>
+                                    @elseif($s['total_absen'] == 0)
+                                        <span class="inline-flex items-center px-2.5 py-0.5 bg-emerald-50 text-emerald-700 text-[11px] font-bold rounded-full">
+                                            Rajin (100%)
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center px-2.5 py-0.5 bg-gray-100 text-gray-600 text-[11px] font-medium rounded-full">
+                                            Normal
+                                        </span>
+                                    @endif
+                                    
+                                    <button @click="modalTerbuka = true" class="p-1 text-[#405078] hover:bg-blue-50 rounded transition-colors" title="Lihat Detail Riwayat">
+                                        <i data-lucide="info" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+
+                                <!-- Modal Riwayat Ketidakhadiran -->
+                                <div x-show="modalTerbuka" style="display: none;" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+                                    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                                        <div x-show="modalTerbuka" @click="modalTerbuka = false" x-transition.opacity class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+                                        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                                        <div x-show="modalTerbuka" x-transition class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                                            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                                                <div class="sm:flex sm:items-start">
+                                                    <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                                                        <h3 class="text-lg leading-6 font-bold text-gray-900 border-b pb-2" id="modal-title">
+                                                            Riwayat Ketidakhadiran - {{ $s['nama_siswa'] }}
+                                                        </h3>
+                                                        <div class="mt-4 space-y-3 max-h-60 overflow-y-auto pr-2">
+                                                            @forelse($s['riwayat_absen'] as $riwayat)
+                                                                <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg border border-gray-100">
+                                                                    <div class="text-left">
+                                                                        <div class="font-bold text-sm text-[#1E2538]">{{ \Carbon\Carbon::parse($riwayat['tanggal'])->locale('id')->isoFormat('dddd, D MMMM Y') }}</div>
+                                                                        <div class="text-xs text-gray-500 mt-1">Waktu: <span class="font-semibold">{{ $riwayat['detail_jam'] }}</span></div>
+                                                                    </div>
+                                                                    <div>
+                                                                        @php
+                                                                            $badge = match ($riwayat['keterangan']) {
+                                                                                'Sakit' => 'bg-blue-50 text-blue-700',
+                                                                                'Izin'  => 'bg-amber-50 text-amber-700',
+                                                                                default => 'bg-rose-50 text-rose-700',
+                                                                            };
+                                                                        @endphp
+                                                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold {{ $badge }}">
+                                                                            {{ $riwayat['keterangan'] }}
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            @empty
+                                                                <div class="text-center text-gray-500 text-sm italic py-4">Belum ada riwayat ketidakhadiran.</div>
+                                                            @endforelse
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                                                <button type="button" @click="modalTerbuka = false" class="w-full inline-flex justify-center rounded-xl border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#405078] sm:ml-3 sm:w-auto sm:text-sm">
+                                                    Tutup
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </td>
                         </tr>
                     @empty
@@ -121,4 +182,7 @@
         </div>
     </div>
 </div>
+@push('scripts')
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+@endpush
 @endsection

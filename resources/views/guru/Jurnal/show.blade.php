@@ -82,7 +82,7 @@
                         $fotoPath = $jurnal->foto ? $jurnal->foto->foto_path : ($jurnal->foto_kegiatan ?? null); 
                     @endphp
                     @if ($fotoPath)
-                        <div class="rounded-xl overflow-hidden border border-[#D1D9EB] max-w-md">
+                        <div class="rounded-xl overflow-hidden border border-[#D1D9EB] max-w-md shadow-sm">
                             <img src="{{ asset('storage/' . $fotoPath) }}" alt="Bukti Mengajar" class="w-full h-auto object-cover">
                         </div>
                     @else
@@ -99,29 +99,32 @@
         <div class="space-y-6">
             <div class="bg-white border border-[#D1D9EB] rounded-2xl shadow-sm overflow-hidden">
                 <div class="px-5 py-4 border-b border-[#D1D9EB] flex items-center justify-between">
-                    <h3 class="font-bold text-[#1E2538] text-sm flex items-center space-x-2">
-                        <i data-lucide="user-x" class="w-4 h-4 text-[#405078]"></i>
-                        <span>Siswa Tidak Hadir</span>
-                    </h3>
-                    <span class="text-xs text-gray-500 font-bold px-2 py-0.5 bg-gray-100 rounded-full">{{ $ketidakhadiran->count() }} Siswa</span>
+                    <div>
+                        <h3 class="font-bold text-[#1E2538] text-sm flex items-center space-x-2">
+                            <i data-lucide="user-x" class="w-4 h-4 text-[#405078]"></i>
+                            <span>Siswa Tidak Hadir Sesi Ini</span>
+                        </h3>
+                        <p class="text-[10px] text-gray-400">Presensi pada jam pelajaran ini</p>
+                    </div>
+                    <span class="text-xs text-rose-600 font-bold px-2 py-0.5 bg-rose-50 rounded-full">{{ count($jurnal->detailKetidakhadiran ?? []) }} Siswa</span>
                 </div>
 
-                @if ($ketidakhadiran->isEmpty())
+                @if (!isset($jurnal->detailKetidakhadiran) || $jurnal->detailKetidakhadiran->isEmpty())
                     <div class="p-6 text-center text-emerald-700 bg-emerald-50/30 font-semibold text-xs flex flex-col items-center space-y-1">
                         <i data-lucide="check-circle" class="w-6 h-6 text-emerald-600"></i>
                         <span>Luar biasa! Seluruh siswa hadir lengkap pada sesi pembelajaran ini.</span>
                     </div>
                 @else
-                    <div class="overflow-x-auto">
+                    <div class="overflow-x-auto max-h-[400px] overflow-y-auto">
                         <table class="w-full text-left border-collapse text-xs">
                             <thead>
                                 <tr class="bg-[#F8FAFC] text-gray-400 uppercase tracking-wider border-b border-[#D1D9EB]">
                                     <th class="py-3 px-4">Nama Siswa</th>
-                                    <th class="py-3 px-4 text-center w-24">Status</th>
+                                    <th class="py-3 px-4 text-center w-36">Status</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-100">
-                                @foreach ($ketidakhadiran as $idx => $k)
+                                @foreach ($jurnal->detailKetidakhadiran as $k)
                                     <tr>
                                         <td class="py-2.5 px-4">
                                             <p class="font-bold text-[#1E2538]">{{ $k->siswa ? $k->siswa->nama_siswa : '-' }}</p>
@@ -129,11 +132,13 @@
                                         </td>
                                         <td class="py-2.5 px-4 text-center">
                                             @if ($k->keterangan === 'Sakit')
-                                                <span class="px-2 py-0.5 bg-blue-50 text-blue-700 font-bold rounded">Sakit</span>
+                                                <span class="px-2.5 py-0.5 bg-blue-50 text-blue-700 font-bold rounded-lg inline-block text-[11px]">Sakit</span>
                                             @elseif ($k->keterangan === 'Izin')
-                                                <span class="px-2 py-0.5 bg-amber-50 text-amber-700 font-bold rounded">Izin</span>
+                                                <span class="px-2.5 py-0.5 bg-amber-50 text-amber-700 font-bold rounded-lg inline-block text-[11px]">Izin</span>
+                                            @elseif ($k->keterangan === 'Alpa')
+                                                <span class="px-2.5 py-0.5 bg-rose-50 text-rose-700 font-bold rounded-lg inline-block text-[11px]">Alpa Jam Mapel</span>
                                             @else
-                                                <span class="px-2 py-0.5 bg-rose-50 text-rose-700 font-bold rounded">Alpa</span>
+                                                <span class="px-2.5 py-0.5 bg-gray-100 text-gray-700 font-bold rounded-lg inline-block text-[11px]">{{ $k->keterangan }}</span>
                                             @endif
                                         </td>
                                     </tr>

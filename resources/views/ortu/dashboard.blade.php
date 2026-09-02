@@ -129,6 +129,49 @@
             </div>
         </div>
 
+        <!-- RIWAYAT KETIDAKHADIRAN -->
+        <div class="bg-white border border-[#D1D9EB] rounded-2xl shadow-sm overflow-hidden mt-6">
+            <div class="px-6 py-5 border-b border-[#D1D9EB] flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <i data-lucide="history" class="w-5 h-5 text-[#405078]"></i>
+                    <h3 class="font-bold text-[#1E2538] text-base">Riwayat Ketidakhadiran (Detail)</h3>
+                </div>
+            </div>
+
+            <div class="divide-y divide-gray-100">
+                @if(isset($riwayatAbsen) && count($riwayatAbsen) > 0)
+                    @foreach($riwayatAbsen as $riwayat)
+                        <div class="p-5 hover:bg-gray-50/50 transition-colors flex flex-col sm:flex-row sm:items-center justify-between">
+                            <div class="space-y-1">
+                                <h4 class="font-bold text-sm text-[#1E2538]">
+                                    {{ \Carbon\Carbon::parse($riwayat['tanggal'])->locale('id')->isoFormat('dddd, D MMMM Y') }}
+                                </h4>
+                                <p class="text-xs text-gray-500">
+                                    <span class="font-medium text-gray-700">Waktu:</span> {{ $riwayat['detail_jam'] }}
+                                </p>
+                            </div>
+                            <div class="mt-2 sm:mt-0">
+                                @php
+                                    $badge = match ($riwayat['keterangan']) {
+                                        'Sakit' => 'bg-blue-50 text-blue-700',
+                                        'Izin'  => 'bg-amber-50 text-amber-700',
+                                        default => 'bg-rose-50 text-rose-700',
+                                    };
+                                @endphp
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold {{ $badge }}">
+                                    {{ $riwayat['keterangan'] }}
+                                </span>
+                            </div>
+                        </div>
+                    @endforeach
+                @else
+                    <div class="p-8 text-center text-gray-400 italic text-xs">
+                        Anak Anda memiliki catatan kehadiran yang sempurna.
+                    </div>
+                @endif
+            </div>
+        </div>
+
         <!-- INFORMASI IZIN KELUAR SEKOLAH (JIKA ADA) -->
         @if($dispenHariIni)
             <div class="bg-white border border-[#D1D9EB] rounded-2xl p-6 shadow-sm space-y-3">

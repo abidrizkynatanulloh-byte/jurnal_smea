@@ -75,11 +75,11 @@ class KepsekController extends Controller
             }
         }
 
-        // 5. Persetujuan Izin Guru Menunggu Tanda Tangan Kepala Sekolah (Tahap 3)
+        // 5. Persetujuan Izin Guru Menunggu Tanda Tangan Kepala Sekolah
         $izinGuruPending = IzinGuru::with('guru')
-            ->where('status_waka', 'Disetujui')
-            ->where('status_sdm', 'Disetujui')
             ->where('status_kepsek', 'Menunggu')
+            ->where('status_akhir', '!=', 'Ditolak')
+            ->orderBy('id', 'desc')
             ->get();
 
         // 6. Audit Trail Aktivitas Terakhir
@@ -111,22 +111,20 @@ class KepsekController extends Controller
     }
 
     /**
-     * Kepala Sekolah menyetujui izin guru (Persetujuan Tahap Final).
+     * Kepala Sekolah menyetujui izin guru.
      */
     public function approveIzinGuru($id)
     {
         $izin = IzinGuru::findOrFail($id);
-        $izin->update([
-            'status_kepsek' => 'Disetujui',
-            'status_akhir'  => 'Disetujui',
-        ]);
+        $izin->status_kepsek = 'Disetujui';
+        $izin->cekDanUpdateStatusAkhir();
 
         AuditLog::log(
             'Pengesahan Izin Guru oleh Kepala Sekolah',
             "Kepala Sekolah mengesahkan izin Guru: {$izin->guru->nama_guru} ({$izin->alasan})"
         );
 
-        return back()->with('success', "Izin Guru {$izin->guru->nama_guru} telah berhasil disahkan.");
+        return back()->with('success', "Izin Guru {$izin->guru->nama_guru} telah disetujui oleh Kepala Sekolah.");
     }
 
     /**
@@ -135,11 +133,9 @@ class KepsekController extends Controller
     public function rejectIzinGuru(Request $request, $id)
     {
         $izin = IzinGuru::findOrFail($id);
-        $izin->update([
-            'status_kepsek'     => 'Ditolak',
-            'status_akhir'      => 'Ditolak',
-            'catatan_penolakan' => $request->input('catatan', 'Ditolak oleh Kepala Sekolah'),
-        ]);
+        $izin->status_kepsek = 'Ditolak';
+        $izin->catatan_penolakan = $request->input('catatan', 'Ditolak oleh Kepala Sekolah');
+        $izin->cekDanUpdateStatusAkhir();
 
         AuditLog::log(
             'Penolakan Izin Guru oleh Kepala Sekolah',

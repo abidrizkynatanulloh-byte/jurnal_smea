@@ -144,28 +144,7 @@
                 <form action="{{ route('login.post') }}" method="POST" class="space-y-5">
                     @csrf
 
-                    <!-- 1. Dropdown Pilihan Role -->
-                    <div>
-                        <label for="role" class="block text-xs font-semibold text-gray-700 mb-1.5">Peran (Role Akses)</label>
-                        <div class="relative">
-                            <select 
-                                name="role" 
-                                id="role" 
-                                required 
-                                class="block w-full px-4 py-3 bg-[#F8FAFC] border border-[#D1D9EB] rounded-lg text-sm text-[#1E2538] focus:outline-none focus:border-[#405078] focus:ring-2 focus:ring-[#405078]/15 transition-all appearance-none cursor-pointer"
-                            >
-                                <option value="">-- Pilih Role Anda --</option>
-                                @foreach ($roles as $key => $label)
-                                    <option value="{{ $key }}" {{ old('role') == $key ? 'selected' : '' }}>
-                                        {{ $label }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            <div class="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-[#8697C3]">
-                                <i data-lucide="chevron-down" class="w-4 h-4"></i>
-                            </div>
-                        </div>
-                    </div>
+
 
                     <!-- 2. Input Username (NIP / NISN / USN) -->
                     <div>

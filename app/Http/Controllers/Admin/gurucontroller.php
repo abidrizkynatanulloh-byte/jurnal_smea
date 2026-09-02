@@ -71,8 +71,8 @@ class GuruController
                 'kode_mapel' => $validated['kode_mapel'],
                 'jabatan'    => match ($validated['role']) {
                     'kepala_sekolah' => 'Kepala Sekolah',
-                    'wakasis_siswa'  => 'Wakil Kesiswaan (Siswa)',
-                    'wakasis_guru'   => 'Wakil Kesiswaan (Guru)',
+                    'wakasis_siswa'  => 'Wakasis Siswa',
+                    'wakasis_guru'   => 'Wakasis Guru',
                     default          => 'Guru',
                 },
             ]);
@@ -91,6 +91,51 @@ class GuruController
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->withInput()->withErrors(['error' => 'Gagal menyimpan: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Memperbarui Data Guru.
+     */
+    public function update(Request $request, $id)
+    {
+        $guru = Guru::findOrFail($id);
+
+        $validated = $request->validate([
+            'nip'        => 'required|string|max:18|unique:guru,nip,' . $guru->id_guru . ',id_guru',
+            'nama_guru'  => 'required|string|max:150',
+            'no_hp'      => 'nullable|string|max:15',
+            'kode_mapel' => 'nullable|exists:mapel,kode_mapel',
+            'jabatan'    => 'nullable|in:Guru,Kepala Sekolah,Wakasis Siswa,Wakasis Guru',
+        ], [
+            'nip.required'       => 'NIP wajib diisi.',
+            'nip.unique'         => 'NIP ini sudah terdaftar.',
+            'nama_guru.required' => 'Nama lengkap pegawai wajib diisi.',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            // Update username in users table if NIP changed
+            if ($guru->nip !== $validated['nip']) {
+                $user = User::where('id_guru', $guru->id_guru)->first();
+                if ($user) {
+                    $user->update(['username' => $validated['nip']]);
+                }
+            }
+
+            $guru->update([
+                'nip'        => $validated['nip'],
+                'nama_guru'  => $validated['nama_guru'],
+                'no_hp'      => $validated['no_hp'],
+                'kode_mapel' => $validated['kode_mapel'],
+                'jabatan'    => $validated['jabatan'] ?? $guru->jabatan,
+            ]);
+
+            DB::commit();
+            return redirect()->route('admin.guru.index')->with('success', 'Data pegawai berhasil diperbarui!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->withInput()->withErrors(['error' => 'Gagal memperbarui: ' . $e->getMessage()]);
         }
     }
 

@@ -80,7 +80,7 @@ class GuruDashboardController extends Controller
             'totalSesiHariIni',
             'sudahDiisiHariIni',
             'totalJadwalSemua',
-            'belumIsiMingguIni',
+            'belumIsiMingguIni'
         ));
     }
 
@@ -92,14 +92,39 @@ class GuruDashboardController extends Controller
         $user = Auth::user();
         $guru = $user->guru;
 
-        $daftarKelas = Kelas::orderBy('nama_kelas')->get();
+        if (!$guru) {
+            abort(403, 'Data guru tidak ditemukan.');
+        }
+
+        // 1. Ambil HANYA kelas di mana guru ini adalah wali kelasnya (Berdasarkan NIP / ID / Nama)
+        $daftarKelas = Kelas::where(function($q) use ($guru) {
+            $q->where('wali_kelas', $guru->nip);
+            if ($guru->id_guru) {
+                $q->orWhere('wali_kelas', $guru->id_guru);
+            }
+            if ($guru->nama_guru) {
+                $q->orWhere('wali_kelas', $guru->nama_guru);
+            }
+        })->orderBy('nama_kelas')->get();
+
+        // 2. Tolak akses jika guru ini BUKAN wali kelas dari kelas mana pun
+        if ($daftarKelas->isEmpty()) {
+            return redirect()->route('guru.dashboard')->withErrors(['error' => 'Akses ditolak. Anda tidak terdaftar sebagai Wali Kelas dari kelas manapun.']);
+        }
+
         $kelasId = $request->query('kelas_id');
 
         if ($kelasId) {
-            $kelasAktif = Kelas::find($kelasId);
+            // 3. Pastikan kelas_id yang direquest memang milik wali kelas tersebut
+            $kelasAktif = $daftarKelas->where('id_kelas', $kelasId)->first();
+            
+            // Jika memaksa memasukkan ID kelas lain via URL
+            if (!$kelasAktif) {
+                return redirect()->route('guru.wali-kelas')->withErrors(['error' => 'Akses ditolak. Anda bukan Wali Kelas dari kelas tersebut.']);
+            }
         } else {
-            $jadwalGuru = Jadwal::where('id_guru', $guru->id_guru ?? 1)->first();
-            $kelasAktif = $jadwalGuru ? $jadwalGuru->kelas : $daftarKelas->first();
+            // Default ke kelas pertama yang dipegang sebagai wali kelas
+            $kelasAktif = $daftarKelas->first();
         }
 
         $rekapSiswa = collect();
@@ -107,9 +132,49 @@ class GuruDashboardController extends Controller
             $siswaList = Siswa::where('id_kelas', $kelasAktif->id_kelas)->orderBy('nama_siswa')->get();
 
             foreach ($siswaList as $s) {
-                $alpaCount = JurnalDetailKetidakhadiran::where('id_siswa', $s->nis)->where('keterangan', 'Alpa')->count();
-                $sakitCount = JurnalDetailKetidakhadiran::where('id_siswa', $s->nis)->where('keterangan', 'Sakit')->count();
-                $izinCount = JurnalDetailKetidakhadiran::where('id_siswa', $s->nis)->where('keterangan', 'Izin')->count();
+                $semuaKetidakhadiran = JurnalDetailKetidakhadiran::with(['jurnal.jadwal.jamMulaiData', 'jurnal.jadwal.jamSelesaiData'])
+                    ->where('id_siswa', $s->nis)
+                    ->get();
+
+                $alpaCount = 0; $sakitCount = 0; $izinCount = 0;
+                $groupedByDate = [];
+                
+                foreach ($semuaKetidakhadiran as $kh) {
+                    if ($kh->keterangan == 'Alpa') $alpaCount++;
+                    elseif ($kh->keterangan == 'Sakit') $sakitCount++;
+                    elseif ($kh->keterangan == 'Izin') $izinCount++;
+
+                    if (!$kh->jurnal) continue;
+                    $tgl = $kh->jurnal->tanggal;
+                    $jamM = $kh->jurnal->jadwal->jamMulaiData->jam_ke ?? '?';
+                    $jamS = $kh->jurnal->jadwal->jamSelesaiData->jam_ke ?? '?';
+                    $teksJam = $jamM == $jamS ? "Jam ke-$jamM" : "Jam ke-$jamM-$jamS";
+                    
+                    if (!isset($groupedByDate[$tgl])) $groupedByDate[$tgl] = [];
+                    if (!isset($groupedByDate[$tgl][$kh->keterangan])) $groupedByDate[$tgl][$kh->keterangan] = [];
+                    $groupedByDate[$tgl][$kh->keterangan][] = $teksJam;
+                }
+
+                $riwayatAbsen = [];
+                foreach ($groupedByDate as $tgl => $ketGroups) {
+                    foreach ($ketGroups as $ket => $jams) {
+                        $jamText = implode(', ', $jams);
+                        if (count($jams) >= 4) {
+                            $jamText = "1 Hari Full (" . count($jams) . " Sesi)";
+                        } else {
+                            $jamText = "Di " . $jamText;
+                        }
+                        $riwayatAbsen[] = [
+                            'tanggal' => $tgl,
+                            'keterangan' => $ket,
+                            'detail_jam' => $jamText
+                        ];
+                    }
+                }
+                usort($riwayatAbsen, function($a, $b) {
+                    return strtotime($b['tanggal']) - strtotime($a['tanggal']);
+                });
+
                 $dispenCount = DispenSiswa::where('nis', $s->nis)->count();
 
                 $rekapSiswa->push([
@@ -121,6 +186,7 @@ class GuruDashboardController extends Controller
                     'dispen'       => $dispenCount,
                     'total_absen'  => $alpaCount + $sakitCount + $izinCount,
                     'perlu_atensi' => $alpaCount >= 3,
+                    'riwayat_absen'=> $riwayatAbsen,
                 ]);
             }
             $rekapSiswa = $rekapSiswa->sortByDesc('total_absen')->values();

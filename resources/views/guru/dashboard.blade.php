@@ -58,19 +58,22 @@
             </div>
         </div>
 
-        <!-- Card 4: Status Belum Diisi Minggu Ini -->
-        <div class="bg-white border border-[#D1D9EB] rounded-2xl p-5 shadow-sm flex items-start space-x-4">
-            <div class="p-3 {{ ($belumIsiMingguIni ?? 0) > 0 ? 'bg-rose-50 text-rose-600' : 'bg-emerald-50 text-emerald-600' }} rounded-xl">
+        <!-- Card 4: Status Belum Diisi Minggu Ini (Klik untuk melihat rincian tanggal, hari, jam, kelas) -->
+        <a href="{{ route('guru.jurnal.tertunggak') }}" class="bg-white border border-[#D1D9EB] rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-rose-300 transition-all flex items-start space-x-4 group cursor-pointer">
+            <div class="p-3 {{ ($belumIsiMingguIni ?? 0) > 0 ? 'bg-rose-50 text-rose-600' : 'bg-emerald-50 text-emerald-600' }} rounded-xl group-hover:scale-105 transition-transform">
                 <i data-lucide="{{ ($belumIsiMingguIni ?? 0) > 0 ? 'alert-triangle' : 'sparkles' }}" class="w-6 h-6"></i>
             </div>
-            <div>
-                <p class="text-[11px] font-bold uppercase tracking-wider text-[#8697C3]">Tertunggak Minggu Ini</p>
+            <div class="flex-1">
+                <div class="flex items-center justify-between">
+                    <p class="text-[11px] font-bold uppercase tracking-wider text-[#8697C3]">Tertunggak Minggu Ini</p>
+                    <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-gray-300 group-hover:text-rose-600 transition-colors"></i>
+                </div>
                 <h3 class="text-2xl font-black {{ ($belumIsiMingguIni ?? 0) > 0 ? 'text-rose-600' : 'text-emerald-600' }} mt-1">
                     {{ $belumIsiMingguIni ?? 0 }} Sesi
                 </h3>
-                <p class="text-[11px] text-gray-500 mt-0.5">{{ ($belumIsiMingguIni ?? 0) > 0 ? 'Perlu segera diisi' : 'Semua jurnal lengkap' }}</p>
+                <p class="text-[11px] text-gray-500 mt-0.5">{{ ($belumIsiMingguIni ?? 0) > 0 ? 'Klik untuk lihat rincian kelas & jam' : 'Semua jurnal lengkap' }}</p>
             </div>
-        </div>
+        </a>
     </div>
 
     <!-- TABEL JADWAL HARI INI -->

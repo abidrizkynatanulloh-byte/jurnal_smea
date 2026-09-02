@@ -23,6 +23,8 @@ class Siswa extends Model
         'nisn',
         'nama_siswa',
         'id_kelas',
+        'jenis_kelamin',
+        'no_hp_wali',
         'kota_lahir',
         'tanggal_lahir',
         'alamat',

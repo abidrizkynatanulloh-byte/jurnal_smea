@@ -8,6 +8,7 @@ use App\Models\Kelas;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class SiswaController
 {
@@ -31,7 +32,11 @@ class SiswaController
             });
         }
 
-        $siswaList = $query->orderBy('nama_siswa')->paginate(10)->withQueryString();
+        if ($request->filled('id_kelas')) {
+            $query->where('id_kelas', $request->id_kelas);
+        }
+
+        $siswaList = $query->orderBy('nama_siswa')->paginate(15)->withQueryString();
         $totalSiswa = Siswa::count();
 
         return view('admin.siswa.index', compact('siswaList', 'kelasList', 'totalSiswa'));
@@ -47,6 +52,8 @@ class SiswaController
             'nisn'          => 'required|string|max:20|unique:siswa,nisn|unique:users,username',
             'nama_siswa'    => 'required|string|max:100',
             'id_kelas'      => 'required|exists:kelas,id_kelas',
+            'jenis_kelamin' => 'nullable|in:L,P',
+            'no_hp_wali'    => 'nullable|string|max:25',
             'kota_lahir'    => 'nullable|string|max:100',
             'tanggal_lahir' => 'nullable|date',
             'alamat'        => 'nullable|string',
@@ -61,17 +68,28 @@ class SiswaController
 
         DB::beginTransaction();
         try {
+            // Filter hanya kolom yang benar-benar ada di tabel agar aman
+            $dataToSave = $validated;
+            if (!Schema::hasColumn('siswa', 'jenis_kelamin')) {
+                unset($dataToSave['jenis_kelamin']);
+            }
+            if (!Schema::hasColumn('siswa', 'no_hp_wali')) {
+                unset($dataToSave['no_hp_wali']);
+            }
+
             // 1. Simpan profil siswa
-            $siswa = Siswa::create($validated);
+            $siswa = Siswa::create($dataToSave);
 
             // 2. Buat akun login Wali Murid otomatis (Password default: wali123)
-            User::create([
-                'username'   => $validated['nisn'],
-                'password'   => Hash::make('wali123'),
-                'role'       => 'wali_murid',
-                'nisn_siswa' => $validated['nisn'],
-                'is_active'  => 1,
-            ]);
+            User::updateOrCreate(
+                ['username' => $validated['nisn']],
+                [
+                    'password'   => Hash::make('wali123'),
+                    'role'       => 'wali_murid',
+                    'nisn_siswa' => $validated['nisn'],
+                    'is_active'  => 1,
+                ]
+            );
 
             DB::commit();
             return redirect()->route('admin.siswa.index')->with('success', 'Siswa baru berhasil ditambahkan dan akun Wali Murid aktif!');
@@ -79,6 +97,39 @@ class SiswaController
             DB::rollBack();
             return back()->withInput()->withErrors(['error' => 'Gagal: ' . $e->getMessage()]);
         }
+    }
+
+    /**
+     * Memperbarui Data Siswa.
+     */
+    public function update(Request $request, $nis)
+    {
+        $siswa = Siswa::findOrFail($nis);
+
+        $validated = $request->validate([
+            'nama_siswa'    => 'required|string|max:100',
+            'id_kelas'      => 'nullable|exists:kelas,id_kelas',
+            'jenis_kelamin' => 'nullable|in:L,P',
+            'no_hp_wali'    => 'nullable|string|max:25',
+            'kota_lahir'    => 'nullable|string|max:100',
+            'tanggal_lahir' => 'nullable|date',
+            'alamat'        => 'nullable|string',
+        ], [
+            'nama_siswa.required' => 'Nama lengkap siswa wajib diisi.',
+        ]);
+
+        // Filter kolom yang ada di database agar tidak terjadi SQL Column Not Found
+        $dataToUpdate = $validated;
+        if (!Schema::hasColumn('siswa', 'jenis_kelamin')) {
+            unset($dataToUpdate['jenis_kelamin']);
+        }
+        if (!Schema::hasColumn('siswa', 'no_hp_wali')) {
+            unset($dataToUpdate['no_hp_wali']);
+        }
+
+        $siswa->update($dataToUpdate);
+
+        return redirect()->route('admin.siswa.index')->with('success', "Data siswa {$siswa->nama_siswa} berhasil diperbarui.");
     }
 
     /**
@@ -98,7 +149,7 @@ class SiswaController
      */
     public function trash()
     {
-        $trashList = Siswa::onlyTrashed()->paginate(10);
+        $trashList = Siswa::onlyTrashed()->paginate(15);
         return view('admin.siswa.trash', compact('trashList'));
     }
 
