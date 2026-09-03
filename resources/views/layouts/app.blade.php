@@ -72,30 +72,106 @@
 
     <style>
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #F8FAFC;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+        }
+        
+        /* Luxury Enterprise Micro Shadows & Chamfered Ring Borders */
+        .card-elevated {
+            background-color: #FFFFFF;
+            border: 1px solid rgba(209, 217, 235, 0.65);
+            box-shadow: 0 1px 3px 0 rgba(16, 24, 40, 0.03), 0 1px 2px -1px rgba(16, 24, 40, 0.03);
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .card-elevated:hover {
+            border-color: rgba(134, 151, 195, 0.5);
+            box-shadow: 0 8px 20px -3px rgba(16, 24, 40, 0.06), 0 3px 6px -2px rgba(16, 24, 40, 0.03);
+        }
+        
+        /* Tactile Big Tech Primary Button with Inner Bevel */
+        .btn-tactile {
+            background: linear-gradient(180deg, #4A5D8A 0%, #354264 100%);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 1px 3px 0 rgba(64, 80, 120, 0.25), inset 0 1px 0 0 rgba(255, 255, 255, 0.22);
+            transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .btn-tactile:hover {
+            background: linear-gradient(180deg, #42537C 0%, #2E3A58 100%);
+            box-shadow: 0 3px 6px 0 rgba(64, 80, 120, 0.32), inset 0 1px 0 0 rgba(255, 255, 255, 0.28);
+        }
+        .btn-tactile:active {
+            transform: scale(0.985);
+            box-shadow: 0 1px 2px 0 rgba(64, 80, 120, 0.2);
+        }
+
+        /* Modern Crisp Inset Inputs */
+        .input-enterprise {
+            background-color: #F8FAFC;
+            border: 1px solid #E2E8F0;
+            transition: all 0.15s ease;
+        }
+        .input-enterprise:focus {
+            background-color: #FFFFFF;
+            border-color: #405078;
+            box-shadow: 0 0 0 3px rgba(64, 80, 120, 0.14);
+        }
+
+        /* Ambient Backdrop */
+        .bg-mesh-canvas {
+            background-color: #F8FAFC;
+            background-image: radial-gradient(1200px circle at 50% 0px, rgba(134, 151, 195, 0.08) 0%, transparent 70%);
+        }
+
+        /* Ultra-Sleek Scrollbars */
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #CBD5E1;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94A3B8;
+        }
+
+        .custom-sidebar-scroll::-webkit-scrollbar {
+            width: 3px;
+        }
+        .custom-sidebar-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-sidebar-scroll::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 9999px;
+        }
+        .custom-sidebar-scroll::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
         }
     </style>
 </head>
-<body class="min-h-screen font-sans antialiased text-[#1E2538] bg-[#F4F6FA] flex flex-col md:flex-row relative">
+<body class="min-h-screen font-sans antialiased text-[#1E2538] bg-[#F8FAFC] flex flex-col md:flex-row relative">
 
     @auth
     <!-- ============================================================== -->
-    <!-- SIDEBAR NAVIGATION (Executive Navy #1E2538 / #405078)           -->
+    <!-- SIDEBAR NAVIGATION (Obsidian Executive Navy #111726)            -->
     <!-- ============================================================== -->
-<<<<<<< HEAD
-    <aside class="w-full md:w-60 bg-[#1E2538] text-white flex-shrink-0 flex flex-col border-r border-[#2B3650] shadow-xl md:h-screen md:sticky md:top-0 md:overflow-y-auto z-40">
-=======
-    <aside class="w-full md:w-64 bg-[#1E2538] text-white flex-shrink-0 flex flex-col border-r border-[#2B3650] shadow-xl z-20 md:sticky md:top-0 md:h-screen">
->>>>>>> 6bc67ec4f8602b97447783317932509793561cf2
+    <aside class="w-full md:w-60 bg-gradient-to-b from-[#111726] via-[#141B2D] to-[#0E131F] text-white flex-shrink-0 flex flex-col border-r border-[#242D45]/70 shadow-2xl md:h-screen md:sticky md:top-0 md:overflow-y-auto z-40">
         <!-- Brand Header -->
-        <div class="h-14 flex items-center px-5 bg-[#1E2538] border-b border-white/10 justify-between shrink-0">
+        <div class="h-14 flex items-center px-5 border-b border-white/[0.08] justify-between shrink-0 bg-white/[0.02]">
             <div class="flex items-center space-x-2.5">
-                <div class="w-8 h-8 rounded-lg bg-[#405078] flex items-center justify-center text-white shadow-xs">
+                <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-[#405078] via-[#4F6291] to-[#303D5C] flex items-center justify-center text-white shadow-[0_0_12px_rgba(134,151,195,0.25)] ring-1 ring-white/25">
                     <i data-lucide="book-open-check" class="w-4 h-4"></i>
                 </div>
                 <div>
-                    <span class="font-bold text-sm tracking-tight text-white block leading-tight">JURNAL SMEA</span>
-                    <span class="block text-[8.5px] font-semibold text-[#8697C3] uppercase tracking-widest">Monitoring Sekolah</span>
+                    <span class="font-extrabold text-sm tracking-tight text-white block leading-tight">JURNAL SMEA</span>
+                    <span class="block text-[8px] font-bold text-[#8697C3] uppercase tracking-widest">Enterprise Platform</span>
                 </div>
             </div>
             <!-- Mobile Menu Toggle Button -->
@@ -273,22 +349,22 @@
                 </a>
             @endif
 
-            <!-- User Info Card in Sidebar Bottom -->
-            <div class="pt-6 border-t border-white/10 mt-6 space-y-2">
-                <div class="px-3 py-2.5 rounded-xl bg-white/5 border border-white/5 flex items-center space-x-3">
-                    <div class="w-8 h-8 rounded-lg bg-[#405078] text-white font-bold text-xs flex items-center justify-center flex-shrink-0">
+            <!-- User Info Card in Sidebar Bottom (Acrylic Glass Style) -->
+            <div class="pt-4 border-t border-white/10 mt-5 space-y-2">
+                <div class="px-3 py-2 rounded-xl bg-white/[0.05] border border-white/10 backdrop-blur-xs flex items-center space-x-2.5 hover:bg-white/[0.08] transition-colors">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-[#4A5D8A] to-[#364467] text-white font-bold text-xs flex items-center justify-center flex-shrink-0 shadow-xs ring-1 ring-white/20">
                         {{ strtoupper(substr(Auth::user()->username, 0, 2)) }}
                     </div>
-                    <div class="overflow-hidden">
-                        <p class="text-xs font-bold text-white truncate">{{ Auth::user()->username }}</p>
-                        <p class="text-[10px] text-[#8697C3] uppercase truncate font-medium">{{ str_replace('_', ' ', Auth::user()->role) }}</p>
+                    <div class="overflow-hidden flex-1">
+                        <p class="text-xs font-bold text-white truncate leading-tight">{{ Auth::user()->nama_display ?? Auth::user()->username }}</p>
+                        <p class="text-[9.5px] text-[#8697C3] uppercase tracking-wider truncate font-semibold mt-0.5">{{ str_replace('_', ' ', Auth::user()->role) }}</p>
                     </div>
                 </div>
 
                 <form action="{{ route('logout') }}" method="POST">
                     @csrf
-                    <button type="submit" class="w-full flex items-center space-x-3 px-3.5 py-2 rounded-xl text-xs font-semibold text-rose-400 hover:bg-rose-500/10 hover:text-rose-300 transition-colors cursor-pointer">
-                        <i data-lucide="log-out" class="w-4 h-4"></i>
+                    <button type="submit" class="w-full flex items-center space-x-2.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-rose-400/90 hover:bg-rose-500/10 hover:text-rose-300 transition-colors cursor-pointer">
+                        <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
                         <span>Keluar (Logout)</span>
                     </button>
                 </form>
@@ -297,15 +373,12 @@
     </aside>
     @endauth
 
-    <!-- ============================================================== -->
-    <!-- MAIN CONTENT AREA                                              -->
-    <!-- ============================================================== -->
-    <main class="flex-1 flex flex-col min-w-0 bg-[#F4F6FA]">
+    <main class="flex-1 flex flex-col min-w-0 bg-mesh-canvas">
         @auth
-        <!-- Top Navigation Header (Sticky Top) -->
-        <header class="h-14 bg-white/95 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-30 flex items-center justify-between px-5 md:px-7 flex-shrink-0 shadow-2xs">
+        <!-- Top Navigation Header (Frosted Glassmorphism) -->
+        <header class="h-14 bg-white/80 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-30 flex items-center justify-between px-5 md:px-7 flex-shrink-0 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
             <div class="flex items-center space-x-2.5">
-                <span class="inline-flex items-center px-2.5 py-0.5 bg-[#405078]/10 text-[#405078] border border-[#405078]/15 rounded-full text-[11px] font-bold uppercase tracking-wider">
+                <span class="inline-flex items-center px-2.5 py-0.5 bg-gradient-to-r from-[#405078]/10 to-[#5F72A3]/10 text-[#405078] border border-[#405078]/20 rounded-full text-[11px] font-bold uppercase tracking-wider">
                     <span class="w-1.5 h-1.5 rounded-full bg-[#405078] mr-1.5"></span>
                     {{ str_replace('_', ' ', Auth::user()->role) }}
                 </span>
@@ -315,22 +388,22 @@
             
             <div class="flex items-center space-x-4">
                 <!-- Date Display -->
-                <div class="hidden sm:flex items-center space-x-2 text-xs text-slate-500 font-medium bg-[#F8FAFC] px-3 py-1 rounded-lg border border-slate-200">
+                <div class="hidden sm:flex items-center space-x-2 text-xs text-slate-600 font-medium bg-slate-50 px-3 py-1 rounded-lg border border-slate-200/80">
                     <i data-lucide="calendar" class="w-3.5 h-3.5 text-[#405078]"></i>
                     <span>{{ date('l, d M Y') }}</span>
                 </div>
                 
                 <!-- Quick User Status -->
                 <div class="flex items-center space-x-2.5 pl-3 border-l border-slate-200">
-                    <div class="w-7.5 h-7.5 rounded-full bg-[#405078] text-white flex items-center justify-center font-bold text-xs shadow-2xs">
-                        {{ strtoupper(substr(Auth::user()->username, 0, 1)) }}
+                    <div class="relative">
+                        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-[#405078] to-[#2B3650] text-white flex items-center justify-center font-bold text-xs shadow-xs ring-2 ring-slate-100">
+                            {{ strtoupper(substr(Auth::user()->username, 0, 1)) }}
+                        </div>
+                        <span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-white"></span>
                     </div>
                     <div class="hidden lg:block text-left">
                         <p class="text-xs font-bold text-[#1E2538] leading-tight">{{ Auth::user()->nama_display ?? Auth::user()->username }}</p>
-                        <p class="text-[10px] text-emerald-600 font-semibold flex items-center space-x-1">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block"></span>
-                            <span>Aktif</span>
-                        </p>
+                        <p class="text-[10px] text-emerald-600 font-semibold leading-tight mt-0.5">Online</p>
                     </div>
                 </div>
             </div>
