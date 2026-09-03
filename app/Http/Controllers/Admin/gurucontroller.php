@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use App\Models\Guru;
-use App\Models\Mapel;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
@@ -12,28 +11,25 @@ use Illuminate\Support\Facades\DB;
 class GuruController
 {
     /**
-     * Menampilkan Halaman Data Guru & Pegawai (Form Tambah di Atas + Tabel di Bawah).
+     * Menampilkan Halaman Data Guru & Pegawai.
      */
     public function index(Request $request)
     {
-        // 1. Data Mapel untuk Dropdown Form & Filter
-        $mapelList = Mapel::orderBy('nama_mapel')->get();
-
-        // 2. Query Data Guru dengan Filter Search & Mapel
-        $query = Guru::query();
+        $query = Guru::with('user');
 
         // Filter Pencarian Nama / NIP
         if ($request->filled('search')) {
             $keyword = trim($request->search);
             $query->where(function ($q) use ($keyword) {
                 $q->where('nama_guru', 'LIKE', "%{$keyword}%")
-                  ->orWhere('nip', 'LIKE', "%{$keyword}%");
+                  ->orWhere('nip', 'LIKE', "%{$keyword}%")
+                  ->orWhere('jabatan', 'LIKE', "%{$keyword}%");
             });
         }
 
-        // Filter Pilihan Mapel
-        if ($request->filled('kode_mapel')) {
-            $query->where('kode_mapel', $request->kode_mapel);
+        // Filter Jabatan / Role
+        if ($request->filled('jabatan')) {
+            $query->where('jabatan', $request->jabatan);
         }
 
         $perPage = (int) $request->input('per_page', 30);
@@ -42,7 +38,7 @@ class GuruController
         $guruList = $query->orderBy('nama_guru')->paginate($perPage)->withQueryString();
         $totalGuru = Guru::count();
 
-        return view('admin.guru.index', compact('guruList', 'mapelList', 'totalGuru'));
+        return view('admin.guru.index', compact('guruList', 'totalGuru'));
     }
 
     /**
@@ -54,11 +50,10 @@ class GuruController
             'nip'        => 'required|string|max:18|unique:guru,nip|unique:users,username',
             'nama_guru'  => 'required|string|max:150',
             'no_hp'      => 'nullable|string|max:15',
-            'kode_mapel' => 'nullable|exists:mapel,kode_mapel',
             'role'       => 'required|in:guru,guru_piket,staf_tu,satpam,kepala_sekolah,wakasis_siswa,wakasis_guru',
             'password'   => 'required|string|min:4',
         ], [
-            'nip.required'       => 'NIP wajib diisi.',
+            'nip.required'       => 'NIP / Kode Pegawai wajib diisi.',
             'nip.unique'         => 'NIP ini sudah terdaftar.',
             'nama_guru.required' => 'Nama lengkap pegawai wajib diisi.',
             'password.required'  => 'Password wajib diisi.',
@@ -71,11 +66,12 @@ class GuruController
                 'nip'        => $validated['nip'],
                 'nama_guru'  => $validated['nama_guru'],
                 'no_hp'      => $validated['no_hp'],
-                'kode_mapel' => $validated['kode_mapel'],
+                'kode_mapel' => null, // Mapel tidak diisi di sini (mengikuti penugasan jadwal KBM)
                 'jabatan'    => match ($validated['role']) {
                     'kepala_sekolah' => 'Kepala Sekolah',
                     'wakasis_siswa'  => 'Wakasis Siswa',
                     'wakasis_guru'   => 'Wakasis Guru',
+                    'guru_piket'     => 'Guru Piket',
                     default          => 'Guru',
                 },
             ]);
@@ -98,41 +94,52 @@ class GuruController
     }
 
     /**
-     * Memperbarui Data Guru.
+     * Memperbarui Data Guru & Akun Loginnya.
      */
     public function update(Request $request, $id)
     {
         $guru = Guru::findOrFail($id);
 
         $validated = $request->validate([
-            'nip'        => 'required|string|max:18|unique:guru,nip,' . $guru->id_guru . ',id_guru',
-            'nama_guru'  => 'required|string|max:150',
-            'no_hp'      => 'nullable|string|max:15',
-            'kode_mapel' => 'nullable|exists:mapel,kode_mapel',
-            'jabatan'    => 'nullable|in:Guru,Kepala Sekolah,Wakasis Siswa,Wakasis Guru',
+            'nip'       => 'required|string|max:18|unique:guru,nip,' . $guru->id_guru . ',id_guru',
+            'nama_guru' => 'required|string|max:150',
+            'no_hp'     => 'nullable|string|max:15',
+            'role'      => 'nullable|in:guru,guru_piket,staf_tu,satpam,kepala_sekolah,wakasis_siswa,wakasis_guru',
+            'password'  => 'nullable|string|min:4',
         ], [
-            'nip.required'       => 'NIP wajib diisi.',
+            'nip.required'       => 'NIP / Kode Pegawai wajib diisi.',
             'nip.unique'         => 'NIP ini sudah terdaftar.',
             'nama_guru.required' => 'Nama lengkap pegawai wajib diisi.',
         ]);
 
         DB::beginTransaction();
         try {
-            // Update username in users table if NIP changed
-            if ($guru->nip !== $validated['nip']) {
-                $user = User::where('id_guru', $guru->id_guru)->first();
-                if ($user) {
-                    $user->update(['username' => $validated['nip']]);
-                }
-            }
-
+            // Update tabel guru
             $guru->update([
-                'nip'        => $validated['nip'],
-                'nama_guru'  => $validated['nama_guru'],
-                'no_hp'      => $validated['no_hp'],
-                'kode_mapel' => $validated['kode_mapel'],
-                'jabatan'    => $validated['jabatan'] ?? $guru->jabatan,
+                'nip'       => $validated['nip'],
+                'nama_guru' => $validated['nama_guru'],
+                'no_hp'     => $validated['no_hp'],
+                'jabatan'   => isset($validated['role']) ? match ($validated['role']) {
+                    'kepala_sekolah' => 'Kepala Sekolah',
+                    'wakasis_siswa'  => 'Wakasis Siswa',
+                    'wakasis_guru'   => 'Wakasis Guru',
+                    'guru_piket'     => 'Guru Piket',
+                    default          => 'Guru',
+                } : $guru->jabatan,
             ]);
+
+            // Update tabel users
+            $user = User::where('id_guru', $guru->id_guru)->first();
+            if ($user) {
+                $userUpdates = ['username' => $validated['nip']];
+                if (!empty($validated['role'])) {
+                    $userUpdates['role'] = $validated['role'];
+                }
+                if (!empty($validated['password'])) {
+                    $userUpdates['password'] = Hash::make($validated['password']);
+                }
+                $user->update($userUpdates);
+            }
 
             DB::commit();
             return redirect()->route('admin.guru.index')->with('success', 'Data pegawai berhasil diperbarui!');
@@ -159,7 +166,7 @@ class GuruController
      */
     public function trash()
     {
-        $trashList = Guru::onlyTrashed()->paginate(10);
+        $trashList = Guru::onlyTrashed()->paginate(30);
         return view('admin.guru.trash', compact('trashList'));
     }
 

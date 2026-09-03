@@ -1,19 +1,19 @@
 @props(['paginator', 'perPageOptions' => [15, 30, 50, 100, 150]])
 
 @if($paginator instanceof \Illuminate\Pagination\LengthAwarePaginator && $paginator->total() > 0)
-    <div class="px-6 py-4 bg-[#F8FAFC] border-t border-[#D1D9EB] flex flex-col sm:flex-row items-center justify-between gap-4 select-none">
+    <div class="px-5 py-3 bg-white border-t border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-3 select-none">
         <!-- Results per page & Counter -->
-        <div class="flex items-center space-x-3 text-xs text-gray-600">
-            <span class="font-medium text-gray-500">Results per page:</span>
+        <div class="flex items-center space-x-3 text-xs text-slate-600">
+            <span class="font-normal text-slate-500">Results per page:</span>
             <div class="relative inline-block">
                 <select onchange="changePerPage(this.value)" 
-                    class="bg-white border border-[#D1D9EB] text-[#1E2538] text-xs font-bold rounded-lg px-3 py-1.5 focus:outline-none focus:border-[#405078] focus:ring-1 focus:ring-[#405078] cursor-pointer shadow-2xs">
+                    class="bg-white border border-slate-300 hover:border-slate-400 text-slate-800 text-xs font-semibold rounded-md px-2.5 py-1 focus:outline-none focus:ring-1 focus:ring-[#405078] cursor-pointer shadow-2xs">
                     @foreach($perPageOptions as $opt)
                         <option value="{{ $opt }}" {{ $paginator->perPage() == $opt ? 'selected' : '' }}>{{ $opt }}</option>
                     @endforeach
                 </select>
             </div>
-            <span class="font-semibold text-gray-700">
+            <span class="font-medium text-slate-600">
                 {{ $paginator->firstItem() ?? 0 }} – {{ $paginator->lastItem() ?? 0 }} of {{ $paginator->total() }}
             </span>
         </div>

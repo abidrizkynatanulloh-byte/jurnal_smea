@@ -82,26 +82,26 @@
     <!-- ============================================================== -->
     <!-- SIDEBAR NAVIGATION (Executive Navy #1E2538 / #405078)           -->
     <!-- ============================================================== -->
-    <aside class="w-full md:w-64 bg-[#1E2538] text-white flex-shrink-0 flex flex-col border-r border-[#2B3650] shadow-xl z-20">
+    <aside class="w-full md:w-60 bg-[#1E2538] text-white flex-shrink-0 flex flex-col border-r border-[#2B3650] shadow-xl md:h-screen md:sticky md:top-0 md:overflow-y-auto z-40">
         <!-- Brand Header -->
-        <div class="h-16 flex items-center px-6 bg-[#1E2538] border-b border-white/10 justify-between">
-            <div class="flex items-center space-x-3">
-                <div class="w-9 h-9 rounded-xl bg-[#405078] flex items-center justify-center text-white shadow-sm shadow-black/20">
-                    <i data-lucide="book-open-check" class="w-5 h-5"></i>
+        <div class="h-14 flex items-center px-5 bg-[#1E2538] border-b border-white/10 justify-between shrink-0">
+            <div class="flex items-center space-x-2.5">
+                <div class="w-8 h-8 rounded-lg bg-[#405078] flex items-center justify-center text-white shadow-xs">
+                    <i data-lucide="book-open-check" class="w-4 h-4"></i>
                 </div>
                 <div>
-                    <span class="font-bold text-base tracking-tight text-white block">JURNAL SMEA</span>
-                    <span class="block text-[9px] font-semibold text-[#8697C3] uppercase tracking-widest -mt-0.5">Monitoring Sekolah</span>
+                    <span class="font-bold text-sm tracking-tight text-white block leading-tight">JURNAL SMEA</span>
+                    <span class="block text-[8.5px] font-semibold text-[#8697C3] uppercase tracking-widest">Monitoring Sekolah</span>
                 </div>
             </div>
             <!-- Mobile Menu Toggle Button -->
-            <button id="mobile-menu-toggle" class="md:hidden p-1.5 text-gray-400 hover:text-white rounded-lg hover:bg-white/5 focus:outline-none">
-                <i data-lucide="menu" class="w-5 h-5"></i>
+            <button id="mobile-menu-toggle" class="md:hidden p-1 text-gray-400 hover:text-white rounded-lg hover:bg-white/5 focus:outline-none">
+                <i data-lucide="menu" class="w-4 h-4"></i>
             </button>
         </div>
 
         <!-- Navigation Links -->
-        <nav id="sidebar-nav" class="flex-1 px-4 py-5 space-y-1.5 hidden md:block overflow-y-auto custom-scrollbar">
+        <nav id="sidebar-nav" class="flex-1 px-3 py-3.5 space-y-1 hidden md:block overflow-y-auto custom-scrollbar">
             
             {{-- ROLE 1: STAF TU / ADMIN --}}
             @if(Auth::user()->role === 'staf_tu')
@@ -298,31 +298,31 @@
     <!-- ============================================================== -->
     <main class="flex-1 flex flex-col min-h-screen overflow-x-hidden bg-[#F4F6FA]">
         @auth
-        <!-- Top Navigation Header -->
-        <header class="h-16 bg-white border-b border-[#D1D9EB] flex items-center justify-between px-6 md:px-8 flex-shrink-0 shadow-xs z-10">
-            <div class="flex items-center space-x-3">
-                <span class="inline-flex items-center px-3 py-1 bg-[#405078]/10 text-[#405078] border border-[#405078]/15 rounded-full text-xs font-bold uppercase tracking-wider">
-                    <span class="w-1.5 h-1.5 rounded-full bg-[#405078] mr-2"></span>
+        <!-- Top Navigation Header (Sticky Top) -->
+        <header class="h-14 bg-white/95 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-30 flex items-center justify-between px-5 md:px-7 flex-shrink-0 shadow-2xs">
+            <div class="flex items-center space-x-2.5">
+                <span class="inline-flex items-center px-2.5 py-0.5 bg-[#405078]/10 text-[#405078] border border-[#405078]/15 rounded-full text-[11px] font-bold uppercase tracking-wider">
+                    <span class="w-1.5 h-1.5 rounded-full bg-[#405078] mr-1.5"></span>
                     {{ str_replace('_', ' ', Auth::user()->role) }}
                 </span>
-                <span class="hidden md:inline text-xs text-gray-400">•</span>
-                <span class="hidden md:inline text-xs text-gray-500 font-medium">SMK Negeri 1 (SMEA)</span>
+                <span class="hidden md:inline text-xs text-slate-300">•</span>
+                <span class="hidden md:inline text-xs text-slate-500 font-medium">SMK Negeri 1 (SMEA)</span>
             </div>
             
-            <div class="flex items-center space-x-5">
+            <div class="flex items-center space-x-4">
                 <!-- Date Display -->
-                <div class="hidden sm:flex items-center space-x-2 text-xs text-gray-500 font-medium bg-[#F8FAFC] px-3.5 py-1.5 rounded-lg border border-[#D1D9EB]">
+                <div class="hidden sm:flex items-center space-x-2 text-xs text-slate-500 font-medium bg-[#F8FAFC] px-3 py-1 rounded-lg border border-slate-200">
                     <i data-lucide="calendar" class="w-3.5 h-3.5 text-[#405078]"></i>
                     <span>{{ date('l, d M Y') }}</span>
                 </div>
                 
                 <!-- Quick User Status -->
-                <div class="flex items-center space-x-3 pl-3 border-l border-gray-200">
-                    <div class="w-8 h-8 rounded-full bg-[#405078] text-white flex items-center justify-center font-bold text-xs shadow-xs">
+                <div class="flex items-center space-x-2.5 pl-3 border-l border-slate-200">
+                    <div class="w-7.5 h-7.5 rounded-full bg-[#405078] text-white flex items-center justify-center font-bold text-xs shadow-2xs">
                         {{ strtoupper(substr(Auth::user()->username, 0, 1)) }}
                     </div>
                     <div class="hidden lg:block text-left">
-                        <p class="text-xs font-bold text-[#1E2538] leading-tight">{{ Auth::user()->username }}</p>
+                        <p class="text-xs font-bold text-[#1E2538] leading-tight">{{ Auth::user()->nama_display ?? Auth::user()->username }}</p>
                         <p class="text-[10px] text-emerald-600 font-semibold flex items-center space-x-1">
                             <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block"></span>
                             <span>Aktif</span>
@@ -334,7 +334,7 @@
         @endauth
 
         <!-- Body Page Contents -->
-        <div class="flex-1 p-6 md:p-8 max-w-7xl w-full mx-auto">
+        <div class="flex-1 p-4 md:p-6 max-w-[1600px] w-full mx-auto">
             <!-- Flash Message Banner -->
             @if (session('success'))
                 <div class="mb-6 p-4 bg-emerald-50 border-l-4 border-emerald-600 rounded-r-2xl text-emerald-800 flex items-start space-x-3 shadow-xs">
