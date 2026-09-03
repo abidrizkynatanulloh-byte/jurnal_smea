@@ -63,12 +63,17 @@ class SatpamController extends Controller
     public function konfirmasiKeluar($id)
     {
         $dispen = DispenSiswa::findOrFail($id);
+
+        $idSatpam = Auth::user()->id_satpam;
+        if (!$idSatpam) {
+            return back()->withErrors(['error' => 'Data satpam tidak ditemukan pada akun Anda.']);
+        }
         
         $jamKeluar = Carbon::now()->format('H:i:s');
         $dispen->update([
             'status'             => 'Sedang di Luar',
             'jam_keluar_aktual'  => $jamKeluar,
-            'dicatat_satpam'     => Auth::id(),
+            'dicatat_satpam'     => Auth::user()->id_satpam,
         ]);
 
         AuditLog::log(

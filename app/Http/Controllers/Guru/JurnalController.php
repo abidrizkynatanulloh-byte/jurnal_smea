@@ -23,6 +23,10 @@ class JurnalController
         $user = Auth::user();
         $guru = $user->guru;
 
+        if (!$guru) {
+            abort(403, 'Data guru tidak ditemukan.');
+        }
+
         // Pastikan jadwal ini milik guru yang login
         $jadwal = Jadwal::with(['kelas', 'mapel', 'ruangan'])
             ->where('id_jadwal', $id_jadwal)
@@ -75,7 +79,7 @@ class JurnalController
                         $q->whereDate('tanggal', $tanggalHariIni);
                     })
                     ->whereIn('keterangan', ['Sakit', 'Izin'])
-                    ->latest()
+                    ->latest('id_detail')
                     ->first();
 
                 $autoStatus = 'Hadir';
@@ -108,6 +112,10 @@ class JurnalController
     {
         $user = Auth::user();
         $guru = $user->guru;
+
+        if (!$guru) {
+            abort(403, 'Data guru tidak ditemukan.');
+        }
 
         $request->validate([
             'id_jadwal'            => 'required|exists:jadwal,id_jadwal',
@@ -214,6 +222,10 @@ class JurnalController
         $user = Auth::user();
         $guru = $user->guru;
 
+        if (!$guru) {
+            abort(403, 'Data guru tidak ditemukan.');
+        }
+
         $query = JurnalMengajar::with(['jadwal.kelas', 'jadwal.mapel', 'jadwal.ruangan', 'foto'])
             ->whereHas('jadwal', function ($q) use ($guru) {
                 $q->where('id_guru', $guru->id_guru);
@@ -235,6 +247,10 @@ class JurnalController
     {
         $user = Auth::user();
         $guru = $user->guru;
+
+        if (!$guru) {
+            abort(403, 'Data guru tidak ditemukan.');
+        }
 
         $startOfWeek = Carbon::now()->startOfWeek(Carbon::MONDAY);
         $today = Carbon::today();
