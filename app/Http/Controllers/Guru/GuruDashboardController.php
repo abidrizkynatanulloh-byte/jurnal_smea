@@ -175,18 +175,35 @@ class GuruDashboardController extends Controller
                     return strtotime($b['tanggal']) - strtotime($a['tanggal']);
                 });
 
-                $dispenCount = DispenSiswa::where('nis', $s->nis)->count();
+                $semuaDispen = DispenSiswa::where('nis', $s->nis)
+                    ->orderBy('tanggal', 'desc')
+                    ->get();
+
+                $dispenCount = $semuaDispen->count();
+
+                $riwayatDispen = [];
+                foreach ($semuaDispen as $d) {
+                    $riwayatDispen[] = [
+                        'tanggal'    => $d->tanggal,
+                        'keperluan'  => $d->keperluan,
+                        'jam_ke'     => $d->jam_ke,
+                        'status'     => $d->status,
+                        'jam_keluar' => $d->jam_keluar_aktual,
+                        'jam_kembali'=> $d->jam_kembali_aktual,
+                    ];
+                }
 
                 $rekapSiswa->push([
-                    'nis'          => $s->nis,
-                    'nama_siswa'   => $s->nama_siswa,
-                    'alpa'         => $alpaCount,
-                    'sakit'        => $sakitCount,
-                    'izin'         => $izinCount,
-                    'dispen'       => $dispenCount,
-                    'total_absen'  => $alpaCount + $sakitCount + $izinCount,
-                    'perlu_atensi' => $alpaCount >= 3,
-                    'riwayat_absen'=> $riwayatAbsen,
+                    'nis'            => $s->nis,
+                    'nama_siswa'     => $s->nama_siswa,
+                    'alpa'           => $alpaCount,
+                    'sakit'          => $sakitCount,
+                    'izin'           => $izinCount,
+                    'dispen'         => $dispenCount,
+                    'total_absen'    => $alpaCount + $sakitCount + $izinCount,
+                    'perlu_atensi'   => $alpaCount >= 3,
+                    'riwayat_absen'  => $riwayatAbsen,
+                    'riwayat_dispen' => $riwayatDispen,
                 ]);
             }
             $rekapSiswa = $rekapSiswa->sortByDesc('total_absen')->values();

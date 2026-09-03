@@ -121,42 +121,99 @@
                                     </button>
                                 </div>
 
-                                <!-- Modal Riwayat Ketidakhadiran -->
+                                <!-- Modal Riwayat Ketidakhadiran & Dispensasi -->
                                 <div x-show="modalTerbuka" style="display: none;" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
                                     <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
                                         <div x-show="modalTerbuka" @click="modalTerbuka = false" x-transition.opacity class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
                                         <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-                                        <div x-show="modalTerbuka" x-transition class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                                        <div x-show="modalTerbuka" x-transition x-data="{ activeTab: 'absen' }" class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
                                             <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                                                <div class="sm:flex sm:items-start">
-                                                    <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
-                                                        <h3 class="text-lg leading-6 font-bold text-gray-900 border-b pb-2" id="modal-title">
-                                                            Riwayat Ketidakhadiran - {{ $s['nama_siswa'] }}
-                                                        </h3>
-                                                        <div class="mt-4 space-y-3 max-h-60 overflow-y-auto pr-2">
-                                                            @forelse($s['riwayat_absen'] as $riwayat)
-                                                                <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg border border-gray-100">
-                                                                    <div class="text-left">
-                                                                        <div class="font-bold text-sm text-[#1E2538]">{{ \Carbon\Carbon::parse($riwayat['tanggal'])->locale('id')->isoFormat('dddd, D MMMM Y') }}</div>
-                                                                        <div class="text-xs text-gray-500 mt-1">Waktu: <span class="font-semibold">{{ $riwayat['detail_jam'] }}</span></div>
+                                                <div class="w-full">
+                                                    <h3 class="text-lg leading-6 font-bold text-gray-900 border-b pb-2" id="modal-title">
+                                                        Detail Riwayat - {{ $s['nama_siswa'] }}
+                                                    </h3>
+
+                                                    <!-- Tab Buttons -->
+                                                    <div class="flex mt-4 bg-gray-100 rounded-xl p-1 space-x-1">
+                                                        <button @click="activeTab = 'absen'" :class="activeTab === 'absen' ? 'bg-white shadow-sm text-[#1E2538] font-bold' : 'text-gray-500 hover:text-gray-700'" class="flex-1 py-2 px-3 rounded-lg text-xs font-semibold transition-all">
+                                                            <span>Ketidakhadiran</span>
+                                                            <span class="ml-1 px-1.5 py-0.5 rounded-full text-[10px]" :class="activeTab === 'absen' ? 'bg-rose-100 text-rose-700' : 'bg-gray-200 text-gray-500'">{{ count($s['riwayat_absen']) }}</span>
+                                                        </button>
+                                                        <button @click="activeTab = 'dispen'" :class="activeTab === 'dispen' ? 'bg-white shadow-sm text-[#1E2538] font-bold' : 'text-gray-500 hover:text-gray-700'" class="flex-1 py-2 px-3 rounded-lg text-xs font-semibold transition-all">
+                                                            <span>Dispensasi</span>
+                                                            <span class="ml-1 px-1.5 py-0.5 rounded-full text-[10px]" :class="activeTab === 'dispen' ? 'bg-purple-100 text-purple-700' : 'bg-gray-200 text-gray-500'">{{ count($s['riwayat_dispen']) }}</span>
+                                                        </button>
+                                                    </div>
+
+                                                    <!-- Tab: Ketidakhadiran -->
+                                                    <div x-show="activeTab === 'absen'" class="mt-4 space-y-3 max-h-72 overflow-y-auto pr-2">
+                                                        @forelse($s['riwayat_absen'] as $riwayat)
+                                                            <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg border border-gray-100">
+                                                                <div class="text-left">
+                                                                    <div class="font-bold text-sm text-[#1E2538]">{{ \Carbon\Carbon::parse($riwayat['tanggal'])->locale('id')->isoFormat('dddd, D MMMM Y') }}</div>
+                                                                    <div class="text-xs text-gray-500 mt-1">Waktu: <span class="font-semibold">{{ $riwayat['detail_jam'] }}</span></div>
+                                                                </div>
+                                                                <div>
+                                                                    @php
+                                                                        $badge = match ($riwayat['keterangan']) {
+                                                                            'Sakit' => 'bg-blue-50 text-blue-700',
+                                                                            'Izin'  => 'bg-amber-50 text-amber-700',
+                                                                            default => 'bg-rose-50 text-rose-700',
+                                                                        };
+                                                                    @endphp
+                                                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold {{ $badge }}">
+                                                                        {{ $riwayat['keterangan'] }}
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        @empty
+                                                            <div class="text-center text-gray-500 text-sm italic py-4">Belum ada riwayat ketidakhadiran.</div>
+                                                        @endforelse
+                                                    </div>
+
+                                                    <!-- Tab: Dispensasi -->
+                                                    <div x-show="activeTab === 'dispen'" style="display: none;" class="mt-4 space-y-3 max-h-72 overflow-y-auto pr-2">
+                                                        @forelse($s['riwayat_dispen'] as $dispen)
+                                                            <div class="p-3 bg-purple-50/50 rounded-lg border border-purple-100">
+                                                                <div class="flex justify-between items-start">
+                                                                    <div class="text-left flex-1">
+                                                                        <div class="font-bold text-sm text-[#1E2538]">{{ \Carbon\Carbon::parse($dispen['tanggal'])->locale('id')->isoFormat('dddd, D MMMM Y') }}</div>
+                                                                        <div class="text-xs text-gray-600 mt-1">
+                                                                            <span class="font-semibold">Keperluan:</span> {{ $dispen['keperluan'] }}
+                                                                        </div>
+                                                                        @if($dispen['jam_ke'])
+                                                                            <div class="text-xs text-gray-500 mt-0.5">Jam ke: {{ $dispen['jam_ke'] }}</div>
+                                                                        @endif
+                                                                        @if($dispen['jam_keluar'] || $dispen['jam_kembali'])
+                                                                            <div class="text-xs text-gray-500 mt-0.5">
+                                                                                @if($dispen['jam_keluar'])
+                                                                                    Keluar: <span class="font-semibold">{{ $dispen['jam_keluar'] }}</span>
+                                                                                @endif
+                                                                                @if($dispen['jam_kembali'])
+                                                                                    · Kembali: <span class="font-semibold">{{ $dispen['jam_kembali'] }}</span>
+                                                                                @endif
+                                                                            </div>
+                                                                        @endif
                                                                     </div>
-                                                                    <div>
+                                                                    <div class="ml-3">
                                                                         @php
-                                                                            $badge = match ($riwayat['keterangan']) {
-                                                                                'Sakit' => 'bg-blue-50 text-blue-700',
-                                                                                'Izin'  => 'bg-amber-50 text-amber-700',
-                                                                                default => 'bg-rose-50 text-rose-700',
+                                                                            $statusBadge = match ($dispen['status']) {
+                                                                                'Disetujui'      => 'bg-emerald-50 text-emerald-700',
+                                                                                'Sedang di Luar' => 'bg-amber-50 text-amber-700',
+                                                                                'Sudah Kembali'  => 'bg-blue-50 text-blue-700',
+                                                                                'Ditolak'        => 'bg-rose-50 text-rose-700',
+                                                                                default          => 'bg-gray-100 text-gray-600',
                                                                             };
                                                                         @endphp
-                                                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold {{ $badge }}">
-                                                                            {{ $riwayat['keterangan'] }}
+                                                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold {{ $statusBadge }}">
+                                                                            {{ $dispen['status'] }}
                                                                         </span>
                                                                     </div>
                                                                 </div>
-                                                            @empty
-                                                                <div class="text-center text-gray-500 text-sm italic py-4">Belum ada riwayat ketidakhadiran.</div>
-                                                            @endforelse
-                                                        </div>
+                                                            </div>
+                                                        @empty
+                                                            <div class="text-center text-gray-500 text-sm italic py-4">Belum ada riwayat dispensasi.</div>
+                                                        @endforelse
                                                     </div>
                                                 </div>
                                             </div>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id" class="h-full bg-[#F4F6FA]">
+<html lang="id" class="bg-[#F4F6FA]">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -76,13 +76,17 @@
         }
     </style>
 </head>
-<body class="h-full font-sans antialiased text-[#1E2538] bg-[#F4F6FA] flex flex-col md:flex-row">
+<body class="min-h-screen font-sans antialiased text-[#1E2538] bg-[#F4F6FA] flex flex-col md:flex-row relative">
 
     @auth
     <!-- ============================================================== -->
     <!-- SIDEBAR NAVIGATION (Executive Navy #1E2538 / #405078)           -->
     <!-- ============================================================== -->
+<<<<<<< HEAD
     <aside class="w-full md:w-60 bg-[#1E2538] text-white flex-shrink-0 flex flex-col border-r border-[#2B3650] shadow-xl md:h-screen md:sticky md:top-0 md:overflow-y-auto z-40">
+=======
+    <aside class="w-full md:w-64 bg-[#1E2538] text-white flex-shrink-0 flex flex-col border-r border-[#2B3650] shadow-xl z-20 md:sticky md:top-0 md:h-screen">
+>>>>>>> 6bc67ec4f8602b97447783317932509793561cf2
         <!-- Brand Header -->
         <div class="h-14 flex items-center px-5 bg-[#1E2538] border-b border-white/10 justify-between shrink-0">
             <div class="flex items-center space-x-2.5">
@@ -296,7 +300,7 @@
     <!-- ============================================================== -->
     <!-- MAIN CONTENT AREA                                              -->
     <!-- ============================================================== -->
-    <main class="flex-1 flex flex-col min-h-screen overflow-x-hidden bg-[#F4F6FA]">
+    <main class="flex-1 flex flex-col min-w-0 bg-[#F4F6FA]">
         @auth
         <!-- Top Navigation Header (Sticky Top) -->
         <header class="h-14 bg-white/95 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-30 flex items-center justify-between px-5 md:px-7 flex-shrink-0 shadow-2xs">
