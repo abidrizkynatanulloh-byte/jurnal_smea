@@ -3,83 +3,102 @@
 @section('title', 'Kelola Wakil Kepala Sekolah - Jurnal Esemkita')
 
 @section('content')
-<div class="space-y-8">
-    <div class="flex items-center justify-between">
+<div class="space-y-4">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-            <h1 class="text-2xl font-extrabold text-[#1E2538] tracking-tight">Kelola Wakil Kepala Sekolah</h1>
-            <p class="text-xs text-gray-500 mt-1">Atur wewenang Guru sebagai Waka Kesiswaan (Siswa) atau Waka Kurikulum (Guru)</p>
+            <h1 class="text-xl font-bold text-slate-900 tracking-tight">Kelola Wakil Kepala Sekolah</h1>
+            <p class="text-xs text-slate-500 mt-0.5">Atur wewenang Guru sebagai Waka Kesiswaan (Dispensasi Siswa) atau Waka Kurikulum/SDM (Izin Guru)</p>
         </div>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+    <!-- Alert / Notifikasi -->
+    @if(session('success'))
+        <div class="p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-lg text-xs font-semibold flex items-center space-x-2 shadow-2xs">
+            <i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i>
+            <span>{{ session('success') }}</span>
+        </div>
+    @endif
+    @if(session('error'))
+        <div class="p-3 bg-rose-50 border border-rose-200 text-rose-800 rounded-lg text-xs font-semibold flex items-center space-x-2 shadow-2xs">
+            <i data-lucide="alert-circle" class="w-4 h-4 text-rose-600"></i>
+            <span>{{ session('error') }}</span>
+        </div>
+    @endif
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 items-start">
         
         <!-- FORM TAMBAH -->
-        <div class="bg-white border border-[#D1D9EB] rounded-2xl shadow-sm p-6 lg:sticky lg:top-8">
-            <h3 class="font-bold text-[#1E2538] text-base mb-4 flex items-center space-x-2">
-                <i data-lucide="user-plus" class="w-5 h-5 text-[#405078]"></i>
-                <span>Angkat Menjadi Waka</span>
-            </h3>
+        <div class="bg-white border border-slate-200 rounded-xl shadow-xs p-5 lg:sticky lg:top-18 space-y-3.5">
+            <div class="flex items-center space-x-2 pb-2.5 border-b border-slate-100">
+                <div class="w-6 h-6 rounded bg-[#1E293B] text-white flex items-center justify-center">
+                    <i data-lucide="user-plus" class="w-3.5 h-3.5"></i>
+                </div>
+                <h3 class="font-bold text-slate-900 text-xs uppercase tracking-wider">Angkat Menjadi Waka</h3>
+            </div>
             
-            <form action="{{ route('admin.waka.store') }}" method="POST" class="space-y-4">
+            <form action="{{ route('admin.waka.store') }}" method="POST" class="space-y-3">
                 @csrf
 
                 <div>
-                    <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Pilih Guru</label>
-                    <select id="guru-select" name="id_guru" required class="block w-full text-sm" placeholder="Cari Nama / NIP Guru...">
-                        <option value="">-- Cari Nama / NIP Guru --</option>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Pilih Guru *</label>
+                    <select id="guru-select" name="id_guru" required class="block w-full px-2.5 py-2 bg-white border border-slate-300 rounded-lg text-xs text-slate-900 font-medium focus:outline-none focus:border-[#1E293B] cursor-pointer">
+                        <option value="">-- Pilih Nama / NIP Guru --</option>
                         @foreach($semuaGuru as $g)
-                            <option value="{{ $g->id_guru }}" data-nip="{{ $g->nip }}">{{ $g->nama_guru }}</option>
+                            <option value="{{ $g->id_guru }}">{{ $g->nama_guru }} ({{ $g->nip ?? '-' }})</option>
                         @endforeach
                     </select>
                 </div>
 
                 <div>
-                    <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Pilih Jabatan Waka</label>
-                    <select name="tipe_waka" required class="block w-full px-3.5 py-2.5 bg-[#F8FAFC] border border-[#D1D9EB] rounded-xl text-sm text-[#1E2538] focus:outline-none focus:border-[#405078] focus:ring-2 focus:ring-[#405078]/15 transition-all">
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Pilih Jabatan Waka *</label>
+                    <select name="tipe_waka" required class="block w-full px-2.5 py-2 bg-white border border-slate-300 rounded-lg text-xs text-slate-900 font-medium focus:outline-none focus:border-[#1E293B] cursor-pointer">
                         <option value="">-- Pilih Jabatan --</option>
                         <option value="wakasis_siswa">Waka Kesiswaan (Dispensasi Siswa)</option>
                         <option value="wakasis_guru">Waka Kurikulum / SDM (Izin Guru)</option>
                     </select>
                 </div>
 
-                <button type="submit" class="w-full mt-2 py-3 px-4 bg-[#405078] hover:bg-[#2F3C5C] text-white rounded-xl font-bold text-sm transition-colors shadow-sm flex items-center justify-center space-x-2 cursor-pointer">
-                    <i data-lucide="plus" class="w-4 h-4"></i>
-                    <span>Terapkan Wewenang</span>
-                </button>
+                <div class="pt-2">
+                    <button type="submit" class="w-full py-2.5 px-4 bg-[#1E293B] hover:bg-[#0F172A] text-white rounded-lg text-xs font-bold transition-all shadow-xs flex items-center justify-center space-x-1.5 cursor-pointer">
+                        <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                        <span>Terapkan Wewenang</span>
+                    </button>
+                </div>
             </form>
         </div>
 
-        <div class="lg:col-span-2 space-y-6">
+        <div class="lg:col-span-2 space-y-4">
             <!-- WAKA SISWA -->
-            <div class="bg-white border border-[#D1D9EB] rounded-2xl shadow-sm overflow-hidden">
-                <div class="px-6 py-4 bg-[#F8FAFC] border-b border-[#D1D9EB]">
-                    <h4 class="font-bold text-[#1E2538] text-sm flex items-center space-x-2">
-                        <i data-lucide="users" class="w-4 h-4 text-blue-500"></i>
-                        <span>Waka Kesiswaan (Siswa)</span>
+            <div class="bg-white border border-slate-200 rounded-xl shadow-xs overflow-hidden">
+                <div class="px-4 py-3 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+                    <h4 class="font-bold text-slate-900 text-xs flex items-center space-x-1.5 uppercase tracking-wider">
+                        <i data-lucide="users" class="w-4 h-4 text-blue-600"></i>
+                        <span>Waka Kesiswaan (Dispensasi Siswa)</span>
                     </h4>
+                    <span class="text-xs text-slate-500 font-semibold">{{ count($wakaSiswa) }} Penugasan</span>
                 </div>
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
+                    <table class="w-full text-left border-collapse text-xs">
                         <thead>
-                            <tr class="bg-white text-gray-500 text-xs font-semibold uppercase tracking-wider border-b border-[#D1D9EB]">
-                                <th class="py-4 px-6">Nama Waka</th>
-                                <th class="py-4 px-6 text-center w-32">Aksi</th>
+                            <tr class="bg-slate-50/50 text-slate-600 text-[11px] font-bold uppercase tracking-wider border-b border-slate-200">
+                                <th class="py-2.5 px-3.5">Nama Waka</th>
+                                <th class="py-2.5 px-3.5 text-center w-28">Aksi</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-100 text-sm text-gray-600">
+                        <tbody class="divide-y divide-slate-100 text-slate-700">
                             @forelse($wakaSiswa as $ws)
-                                <tr>
-                                    <td class="py-4 px-6 font-medium text-[#1E2538]">{{ $ws->guru->nama_guru ?? 'Data Guru Tidak Ditemukan' }}</td>
-                                    <td class="py-4 px-6 text-center">
+                                <tr class="hover:bg-slate-50/80 transition-colors">
+                                    <td class="py-2.5 px-3.5 font-medium text-slate-900">{{ $ws->guru->nama_guru ?? 'Data Guru Tidak Ditemukan' }}</td>
+                                    <td class="py-2.5 px-3.5 text-center">
                                         <form action="{{ route('admin.waka.destroy', $ws->id) }}" method="POST" onsubmit="return confirm('Berhentikan wewenang Waka dan kembalikan menjadi Guru biasa?');">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="px-3.5 py-1.5 border border-rose-200 bg-white hover:bg-rose-50 text-rose-600 rounded-lg text-xs font-bold transition-colors">Berhentikan</button>
+                                            <button type="submit" class="px-2.5 py-1 border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded text-xs font-semibold transition-colors cursor-pointer">Berhentikan</button>
                                         </form>
                                     </td>
                                 </tr>
                             @empty
-                                <tr><td colspan="2" class="py-6 text-center text-gray-400 italic">Belum ada Waka Kesiswaan</td></tr>
+                                <tr><td colspan="2" class="py-6 text-center text-slate-400 italic text-xs">Belum ada Waka Kesiswaan</td></tr>
                             @endforelse
                         </tbody>
                     </table>
@@ -87,35 +106,36 @@
             </div>
 
             <!-- WAKA GURU -->
-            <div class="bg-white border border-[#D1D9EB] rounded-2xl shadow-sm overflow-hidden">
-                <div class="px-6 py-4 bg-[#F8FAFC] border-b border-[#D1D9EB]">
-                    <h4 class="font-bold text-[#1E2538] text-sm flex items-center space-x-2">
-                        <i data-lucide="book-open" class="w-4 h-4 text-amber-500"></i>
-                        <span>Waka Kurikulum / SDM (Guru)</span>
+            <div class="bg-white border border-slate-200 rounded-xl shadow-xs overflow-hidden">
+                <div class="px-4 py-3 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+                    <h4 class="font-bold text-slate-900 text-xs flex items-center space-x-1.5 uppercase tracking-wider">
+                        <i data-lucide="award" class="w-4 h-4 text-indigo-600"></i>
+                        <span>Waka Kurikulum / SDM (Izin Guru)</span>
                     </h4>
+                    <span class="text-xs text-slate-500 font-semibold">{{ count($wakaGuru) }} Penugasan</span>
                 </div>
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
+                    <table class="w-full text-left border-collapse text-xs">
                         <thead>
-                            <tr class="bg-white text-gray-500 text-xs font-semibold uppercase tracking-wider border-b border-[#D1D9EB]">
-                                <th class="py-4 px-6">Nama Waka</th>
-                                <th class="py-4 px-6 text-center w-32">Aksi</th>
+                            <tr class="bg-slate-50/50 text-slate-600 text-[11px] font-bold uppercase tracking-wider border-b border-slate-200">
+                                <th class="py-2.5 px-3.5">Nama Waka</th>
+                                <th class="py-2.5 px-3.5 text-center w-28">Aksi</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-100 text-sm text-gray-600">
+                        <tbody class="divide-y divide-slate-100 text-slate-700">
                             @forelse($wakaGuru as $wg)
-                                <tr>
-                                    <td class="py-4 px-6 font-medium text-[#1E2538]">{{ $wg->guru->nama_guru ?? 'Data Guru Tidak Ditemukan' }}</td>
-                                    <td class="py-4 px-6 text-center">
+                                <tr class="hover:bg-slate-50/80 transition-colors">
+                                    <td class="py-2.5 px-3.5 font-medium text-slate-900">{{ $wg->guru->nama_guru ?? 'Data Guru Tidak Ditemukan' }}</td>
+                                    <td class="py-2.5 px-3.5 text-center">
                                         <form action="{{ route('admin.waka.destroy', $wg->id) }}" method="POST" onsubmit="return confirm('Berhentikan wewenang Waka dan kembalikan menjadi Guru biasa?');">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="px-3.5 py-1.5 border border-rose-200 bg-white hover:bg-rose-50 text-rose-600 rounded-lg text-xs font-bold transition-colors">Berhentikan</button>
+                                            <button type="submit" class="px-2.5 py-1 border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded text-xs font-semibold transition-colors cursor-pointer">Berhentikan</button>
                                         </form>
                                     </td>
                                 </tr>
                             @empty
-                                <tr><td colspan="2" class="py-6 text-center text-gray-400 italic">Belum ada Waka Kurikulum</td></tr>
+                                <tr><td colspan="2" class="py-6 text-center text-slate-400 italic text-xs">Belum ada Waka Kurikulum</td></tr>
                             @endforelse
                         </tbody>
                     </table>
@@ -124,24 +144,4 @@
         </div>
     </div>
 </div>
-@push('scripts')
-<link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        new TomSelect("#guru-select", {
-            searchField: ['text', 'nip'],
-            render: {
-                option: function(data, escape) {
-                    return '<div><span class="font-medium">' + escape(data.text) + '</span>' +
-                           '<span class="text-xs text-gray-400 ml-2">NIP: ' + escape(data.nip || '-') + '</span></div>';
-                },
-                item: function(data, escape) {
-                    return '<div>' + escape(data.text) + '</div>';
-                }
-            }
-        });
-    });
-</script>
-@endpush
 @endsection

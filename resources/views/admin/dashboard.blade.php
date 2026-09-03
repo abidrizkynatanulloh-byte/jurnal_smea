@@ -13,8 +13,8 @@
             </p>
         </div>
         <div class="flex items-center space-x-2.5">
-            <a href="{{ route('admin.rekap.index') }}" class="px-3.5 py-1.5 bg-[#405078] hover:bg-[#2F3C5C] text-white rounded-xl text-xs font-semibold transition-colors flex items-center space-x-1.5 shadow-2xs">
-                <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5"></i>
+            <a href="{{ route('admin.rekap.index') }}" class="px-3.5 py-2 bg-[#1E293B] hover:bg-[#0F172A] text-white rounded-lg text-xs font-semibold transition-colors flex items-center space-x-1.5 shadow-xs">
+                <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
                 <span>Lihat Rekapitulasi Jurnal</span>
             </a>
         </div>
@@ -23,205 +23,205 @@
     <!-- 1. Statistik Grid Utama (Klik untuk membuka halaman detail) -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <!-- Card 1: Siswa -->
-        <a href="{{ route('admin.siswa.index') }}" class="card-elevated rounded-2xl p-4 flex items-start space-x-3.5 group cursor-pointer relative overflow-hidden">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#405078]/15 to-[#405078]/5 text-[#405078] flex items-center justify-center group-hover:scale-105 transition-transform flex-shrink-0 ring-1 ring-[#405078]/20">
+        <a href="{{ route('admin.siswa.index') }}" class="bg-white border border-slate-200 rounded-xl p-4.5 shadow-xs hover:border-slate-300 hover:shadow-sm transition-all flex items-start space-x-3.5 group cursor-pointer">
+            <div class="w-10 h-10 rounded-lg bg-blue-50 text-blue-700 border border-blue-100 flex items-center justify-center flex-shrink-0">
                 <i data-lucide="graduation-cap" class="w-5 h-5"></i>
             </div>
             <div class="flex-1 min-w-0">
                 <div class="flex items-center justify-between">
-                    <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Total Siswa</p>
-                    <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-slate-300 group-hover:text-[#405078] group-hover:translate-x-0.5 transition-all"></i>
+                    <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Siswa</p>
+                    <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 group-hover:text-slate-700 transition-colors"></i>
                 </div>
-                <h3 class="text-2xl font-black text-slate-900 mt-0.5 tracking-tight tabular-nums">{{ number_format($totalSiswa, 0, ',', '.') }}</h3>
-                <p class="text-[10.5px] text-slate-500 mt-0.5 truncate">Lihat direktori siswa & rombel</p>
+                <h3 class="text-2xl font-black text-slate-900 mt-1 tracking-tight tabular-nums">{{ number_format($totalSiswa, 0, ',', '.') }}</h3>
+                <p class="text-xs text-slate-500 mt-0.5 truncate">Lihat data siswa & rombel</p>
             </div>
         </a>
 
         <!-- Card 2: Guru & Staf -->
-        <a href="{{ route('admin.guru.index') }}" class="card-elevated rounded-2xl p-4 flex items-start space-x-3.5 group cursor-pointer relative overflow-hidden">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#8697C3]/20 to-[#8697C3]/5 text-[#405078] flex items-center justify-center group-hover:scale-105 transition-transform flex-shrink-0 ring-1 ring-[#8697C3]/30">
+        <a href="{{ route('admin.guru.index') }}" class="bg-white border border-slate-200 rounded-xl p-4.5 shadow-xs hover:border-slate-300 hover:shadow-sm transition-all flex items-start space-x-3.5 group cursor-pointer">
+            <div class="w-10 h-10 rounded-lg bg-indigo-50 text-indigo-700 border border-indigo-100 flex items-center justify-center flex-shrink-0">
                 <i data-lucide="users" class="w-5 h-5"></i>
             </div>
             <div class="flex-1 min-w-0">
                 <div class="flex items-center justify-between">
-                    <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Guru & Pegawai</p>
-                    <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-slate-300 group-hover:text-[#405078] group-hover:translate-x-0.5 transition-all"></i>
+                    <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Guru & Pegawai</p>
+                    <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 group-hover:text-slate-700 transition-colors"></i>
                 </div>
-                <h3 class="text-2xl font-black text-slate-900 mt-0.5 tracking-tight tabular-nums">{{ $totalPegawai }}</h3>
-                <p class="text-[10.5px] text-slate-500 mt-0.5 truncate">{{ $totalGuru }} Guru • {{ $totalStaf }} Staf TU</p>
+                <h3 class="text-2xl font-black text-slate-900 mt-1 tracking-tight tabular-nums">{{ $totalPegawai }}</h3>
+                <p class="text-xs text-slate-500 mt-0.5 truncate">{{ $totalGuru }} Guru • {{ $totalStaf }} Staf TU</p>
             </div>
         </a>
 
         <!-- Card 3: Jadwal -->
-        <a href="{{ route('admin.jadwal.index') }}" class="card-elevated rounded-2xl p-4 flex items-start space-x-3.5 group cursor-pointer relative overflow-hidden">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#405078]/15 to-[#405078]/5 text-[#405078] flex items-center justify-center group-hover:scale-105 transition-transform flex-shrink-0 ring-1 ring-[#405078]/20">
+        <a href="{{ route('admin.jadwal.index') }}" class="bg-white border border-slate-200 rounded-xl p-4.5 shadow-xs hover:border-slate-300 hover:shadow-sm transition-all flex items-start space-x-3.5 group cursor-pointer">
+            <div class="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-100 flex items-center justify-center flex-shrink-0">
                 <i data-lucide="calendar" class="w-5 h-5"></i>
             </div>
             <div class="flex-1 min-w-0">
                 <div class="flex items-center justify-between">
-                    <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Total Jadwal</p>
-                    <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-slate-300 group-hover:text-[#405078] group-hover:translate-x-0.5 transition-all"></i>
+                    <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Jadwal</p>
+                    <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 group-hover:text-slate-700 transition-colors"></i>
                 </div>
-                <h3 class="text-2xl font-black text-slate-900 mt-0.5 tracking-tight tabular-nums">{{ $totalJadwal }}</h3>
-                <p class="text-[10.5px] text-slate-500 mt-0.5 truncate">Kelola matriks KBM mengajar</p>
+                <h3 class="text-2xl font-black text-slate-900 mt-1 tracking-tight tabular-nums">{{ $totalJadwal }}</h3>
+                <p class="text-xs text-slate-500 mt-0.5 truncate">Kelola jadwal KBM mengajar</p>
             </div>
         </a>
 
         <!-- Card 4: Kepatuhan -->
-        <a href="{{ route('admin.rekap.kepatuhan') }}" class="card-elevated rounded-2xl p-4 flex items-start space-x-3.5 group cursor-pointer relative overflow-hidden">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500/15 to-emerald-500/5 text-emerald-600 flex items-center justify-center group-hover:scale-105 transition-transform flex-shrink-0 ring-1 ring-emerald-500/20">
+        <a href="{{ route('admin.rekap.kepatuhan') }}" class="bg-white border border-slate-200 rounded-xl p-4.5 shadow-xs hover:border-slate-300 hover:shadow-sm transition-all flex items-start space-x-3.5 group cursor-pointer">
+            <div class="w-10 h-10 rounded-lg bg-teal-50 text-teal-700 border border-teal-100 flex items-center justify-center flex-shrink-0">
                 <i data-lucide="check-circle-2" class="w-5 h-5"></i>
             </div>
             <div class="flex-1 min-w-0">
                 <div class="flex items-center justify-between">
-                    <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Kepatuhan Jurnal</p>
-                    <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-slate-300 group-hover:text-emerald-600 group-hover:translate-x-0.5 transition-all"></i>
+                    <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Kepatuhan Jurnal</p>
+                    <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 group-hover:text-teal-700 transition-colors"></i>
                 </div>
-                <h3 class="text-2xl font-black text-slate-900 mt-0.5 tracking-tight tabular-nums">{{ $persentaseKepatuhan }}%</h3>
-                <p class="text-[10.5px] text-slate-500 mt-0.5 truncate">Rekapitulasi kepatuhan per guru</p>
+                <h3 class="text-2xl font-black text-slate-900 mt-1 tracking-tight tabular-nums">{{ $persentaseKepatuhan }}%</h3>
+                <p class="text-xs text-slate-500 mt-0.5 truncate">Rekap kepatuhan per guru</p>
             </div>
         </a>
     </div>
 
     <!-- 2. REKAP ABSENSI SISWA HARI INI -->
-    <div class="card-elevated rounded-2xl p-4.5">
+    <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-xs">
         <div class="flex items-center justify-between mb-3.5">
-            <h3 class="font-extrabold text-slate-900 text-xs uppercase tracking-wider flex items-center space-x-2">
-                <i data-lucide="user-check" class="w-4 h-4 text-[#405078]"></i>
+            <h3 class="font-bold text-slate-900 text-xs uppercase tracking-wider flex items-center space-x-2">
+                <i data-lucide="user-check" class="w-4 h-4 text-slate-700"></i>
                 <span>Data Absensi Siswa Hari Ini</span>
             </h3>
-            <span class="text-[11px] text-slate-500 font-semibold bg-slate-100/80 px-2.5 py-0.5 rounded-full border border-slate-200/60">{{ $tanggalHariIniTeks }}</span>
+            <span class="text-xs text-slate-500 font-medium">{{ $tanggalHariIniTeks }}</span>
         </div>
 
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <!-- Hadir -->
-            <div class="p-3 bg-gradient-to-br from-emerald-50/80 to-emerald-50/30 border border-emerald-200/70 rounded-xl flex items-center space-x-3">
-                <div class="p-2 bg-emerald-100 text-emerald-700 rounded-lg">
+            <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-lg flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center flex-shrink-0">
                     <i data-lucide="user-check" class="w-4 h-4"></i>
                 </div>
                 <div>
-                    <p class="text-[10px] font-bold uppercase tracking-wider text-emerald-800">Hadir</p>
-                    <h4 class="text-xl font-black text-emerald-950 leading-tight tabular-nums">{{ $siswaHadirHariIni }}</h4>
-                    <p class="text-[10px] text-emerald-700">Siswa aktif KBM</p>
+                    <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Hadir</p>
+                    <h4 class="text-xl font-black text-slate-900 leading-tight tabular-nums">{{ $siswaHadirHariIni }}</h4>
+                    <p class="text-[10.5px] text-emerald-700 font-medium">Siswa KBM</p>
                 </div>
             </div>
 
             <!-- Sakit -->
-            <div onclick="openModalSiswaSakit()" class="p-3 bg-gradient-to-br from-amber-50/80 to-amber-50/30 border border-amber-200/70 rounded-xl flex items-center space-x-3 hover:shadow-xs transition-all cursor-pointer group">
-                <div class="p-2 bg-amber-100 text-amber-700 rounded-lg group-hover:scale-105 transition-transform">
+            <div onclick="openModalSiswaSakit()" class="p-3.5 bg-slate-50 border border-slate-200 hover:border-amber-300 rounded-lg flex items-center space-x-3 hover:bg-amber-50/30 transition-all cursor-pointer group">
+                <div class="w-8 h-8 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
                     <i data-lucide="stethoscope" class="w-4 h-4"></i>
                 </div>
                 <div class="flex-1">
                     <div class="flex items-center justify-between">
-                        <p class="text-[10px] font-bold uppercase tracking-wider text-amber-800">Sakit</p>
+                        <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Sakit</p>
                         <span class="text-[10px] text-amber-700 font-bold underline flex items-center space-x-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
                             <span>Lihat</span>
                             <i data-lucide="chevron-right" class="w-3 h-3"></i>
                         </span>
                     </div>
-                    <h4 class="text-xl font-black text-amber-950 leading-tight tabular-nums">{{ $siswaSakitHariIni }}</h4>
-                    <p class="text-[10px] text-amber-700">Terdata sakit</p>
+                    <h4 class="text-xl font-black text-slate-900 leading-tight tabular-nums">{{ $siswaSakitHariIni }}</h4>
+                    <p class="text-[10.5px] text-amber-700 font-medium">Terdata Sakit</p>
                 </div>
             </div>
 
             <!-- Izin / Dispen -->
-            <div onclick="openModalSiswaIzin()" class="p-3 bg-gradient-to-br from-blue-50/80 to-blue-50/30 border border-blue-200/70 rounded-xl flex items-center space-x-3 hover:shadow-xs transition-all cursor-pointer group">
-                <div class="p-2 bg-blue-100 text-blue-700 rounded-lg group-hover:scale-105 transition-transform">
+            <div onclick="openModalSiswaIzin()" class="p-3.5 bg-slate-50 border border-slate-200 hover:border-blue-300 rounded-lg flex items-center space-x-3 hover:bg-blue-50/30 transition-all cursor-pointer group">
+                <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
                     <i data-lucide="file-badge" class="w-4 h-4"></i>
                 </div>
                 <div class="flex-1">
                     <div class="flex items-center justify-between">
-                        <p class="text-[10px] font-bold uppercase tracking-wider text-blue-800">Izin / Dispen</p>
+                        <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Izin / Dispen</p>
                         <span class="text-[10px] text-blue-700 font-bold underline flex items-center space-x-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
                             <span>Lihat</span>
                             <i data-lucide="chevron-right" class="w-3 h-3"></i>
                         </span>
                     </div>
-                    <h4 class="text-xl font-black text-blue-950 leading-tight tabular-nums">{{ $siswaIzinTotal }}</h4>
-                    <p class="text-[10px] text-blue-700">Izin & dispen sah</p>
+                    <h4 class="text-xl font-black text-slate-900 leading-tight tabular-nums">{{ $siswaIzinTotal }}</h4>
+                    <p class="text-[10.5px] text-blue-700 font-medium">Izin & Dispen Sah</p>
                 </div>
             </div>
 
             <!-- Alpa -->
-            <div onclick="openModalSiswaAlpa()" class="p-3 bg-gradient-to-br from-rose-50/80 to-rose-50/30 border border-rose-200/70 rounded-xl flex items-center space-x-3 hover:shadow-xs transition-all cursor-pointer group">
-                <div class="p-2 bg-rose-100 text-rose-700 rounded-lg group-hover:scale-105 transition-transform">
+            <div onclick="openModalSiswaAlpa()" class="p-3.5 bg-slate-50 border border-slate-200 hover:border-rose-300 rounded-lg flex items-center space-x-3 hover:bg-rose-50/30 transition-all cursor-pointer group">
+                <div class="w-8 h-8 rounded-full bg-rose-100 text-rose-700 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
                     <i data-lucide="user-x" class="w-4 h-4"></i>
                 </div>
                 <div class="flex-1">
                     <div class="flex items-center justify-between">
-                        <p class="text-[10px] font-bold uppercase tracking-wider text-rose-800">Alpa</p>
+                        <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Alpa</p>
                         <span class="text-[10px] text-rose-700 font-bold underline flex items-center space-x-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
                             <span>Lihat</span>
                             <i data-lucide="chevron-right" class="w-3 h-3"></i>
                         </span>
                     </div>
-                    <h4 class="text-xl font-black text-rose-950 leading-tight tabular-nums">{{ $siswaAlpaHariIni }}</h4>
-                    <p class="text-[10px] text-rose-700">Tanpa keterangan</p>
+                    <h4 class="text-xl font-black text-slate-900 leading-tight tabular-nums">{{ $siswaAlpaHariIni }}</h4>
+                    <p class="text-[10.5px] text-rose-700 font-medium">Tanpa Keterangan</p>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- 3. Perhatian Operasional (Klik untuk membuka daftar detail) -->
-    <div class="card-elevated rounded-2xl p-4.5">
-        <h3 class="font-extrabold text-slate-900 text-xs uppercase tracking-wider mb-3 flex items-center space-x-2">
-            <i data-lucide="alert-triangle" class="w-4 h-4 text-[#405078]"></i>
+    <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-xs">
+        <h3 class="font-bold text-slate-900 text-xs uppercase tracking-wider mb-3 flex items-center space-x-2">
+            <i data-lucide="alert-triangle" class="w-4 h-4 text-slate-700"></i>
             <span>Perhatian Operasional (Klik Kartu untuk Melihat List Guru)</span>
         </h3>
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
             <!-- Warning 1: Jurnal Kemarin -->
-            <div onclick="openModalKemarin()" class="p-3.5 bg-gradient-to-r from-amber-50/90 to-amber-50/40 border border-amber-200/80 rounded-xl flex items-start space-x-3 hover:shadow-xs transition-all cursor-pointer group">
-                <div class="p-2 bg-amber-100 text-amber-800 rounded-lg group-hover:scale-105 transition-transform flex-shrink-0">
+            <div onclick="openModalKemarin()" class="p-3.5 bg-amber-50/60 border border-amber-200 rounded-lg flex items-start space-x-3 hover:bg-amber-50 transition-all cursor-pointer group">
+                <div class="p-1.5 bg-amber-100 text-amber-800 rounded-md flex-shrink-0">
                     <i data-lucide="book-x" class="w-4 h-4"></i>
                 </div>
                 <div class="flex-1 min-w-0">
                     <div class="flex items-center justify-between">
-                        <h4 class="text-xs font-bold text-amber-950">Jurnal Mengajar Kemarin</h4>
-                        <span class="text-[10px] text-amber-800 font-bold underline flex items-center space-x-0.5">
+                        <h4 class="text-xs font-bold text-amber-900">Jurnal Mengajar Kemarin</h4>
+                        <span class="text-[10.5px] text-amber-800 font-bold underline flex items-center space-x-0.5">
                             <span>Lihat List</span>
                             <i data-lucide="chevron-right" class="w-3 h-3"></i>
                         </span>
                     </div>
-                    <p class="text-xs text-amber-800/90 mt-0.5"><span class="font-bold text-[#405078]">{{ $guruBelumIsiKemarin }} sesi mengajar</span> terdeteksi belum mengisi jurnal kemarin.</p>
+                    <p class="text-xs text-amber-800 mt-0.5"><span class="font-bold text-slate-900">{{ $guruBelumIsiKemarin }} sesi mengajar</span> terdeteksi belum mengisi jurnal kemarin.</p>
                 </div>
             </div>
 
             <!-- Warning 2: Guru Alpa Hari Ini -->
-            <div onclick="openModalAlpa()" class="p-3.5 bg-gradient-to-r from-rose-50/90 to-rose-50/40 border border-rose-200/80 rounded-xl flex items-start space-x-3 hover:shadow-xs transition-all cursor-pointer group">
-                <div class="p-2 bg-rose-100 text-rose-800 rounded-lg group-hover:scale-105 transition-transform flex-shrink-0">
+            <div onclick="openModalAlpa()" class="p-3.5 bg-rose-50/60 border border-rose-200 rounded-lg flex items-start space-x-3 hover:bg-rose-50 transition-all cursor-pointer group">
+                <div class="p-1.5 bg-rose-100 text-rose-800 rounded-md flex-shrink-0">
                     <i data-lucide="user-x" class="w-4 h-4"></i>
                 </div>
                 <div class="flex-1 min-w-0">
                     <div class="flex items-center justify-between">
-                        <h4 class="text-xs font-bold text-rose-950">Guru Alpa Hari Ini</h4>
-                        <span class="text-[10px] text-rose-800 font-bold underline flex items-center space-x-0.5">
+                        <h4 class="text-xs font-bold text-rose-900">Guru Alpa Hari Ini</h4>
+                        <span class="text-[10.5px] text-rose-800 font-bold underline flex items-center space-x-0.5">
                             <span>Lihat List Alpa</span>
                             <i data-lucide="chevron-right" class="w-3 h-3"></i>
                         </span>
                     </div>
-                    <p class="text-xs text-rose-800/90 mt-0.5"><span class="font-bold text-rose-700">{{ $guruAlpaHariIni }} guru / {{ count($listGuruAlpaHariIni) }} sesi</span> terdeteksi Alpa (jam lewat).</p>
+                    <p class="text-xs text-rose-800 mt-0.5"><span class="font-bold text-rose-900">{{ $guruAlpaHariIni }} guru / {{ count($listGuruAlpaHariIni) }} sesi</span> terdeteksi Alpa (jam lewat).</p>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- 4. Tabel Jadwal Hari Ini (Urutan: ALPA lebih dulu!) -->
-    <div class="card-elevated rounded-2xl overflow-hidden">
-        <div class="px-4.5 py-3 border-b border-slate-200/70 flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2.5 sm:space-y-0 bg-slate-50/50">
+    <div class="bg-white border border-slate-200 rounded-xl shadow-xs overflow-hidden">
+        <div class="px-5 py-3.5 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2.5 sm:space-y-0 bg-slate-50">
             <div class="flex items-center space-x-2.5">
-                <div class="w-2 h-2 bg-[#405078] rounded-full animate-pulse"></div>
-                <h3 class="font-extrabold text-slate-900 text-xs uppercase tracking-wider">Jadwal Mengajar Hari Ini ({{ $namaHariIni }})</h3>
-                <span class="text-[10px] font-extrabold text-rose-700 bg-rose-50 border border-rose-200/80 px-2 py-0.5 rounded-full">Prioritas Alpa</span>
+                <div class="w-2 h-2 bg-slate-700 rounded-full"></div>
+                <h3 class="font-bold text-slate-900 text-xs uppercase tracking-wider">Jadwal Mengajar Hari Ini ({{ $namaHariIni }})</h3>
+                <span class="text-[10.5px] font-bold text-rose-700 bg-rose-50 border border-rose-200 px-2 py-0.5 rounded">Prioritas Alpa</span>
             </div>
             
             <div class="flex items-center space-x-3">
-                <span id="slideInfo" class="text-xs font-semibold text-slate-500">Menampilkan 1-10 dari {{ count($jadwalHariIni) }} sesi</span>
-                <div class="inline-flex rounded-lg border border-slate-200 p-0.5 bg-white shadow-2xs">
-                    <button type="button" id="prevBtn" onclick="geserSlide(-1)" class="p-1 rounded hover:bg-slate-100 text-slate-500 hover:text-[#1E2538] disabled:opacity-40 transition-colors cursor-pointer" disabled>
+                <span id="slideInfo" class="text-xs font-medium text-slate-500">Menampilkan 1-10 dari {{ count($jadwalHariIni) }} sesi</span>
+                <div class="inline-flex rounded border border-slate-300 p-0.5 bg-white shadow-2xs">
+                    <button type="button" id="prevBtn" onclick="geserSlide(-1)" class="p-1 rounded hover:bg-slate-100 text-slate-500 hover:text-slate-900 disabled:opacity-40 transition-colors cursor-pointer" disabled>
                         <i data-lucide="chevron-left" class="w-3.5 h-3.5"></i>
                     </button>
-                    <button type="button" id="nextBtn" onclick="geserSlide(1)" class="p-1 rounded hover:bg-slate-100 text-slate-500 hover:text-[#1E2538] disabled:opacity-40 transition-colors cursor-pointer">
+                    <button type="button" id="nextBtn" onclick="geserSlide(1)" class="p-1 rounded hover:bg-slate-100 text-slate-500 hover:text-slate-900 disabled:opacity-40 transition-colors cursor-pointer">
                         <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
                     </button>
                 </div>
@@ -230,53 +230,49 @@
 
         <div class="overflow-x-auto max-h-[480px] overflow-y-auto">
             <table class="w-full text-left border-collapse text-xs">
-                <thead class="sticky top-0 bg-slate-50/95 backdrop-blur-xs z-10">
-                    <tr class="text-slate-500 font-bold uppercase tracking-wider border-b border-slate-200/80">
-                        <th class="py-2.5 px-3 text-center w-12">No</th>
-                        <th class="py-2.5 px-3 w-28">Jam Ke-</th>
-                        <th class="py-2.5 px-3 w-24">Kelas</th>
-                        <th class="py-2.5 px-3">Guru</th>
-                        <th class="py-2.5 px-3">Mata Pelajaran</th>
-                        <th class="py-2.5 px-3 w-28">Ruangan</th>
-                        <th class="py-2.5 px-3 text-center w-36">Status Jurnal</th>
+                <thead class="sticky top-0 bg-slate-50 border-b border-slate-200 z-10">
+                    <tr class="text-slate-600 font-bold uppercase tracking-wider text-[11px]">
+                        <th class="py-3 px-3.5 text-center w-12">No</th>
+                        <th class="py-3 px-3.5 w-28">Jam Ke-</th>
+                        <th class="py-3 px-3.5 w-24">Kelas</th>
+                        <th class="py-3 px-3.5">Guru</th>
+                        <th class="py-3 px-3.5">Mata Pelajaran</th>
+                        <th class="py-3 px-3.5 w-28">Ruangan</th>
+                        <th class="py-3 px-3.5 text-center w-36">Status Jurnal</th>
                     </tr>
                 </thead>
-                <tbody id="jadwalTbody" class="divide-y divide-slate-100 text-slate-600">
+                <tbody id="jadwalTbody" class="divide-y divide-slate-100 text-slate-700">
                     @forelse ($jadwalHariIni as $index => $j)
-                        <tr class="jadwal-row hover:bg-slate-50/60 transition-colors {{ $j->status_jurnal === 'Alpa' ? 'bg-rose-50/30' : '' }}" data-index="{{ $index }}" style="{{ $index >= 10 ? 'display: none;' : '' }}">
-                            <td class="py-2 px-3 text-center font-medium text-slate-400 text-xs">{{ $index + 1 }}</td>
-                            <td class="py-2 px-3 font-semibold text-[#1E2538]">Jam {{ $j->jam_mulai }}–{{ $j->jam_selesai }}</td>
-                            <td class="py-2 px-3"><span class="px-1.5 py-0.5 bg-slate-100 rounded text-[11px] font-bold text-slate-700">{{ $j->kelas ? $j->kelas->nama_kelas : '-' }}</span></td>
-                            <td class="py-2 px-3 font-medium text-[#1E2538] leading-tight">{{ $j->guru ? $j->guru->nama_guru : '-' }}</td>
-                            <td class="py-2 px-3 font-medium text-[#405078]">{{ $j->mapel ? $j->mapel->nama_mapel : '-' }}</td>
-                            <td class="py-2 px-3 text-slate-500"><span class="inline-flex items-center space-x-1"><i data-lucide="map-pin" class="w-3 h-3 text-slate-400"></i><span>{{ $j->ruangan ? $j->ruangan->nama_ruangan : '-' }}</span></span></td>
-                            <td class="py-2 px-3 text-center">
+                        <tr class="jadwal-row hover:bg-slate-50/80 transition-colors {{ $j->status_jurnal === 'Alpa' ? 'bg-rose-50/20' : '' }}" data-index="{{ $index }}" style="{{ $index >= 10 ? 'display: none;' : '' }}">
+                            <td class="py-2.5 px-3.5 text-center font-medium text-slate-400 text-xs tabular-nums">{{ $index + 1 }}</td>
+                            <td class="py-2.5 px-3.5 font-semibold text-slate-900">Jam {{ $j->jam_mulai }}–{{ $j->jam_selesai }}</td>
+                            <td class="py-2.5 px-3.5"><span class="px-2 py-0.5 bg-slate-100 border border-slate-200 rounded text-[11px] font-bold text-slate-700">{{ $j->kelas ? $j->kelas->nama_kelas : '-' }}</span></td>
+                            <td class="py-2.5 px-3.5 font-medium text-slate-900 leading-tight">{{ $j->guru ? $j->guru->nama_guru : '-' }}</td>
+                            <td class="py-2.5 px-3.5 font-medium text-slate-700">{{ $j->mapel ? $j->mapel->nama_mapel : '-' }}</td>
+                            <td class="py-2.5 px-3.5 text-slate-500"><span class="inline-flex items-center space-x-1"><i data-lucide="map-pin" class="w-3 h-3 text-slate-400"></i><span>{{ $j->ruangan ? $j->ruangan->nama_ruangan : '-' }}</span></span></td>
+                            <td class="py-2.5 px-3.5 text-center">
                                 @if ($j->status_jurnal === 'Selesai')
-                                    <span class="inline-flex items-center px-2 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-bold rounded-full space-x-1">
-                                        <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
-                                        <span>Selesai</span>
+                                    <span class="inline-block px-2.5 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-bold rounded">
+                                        Selesai
                                     </span>
                                 @elseif ($j->status_jurnal === 'Alpa')
-                                    <span class="inline-flex items-center px-2 py-0.5 bg-rose-100 text-rose-700 border border-rose-300 text-[11px] font-extrabold rounded-full space-x-1">
-                                        <span class="w-1.5 h-1.5 bg-rose-600 rounded-full animate-ping"></span>
-                                        <span>Alpa (Belum Diisi)</span>
+                                    <span class="inline-block px-2.5 py-0.5 bg-rose-50 text-rose-700 border border-rose-200 text-[11px] font-bold rounded">
+                                        Alpa (Belum Diisi)
                                     </span>
                                 @elseif (str_contains($j->status_jurnal, 'Sah'))
-                                    <span class="inline-flex items-center px-2 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 text-[11px] font-bold rounded-full space-x-1">
-                                        <span class="w-1.5 h-1.5 bg-blue-500 rounded-full"></span>
-                                        <span>{{ $j->status_jurnal }}</span>
+                                    <span class="inline-block px-2.5 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 text-[11px] font-bold rounded">
+                                        {{ $j->status_jurnal }}
                                     </span>
                                 @else
-                                    <span class="inline-flex items-center px-2 py-0.5 bg-amber-50 text-amber-700 border border-amber-200 text-[11px] font-semibold rounded-full space-x-1">
-                                        <span class="w-1.5 h-1.5 bg-amber-500 rounded-full"></span>
-                                        <span>Terjadwal</span>
+                                    <span class="inline-block px-2.5 py-0.5 bg-slate-100 text-slate-600 border border-slate-200 text-[11px] font-semibold rounded">
+                                        Terjadwal
                                     </span>
                                 @endif
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="py-8 text-center text-slate-400 italic text-xs">
+                            <td colspan="7" class="py-10 text-center text-slate-400 italic text-xs">
                                 <i data-lucide="inbox" class="w-7 h-7 mx-auto mb-1.5 text-slate-300"></i>
                                 Tidak ada jadwal mengajar pada hari {{ $namaHariIni }}.
                             </td>

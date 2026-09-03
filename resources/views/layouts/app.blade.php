@@ -156,84 +156,84 @@
         }
     </style>
 </head>
-<body class="min-h-screen font-sans antialiased text-[#1E2538] bg-[#F8FAFC] flex flex-col md:flex-row relative">
+<body class="min-h-screen font-sans antialiased text-slate-900 bg-[#F1F5F9] flex flex-col md:flex-row relative">
 
     @auth
     <!-- ============================================================== -->
-    <!-- SIDEBAR NAVIGATION (Obsidian Executive Navy #111726)            -->
+    <!-- SIDEBAR NAVIGATION (Executive Corporate Slate #1E293B)          -->
     <!-- ============================================================== -->
-    <aside class="w-full md:w-60 bg-gradient-to-b from-[#111726] via-[#141B2D] to-[#0E131F] text-white flex-shrink-0 flex flex-col border-r border-[#242D45]/70 shadow-2xl md:h-screen md:sticky md:top-0 md:overflow-y-auto z-40">
+    <aside class="w-full md:w-56 bg-[#1E293B] text-white flex-shrink-0 flex flex-col border-r border-slate-700/80 shadow-lg md:h-screen md:sticky md:top-0 md:overflow-y-auto z-40">
         <!-- Brand Header -->
-        <div class="h-14 flex items-center px-5 border-b border-white/[0.08] justify-between shrink-0 bg-white/[0.02]">
+        <div class="h-13 flex items-center px-4 border-b border-slate-700/80 justify-between shrink-0 bg-[#0F172A]/40">
             <div class="flex items-center space-x-2.5">
-                <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-[#405078] via-[#4F6291] to-[#303D5C] flex items-center justify-center text-white shadow-[0_0_12px_rgba(134,151,195,0.25)] ring-1 ring-white/25">
+                <div class="w-7.5 h-7.5 rounded-lg bg-[#405078] flex items-center justify-center text-white shadow-xs">
                     <i data-lucide="book-open-check" class="w-4 h-4"></i>
                 </div>
                 <div>
-                    <span class="font-extrabold text-sm tracking-tight text-white block leading-tight">JURNAL SMEA</span>
-                    <span class="block text-[8px] font-bold text-[#8697C3] uppercase tracking-widest">Enterprise Platform</span>
+                    <span class="font-bold text-sm tracking-tight text-white block leading-tight">JURNAL SMEA</span>
+                    <span class="block text-[8px] font-semibold text-slate-400 uppercase tracking-wider">SMK Negeri 1</span>
                 </div>
             </div>
             <!-- Mobile Menu Toggle Button -->
-            <button id="mobile-menu-toggle" class="md:hidden p-1 text-gray-400 hover:text-white rounded-lg hover:bg-white/5 focus:outline-none">
+            <button id="mobile-menu-toggle" class="md:hidden p-1 text-slate-400 hover:text-white rounded-lg hover:bg-white/5 focus:outline-none">
                 <i data-lucide="menu" class="w-4 h-4"></i>
             </button>
         </div>
 
         <!-- Navigation Links -->
-        <nav id="sidebar-nav" class="flex-1 px-3 py-3.5 space-y-1 hidden md:block overflow-y-auto custom-scrollbar">
+        <nav id="sidebar-nav" class="flex-1 px-2.5 py-3 space-y-0.5 hidden md:block overflow-y-auto custom-sidebar-scroll text-xs">
             
             {{-- ROLE 1: STAF TU / ADMIN --}}
             @if(Auth::user()->role === 'staf_tu')
-                <div class="pb-1.5">
-                    <span class="px-3 text-[10px] font-bold text-[#8697C3]/70 uppercase tracking-wider">Utama</span>
+                <div class="pt-1 pb-1">
+                    <span class="px-2.5 text-[9.5px] font-bold text-slate-400 uppercase tracking-wider">Utama</span>
                 </div>
-                <a href="{{ route('admin.dashboard') }}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150 {{ Route::is('admin.dashboard') ? 'bg-[#405078] text-white shadow-sm' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
-                    <i data-lucide="layout-dashboard" class="w-4 h-4 text-[#8697C3]"></i>
+                <a href="{{ route('admin.dashboard') }}" class="flex items-center space-x-2.5 px-2.5 py-2 rounded-lg font-medium transition-colors {{ Route::is('admin.dashboard') ? 'bg-[#334155] text-white font-bold shadow-xs' : 'text-slate-300 hover:bg-slate-700/50 hover:text-white' }}">
+                    <i data-lucide="layout-dashboard" class="w-4 h-4 {{ Route::is('admin.dashboard') ? 'text-white' : 'text-slate-400' }}"></i>
                     <span>Dashboard Admin</span>
                 </a>
 
-                <div class="pt-4 pb-1.5">
-                    <span class="px-3 text-[10px] font-bold text-[#8697C3]/70 uppercase tracking-wider">Master Data</span>
+                <div class="pt-3 pb-1">
+                    <span class="px-2.5 text-[9.5px] font-bold text-slate-400 uppercase tracking-wider">Master Data</span>
                 </div>
-                <a href="{{ route('admin.guru.index') }}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150 {{ Route::is('admin.guru.*') ? 'bg-[#405078] text-white shadow-sm' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
-                    <i data-lucide="users-round" class="w-4 h-4 text-[#8697C3]"></i>
+                <a href="{{ route('admin.guru.index') }}" class="flex items-center space-x-2.5 px-2.5 py-2 rounded-lg font-medium transition-colors {{ Route::is('admin.guru.*') ? 'bg-[#334155] text-white font-bold shadow-xs' : 'text-slate-300 hover:bg-slate-700/50 hover:text-white' }}">
+                    <i data-lucide="users-round" class="w-4 h-4 {{ Route::is('admin.guru.*') ? 'text-white' : 'text-slate-400' }}"></i>
                     <span>Data Guru & Pegawai</span>
                 </a>
-                <a href="{{ route('admin.siswa.index') }}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150 {{ Route::is('admin.siswa.*') ? 'bg-[#405078] text-white shadow-sm' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
-                    <i data-lucide="graduation-cap" class="w-4 h-4 text-[#8697C3]"></i>
+                <a href="{{ route('admin.siswa.index') }}" class="flex items-center space-x-2.5 px-2.5 py-2 rounded-lg font-medium transition-colors {{ Route::is('admin.siswa.*') ? 'bg-[#334155] text-white font-bold shadow-xs' : 'text-slate-300 hover:bg-slate-700/50 hover:text-white' }}">
+                    <i data-lucide="graduation-cap" class="w-4 h-4 {{ Route::is('admin.siswa.*') ? 'text-white' : 'text-slate-400' }}"></i>
                     <span>Data Siswa</span>
                 </a>
-                <a href="{{ route('admin.mapel.index') }}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150 {{ Route::is('admin.mapel.*') ? 'bg-[#405078] text-white shadow-sm' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
-                    <i data-lucide="book-marked" class="w-4 h-4 text-[#8697C3]"></i>
+                <a href="{{ route('admin.mapel.index') }}" class="flex items-center space-x-2.5 px-2.5 py-2 rounded-lg font-medium transition-colors {{ Route::is('admin.mapel.*') ? 'bg-[#334155] text-white font-bold shadow-xs' : 'text-slate-300 hover:bg-slate-700/50 hover:text-white' }}">
+                    <i data-lucide="book-marked" class="w-4 h-4 {{ Route::is('admin.mapel.*') ? 'text-white' : 'text-slate-400' }}"></i>
                     <span>Mata Pelajaran</span>
                 </a>
-                <a href="{{ route('admin.jam.index') }}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150 {{ Route::is('admin.jam.*') ? 'bg-[#405078] text-white shadow-sm' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
-                    <i data-lucide="clock" class="w-4 h-4 text-[#8697C3]"></i>
+                <a href="{{ route('admin.jam.index') }}" class="flex items-center space-x-2.5 px-2.5 py-2 rounded-lg font-medium transition-colors {{ Route::is('admin.jam.*') ? 'bg-[#334155] text-white font-bold shadow-xs' : 'text-slate-300 hover:bg-slate-700/50 hover:text-white' }}">
+                    <i data-lucide="clock" class="w-4 h-4 {{ Route::is('admin.jam.*') ? 'text-white' : 'text-slate-400' }}"></i>
                     <span>Master Jam Pelajaran</span>
                 </a>
-                <a href="{{ route('admin.jadwal.index') }}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150 {{ Route::is('admin.jadwal.*') ? 'bg-[#405078] text-white shadow-sm' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
-                    <i data-lucide="calendar" class="w-4 h-4 text-[#8697C3]"></i>
+                <a href="{{ route('admin.jadwal.index') }}" class="flex items-center space-x-2.5 px-2.5 py-2 rounded-lg font-medium transition-colors {{ Route::is('admin.jadwal.*') ? 'bg-[#334155] text-white font-bold shadow-xs' : 'text-slate-300 hover:bg-slate-700/50 hover:text-white' }}">
+                    <i data-lucide="calendar" class="w-4 h-4 {{ Route::is('admin.jadwal.*') ? 'text-white' : 'text-slate-400' }}"></i>
                     <span>Jadwal Mengajar</span>
                 </a>
-                <a href="{{ route('admin.guru-piket.index') }}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150 {{ Route::is('admin.guru-piket.*') ? 'bg-[#405078] text-white shadow-sm' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
-                    <i data-lucide="user-check" class="w-4 h-4 text-[#8697C3]"></i>
+                <a href="{{ route('admin.guru-piket.index') }}" class="flex items-center space-x-2.5 px-2.5 py-2 rounded-lg font-medium transition-colors {{ Route::is('admin.guru-piket.*') ? 'bg-[#334155] text-white font-bold shadow-xs' : 'text-slate-300 hover:bg-slate-700/50 hover:text-white' }}">
+                    <i data-lucide="user-check" class="w-4 h-4 {{ Route::is('admin.guru-piket.*') ? 'text-white' : 'text-slate-400' }}"></i>
                     <span>Kelola Guru Piket</span>
                 </a>
-                <a href="{{ route('admin.waka.index') }}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150 {{ Route::is('admin.waka.*') ? 'bg-[#405078] text-white shadow-sm' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
-                    <i data-lucide="crown" class="w-4 h-4 text-[#8697C3]"></i>
+                <a href="{{ route('admin.waka.index') }}" class="flex items-center space-x-2.5 px-2.5 py-2 rounded-lg font-medium transition-colors {{ Route::is('admin.waka.*') ? 'bg-[#334155] text-white font-bold shadow-xs' : 'text-slate-300 hover:bg-slate-700/50 hover:text-white' }}">
+                    <i data-lucide="crown" class="w-4 h-4 {{ Route::is('admin.waka.*') ? 'text-white' : 'text-slate-400' }}"></i>
                     <span>Kelola Waka</span>
                 </a>
 
-                <div class="pt-4 pb-1.5">
-                    <span class="px-3 text-[10px] font-bold text-[#8697C3]/70 uppercase tracking-wider">Laporan & Pengguna</span>
+                <div class="pt-3 pb-1">
+                    <span class="px-2.5 text-[9.5px] font-bold text-slate-400 uppercase tracking-wider">Laporan & Pengguna</span>
                 </div>
-                <a href="{{ route('admin.rekap.index') }}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150 {{ Route::is('admin.rekap.*') ? 'bg-[#405078] text-white shadow-sm' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
-                    <i data-lucide="clipboard-list" class="w-4 h-4 text-[#8697C3]"></i>
+                <a href="{{ route('admin.rekap.index') }}" class="flex items-center space-x-2.5 px-2.5 py-2 rounded-lg font-medium transition-colors {{ Route::is('admin.rekap.*') ? 'bg-[#334155] text-white font-bold shadow-xs' : 'text-slate-300 hover:bg-slate-700/50 hover:text-white' }}">
+                    <i data-lucide="clipboard-list" class="w-4 h-4 {{ Route::is('admin.rekap.*') ? 'text-white' : 'text-slate-400' }}"></i>
                     <span>Rekap Jurnal & Absensi</span>
                 </a>
-                <a href="{{ route('admin.users.index') }}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150 {{ Route::is('admin.users.*') ? 'bg-[#405078] text-white shadow-sm' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
-                    <i data-lucide="shield-check" class="w-4 h-4 text-[#8697C3]"></i>
+                <a href="{{ route('admin.users.index') }}" class="flex items-center space-x-2.5 px-2.5 py-2 rounded-lg font-medium transition-colors {{ Route::is('admin.users.*') ? 'bg-[#334155] text-white font-bold shadow-xs' : 'text-slate-300 hover:bg-slate-700/50 hover:text-white' }}">
+                    <i data-lucide="shield-check" class="w-4 h-4 {{ Route::is('admin.users.*') ? 'text-white' : 'text-slate-400' }}"></i>
                     <span>Kelola Pengguna</span>
                 </a>
 
@@ -373,37 +373,36 @@
     </aside>
     @endauth
 
-    <main class="flex-1 flex flex-col min-w-0 bg-mesh-canvas">
+    <main class="flex-1 flex flex-col min-w-0 bg-[#F1F5F9]">
         @auth
-        <!-- Top Navigation Header (Frosted Glassmorphism) -->
-        <header class="h-14 bg-white/80 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-30 flex items-center justify-between px-5 md:px-7 flex-shrink-0 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+        <!-- Top Navigation Header (Clean Corporate Standard) -->
+        <header class="h-13 bg-white border-b border-slate-200 sticky top-0 z-30 flex items-center justify-between px-5 md:px-6 flex-shrink-0 shadow-2xs">
             <div class="flex items-center space-x-2.5">
-                <span class="inline-flex items-center px-2.5 py-0.5 bg-gradient-to-r from-[#405078]/10 to-[#5F72A3]/10 text-[#405078] border border-[#405078]/20 rounded-full text-[11px] font-bold uppercase tracking-wider">
-                    <span class="w-1.5 h-1.5 rounded-full bg-[#405078] mr-1.5"></span>
+                <span class="inline-flex items-center px-2.5 py-0.5 bg-[#1E293B] text-white rounded text-[11px] font-bold uppercase tracking-wider">
                     {{ str_replace('_', ' ', Auth::user()->role) }}
                 </span>
-                <span class="hidden md:inline text-xs text-slate-300">•</span>
-                <span class="hidden md:inline text-xs text-slate-500 font-medium">SMK Negeri 1 (SMEA)</span>
+                <span class="text-xs text-slate-300">•</span>
+                <span class="text-xs text-slate-600 font-semibold">SMK Negeri 1 (SMEA)</span>
             </div>
             
-            <div class="flex items-center space-x-4">
+            <div class="flex items-center space-x-3.5">
                 <!-- Date Display -->
-                <div class="hidden sm:flex items-center space-x-2 text-xs text-slate-600 font-medium bg-slate-50 px-3 py-1 rounded-lg border border-slate-200/80">
-                    <i data-lucide="calendar" class="w-3.5 h-3.5 text-[#405078]"></i>
+                <div class="hidden sm:flex items-center space-x-2 text-xs text-slate-600 font-medium bg-slate-100 px-3 py-1 rounded border border-slate-200">
+                    <i data-lucide="calendar" class="w-3.5 h-3.5 text-slate-500"></i>
                     <span>{{ date('l, d M Y') }}</span>
                 </div>
                 
                 <!-- Quick User Status -->
                 <div class="flex items-center space-x-2.5 pl-3 border-l border-slate-200">
                     <div class="relative">
-                        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-[#405078] to-[#2B3650] text-white flex items-center justify-center font-bold text-xs shadow-xs ring-2 ring-slate-100">
+                        <div class="w-8 h-8 rounded-full bg-[#1E293B] text-white flex items-center justify-center font-bold text-xs ring-1 ring-slate-200">
                             {{ strtoupper(substr(Auth::user()->username, 0, 1)) }}
                         </div>
-                        <span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-white"></span>
+                        <span class="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-white"></span>
                     </div>
                     <div class="hidden lg:block text-left">
-                        <p class="text-xs font-bold text-[#1E2538] leading-tight">{{ Auth::user()->nama_display ?? Auth::user()->username }}</p>
-                        <p class="text-[10px] text-emerald-600 font-semibold leading-tight mt-0.5">Online</p>
+                        <p class="text-xs font-bold text-slate-900 leading-tight">{{ Auth::user()->nama_display ?? Auth::user()->username }}</p>
+                        <p class="text-[10px] text-emerald-600 font-semibold leading-tight">Online</p>
                     </div>
                 </div>
             </div>
