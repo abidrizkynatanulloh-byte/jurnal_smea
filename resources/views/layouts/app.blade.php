@@ -369,7 +369,7 @@
         @endauth
 
         <!-- Body Page Contents: Full Height SaaS Application Canvas -->
-        <div class="flex-1 p-3.5 md:p-4 max-w-[1600px] w-full mx-auto flex flex-col min-h-0 overflow-y-auto md:overflow-hidden">
+        <div class="flex-1 p-3.5 md:p-4 max-w-[1600px] w-full mx-auto flex flex-col min-h-0 overflow-y-auto">
             <!-- Compact Flash Notification -->
             @if (session('success'))
                 <div class="shrink-0 mb-3 p-2.5 bg-emerald-50 border border-emerald-200 rounded-lg text-emerald-800 text-xs font-semibold flex items-center space-x-2 shadow-2xs">
@@ -393,6 +393,8 @@
                         @endforeach
                     </ul>
                 </div>
+            @endif
+
             @yield('content')
         </div>
     </main>

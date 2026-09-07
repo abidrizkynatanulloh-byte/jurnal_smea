@@ -26,9 +26,10 @@ class AdminGuruPiketController
         }
 
         // Daftar semua guru aktif untuk dropdown penugasan
-        $daftarGuru = Guru::orderBy('nama_guru', 'asc')->get();
+        $guruList = Guru::orderBy('nama_guru', 'asc')->get();
+        $daftarGuru = $guruList;
 
-        return view('admin.guru-piket.index', compact('hariList', 'piketPerHari', 'daftarGuru'));
+        return view('admin.guru-piket.index', compact('hariList', 'piketPerHari', 'guruList', 'daftarGuru'));
     }
 
     /**
