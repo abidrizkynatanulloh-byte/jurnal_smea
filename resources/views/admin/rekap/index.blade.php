@@ -100,30 +100,45 @@
                 <!-- List Items (10 per slide) -->
                 <div id="guruCardsGrid" class="divide-y divide-slate-100">
                     @foreach($guruAlpaList as $index => $ga)
-                        <div class="guru-card py-2 flex flex-col sm:flex-row sm:items-center justify-between gap-2 transition-colors hover:bg-slate-50/80 px-2 rounded-md"
+                        @php
+                            $namaGuruVal = $ga->guru ? $ga->guru->nama_guru : 'Guru Tidak Terdaftar';
+                            $nipVal      = $ga->guru ? $ga->guru->nip : '-';
+                            $mapelVal    = $ga->mapel ? $ga->mapel->nama_mapel : '-';
+                            $kelasVal    = $ga->kelas ? $ga->kelas->nama_kelas : '-';
+                            $ruanganVal  = $ga->ruangan ? $ga->ruangan->nama_ruangan : '-';
+                        @endphp
+                        <div class="guru-card py-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 transition-all hover:bg-slate-100/70 px-2.5 rounded-lg cursor-pointer group"
                             data-index="{{ $index }}"
-                            data-nama="{{ strtolower($ga->nama_guru) }}">
-                            <div class="flex items-center space-x-2.5">
-                                <div class="w-6.5 h-6.5 rounded flex items-center justify-center text-[11px] font-bold shrink-0
-                                    @if($ga->status_rekap === 'Alpa') bg-rose-50 text-rose-700 border border-rose-200
-                                    @elseif(str_contains($ga->status_rekap, 'Sah')) bg-blue-50 text-blue-700 border border-blue-200
-                                    @else bg-slate-100 text-slate-600 border border-slate-200 @endif">
-                                    {{ strtoupper(substr($ga->nama_guru, 0, 1)) }}
+                            data-nama="{{ strtolower($namaGuruVal . ' ' . $mapelVal . ' ' . $kelasVal) }}"
+                            onclick="openDetailModal('{{ addslashes($namaGuruVal) }}', '{{ addslashes($nipVal) }}', '{{ addslashes($mapelVal) }}', '{{ addslashes($kelasVal) }}', '{{ addslashes($ruanganVal) }}', '{{ $ga->jam_mulai }}', '{{ $ga->jam_selesai }}', '{{ addslashes($ga->status_rekap) }}', '{{ $tanggal }}', '{{ $namaHari }}')">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-7 h-7 rounded-md flex items-center justify-center text-xs font-bold shrink-0 shadow-2xs
+                                    @if($ga->status_rekap === 'Alpa') bg-rose-100 text-rose-800 border border-rose-200
+                                    @elseif(str_contains($ga->status_rekap, 'Sah')) bg-blue-100 text-blue-800 border border-blue-200
+                                    @else bg-amber-100 text-amber-800 border border-amber-200 @endif">
+                                    {{ strtoupper(substr($namaGuruVal, 0, 1)) }}
                                 </div>
                                 <div>
-                                    <h4 class="text-xs font-semibold text-slate-900 leading-tight">{{ $ga->nama_guru }}</h4>
-                                    <p class="text-[11px] text-slate-500 mt-0.5">
-                                        {{ $ga->nama_mapel }} • {{ $ga->nama_kelas }} (Jam {{ $ga->jam_mulai }}-{{ $ga->jam_selesai }})
+                                    <h4 class="text-xs font-bold text-slate-900 leading-tight group-hover:text-indigo-600 transition-colors">
+                                        {{ $namaGuruVal }}
+                                    </h4>
+                                    <p class="text-[11px] text-slate-500 mt-0.5 flex items-center space-x-1">
+                                        <span class="font-medium text-slate-700">{{ $mapelVal }}</span>
+                                        <span>•</span>
+                                        <span>{{ $kelasVal }}</span>
+                                        <span>•</span>
+                                        <span class="font-mono text-slate-600">Jam {{ $ga->jam_mulai }}-{{ $ga->jam_selesai }}</span>
                                     </p>
                                 </div>
                             </div>
-                            <div class="flex items-center space-x-2">
-                                <span class="inline-block px-2 py-0.5 rounded text-[10.5px] font-semibold border
+                            <div class="flex items-center space-x-2 shrink-0">
+                                <span class="inline-block px-2.5 py-0.5 rounded text-[10.5px] font-bold border shadow-2xs
                                     @if($ga->status_rekap === 'Alpa') bg-rose-50 text-rose-700 border-rose-200
                                     @elseif(str_contains($ga->status_rekap, 'Sah')) bg-blue-50 text-blue-700 border-blue-200
                                     @else bg-amber-50 text-amber-700 border-amber-200 @endif">
                                     {{ $ga->status_rekap }}
                                 </span>
+                                <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 group-hover:text-slate-700 group-hover:translate-x-0.5 transition-all"></i>
                             </div>
                         </div>
                     @endforeach
@@ -222,8 +237,114 @@
     </div>
 </div>
 
+<!-- MODAL DETAIL STATUS KEHADIRAN GURU -->
+<div id="modalDetailStatusGuru" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center hidden p-4">
+    <div class="bg-white border border-slate-200 rounded-xl shadow-xl max-w-md w-full p-5 space-y-4">
+        <!-- Modal Header -->
+        <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+            <div class="flex items-center space-x-2.5">
+                <div class="w-8 h-8 rounded-lg bg-[#1E293B] text-white flex items-center justify-center font-bold shadow-2xs">
+                    <i data-lucide="user-check" class="w-4 h-4"></i>
+                </div>
+                <div>
+                    <h3 class="font-bold text-slate-900 text-sm">Detail Status Sesi Mengajar</h3>
+                    <p class="text-[11px] text-slate-500 font-medium" id="modalTanggalHari">-</p>
+                </div>
+            </div>
+            <button type="button" onclick="closeDetailModal()" class="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer">
+                <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="space-y-3">
+            <!-- Guru Info Box -->
+            <div class="p-3 bg-slate-50 border border-slate-200 rounded-lg flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-full bg-[#1E293B] text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-2xs" id="modalAvatarGuru">
+                    G
+                </div>
+                <div class="min-w-0 flex-1">
+                    <h4 class="font-bold text-slate-900 text-xs truncate" id="modalNamaGuru">-</h4>
+                    <p class="text-[11px] text-slate-500 font-mono mt-0.5" id="modalNipGuru">NIP: -</p>
+                </div>
+            </div>
+
+            <!-- Grid Details -->
+            <div class="grid grid-cols-2 gap-2 text-xs">
+                <div class="p-2.5 bg-white border border-slate-200 rounded-lg space-y-0.5">
+                    <span class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">Mata Pelajaran</span>
+                    <span class="font-bold text-slate-800 block truncate" id="modalMapel">-</span>
+                </div>
+                <div class="p-2.5 bg-white border border-slate-200 rounded-lg space-y-0.5">
+                    <span class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">Kelas</span>
+                    <span class="font-bold text-slate-800 block truncate" id="modalKelas">-</span>
+                </div>
+                <div class="p-2.5 bg-white border border-slate-200 rounded-lg space-y-0.5">
+                    <span class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">Jam Pelajaran</span>
+                    <span class="font-bold text-slate-800 block truncate font-mono" id="modalJam">-</span>
+                </div>
+                <div class="p-2.5 bg-white border border-slate-200 rounded-lg space-y-0.5">
+                    <span class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">Ruangan</span>
+                    <span class="font-bold text-slate-800 block truncate" id="modalRuangan">-</span>
+                </div>
+            </div>
+
+            <!-- Status Box -->
+            <div class="p-3 border border-slate-200 bg-slate-50/50 rounded-lg flex items-center justify-between">
+                <div>
+                    <span class="text-[10px] font-semibold uppercase tracking-wider block text-slate-400">Status Kehadiran / Jurnal</span>
+                    <span class="text-xs font-bold text-slate-900 mt-0.5 block" id="modalStatusTeks">-</span>
+                </div>
+                <span id="modalStatusBadge" class="px-2.5 py-1 rounded text-xs font-bold border shadow-2xs">
+                    -
+                </span>
+            </div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="pt-2 border-t border-slate-100 flex items-center justify-end">
+            <button type="button" onclick="closeDetailModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-2xs">
+                Tutup
+            </button>
+        </div>
+    </div>
+</div>
+
 @push('scripts')
 <script>
+function openDetailModal(namaGuru, nip, mapel, kelas, ruangan, jamMulai, jamSelesai, status, tanggal, hari) {
+    document.getElementById('modalNamaGuru').textContent = namaGuru;
+    document.getElementById('modalNipGuru').textContent = 'NIP: ' + (nip && nip !== '-' ? nip : 'Belum diisi');
+    document.getElementById('modalMapel').textContent = mapel;
+    document.getElementById('modalKelas').textContent = kelas;
+    document.getElementById('modalRuangan').textContent = ruangan;
+    document.getElementById('modalJam').textContent = 'Jam Ke ' + jamMulai + ' - ' + jamSelesai;
+    document.getElementById('modalTanggalHari').textContent = hari + ', ' + tanggal;
+    document.getElementById('modalAvatarGuru').textContent = (namaGuru ? namaGuru.charAt(0).toUpperCase() : 'G');
+
+    const badgeEl = document.getElementById('modalStatusBadge');
+    const statusTeksEl = document.getElementById('modalStatusTeks');
+
+    badgeEl.textContent = status;
+    if (status === 'Alpa') {
+        badgeEl.className = 'px-2.5 py-1 rounded text-xs font-bold border bg-rose-50 text-rose-700 border-rose-200';
+        statusTeksEl.textContent = 'Alpa (Jurnal Belum Diisi / Jam Lewat)';
+    } else if (status.includes('Sah')) {
+        badgeEl.className = 'px-2.5 py-1 rounded text-xs font-bold border bg-blue-50 text-blue-700 border-blue-200';
+        statusTeksEl.textContent = 'Izin Resmi (' + status + ')';
+    } else {
+        badgeEl.className = 'px-2.5 py-1 rounded text-xs font-bold border bg-amber-50 text-amber-700 border-amber-200';
+        statusTeksEl.textContent = 'Terjadwal (Belum Jam Mengajar / Menunggu Input)';
+    }
+
+    document.getElementById('modalDetailStatusGuru').classList.remove('hidden');
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+function closeDetailModal() {
+    document.getElementById('modalDetailStatusGuru').classList.add('hidden');
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     // ========== SLIDE PAGINATION FOR GURU CARDS (IMAGE 5 STYLE) ==========
     const cards = document.querySelectorAll('.guru-card');
