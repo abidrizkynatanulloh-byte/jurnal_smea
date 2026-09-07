@@ -3,18 +3,18 @@
 @section('title', 'Rekap Presensi Wali Kelas - Jurnal Esemkita')
 
 @section('content')
-<div class="space-y-8">
+<div class="space-y-4">
     <!-- Header -->
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
         <div>
-            <div class="flex items-center space-x-2 mb-1">
-                <a href="{{ route('guru.dashboard') }}" class="text-xs font-semibold text-[#405078] hover:underline flex items-center space-x-1">
+            <div class="flex items-center space-x-1.5 mb-1">
+                <a href="{{ route('guru.dashboard') }}" class="text-xs font-semibold text-slate-500 hover:text-slate-800 flex items-center space-x-1">
                     <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
                     <span>Kembali ke Dashboard Guru</span>
                 </a>
             </div>
-            <h1 class="text-2xl font-extrabold text-[#1E2538] tracking-tight">Rekapitulasi Presensi Kelas Binaan</h1>
-            <p class="text-xs text-gray-500 mt-0.5">
+            <h1 class="text-xl font-bold text-slate-900 tracking-tight">Rekapitulasi Presensi Kelas Binaan</h1>
+            <p class="text-xs text-slate-500 mt-0.5">
                 Monitoring ketidakhadiran siswa dan deteksi dini siswa yang membutuhkan atensi wali kelas
             </p>
         </div>
@@ -23,9 +23,9 @@
         <div>
             @if($daftarKelas->count() > 1)
                 <form action="{{ route('guru.wali-kelas') }}" method="GET" class="flex items-center space-x-2">
-                    <label class="text-xs font-bold text-gray-500">Pilih Kelas Binaan:</label>
+                    <label class="text-xs font-bold text-slate-500">Pilih Kelas:</label>
                     <select name="kelas_id" onchange="this.form.submit()"
-                        class="px-3.5 py-2 bg-white border border-[#D1D9EB] rounded-xl text-xs font-bold text-[#1E2538] focus:outline-none focus:border-[#405078] shadow-xs cursor-pointer">
+                        class="h-8 px-2.5 bg-white border border-slate-200 rounded-lg text-xs font-semibold text-slate-800 focus:outline-none focus:border-[#1E2538] shadow-2xs cursor-pointer">
                         @foreach($daftarKelas as $k)
                             <option value="{{ $k->id_kelas }}" {{ $kelasAktif && $kelasAktif->id_kelas == $k->id_kelas ? 'selected' : '' }}>
                                 {{ $k->nama_kelas }}
@@ -34,8 +34,8 @@
                     </select>
                 </form>
             @elseif($kelasAktif)
-                <div class="px-4 py-2 bg-white border border-[#D1D9EB] rounded-xl shadow-xs text-xs font-bold text-[#1E2538] flex items-center space-x-2">
-                    <i data-lucide="shield-check" class="w-4 h-4 text-[#405078]"></i>
+                <div class="h-8 px-3 bg-white border border-slate-200 rounded-lg shadow-2xs text-xs font-bold text-slate-800 flex items-center space-x-1.5">
+                    <i data-lucide="shield-check" class="w-3.5 h-3.5 text-slate-600"></i>
                     <span>Kelas Binaan: {{ $kelasAktif->nama_kelas }}</span>
                 </div>
             @endif
@@ -48,15 +48,15 @@
 
     <!-- PERINGATAN SISWA PERLU ATENSI KHUSUS -->
     @if($siswaBermasalah->isNotEmpty())
-        <div class="p-5 bg-rose-50/80 border border-rose-200 rounded-2xl text-rose-900 shadow-sm space-y-2">
+        <div class="p-3.5 bg-rose-50/80 border border-rose-200 rounded-xl text-rose-900 shadow-2xs space-y-1.5">
             <div class="flex items-center space-x-2">
-                <i data-lucide="alert-triangle" class="w-5 h-5 text-rose-600"></i>
-                <h3 class="font-bold text-sm">Peringatan Wali Kelas: {{ $siswaBermasalah->count() }} Siswa Perlu Atensi (Alpa ≥ 3 Kali)</h3>
+                <i data-lucide="alert-triangle" class="w-4 h-4 text-rose-600"></i>
+                <h3 class="font-bold text-xs">Peringatan Wali Kelas: {{ $siswaBermasalah->count() }} Siswa Perlu Atensi (Alpa ≥ 3 Kali)</h3>
             </div>
-            <p class="text-xs text-rose-700">Siswa di bawah ini memiliki riwayat alpa/tanpa keterangan yang tinggi. Disarankan untuk berkoordinasi dengan Guru BK atau Orang Tua.</p>
-            <div class="flex flex-wrap gap-2 pt-1">
+            <p class="text-[11px] text-rose-700">Siswa di bawah ini memiliki riwayat alpa tinggi. Disarankan berkoordinasi dengan Guru BK atau Orang Tua.</p>
+            <div class="flex flex-wrap gap-1.5 pt-0.5">
                 @foreach($siswaBermasalah as $sb)
-                    <span class="px-3 py-1 bg-white border border-rose-200 rounded-xl text-xs font-bold text-rose-800 shadow-xs">
+                    <span class="px-2 py-0.5 bg-white border border-rose-200 rounded-md text-[11px] font-bold text-rose-800 shadow-2xs">
                         {{ $sb['nama_siswa'] }} ({{ $sb['alpa'] }}x Alpa)
                     </span>
                 @endforeach
@@ -65,127 +65,126 @@
     @endif
 
     <!-- TABEL REKAPITULASI PRESENSI KELAS -->
-    <div class="bg-white border border-[#D1D9EB] rounded-2xl shadow-sm overflow-hidden">
-        <div class="px-6 py-5 border-b border-[#D1D9EB] flex items-center justify-between">
+    <div class="bg-white border border-slate-200 rounded-xl shadow-xs overflow-hidden">
+        <div class="px-4 py-3 border-b border-slate-200 flex items-center justify-between">
             <div class="flex items-center space-x-2">
-                <i data-lucide="users" class="w-5 h-5 text-[#405078]"></i>
-                <h3 class="font-bold text-[#1E2538] text-base">
+                <i data-lucide="users" class="w-4 h-4 text-slate-500"></i>
+                <h3 class="font-bold text-slate-900 text-xs">
                     Daftar Siswa {{ $kelasAktif ? $kelasAktif->nama_kelas : '' }} ({{ $rekapSiswa->count() }} Siswa)
                 </h3>
             </div>
-            <span class="text-xs text-gray-400 font-semibold">Semester Berjalan</span>
+            <span class="text-[11px] text-slate-400 font-semibold">Semester Berjalan</span>
         </div>
 
         <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
+            <table class="w-full text-left border-collapse text-xs">
                 <thead>
-                    <tr class="bg-[#F8FAFC] text-gray-500 text-xs font-semibold uppercase tracking-wider border-b border-[#D1D9EB]">
-                        <th class="py-4 px-6 w-16 text-center">No</th>
-                        <th class="py-4 px-6 w-32">NIS</th>
-                        <th class="py-4 px-6">Nama Lengkap Siswa</th>
-                        <th class="py-4 px-6 text-center w-24">Sakit</th>
-                        <th class="py-4 px-6 text-center w-24">Izin</th>
-                        <th class="py-4 px-6 text-center w-24">Alpa</th>
-                        <th class="py-4 px-6 text-center w-24">Dispen</th>
-                        <th class="py-4 px-6 text-center w-36">Status & Aksi</th>
+                    <tr class="bg-white border-b border-slate-200 text-slate-500 font-bold uppercase tracking-wider text-[11px]">
+                        <th class="py-2 px-3.5 w-12 text-center">No</th>
+                        <th class="py-2 px-3.5 w-28">NIS</th>
+                        <th class="py-2 px-3.5">Nama Lengkap Siswa</th>
+                        <th class="py-2 px-3.5 text-center w-20">Sakit</th>
+                        <th class="py-2 px-3.5 text-center w-20">Izin</th>
+                        <th class="py-2 px-3.5 text-center w-20">Alpa</th>
+                        <th class="py-2 px-3.5 text-center w-20">Dispen</th>
+                        <th class="py-2 px-3.5 text-center w-32">Status & Aksi</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-100 text-sm text-gray-600">
+                <tbody class="divide-y divide-slate-100 text-slate-700">
                     @forelse($rekapSiswa as $idx => $s)
-                        <tr class="hover:bg-gray-50/50 transition-colors {{ $s['perlu_atensi'] ? 'bg-rose-50/20' : '' }}">
-                            <td class="py-4 px-6 text-center text-xs text-gray-400">{{ $idx + 1 }}</td>
-                            <td class="py-4 px-6 text-xs font-semibold text-gray-700">{{ $s['nis'] }}</td>
-                            <td class="py-4 px-6 font-bold text-[#1E2538]">{{ $s['nama_siswa'] }}</td>
-                            <td class="py-4 px-6 text-center text-xs font-medium text-blue-600">{{ $s['sakit'] }}</td>
-                            <td class="py-4 px-6 text-center text-xs font-medium text-amber-600">{{ $s['izin'] }}</td>
-                            <td class="py-4 px-6 text-center text-xs font-bold {{ $s['alpa'] > 0 ? 'text-rose-600' : 'text-gray-400' }}">{{ $s['alpa'] }}</td>
-                            <td class="py-4 px-6 text-center text-xs font-medium text-[#405078]">{{ $s['dispen'] }}</td>
-                            <td class="py-4 px-6 text-center" x-data="{ modalTerbuka: false }">
-                                <div class="flex items-center justify-center space-x-2">
+                        <tr class="hover:bg-slate-50/80 transition-colors {{ $s['perlu_atensi'] ? 'bg-rose-50/20' : '' }}">
+                            <td class="py-2 px-3.5 text-center text-slate-400 text-xs">{{ $idx + 1 }}</td>
+                            <td class="py-2 px-3.5 font-semibold text-slate-600 text-xs">{{ $s['nis'] }}</td>
+                            <td class="py-2 px-3.5 font-bold text-slate-800 text-xs">{{ $s['nama_siswa'] }}</td>
+                            <td class="py-2 px-3.5 text-center font-semibold text-blue-600 text-xs">{{ $s['sakit'] }}</td>
+                            <td class="py-2 px-3.5 text-center font-semibold text-amber-600 text-xs">{{ $s['izin'] }}</td>
+                            <td class="py-2 px-3.5 text-center font-bold text-xs {{ $s['alpa'] > 0 ? 'text-rose-600' : 'text-slate-400' }}">{{ $s['alpa'] }}</td>
+                            <td class="py-2 px-3.5 text-center font-semibold text-slate-600 text-xs">{{ $s['dispen'] }}</td>
+                            <td class="py-2 px-3.5 text-center" x-data="{ modalTerbuka: false }">
+                                <div class="flex items-center justify-center space-x-1.5">
                                     @if($s['perlu_atensi'])
-                                        <span class="inline-flex items-center px-2.5 py-0.5 bg-rose-100 text-rose-800 text-[11px] font-bold rounded-full">
+                                        <span class="inline-flex items-center px-2 py-0.5 bg-rose-50 text-rose-700 text-[10px] font-bold rounded-md border border-rose-200/60">
                                             Perlu Atensi
                                         </span>
                                     @elseif($s['total_absen'] == 0)
-                                        <span class="inline-flex items-center px-2.5 py-0.5 bg-emerald-50 text-emerald-700 text-[11px] font-bold rounded-full">
+                                        <span class="inline-flex items-center px-2 py-0.5 bg-emerald-50 text-emerald-700 text-[10px] font-bold rounded-md border border-emerald-200/60">
                                             Rajin (100%)
                                         </span>
                                     @else
-                                        <span class="inline-flex items-center px-2.5 py-0.5 bg-gray-100 text-gray-600 text-[11px] font-medium rounded-full">
+                                        <span class="inline-flex items-center px-2 py-0.5 bg-slate-100 text-slate-600 text-[10px] font-medium rounded-md border border-slate-200">
                                             Normal
                                         </span>
                                     @endif
                                     
-                                    <button @click="modalTerbuka = true" class="p-1 text-[#405078] hover:bg-blue-50 rounded transition-colors" title="Lihat Detail Riwayat">
-                                        <i data-lucide="info" class="w-4 h-4"></i>
+                                    <button @click="modalTerbuka = true" class="w-6 h-6 flex items-center justify-center text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded border border-slate-200 transition-colors" title="Lihat Detail Riwayat">
+                                        <i data-lucide="info" class="w-3.5 h-3.5"></i>
                                     </button>
                                 </div>
 
                                 <!-- Modal Riwayat Ketidakhadiran & Dispensasi -->
                                 <div x-show="modalTerbuka" style="display: none;" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-                                    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-                                        <div x-show="modalTerbuka" @click="modalTerbuka = false" x-transition.opacity class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
-                                        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-                                        <div x-show="modalTerbuka" x-transition x-data="{ activeTab: 'absen' }" class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-                                            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                                    <div class="flex items-center justify-center min-h-screen p-4 text-center">
+                                        <div x-show="modalTerbuka" @click="modalTerbuka = false" x-transition.opacity class="fixed inset-0 bg-black/40 backdrop-blur-xs transition-opacity" aria-hidden="true"></div>
+                                        <div x-show="modalTerbuka" x-transition x-data="{ activeTab: 'absen' }" class="inline-block align-bottom bg-white rounded-xl text-left overflow-hidden shadow-xl transform transition-all max-w-md w-full z-10 border border-slate-200">
+                                            <div class="bg-white p-4">
                                                 <div class="w-full">
-                                                    <h3 class="text-lg leading-6 font-bold text-gray-900 border-b pb-2" id="modal-title">
+                                                    <h3 class="text-sm font-bold text-slate-900 border-b border-slate-100 pb-2" id="modal-title">
                                                         Detail Riwayat - {{ $s['nama_siswa'] }}
                                                     </h3>
 
                                                     <!-- Tab Buttons -->
-                                                    <div class="flex mt-4 bg-gray-100 rounded-xl p-1 space-x-1">
-                                                        <button @click="activeTab = 'absen'" :class="activeTab === 'absen' ? 'bg-white shadow-sm text-[#1E2538] font-bold' : 'text-gray-500 hover:text-gray-700'" class="flex-1 py-2 px-3 rounded-lg text-xs font-semibold transition-all">
+                                                    <div class="flex mt-3 bg-slate-100 rounded-lg p-0.5 space-x-1">
+                                                        <button @click="activeTab = 'absen'" :class="activeTab === 'absen' ? 'bg-white shadow-2xs text-slate-900 font-bold' : 'text-slate-500 hover:text-slate-700'" class="flex-1 py-1.5 px-2 rounded-md text-xs font-semibold transition-all">
                                                             <span>Ketidakhadiran</span>
-                                                            <span class="ml-1 px-1.5 py-0.5 rounded-full text-[10px]" :class="activeTab === 'absen' ? 'bg-rose-100 text-rose-700' : 'bg-gray-200 text-gray-500'">{{ count($s['riwayat_absen']) }}</span>
+                                                            <span class="ml-1 px-1.5 py-0.2 rounded-full text-[10px]" :class="activeTab === 'absen' ? 'bg-rose-100 text-rose-700' : 'bg-slate-200 text-slate-500'">{{ count($s['riwayat_absen']) }}</span>
                                                         </button>
-                                                        <button @click="activeTab = 'dispen'" :class="activeTab === 'dispen' ? 'bg-white shadow-sm text-[#1E2538] font-bold' : 'text-gray-500 hover:text-gray-700'" class="flex-1 py-2 px-3 rounded-lg text-xs font-semibold transition-all">
+                                                        <button @click="activeTab = 'dispen'" :class="activeTab === 'dispen' ? 'bg-white shadow-2xs text-slate-900 font-bold' : 'text-slate-500 hover:text-slate-700'" class="flex-1 py-1.5 px-2 rounded-md text-xs font-semibold transition-all">
                                                             <span>Dispensasi</span>
-                                                            <span class="ml-1 px-1.5 py-0.5 rounded-full text-[10px]" :class="activeTab === 'dispen' ? 'bg-purple-100 text-purple-700' : 'bg-gray-200 text-gray-500'">{{ count($s['riwayat_dispen']) }}</span>
+                                                            <span class="ml-1 px-1.5 py-0.2 rounded-full text-[10px]" :class="activeTab === 'dispen' ? 'bg-purple-100 text-purple-700' : 'bg-slate-200 text-slate-500'">{{ count($s['riwayat_dispen']) }}</span>
                                                         </button>
                                                     </div>
 
                                                     <!-- Tab: Ketidakhadiran -->
-                                                    <div x-show="activeTab === 'absen'" class="mt-4 space-y-3 max-h-72 overflow-y-auto pr-2">
+                                                    <div x-show="activeTab === 'absen'" class="mt-3 space-y-2 max-h-60 overflow-y-auto pr-1">
                                                         @forelse($s['riwayat_absen'] as $riwayat)
-                                                            <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg border border-gray-100">
+                                                            <div class="flex justify-between items-center p-2.5 bg-slate-50 rounded-lg border border-slate-200/60">
                                                                 <div class="text-left">
-                                                                    <div class="font-bold text-sm text-[#1E2538]">{{ \Carbon\Carbon::parse($riwayat['tanggal'])->locale('id')->isoFormat('dddd, D MMMM Y') }}</div>
-                                                                    <div class="text-xs text-gray-500 mt-1">Waktu: <span class="font-semibold">{{ $riwayat['detail_jam'] }}</span></div>
+                                                                    <div class="font-bold text-xs text-slate-800">{{ \Carbon\Carbon::parse($riwayat['tanggal'])->locale('id')->isoFormat('dddd, D MMMM Y') }}</div>
+                                                                    <div class="text-[11px] text-slate-500 mt-0.5">Waktu: <span class="font-semibold">{{ $riwayat['detail_jam'] }}</span></div>
                                                                 </div>
                                                                 <div>
                                                                     @php
                                                                         $badge = match ($riwayat['keterangan']) {
-                                                                            'Sakit' => 'bg-blue-50 text-blue-700',
-                                                                            'Izin'  => 'bg-amber-50 text-amber-700',
-                                                                            default => 'bg-rose-50 text-rose-700',
+                                                                            'Sakit' => 'bg-blue-50 text-blue-700 border border-blue-200/60',
+                                                                            'Izin'  => 'bg-amber-50 text-amber-700 border border-amber-200/60',
+                                                                            default => 'bg-rose-50 text-rose-700 border border-rose-200/60',
                                                                         };
                                                                     @endphp
-                                                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold {{ $badge }}">
+                                                                    <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold {{ $badge }}">
                                                                         {{ $riwayat['keterangan'] }}
                                                                     </span>
                                                                 </div>
                                                             </div>
                                                         @empty
-                                                            <div class="text-center text-gray-500 text-sm italic py-4">Belum ada riwayat ketidakhadiran.</div>
+                                                            <div class="text-center text-slate-400 text-xs italic py-4">Belum ada riwayat ketidakhadiran.</div>
                                                         @endforelse
                                                     </div>
 
                                                     <!-- Tab: Dispensasi -->
-                                                    <div x-show="activeTab === 'dispen'" style="display: none;" class="mt-4 space-y-3 max-h-72 overflow-y-auto pr-2">
+                                                    <div x-show="activeTab === 'dispen'" style="display: none;" class="mt-3 space-y-2 max-h-60 overflow-y-auto pr-1">
                                                         @forelse($s['riwayat_dispen'] as $dispen)
-                                                            <div class="p-3 bg-purple-50/50 rounded-lg border border-purple-100">
+                                                            <div class="p-2.5 bg-purple-50/50 rounded-lg border border-purple-100">
                                                                 <div class="flex justify-between items-start">
                                                                     <div class="text-left flex-1">
-                                                                        <div class="font-bold text-sm text-[#1E2538]">{{ \Carbon\Carbon::parse($dispen['tanggal'])->locale('id')->isoFormat('dddd, D MMMM Y') }}</div>
-                                                                        <div class="text-xs text-gray-600 mt-1">
+                                                                        <div class="font-bold text-xs text-slate-800">{{ \Carbon\Carbon::parse($dispen['tanggal'])->locale('id')->isoFormat('dddd, D MMMM Y') }}</div>
+                                                                        <div class="text-[11px] text-slate-600 mt-0.5">
                                                                             <span class="font-semibold">Keperluan:</span> {{ $dispen['keperluan'] }}
                                                                         </div>
                                                                         @if($dispen['jam_ke'])
-                                                                            <div class="text-xs text-gray-500 mt-0.5">Jam ke: {{ $dispen['jam_ke'] }}</div>
+                                                                            <div class="text-[11px] text-slate-500 mt-0.5">Jam ke: {{ $dispen['jam_ke'] }}</div>
                                                                         @endif
                                                                         @if($dispen['jam_keluar'] || $dispen['jam_kembali'])
-                                                                            <div class="text-xs text-gray-500 mt-0.5">
+                                                                            <div class="text-[10px] text-slate-500 mt-0.5">
                                                                                 @if($dispen['jam_keluar'])
                                                                                     Keluar: <span class="font-semibold">{{ $dispen['jam_keluar'] }}</span>
                                                                                 @endif
@@ -195,30 +194,30 @@
                                                                             </div>
                                                                         @endif
                                                                     </div>
-                                                                    <div class="ml-3">
+                                                                    <div class="ml-2">
                                                                         @php
                                                                             $statusBadge = match ($dispen['status']) {
-                                                                                'Disetujui'      => 'bg-emerald-50 text-emerald-700',
-                                                                                'Sedang di Luar' => 'bg-amber-50 text-amber-700',
-                                                                                'Sudah Kembali'  => 'bg-blue-50 text-blue-700',
-                                                                                'Ditolak'        => 'bg-rose-50 text-rose-700',
-                                                                                default          => 'bg-gray-100 text-gray-600',
+                                                                                'Disetujui'      => 'bg-emerald-50 text-emerald-700 border border-emerald-200/60',
+                                                                                'Sedang di Luar' => 'bg-amber-50 text-amber-700 border border-amber-200/60',
+                                                                                'Sudah Kembali'  => 'bg-blue-50 text-blue-700 border border-blue-200/60',
+                                                                                'Ditolak'        => 'bg-rose-50 text-rose-700 border border-rose-200/60',
+                                                                                default          => 'bg-slate-100 text-slate-600 border border-slate-200',
                                                                             };
                                                                         @endphp
-                                                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold {{ $statusBadge }}">
+                                                                        <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold {{ $statusBadge }}">
                                                                             {{ $dispen['status'] }}
                                                                         </span>
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                         @empty
-                                                            <div class="text-center text-gray-500 text-sm italic py-4">Belum ada riwayat dispensasi.</div>
+                                                            <div class="text-center text-slate-400 text-xs italic py-4">Belum ada riwayat dispensasi.</div>
                                                         @endforelse
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                                                <button type="button" @click="modalTerbuka = false" class="w-full inline-flex justify-center rounded-xl border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#405078] sm:ml-3 sm:w-auto sm:text-sm">
+                                            <div class="bg-slate-50 px-4 py-2.5 sm:flex sm:flex-row-reverse border-t border-slate-100">
+                                                <button type="button" @click="modalTerbuka = false" class="h-7 px-3 bg-white border border-slate-200 rounded-lg text-xs font-semibold text-slate-700 hover:bg-slate-50">
                                                     Tutup
                                                 </button>
                                             </div>
@@ -229,7 +228,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="py-8 text-center text-gray-400 italic text-xs">
+                            <td colspan="8" class="py-6 text-center text-slate-400 italic text-xs">
                                 Tidak ada data siswa di kelas ini.
                             </td>
                         </tr>

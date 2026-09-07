@@ -263,49 +263,49 @@
 </div>
 
 <!-- MODAL 1: LIST GURU ALPA HARI INI -->
-<div id="modalAlpa" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center hidden p-4">
-    <div class="bg-white border border-[#D1D9EB] rounded-2xl max-w-3xl w-full shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
-        <div class="px-6 py-4 border-b border-[#D1D9EB] bg-rose-50 flex items-center justify-between">
-            <div class="flex items-center space-x-2">
-                <i data-lucide="user-x" class="w-5 h-5 text-rose-600"></i>
-                <h3 class="font-bold text-[#1E2538] text-base">Daftar Guru Alpa / Belum Isi Jurnal Hari Ini</h3>
+<div id="modalAlpa" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 flex items-center justify-center hidden p-4">
+    <div class="bg-white border border-slate-200 rounded-xl max-w-2xl w-full shadow-xl overflow-hidden flex flex-col max-h-[85vh]">
+        <div class="px-4 py-2.5 border-b border-slate-200 bg-rose-50/70 flex items-center justify-between">
+            <div class="flex items-center space-x-1.5">
+                <i data-lucide="user-x" class="w-4 h-4 text-rose-600"></i>
+                <h3 class="font-bold text-slate-900 text-xs uppercase tracking-wider">Daftar Guru Alpa / Belum Isi Jurnal Hari Ini</h3>
             </div>
-            <button onclick="closeModalAlpa()" class="text-gray-400 hover:text-gray-600 p-1 cursor-pointer">
-                <i data-lucide="x" class="w-5 h-5"></i>
+            <button onclick="closeModalAlpa()" class="text-slate-400 hover:text-slate-600 p-1 cursor-pointer">
+                <i data-lucide="x" class="w-4 h-4"></i>
             </button>
         </div>
-        <div class="p-6 overflow-y-auto space-y-4">
-            <p class="text-xs text-gray-500">Berikut daftar sesi mengajar hari ini yang jam mengajarnya telah berakhir namun belum ada catatan jurnal mengajar:</p>
-            <div class="overflow-x-auto border border-[#D1D9EB] rounded-xl">
-                <table class="w-full text-left text-xs text-gray-600">
-                    <thead class="bg-[#F8FAFC] text-gray-500 font-semibold border-b border-[#D1D9EB]">
+        <div class="p-3.5 overflow-y-auto space-y-2.5">
+            <p class="text-[11px] text-slate-500">Berikut daftar sesi mengajar hari ini yang jam mengajarnya telah berakhir namun belum ada catatan jurnal mengajar:</p>
+            <div class="overflow-x-auto border border-slate-200 rounded-lg">
+                <table class="w-full text-left text-xs border-collapse">
+                    <thead class="bg-white text-slate-500 font-bold uppercase tracking-wider text-[11px] border-b border-slate-200">
                         <tr>
-                            <th class="py-3 px-4 text-center w-12">No</th>
-                            <th class="py-3 px-4">Nama Guru</th>
-                            <th class="py-3 px-4">Kelas & Mapel</th>
-                            <th class="py-3 px-4 text-center">Jam Ke-</th>
-                            <th class="py-3 px-4">Ruangan</th>
-                            <th class="py-3 px-4 text-center">Status</th>
+                            <th class="py-2 px-3 text-center w-10">No</th>
+                            <th class="py-2 px-3">Nama Guru</th>
+                            <th class="py-2 px-3">Kelas & Mapel</th>
+                            <th class="py-2 px-3 text-center">Jam Ke-</th>
+                            <th class="py-2 px-3">Ruangan</th>
+                            <th class="py-2 px-3 text-center">Status</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-100">
+                    <tbody class="divide-y divide-slate-100 text-slate-700">
                         @forelse ($listGuruAlpaHariIni as $idx => $g)
-                            <tr class="hover:bg-rose-50/20">
-                                <td class="py-3 px-4 text-center font-medium text-gray-400">{{ $idx + 1 }}</td>
-                                <td class="py-3 px-4 font-bold text-[#1E2538]">{{ $g->guru ? $g->guru->nama_guru : '-' }}</td>
-                                <td class="py-3 px-4">
-                                    <div class="font-semibold text-gray-700">{{ $g->kelas ? $g->kelas->nama_kelas : '-' }}</div>
-                                    <div class="text-[10px] text-gray-400">{{ $g->mapel ? $g->mapel->nama_mapel : '-' }}</div>
+                            <tr class="hover:bg-rose-50/20 transition-colors">
+                                <td class="py-2 px-3 text-center font-medium text-slate-400 tabular-nums">{{ $idx + 1 }}</td>
+                                <td class="py-2 px-3 font-semibold text-slate-900">{{ $g->guru ? $g->guru->nama_guru : '-' }}</td>
+                                <td class="py-2 px-3">
+                                    <div class="font-semibold text-slate-800">{{ $g->kelas ? $g->kelas->nama_kelas : '-' }}</div>
+                                    <div class="text-[10px] text-slate-400">{{ $g->mapel ? $g->mapel->nama_mapel : '-' }}</div>
                                 </td>
-                                <td class="py-3 px-4 text-center font-bold text-rose-700">Jam {{ $g->jam_mulai }} - {{ $j->jam_selesai ?? $g->jam_selesai }}</td>
-                                <td class="py-3 px-4 text-gray-600">{{ $g->ruangan ? $g->ruangan->nama_ruangan : '-' }}</td>
-                                <td class="py-3 px-4 text-center">
-                                    <span class="px-2 py-0.5 bg-rose-100 text-rose-700 font-extrabold rounded-md text-[10px]">ALPA</span>
+                                <td class="py-2 px-3 text-center font-semibold text-rose-700">Jam {{ $g->jam_mulai }} - {{ $j->jam_selesai ?? $g->jam_selesai }}</td>
+                                <td class="py-2 px-3 text-slate-600">{{ $g->ruangan ? $g->ruangan->nama_ruangan : '-' }}</td>
+                                <td class="py-2 px-3 text-center">
+                                    <span class="px-2 py-0.5 bg-rose-50 text-rose-700 border border-rose-200 font-bold rounded text-[10px]">ALPA</span>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="py-6 text-center text-gray-400 italic">
+                                <td colspan="6" class="py-5 text-center text-slate-400 italic text-xs">
                                     Tidak ada guru yang terdeteksi Alpa hari ini.
                                 </td>
                             </tr>
@@ -314,8 +314,8 @@
                 </table>
             </div>
         </div>
-        <div class="px-6 py-3.5 border-t border-[#D1D9EB] bg-gray-50 flex justify-end">
-            <button onclick="closeModalAlpa()" class="px-4 py-2 bg-[#405078] hover:bg-[#2F3C5C] text-white text-xs font-bold rounded-xl cursor-pointer">
+        <div class="px-4 py-2 border-t border-slate-200 bg-slate-50 flex justify-end">
+            <button onclick="closeModalAlpa()" class="h-8 px-3.5 bg-[#1E2538] hover:bg-[#161c2c] text-white text-xs font-semibold rounded-lg cursor-pointer">
                 Tutup
             </button>
         </div>
@@ -323,45 +323,45 @@
 </div>
 
 <!-- MODAL 2: LIST GURU BELUM ISI KEMARIN -->
-<div id="modalKemarin" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center hidden p-4">
-    <div class="bg-white border border-[#D1D9EB] rounded-2xl max-w-3xl w-full shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
-        <div class="px-6 py-4 border-b border-[#D1D9EB] bg-amber-50 flex items-center justify-between">
-            <div class="flex items-center space-x-2">
-                <i data-lucide="book-x" class="w-5 h-5 text-amber-700"></i>
-                <h3 class="font-bold text-[#1E2538] text-base">Daftar Sesi Mengajar Belum Diisi (Kemarin)</h3>
+<div id="modalKemarin" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 flex items-center justify-center hidden p-4">
+    <div class="bg-white border border-slate-200 rounded-xl max-w-2xl w-full shadow-xl overflow-hidden flex flex-col max-h-[85vh]">
+        <div class="px-4 py-2.5 border-b border-slate-200 bg-amber-50/70 flex items-center justify-between">
+            <div class="flex items-center space-x-1.5">
+                <i data-lucide="book-x" class="w-4 h-4 text-amber-600"></i>
+                <h3 class="font-bold text-slate-900 text-xs uppercase tracking-wider">Daftar Sesi Mengajar Belum Diisi (Kemarin)</h3>
             </div>
-            <button onclick="closeModalKemarin()" class="text-gray-400 hover:text-gray-600 p-1 cursor-pointer">
-                <i data-lucide="x" class="w-5 h-5"></i>
+            <button onclick="closeModalKemarin()" class="text-slate-400 hover:text-slate-600 p-1 cursor-pointer">
+                <i data-lucide="x" class="w-4 h-4"></i>
             </button>
         </div>
-        <div class="p-6 overflow-y-auto space-y-4">
-            <p class="text-xs text-gray-500">Berikut daftar sesi mengajar kemarin yang belum diisi oleh guru pengampu:</p>
-            <div class="overflow-x-auto border border-[#D1D9EB] rounded-xl">
-                <table class="w-full text-left text-xs text-gray-600">
-                    <thead class="bg-[#F8FAFC] text-gray-500 font-semibold border-b border-[#D1D9EB]">
+        <div class="p-3.5 overflow-y-auto space-y-2.5">
+            <p class="text-[11px] text-slate-500">Berikut daftar sesi mengajar kemarin yang belum diisi oleh guru pengampu:</p>
+            <div class="overflow-x-auto border border-slate-200 rounded-lg">
+                <table class="w-full text-left text-xs border-collapse">
+                    <thead class="bg-white text-slate-500 font-bold uppercase tracking-wider text-[11px] border-b border-slate-200">
                         <tr>
-                            <th class="py-3 px-4 text-center w-12">No</th>
-                            <th class="py-3 px-4">Nama Guru</th>
-                            <th class="py-3 px-4">Kelas & Mapel</th>
-                            <th class="py-3 px-4 text-center">Jam Ke-</th>
-                            <th class="py-3 px-4">Ruangan</th>
+                            <th class="py-2 px-3 text-center w-10">No</th>
+                            <th class="py-2 px-3">Nama Guru</th>
+                            <th class="py-2 px-3">Kelas & Mapel</th>
+                            <th class="py-2 px-3 text-center">Jam Ke-</th>
+                            <th class="py-2 px-3">Ruangan</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-100">
+                    <tbody class="divide-y divide-slate-100 text-slate-700">
                         @forelse ($listGuruBelumIsiKemarin as $idx => $g)
-                            <tr class="hover:bg-amber-50/20">
-                                <td class="py-3 px-4 text-center font-medium text-gray-400">{{ $idx + 1 }}</td>
-                                <td class="py-3 px-4 font-bold text-[#1E2538]">{{ $g->guru ? $g->guru->nama_guru : '-' }}</td>
-                                <td class="py-3 px-4">
-                                    <div class="font-semibold text-gray-700">{{ $g->kelas ? $g->kelas->nama_kelas : '-' }}</div>
-                                    <div class="text-[10px] text-gray-400">{{ $g->mapel ? $g->mapel->nama_mapel : '-' }}</div>
+                            <tr class="hover:bg-amber-50/20 transition-colors">
+                                <td class="py-2 px-3 text-center font-medium text-slate-400 tabular-nums">{{ $idx + 1 }}</td>
+                                <td class="py-2 px-3 font-semibold text-slate-900">{{ $g->guru ? $g->guru->nama_guru : '-' }}</td>
+                                <td class="py-2 px-3">
+                                    <div class="font-semibold text-slate-800">{{ $g->kelas ? $g->kelas->nama_kelas : '-' }}</div>
+                                    <div class="text-[10px] text-slate-400">{{ $g->mapel ? $g->mapel->nama_mapel : '-' }}</div>
                                 </td>
-                                <td class="py-3 px-4 text-center font-bold text-amber-700">Jam {{ $g->jam_mulai }} - {{ $g->jam_selesai }}</td>
-                                <td class="py-3 px-4 text-gray-600">{{ $g->ruangan ? $g->ruangan->nama_ruangan : '-' }}</td>
+                                <td class="py-2 px-3 text-center font-semibold text-amber-700">Jam {{ $g->jam_mulai }} - {{ $g->jam_selesai }}</td>
+                                <td class="py-2 px-3 text-slate-600">{{ $g->ruangan ? $g->ruangan->nama_ruangan : '-' }}</td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="py-6 text-center text-gray-400 italic">
+                                <td colspan="5" class="py-5 text-center text-slate-400 italic text-xs">
                                     Semua jurnal mengajar kemarin telah diisi lengkap.
                                 </td>
                             </tr>
@@ -370,8 +370,8 @@
                 </table>
             </div>
         </div>
-        <div class="px-6 py-3.5 border-t border-[#D1D9EB] bg-gray-50 flex justify-end">
-            <button onclick="closeModalKemarin()" class="px-4 py-2 bg-[#405078] hover:bg-[#2F3C5C] text-white text-xs font-bold rounded-xl cursor-pointer">
+        <div class="px-4 py-2 border-t border-slate-200 bg-slate-50 flex justify-end">
+            <button onclick="closeModalKemarin()" class="h-8 px-3.5 bg-[#1E2538] hover:bg-[#161c2c] text-white text-xs font-semibold rounded-lg cursor-pointer">
                 Tutup
             </button>
         </div>
@@ -379,54 +379,54 @@
 </div>
 
 <!-- MODAL 3: LIST SISWA SAKIT HARI INI -->
-<div id="modalSiswaSakit" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center hidden p-4">
-    <div class="bg-white border border-[#D1D9EB] rounded-2xl max-w-3xl w-full shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
-        <div class="px-6 py-4 border-b border-[#D1D9EB] bg-amber-50 flex items-center justify-between">
-            <div class="flex items-center space-x-2">
-                <i data-lucide="stethoscope" class="w-5 h-5 text-amber-600"></i>
-                <h3 class="font-bold text-[#1E2538] text-base">Daftar Siswa Sakit Hari Ini</h3>
-                <span class="text-xs font-bold text-amber-700 bg-amber-100 border border-amber-200 px-2 py-0.5 rounded-full">{{ $siswaSakitHariIni }} siswa</span>
+<div id="modalSiswaSakit" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 flex items-center justify-center hidden p-4">
+    <div class="bg-white border border-slate-200 rounded-xl max-w-2xl w-full shadow-xl overflow-hidden flex flex-col max-h-[85vh]">
+        <div class="px-4 py-2.5 border-b border-slate-200 bg-amber-50/70 flex items-center justify-between">
+            <div class="flex items-center space-x-1.5">
+                <i data-lucide="stethoscope" class="w-4 h-4 text-amber-600"></i>
+                <h3 class="font-bold text-slate-900 text-xs uppercase tracking-wider">Daftar Siswa Sakit Hari Ini</h3>
+                <span class="text-[11px] font-bold text-amber-700 bg-amber-100 border border-amber-200 px-2 py-0.5 rounded-full">{{ $siswaSakitHariIni }} siswa</span>
             </div>
-            <button onclick="closeModalSiswaSakit()" class="text-gray-400 hover:text-gray-600 p-1 cursor-pointer">
-                <i data-lucide="x" class="w-5 h-5"></i>
+            <button onclick="closeModalSiswaSakit()" class="text-slate-400 hover:text-slate-600 p-1 cursor-pointer">
+                <i data-lucide="x" class="w-4 h-4"></i>
             </button>
         </div>
-        <div class="p-6 overflow-y-auto space-y-4">
-            <p class="text-xs text-gray-500">Berikut daftar siswa yang tercatat sakit pada jurnal mengajar hari ini:</p>
-            <div class="overflow-x-auto border border-[#D1D9EB] rounded-xl">
-                <table class="w-full text-left text-xs text-gray-600">
-                    <thead class="bg-[#F8FAFC] text-gray-500 font-semibold border-b border-[#D1D9EB]">
+        <div class="p-3.5 overflow-y-auto space-y-2.5">
+            <p class="text-[11px] text-slate-500">Berikut daftar siswa yang tercatat sakit pada jurnal mengajar hari ini:</p>
+            <div class="overflow-x-auto border border-slate-200 rounded-lg">
+                <table class="w-full text-left text-xs border-collapse">
+                    <thead class="bg-white text-slate-500 font-bold uppercase tracking-wider text-[11px] border-b border-slate-200">
                         <tr>
-                            <th class="py-3 px-4 text-center w-12">No</th>
-                            <th class="py-3 px-4">NIS</th>
-                            <th class="py-3 px-4">Nama Siswa</th>
-                            <th class="py-3 px-4">Kelas</th>
-                            <th class="py-3 px-4">Pada Mata Pelajaran</th>
-                            <th class="py-3 px-4 text-center">Status</th>
+                            <th class="py-2 px-3 text-center w-10">No</th>
+                            <th class="py-2 px-3">NIS</th>
+                            <th class="py-2 px-3">Nama Siswa</th>
+                            <th class="py-2 px-3">Kelas</th>
+                            <th class="py-2 px-3">Pada Mata Pelajaran</th>
+                            <th class="py-2 px-3 text-center">Status</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-100">
+                    <tbody class="divide-y divide-slate-100 text-slate-700">
                         @forelse ($listSiswaSakitHariIni as $idx => $d)
-                            <tr class="hover:bg-amber-50/20">
-                                <td class="py-3 px-4 text-center font-medium text-gray-400">{{ $idx + 1 }}</td>
-                                <td class="py-3 px-4 font-mono text-gray-500">{{ $d->id_siswa }}</td>
-                                <td class="py-3 px-4 font-bold text-[#1E2538]">{{ $d->siswa ? $d->siswa->nama_siswa : '-' }}</td>
-                                <td class="py-3 px-4">
-                                    <span class="px-2 py-0.5 bg-gray-100 rounded-md text-[10px] font-bold text-gray-700">{{ $d->siswa && $d->siswa->kelas ? $d->siswa->kelas->nama_kelas : '-' }}</span>
+                            <tr class="hover:bg-amber-50/20 transition-colors">
+                                <td class="py-2 px-3 text-center font-medium text-slate-400 tabular-nums">{{ $idx + 1 }}</td>
+                                <td class="py-2 px-3 font-mono text-slate-500">{{ $d->id_siswa }}</td>
+                                <td class="py-2 px-3 font-semibold text-slate-900">{{ $d->siswa ? $d->siswa->nama_siswa : '-' }}</td>
+                                <td class="py-2 px-3">
+                                    <span class="px-1.5 py-0.5 bg-slate-100 border border-slate-200 rounded text-[10px] font-semibold text-slate-700">{{ $d->siswa && $d->siswa->kelas ? $d->siswa->kelas->nama_kelas : '-' }}</span>
                                 </td>
-                                <td class="py-3 px-4 text-gray-600">
+                                <td class="py-2 px-3 text-slate-600">
                                     {{ $d->jurnal && $d->jurnal->jadwal && $d->jurnal->jadwal->mapel ? $d->jurnal->jadwal->mapel->nama_mapel : '-' }}
                                     @if($d->jurnal && $d->jurnal->jadwal && $d->jurnal->jadwal->kelas)
-                                        <span class="text-[10px] text-gray-400">({{ $d->jurnal->jadwal->kelas->nama_kelas }})</span>
+                                        <span class="text-[10px] text-slate-400">({{ $d->jurnal->jadwal->kelas->nama_kelas }})</span>
                                     @endif
                                 </td>
-                                <td class="py-3 px-4 text-center">
-                                    <span class="px-2 py-0.5 bg-amber-100 text-amber-700 font-extrabold rounded-md text-[10px]">SAKIT</span>
+                                <td class="py-2 px-3 text-center">
+                                    <span class="px-2 py-0.5 bg-amber-50 text-amber-700 border border-amber-200 font-bold rounded text-[10px]">SAKIT</span>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="py-6 text-center text-gray-400 italic">
+                                <td colspan="6" class="py-5 text-center text-slate-400 italic text-xs">
                                     Tidak ada siswa yang sakit hari ini.
                                 </td>
                             </tr>
@@ -435,8 +435,8 @@
                 </table>
             </div>
         </div>
-        <div class="px-6 py-3.5 border-t border-[#D1D9EB] bg-gray-50 flex justify-end">
-            <button onclick="closeModalSiswaSakit()" class="px-4 py-2 bg-[#405078] hover:bg-[#2F3C5C] text-white text-xs font-bold rounded-xl cursor-pointer">
+        <div class="px-4 py-2 border-t border-slate-200 bg-slate-50 flex justify-end">
+            <button onclick="closeModalSiswaSakit()" class="h-8 px-3.5 bg-[#1E2538] hover:bg-[#161c2c] text-white text-xs font-semibold rounded-lg cursor-pointer">
                 Tutup
             </button>
         </div>
@@ -444,52 +444,52 @@
 </div>
 
 <!-- MODAL 4: LIST SISWA IZIN / DISPEN HARI INI -->
-<div id="modalSiswaIzin" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center hidden p-4">
-    <div class="bg-white border border-[#D1D9EB] rounded-2xl max-w-3xl w-full shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
-        <div class="px-6 py-4 border-b border-[#D1D9EB] bg-blue-50 flex items-center justify-between">
-            <div class="flex items-center space-x-2">
-                <i data-lucide="file-badge" class="w-5 h-5 text-blue-600"></i>
-                <h3 class="font-bold text-[#1E2538] text-base">Daftar Siswa Izin / Dispen Hari Ini</h3>
-                <span class="text-xs font-bold text-blue-700 bg-blue-100 border border-blue-200 px-2 py-0.5 rounded-full">{{ $siswaIzinTotal }} siswa</span>
+<div id="modalSiswaIzin" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 flex items-center justify-center hidden p-4">
+    <div class="bg-white border border-slate-200 rounded-xl max-w-2xl w-full shadow-xl overflow-hidden flex flex-col max-h-[85vh]">
+        <div class="px-4 py-2.5 border-b border-slate-200 bg-blue-50/70 flex items-center justify-between">
+            <div class="flex items-center space-x-1.5">
+                <i data-lucide="file-badge" class="w-4 h-4 text-blue-600"></i>
+                <h3 class="font-bold text-slate-900 text-xs uppercase tracking-wider">Daftar Siswa Izin / Dispen Hari Ini</h3>
+                <span class="text-[11px] font-bold text-blue-700 bg-blue-100 border border-blue-200 px-2 py-0.5 rounded-full">{{ $siswaIzinTotal }} siswa</span>
             </div>
-            <button onclick="closeModalSiswaIzin()" class="text-gray-400 hover:text-gray-600 p-1 cursor-pointer">
-                <i data-lucide="x" class="w-5 h-5"></i>
+            <button onclick="closeModalSiswaIzin()" class="text-slate-400 hover:text-slate-600 p-1 cursor-pointer">
+                <i data-lucide="x" class="w-4 h-4"></i>
             </button>
         </div>
-        <div class="p-6 overflow-y-auto space-y-5">
+        <div class="p-3.5 overflow-y-auto space-y-3.5">
             {{-- Bagian 1: Izin dari Jurnal --}}
             @if($listSiswaIzinHariIni->count() > 0)
             <div>
-                <p class="text-xs text-gray-500 mb-2 font-semibold">Izin (tercatat di jurnal mengajar):</p>
-                <div class="overflow-x-auto border border-[#D1D9EB] rounded-xl">
-                    <table class="w-full text-left text-xs text-gray-600">
-                        <thead class="bg-[#F8FAFC] text-gray-500 font-semibold border-b border-[#D1D9EB]">
+                <p class="text-[11px] text-slate-500 mb-1.5 font-semibold">Izin (tercatat di jurnal mengajar):</p>
+                <div class="overflow-x-auto border border-slate-200 rounded-lg">
+                    <table class="w-full text-left text-xs border-collapse">
+                        <thead class="bg-white text-slate-500 font-bold uppercase tracking-wider text-[11px] border-b border-slate-200">
                             <tr>
-                                <th class="py-3 px-4 text-center w-12">No</th>
-                                <th class="py-3 px-4">NIS</th>
-                                <th class="py-3 px-4">Nama Siswa</th>
-                                <th class="py-3 px-4">Kelas</th>
-                                <th class="py-3 px-4">Pada Mata Pelajaran</th>
-                                <th class="py-3 px-4 text-center">Status</th>
+                                <th class="py-2 px-3 text-center w-10">No</th>
+                                <th class="py-2 px-3">NIS</th>
+                                <th class="py-2 px-3">Nama Siswa</th>
+                                <th class="py-2 px-3">Kelas</th>
+                                <th class="py-2 px-3">Pada Mata Pelajaran</th>
+                                <th class="py-2 px-3 text-center">Status</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-100">
+                        <tbody class="divide-y divide-slate-100 text-slate-700">
                             @foreach ($listSiswaIzinHariIni as $idx => $d)
-                                <tr class="hover:bg-blue-50/20">
-                                    <td class="py-3 px-4 text-center font-medium text-gray-400">{{ $idx + 1 }}</td>
-                                    <td class="py-3 px-4 font-mono text-gray-500">{{ $d->id_siswa }}</td>
-                                    <td class="py-3 px-4 font-bold text-[#1E2538]">{{ $d->siswa ? $d->siswa->nama_siswa : '-' }}</td>
-                                    <td class="py-3 px-4">
-                                        <span class="px-2 py-0.5 bg-gray-100 rounded-md text-[10px] font-bold text-gray-700">{{ $d->siswa && $d->siswa->kelas ? $d->siswa->kelas->nama_kelas : '-' }}</span>
+                                <tr class="hover:bg-blue-50/20 transition-colors">
+                                    <td class="py-2 px-3 text-center font-medium text-slate-400 tabular-nums">{{ $idx + 1 }}</td>
+                                    <td class="py-2 px-3 font-mono text-slate-500">{{ $d->id_siswa }}</td>
+                                    <td class="py-2 px-3 font-semibold text-slate-900">{{ $d->siswa ? $d->siswa->nama_siswa : '-' }}</td>
+                                    <td class="py-2 px-3">
+                                        <span class="px-1.5 py-0.5 bg-slate-100 border border-slate-200 rounded text-[10px] font-semibold text-slate-700">{{ $d->siswa && $d->siswa->kelas ? $d->siswa->kelas->nama_kelas : '-' }}</span>
                                     </td>
-                                    <td class="py-3 px-4 text-gray-600">
+                                    <td class="py-2 px-3 text-slate-600">
                                         {{ $d->jurnal && $d->jurnal->jadwal && $d->jurnal->jadwal->mapel ? $d->jurnal->jadwal->mapel->nama_mapel : '-' }}
                                         @if($d->jurnal && $d->jurnal->jadwal && $d->jurnal->jadwal->kelas)
-                                            <span class="text-[10px] text-gray-400">({{ $d->jurnal->jadwal->kelas->nama_kelas }})</span>
+                                            <span class="text-[10px] text-slate-400">({{ $d->jurnal->jadwal->kelas->nama_kelas }})</span>
                                         @endif
                                     </td>
-                                    <td class="py-3 px-4 text-center">
-                                        <span class="px-2 py-0.5 bg-blue-100 text-blue-700 font-extrabold rounded-md text-[10px]">IZIN</span>
+                                    <td class="py-2 px-3 text-center">
+                                        <span class="px-2 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 font-bold rounded text-[10px]">IZIN</span>
                                     </td>
                                 </tr>
                             @endforeach
@@ -502,31 +502,31 @@
             {{-- Bagian 2: Dispensasi --}}
             @if($listDispenActive->count() > 0)
             <div>
-                <p class="text-xs text-gray-500 mb-2 font-semibold">Dispensasi (surat dispen sah):</p>
-                <div class="overflow-x-auto border border-[#D1D9EB] rounded-xl">
-                    <table class="w-full text-left text-xs text-gray-600">
-                        <thead class="bg-[#F8FAFC] text-gray-500 font-semibold border-b border-[#D1D9EB]">
+                <p class="text-[11px] text-slate-500 mb-1.5 font-semibold">Dispensasi (surat dispen sah):</p>
+                <div class="overflow-x-auto border border-slate-200 rounded-lg">
+                    <table class="w-full text-left text-xs border-collapse">
+                        <thead class="bg-white text-slate-500 font-bold uppercase tracking-wider text-[11px] border-b border-slate-200">
                             <tr>
-                                <th class="py-3 px-4 text-center w-12">No</th>
-                                <th class="py-3 px-4">NIS</th>
-                                <th class="py-3 px-4">Nama Siswa</th>
-                                <th class="py-3 px-4">Kelas</th>
-                                <th class="py-3 px-4">Keperluan</th>
-                                <th class="py-3 px-4 text-center">Status</th>
+                                <th class="py-2 px-3 text-center w-10">No</th>
+                                <th class="py-2 px-3">NIS</th>
+                                <th class="py-2 px-3">Nama Siswa</th>
+                                <th class="py-2 px-3">Kelas</th>
+                                <th class="py-2 px-3">Keperluan</th>
+                                <th class="py-2 px-3 text-center">Status</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-100">
+                        <tbody class="divide-y divide-slate-100 text-slate-700">
                             @foreach ($listDispenActive as $idx => $dp)
-                                <tr class="hover:bg-blue-50/20">
-                                    <td class="py-3 px-4 text-center font-medium text-gray-400">{{ $idx + 1 }}</td>
-                                    <td class="py-3 px-4 font-mono text-gray-500">{{ $dp->nis }}</td>
-                                    <td class="py-3 px-4 font-bold text-[#1E2538]">{{ $dp->siswa ? $dp->siswa->nama_siswa : '-' }}</td>
-                                    <td class="py-3 px-4">
-                                        <span class="px-2 py-0.5 bg-gray-100 rounded-md text-[10px] font-bold text-gray-700">{{ $dp->siswa && $dp->siswa->kelas ? $dp->siswa->kelas->nama_kelas : '-' }}</span>
+                                <tr class="hover:bg-blue-50/20 transition-colors">
+                                    <td class="py-2 px-3 text-center font-medium text-slate-400 tabular-nums">{{ $idx + 1 }}</td>
+                                    <td class="py-2 px-3 font-mono text-slate-500">{{ $dp->nis }}</td>
+                                    <td class="py-2 px-3 font-semibold text-slate-900">{{ $dp->siswa ? $dp->siswa->nama_siswa : '-' }}</td>
+                                    <td class="py-2 px-3">
+                                        <span class="px-1.5 py-0.5 bg-slate-100 border border-slate-200 rounded text-[10px] font-semibold text-slate-700">{{ $dp->siswa && $dp->siswa->kelas ? $dp->siswa->kelas->nama_kelas : '-' }}</span>
                                     </td>
-                                    <td class="py-3 px-4 text-gray-600">{{ $dp->keperluan ?? '-' }}</td>
-                                    <td class="py-3 px-4 text-center">
-                                        <span class="px-2 py-0.5 bg-indigo-100 text-indigo-700 font-extrabold rounded-md text-[10px]">DISPEN</span>
+                                    <td class="py-2 px-3 text-slate-600">{{ $dp->keperluan ?? '-' }}</td>
+                                    <td class="py-2 px-3 text-center">
+                                        <span class="px-2 py-0.5 bg-indigo-50 text-indigo-700 border border-indigo-200 font-bold rounded text-[10px]">DISPEN</span>
                                     </td>
                                 </tr>
                             @endforeach
@@ -537,14 +537,14 @@
             @endif
 
             @if($listSiswaIzinHariIni->count() === 0 && $listDispenActive->count() === 0)
-                <div class="py-6 text-center text-gray-400 italic">
-                    <i data-lucide="inbox" class="w-8 h-8 mx-auto mb-2 text-gray-300"></i>
+                <div class="py-5 text-center text-slate-400 italic text-xs">
+                    <i data-lucide="inbox" class="w-6 h-6 mx-auto mb-1 text-slate-300"></i>
                     Tidak ada siswa yang izin atau dispen hari ini.
                 </div>
             @endif
         </div>
-        <div class="px-6 py-3.5 border-t border-[#D1D9EB] bg-gray-50 flex justify-end">
-            <button onclick="closeModalSiswaIzin()" class="px-4 py-2 bg-[#405078] hover:bg-[#2F3C5C] text-white text-xs font-bold rounded-xl cursor-pointer">
+        <div class="px-4 py-2 border-t border-slate-200 bg-slate-50 flex justify-end">
+            <button onclick="closeModalSiswaIzin()" class="h-8 px-3.5 bg-[#1E2538] hover:bg-[#161c2c] text-white text-xs font-semibold rounded-lg cursor-pointer">
                 Tutup
             </button>
         </div>
@@ -552,54 +552,54 @@
 </div>
 
 <!-- MODAL 5: LIST SISWA ALPA HARI INI -->
-<div id="modalSiswaAlpa" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center hidden p-4">
-    <div class="bg-white border border-[#D1D9EB] rounded-2xl max-w-3xl w-full shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
-        <div class="px-6 py-4 border-b border-[#D1D9EB] bg-rose-50 flex items-center justify-between">
-            <div class="flex items-center space-x-2">
-                <i data-lucide="user-x" class="w-5 h-5 text-rose-600"></i>
-                <h3 class="font-bold text-[#1E2538] text-base">Daftar Siswa Alpa (Tanpa Keterangan) Hari Ini</h3>
-                <span class="text-xs font-bold text-rose-700 bg-rose-100 border border-rose-200 px-2 py-0.5 rounded-full">{{ $siswaAlpaHariIni }} siswa</span>
+<div id="modalSiswaAlpa" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 flex items-center justify-center hidden p-4">
+    <div class="bg-white border border-slate-200 rounded-xl max-w-2xl w-full shadow-xl overflow-hidden flex flex-col max-h-[85vh]">
+        <div class="px-4 py-2.5 border-b border-slate-200 bg-rose-50/70 flex items-center justify-between">
+            <div class="flex items-center space-x-1.5">
+                <i data-lucide="user-x" class="w-4 h-4 text-rose-600"></i>
+                <h3 class="font-bold text-slate-900 text-xs uppercase tracking-wider">Daftar Siswa Alpa (Tanpa Keterangan) Hari Ini</h3>
+                <span class="text-[11px] font-bold text-rose-700 bg-rose-100 border border-rose-200 px-2 py-0.5 rounded-full">{{ $siswaAlpaHariIni }} siswa</span>
             </div>
-            <button onclick="closeModalSiswaAlpa()" class="text-gray-400 hover:text-gray-600 p-1 cursor-pointer">
-                <i data-lucide="x" class="w-5 h-5"></i>
+            <button onclick="closeModalSiswaAlpa()" class="text-slate-400 hover:text-slate-600 p-1 cursor-pointer">
+                <i data-lucide="x" class="w-4 h-4"></i>
             </button>
         </div>
-        <div class="p-6 overflow-y-auto space-y-4">
-            <p class="text-xs text-gray-500">Berikut daftar siswa yang tercatat Alpa (tanpa keterangan) pada jurnal mengajar hari ini:</p>
-            <div class="overflow-x-auto border border-[#D1D9EB] rounded-xl">
-                <table class="w-full text-left text-xs text-gray-600">
-                    <thead class="bg-[#F8FAFC] text-gray-500 font-semibold border-b border-[#D1D9EB]">
+        <div class="p-3.5 overflow-y-auto space-y-2.5">
+            <p class="text-[11px] text-slate-500">Berikut daftar siswa yang tercatat Alpa (tanpa keterangan) pada jurnal mengajar hari ini:</p>
+            <div class="overflow-x-auto border border-slate-200 rounded-lg">
+                <table class="w-full text-left text-xs border-collapse">
+                    <thead class="bg-white text-slate-500 font-bold uppercase tracking-wider text-[11px] border-b border-slate-200">
                         <tr>
-                            <th class="py-3 px-4 text-center w-12">No</th>
-                            <th class="py-3 px-4">NIS</th>
-                            <th class="py-3 px-4">Nama Siswa</th>
-                            <th class="py-3 px-4">Kelas</th>
-                            <th class="py-3 px-4">Pada Mata Pelajaran</th>
-                            <th class="py-3 px-4 text-center">Status</th>
+                            <th class="py-2 px-3 text-center w-10">No</th>
+                            <th class="py-2 px-3">NIS</th>
+                            <th class="py-2 px-3">Nama Siswa</th>
+                            <th class="py-2 px-3">Kelas</th>
+                            <th class="py-2 px-3">Pada Mata Pelajaran</th>
+                            <th class="py-2 px-3 text-center">Status</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-100">
+                    <tbody class="divide-y divide-slate-100 text-slate-700">
                         @forelse ($listSiswaAlpaHariIni as $idx => $d)
-                            <tr class="hover:bg-rose-50/20">
-                                <td class="py-3 px-4 text-center font-medium text-gray-400">{{ $idx + 1 }}</td>
-                                <td class="py-3 px-4 font-mono text-gray-500">{{ $d->id_siswa }}</td>
-                                <td class="py-3 px-4 font-bold text-[#1E2538]">{{ $d->siswa ? $d->siswa->nama_siswa : '-' }}</td>
-                                <td class="py-3 px-4">
-                                    <span class="px-2 py-0.5 bg-gray-100 rounded-md text-[10px] font-bold text-gray-700">{{ $d->siswa && $d->siswa->kelas ? $d->siswa->kelas->nama_kelas : '-' }}</span>
+                            <tr class="hover:bg-rose-50/20 transition-colors">
+                                <td class="py-2 px-3 text-center font-medium text-slate-400 tabular-nums">{{ $idx + 1 }}</td>
+                                <td class="py-2 px-3 font-mono text-slate-500">{{ $d->id_siswa }}</td>
+                                <td class="py-2 px-3 font-semibold text-slate-900">{{ $d->siswa ? $d->siswa->nama_siswa : '-' }}</td>
+                                <td class="py-2 px-3">
+                                    <span class="px-1.5 py-0.5 bg-slate-100 border border-slate-200 rounded text-[10px] font-semibold text-slate-700">{{ $d->siswa && $d->siswa->kelas ? $d->siswa->kelas->nama_kelas : '-' }}</span>
                                 </td>
-                                <td class="py-3 px-4 text-gray-600">
+                                <td class="py-2 px-3 text-slate-600">
                                     {{ $d->jurnal && $d->jurnal->jadwal && $d->jurnal->jadwal->mapel ? $d->jurnal->jadwal->mapel->nama_mapel : '-' }}
                                     @if($d->jurnal && $d->jurnal->jadwal && $d->jurnal->jadwal->kelas)
-                                        <span class="text-[10px] text-gray-400">({{ $d->jurnal->jadwal->kelas->nama_kelas }})</span>
+                                        <span class="text-[10px] text-slate-400">({{ $d->jurnal->jadwal->kelas->nama_kelas }})</span>
                                     @endif
                                 </td>
-                                <td class="py-3 px-4 text-center">
-                                    <span class="px-2 py-0.5 bg-rose-100 text-rose-700 font-extrabold rounded-md text-[10px]">ALPA</span>
+                                <td class="py-2 px-3 text-center">
+                                    <span class="px-2 py-0.5 bg-rose-50 text-rose-700 border border-rose-200 font-bold rounded text-[10px]">ALPA</span>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="py-6 text-center text-gray-400 italic">
+                                <td colspan="6" class="py-5 text-center text-slate-400 italic text-xs">
                                     Tidak ada siswa yang Alpa hari ini.
                                 </td>
                             </tr>
@@ -608,8 +608,8 @@
                 </table>
             </div>
         </div>
-        <div class="px-6 py-3.5 border-t border-[#D1D9EB] bg-gray-50 flex justify-end">
-            <button onclick="closeModalSiswaAlpa()" class="px-4 py-2 bg-[#405078] hover:bg-[#2F3C5C] text-white text-xs font-bold rounded-xl cursor-pointer">
+        <div class="px-4 py-2 border-t border-slate-200 bg-slate-50 flex justify-end">
+            <button onclick="closeModalSiswaAlpa()" class="h-8 px-3.5 bg-[#1E2538] hover:bg-[#161c2c] text-white text-xs font-semibold rounded-lg cursor-pointer">
                 Tutup
             </button>
         </div>

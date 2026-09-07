@@ -15,27 +15,27 @@
     </div>
 
     <!-- FILTER TANGGAL + KELAS (SESUAI GAMBAR 1 - FIXED) -->
-    <div class="shrink-0 bg-white border border-slate-200/90 rounded-xl shadow-2xs p-4">
-        <form action="{{ route('admin.rekap.index') }}" method="GET" class="flex flex-col sm:flex-row gap-3 items-end">
+    <div class="shrink-0 bg-white border border-slate-200/90 rounded-xl shadow-2xs p-3">
+        <form action="{{ route('admin.rekap.index') }}" method="GET" class="flex flex-col sm:flex-row gap-2.5 items-end">
             <div class="flex-1 w-full">
-                <label for="tanggal" class="block text-xs font-semibold text-slate-700 mb-1.5">Pilih Tanggal</label>
+                <label for="tanggal" class="block text-[11px] font-semibold text-slate-700 mb-0.5">Pilih Tanggal</label>
                 <div class="relative">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                        <i data-lucide="calendar" class="w-4 h-4"></i>
+                    <div class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-slate-400">
+                        <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
                     </div>
                     <input type="date" name="tanggal" id="tanggal" value="{{ $tanggal }}"
-                        class="w-full h-10 pl-9 pr-3 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 font-mono focus:outline-none focus:border-slate-800 cursor-pointer">
+                        class="w-full h-8 pl-8 pr-2.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 font-mono focus:outline-none focus:border-slate-800 cursor-pointer">
                 </div>
             </div>
 
             <div class="flex-1 w-full">
-                <label for="kelas" class="block text-xs font-semibold text-slate-700 mb-1.5">Filter Kelas</label>
+                <label for="kelas" class="block text-[11px] font-semibold text-slate-700 mb-0.5">Filter Kelas</label>
                 <div class="relative">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                        <i data-lucide="school" class="w-4 h-4"></i>
+                    <div class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-slate-400">
+                        <i data-lucide="school" class="w-3.5 h-3.5"></i>
                     </div>
                     <select name="kelas" id="kelas"
-                        class="w-full h-10 pl-9 pr-3 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 font-medium focus:outline-none focus:border-slate-800 cursor-pointer appearance-none">
+                        class="w-full h-8 pl-8 pr-2.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 font-medium focus:outline-none focus:border-slate-800 cursor-pointer appearance-none">
                         <option value="">Semua Kelas</option>
                         @foreach($daftarKelas as $kls)
                             <option value="{{ $kls->id_kelas }}" {{ $filterKelas == $kls->id_kelas ? 'selected' : '' }}>{{ $kls->nama_kelas }}</option>
@@ -44,13 +44,13 @@
                 </div>
             </div>
 
-            <div class="flex space-x-2 w-full sm:w-auto">
-                <button type="submit" class="h-10 px-4 bg-[#1E2538] hover:bg-[#161c2c] text-white rounded-lg text-xs font-semibold transition-colors flex items-center justify-center space-x-2 cursor-pointer shadow-2xs">
-                    <i data-lucide="filter" class="w-4 h-4"></i>
+            <div class="flex space-x-1.5 w-full sm:w-auto">
+                <button type="submit" class="h-8 px-3.5 bg-[#1E2538] hover:bg-[#161c2c] text-white rounded-lg text-xs font-semibold transition-colors flex items-center justify-center space-x-1.5 cursor-pointer shadow-2xs">
+                    <i data-lucide="filter" class="w-3.5 h-3.5"></i>
                     <span>Terapkan</span>
                 </button>
-                <a href="{{ route('admin.rekap.index') }}" class="h-10 px-3.5 border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 rounded-lg text-xs font-semibold transition-colors flex items-center justify-center space-x-1.5">
-                    <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                <a href="{{ route('admin.rekap.index') }}" class="h-8 px-3 border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 rounded-lg text-xs font-semibold transition-colors flex items-center justify-center space-x-1">
+                    <i data-lucide="rotate-ccw" class="w-3 h-3"></i>
                     <span>Reset</span>
                 </a>
             </div>

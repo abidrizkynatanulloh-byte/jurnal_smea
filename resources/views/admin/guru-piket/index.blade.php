@@ -13,7 +13,7 @@
             </p>
         </div>
         <div>
-            <button onclick="openModalTambah()" class="py-2 px-3.5 bg-[#1E293B] hover:bg-[#0F172A] text-white rounded-lg font-bold text-xs transition-all shadow-xs flex items-center space-x-1.5 cursor-pointer">
+            <button onclick="openModalTambah()" class="h-8.5 px-3.5 bg-[#1E2538] hover:bg-[#161c2c] text-white rounded-lg font-semibold text-xs transition-all shadow-2xs flex items-center space-x-1.5 cursor-pointer">
                 <i data-lucide="user-plus" class="w-3.5 h-3.5"></i>
                 <span>Tambah Guru Piket</span>
             </button>
@@ -95,10 +95,10 @@
 
 <!-- Modal Tambah Guru Piket -->
 <div id="modalTambah" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 flex items-center justify-center hidden p-4">
-    <div class="bg-white rounded-xl border border-slate-200 shadow-xl max-w-md w-full p-5 space-y-3.5">
-        <div class="flex items-center justify-between pb-2.5 border-b border-slate-100">
-            <h3 class="font-bold text-slate-900 text-sm flex items-center space-x-1.5">
-                <i data-lucide="user-plus" class="w-4 h-4 text-slate-700"></i>
+    <div class="bg-white rounded-xl border border-slate-200 shadow-xl max-w-md w-full p-4 space-y-3">
+        <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+            <h3 class="font-bold text-slate-900 text-xs flex items-center space-x-1.5 uppercase tracking-wider">
+                <i data-lucide="user-plus" class="w-3.5 h-3.5 text-slate-700"></i>
                 <span>Tambah Penugasan Guru Piket</span>
             </h3>
             <button onclick="closeModalTambah()" class="text-slate-400 hover:text-slate-600 p-1 cursor-pointer">
@@ -106,11 +106,11 @@
             </button>
         </div>
 
-        <form action="{{ route('admin.guru-piket.store') }}" method="POST" class="space-y-3">
+        <form action="{{ route('admin.guru-piket.store') }}" method="POST" class="space-y-2.5">
             @csrf
             <div>
                 <label for="hariSelect" class="block text-xs font-semibold text-slate-700 mb-1">Pilih Hari *</label>
-                <select name="hari" id="hariSelect" required class="block w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs text-slate-900 focus:outline-none focus:border-[#1E293B]">
+                <select name="hari" id="hariSelect" required class="block w-full h-8 px-2.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 focus:outline-none focus:border-[#1E2538]">
                     <option value="">-- Pilih Hari --</option>
                     @foreach($hariList as $h)
                         <option value="{{ $h }}">{{ $h }}</option>
@@ -120,7 +120,7 @@
 
             <div>
                 <label for="guruSelect" class="block text-xs font-semibold text-slate-700 mb-1">Pilih Guru *</label>
-                <select name="id_guru" id="guruSelect" required class="block w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs text-slate-900 focus:outline-none focus:border-[#1E293B]">
+                <select name="id_guru" id="guruSelect" required class="block w-full h-8 px-2.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 focus:outline-none focus:border-[#1E2538]">
                     <option value="">-- Pilih Guru --</option>
                     @foreach($guruList as $g)
                         <option value="{{ $g->id_guru }}">{{ $g->nama_guru }} ({{ $g->nip ?? '-' }})</option>
@@ -131,14 +131,14 @@
             <div>
                 <label for="keterangan" class="block text-xs font-semibold text-slate-700 mb-1">Keterangan / Posisi (Opsional)</label>
                 <input type="text" name="keterangan" id="keterangan" placeholder="Contoh: Koordinator Gerbang Barat / Piket Lt 2" 
-                    class="block w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs text-slate-900 focus:outline-none focus:border-[#1E293B]">
+                    class="block w-full h-8 px-2.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 focus:outline-none focus:border-[#1E2538]">
             </div>
 
-            <div class="flex items-center justify-end space-x-2 pt-2.5 border-t border-slate-100">
-                <button type="button" onclick="closeModalTambah()" class="px-3.5 py-1.5 border border-slate-300 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-50 cursor-pointer">
+            <div class="flex items-center justify-end space-x-2 pt-2 border-t border-slate-100">
+                <button type="button" onclick="closeModalTambah()" class="h-8 px-3 border border-slate-200 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-50 cursor-pointer">
                     Batal
                 </button>
-                <button type="submit" class="px-4 py-1.5 bg-[#1E293B] hover:bg-[#0F172A] text-white rounded-lg text-xs font-bold transition-all shadow-xs cursor-pointer">
+                <button type="submit" class="h-8.5 px-3.5 bg-[#1E2538] hover:bg-[#161c2c] text-white rounded-lg text-xs font-semibold transition-all shadow-2xs cursor-pointer">
                     Simpan Penugasan
                 </button>
             </div>
