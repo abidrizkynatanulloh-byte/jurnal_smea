@@ -72,110 +72,64 @@
 
     <style>
         body {
-            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             background-color: #F8FAFC;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
             text-rendering: optimizeLegibility;
         }
-        
-        /* Luxury Enterprise Micro Shadows & Chamfered Ring Borders */
-        .card-elevated {
-            background-color: #FFFFFF;
-            border: 1px solid rgba(209, 217, 235, 0.65);
-            box-shadow: 0 1px 3px 0 rgba(16, 24, 40, 0.03), 0 1px 2px -1px rgba(16, 24, 40, 0.03);
-            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .card-elevated:hover {
-            border-color: rgba(134, 151, 195, 0.5);
-            box-shadow: 0 8px 20px -3px rgba(16, 24, 40, 0.06), 0 3px 6px -2px rgba(16, 24, 40, 0.03);
-        }
-        
-        /* Tactile Big Tech Primary Button with Inner Bevel */
-        .btn-tactile {
-            background: linear-gradient(180deg, #4A5D8A 0%, #354264 100%);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            box-shadow: 0 1px 3px 0 rgba(64, 80, 120, 0.25), inset 0 1px 0 0 rgba(255, 255, 255, 0.22);
-            transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .btn-tactile:hover {
-            background: linear-gradient(180deg, #42537C 0%, #2E3A58 100%);
-            box-shadow: 0 3px 6px 0 rgba(64, 80, 120, 0.32), inset 0 1px 0 0 rgba(255, 255, 255, 0.28);
-        }
-        .btn-tactile:active {
-            transform: scale(0.985);
-            box-shadow: 0 1px 2px 0 rgba(64, 80, 120, 0.2);
-        }
 
-        /* Modern Crisp Inset Inputs */
-        .input-enterprise {
-            background-color: #F8FAFC;
-            border: 1px solid #E2E8F0;
-            transition: all 0.15s ease;
-        }
-        .input-enterprise:focus {
-            background-color: #FFFFFF;
-            border-color: #405078;
-            box-shadow: 0 0 0 3px rgba(64, 80, 120, 0.14);
-        }
-
-        /* Ambient Backdrop */
-        .bg-mesh-canvas {
-            background-color: #F8FAFC;
-            background-image: radial-gradient(1200px circle at 50% 0px, rgba(134, 151, 195, 0.08) 0%, transparent 70%);
-        }
-
-        /* Ultra-Sleek Scrollbars */
+        /* Pure Crisp Scrollbar (Human High-End Desktop Software) */
         ::-webkit-scrollbar {
-            width: 5px;
-            height: 5px;
+            width: 6px;
+            height: 6px;
         }
         ::-webkit-scrollbar-track {
-            background: transparent;
+            background: #F1F5F9;
         }
         ::-webkit-scrollbar-thumb {
             background: #CBD5E1;
-            border-radius: 9999px;
+            border-radius: 3px;
         }
         ::-webkit-scrollbar-thumb:hover {
             background: #94A3B8;
         }
 
         .custom-sidebar-scroll::-webkit-scrollbar {
-            width: 3px;
+            width: 4px;
         }
         .custom-sidebar-scroll::-webkit-scrollbar-track {
             background: transparent;
         }
         .custom-sidebar-scroll::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 9999px;
+            background: #334155;
+            border-radius: 2px;
         }
         .custom-sidebar-scroll::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 255, 255, 0.3);
+            background: #475569;
         }
     </style>
 </head>
-<body class="min-h-screen font-sans antialiased text-slate-900 bg-[#F1F5F9] flex flex-col md:flex-row relative">
+<body class="min-h-screen md:h-screen md:overflow-hidden font-sans antialiased text-slate-900 bg-[#F8FAFC] flex flex-col md:flex-row relative">
 
     @auth
     <!-- ============================================================== -->
-    <!-- SIDEBAR NAVIGATION (Executive Corporate Slate #1E293B)          -->
+    <!-- SIDEBAR NAVIGATION (Linear / Vercel Dark Slate #0F172A)         -->
     <!-- ============================================================== -->
-    <aside class="w-full md:w-56 bg-[#1E293B] text-white flex-shrink-0 flex flex-col border-r border-slate-700/80 shadow-lg md:h-screen md:sticky md:top-0 md:overflow-y-auto z-40">
+    <aside class="w-full md:w-56 bg-[#0F172A] text-white flex-shrink-0 flex flex-col border-r border-slate-800 shadow-xs md:h-screen md:overflow-y-auto z-40">
         <!-- Brand Header -->
-        <div class="h-13 flex items-center px-4 border-b border-slate-700/80 justify-between shrink-0 bg-[#0F172A]/40">
+        <div class="h-12 flex items-center px-4 border-b border-slate-800 justify-between shrink-0">
             <div class="flex items-center space-x-2.5">
-                <div class="w-7.5 h-7.5 rounded-lg bg-[#405078] flex items-center justify-center text-white shadow-xs">
-                    <i data-lucide="book-open-check" class="w-4 h-4"></i>
+                <div class="w-6 h-6 rounded bg-slate-100 text-slate-900 flex items-center justify-center font-bold shadow-2xs">
+                    <i data-lucide="book-open" class="w-3.5 h-3.5 text-slate-900"></i>
                 </div>
                 <div>
-                    <span class="font-bold text-sm tracking-tight text-white block leading-tight">JURNAL SMEA</span>
-                    <span class="block text-[8px] font-semibold text-slate-400 uppercase tracking-wider">SMK Negeri 1</span>
+                    <span class="font-bold text-xs tracking-tight text-white block leading-none">JURNAL SMEA</span>
+                    <span class="block text-[9px] font-medium text-slate-400 leading-none mt-1">SMK Negeri 1</span>
                 </div>
             </div>
             <!-- Mobile Menu Toggle Button -->
-            <button id="mobile-menu-toggle" class="md:hidden p-1 text-slate-400 hover:text-white rounded-lg hover:bg-white/5 focus:outline-none">
+            <button id="mobile-menu-toggle" class="md:hidden p-1 text-slate-400 hover:text-white rounded hover:bg-slate-800 focus:outline-none">
                 <i data-lucide="menu" class="w-4 h-4"></i>
             </button>
         </div>
@@ -186,54 +140,54 @@
             {{-- ROLE 1: STAF TU / ADMIN --}}
             @if(Auth::user()->role === 'staf_tu')
                 <div class="pt-1 pb-1">
-                    <span class="px-2.5 text-[9.5px] font-bold text-slate-400 uppercase tracking-wider">Utama</span>
+                    <span class="px-2 text-[9.5px] font-semibold text-slate-500 uppercase tracking-widest">Utama</span>
                 </div>
-                <a href="{{ route('admin.dashboard') }}" class="flex items-center space-x-2.5 px-2.5 py-2 rounded-lg font-medium transition-colors {{ Route::is('admin.dashboard') ? 'bg-[#334155] text-white font-bold shadow-xs' : 'text-slate-300 hover:bg-slate-700/50 hover:text-white' }}">
-                    <i data-lucide="layout-dashboard" class="w-4 h-4 {{ Route::is('admin.dashboard') ? 'text-white' : 'text-slate-400' }}"></i>
+                <a href="{{ route('admin.dashboard') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-md font-medium transition-colors {{ Route::is('admin.dashboard') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
+                    <i data-lucide="layout-dashboard" class="w-3.5 h-3.5 {{ Route::is('admin.dashboard') ? 'text-white' : 'text-slate-400' }}"></i>
                     <span>Dashboard Admin</span>
                 </a>
 
                 <div class="pt-3 pb-1">
-                    <span class="px-2.5 text-[9.5px] font-bold text-slate-400 uppercase tracking-wider">Master Data</span>
+                    <span class="px-2 text-[9.5px] font-semibold text-slate-500 uppercase tracking-widest">Master Data</span>
                 </div>
-                <a href="{{ route('admin.guru.index') }}" class="flex items-center space-x-2.5 px-2.5 py-2 rounded-lg font-medium transition-colors {{ Route::is('admin.guru.*') ? 'bg-[#334155] text-white font-bold shadow-xs' : 'text-slate-300 hover:bg-slate-700/50 hover:text-white' }}">
-                    <i data-lucide="users-round" class="w-4 h-4 {{ Route::is('admin.guru.*') ? 'text-white' : 'text-slate-400' }}"></i>
+                <a href="{{ route('admin.guru.index') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-md font-medium transition-colors {{ Route::is('admin.guru.*') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
+                    <i data-lucide="users" class="w-3.5 h-3.5 {{ Route::is('admin.guru.*') ? 'text-white' : 'text-slate-400' }}"></i>
                     <span>Data Guru & Pegawai</span>
                 </a>
-                <a href="{{ route('admin.siswa.index') }}" class="flex items-center space-x-2.5 px-2.5 py-2 rounded-lg font-medium transition-colors {{ Route::is('admin.siswa.*') ? 'bg-[#334155] text-white font-bold shadow-xs' : 'text-slate-300 hover:bg-slate-700/50 hover:text-white' }}">
-                    <i data-lucide="graduation-cap" class="w-4 h-4 {{ Route::is('admin.siswa.*') ? 'text-white' : 'text-slate-400' }}"></i>
+                <a href="{{ route('admin.siswa.index') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-md font-medium transition-colors {{ Route::is('admin.siswa.*') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
+                    <i data-lucide="graduation-cap" class="w-3.5 h-3.5 {{ Route::is('admin.siswa.*') ? 'text-white' : 'text-slate-400' }}"></i>
                     <span>Data Siswa</span>
                 </a>
-                <a href="{{ route('admin.mapel.index') }}" class="flex items-center space-x-2.5 px-2.5 py-2 rounded-lg font-medium transition-colors {{ Route::is('admin.mapel.*') ? 'bg-[#334155] text-white font-bold shadow-xs' : 'text-slate-300 hover:bg-slate-700/50 hover:text-white' }}">
-                    <i data-lucide="book-marked" class="w-4 h-4 {{ Route::is('admin.mapel.*') ? 'text-white' : 'text-slate-400' }}"></i>
+                <a href="{{ route('admin.mapel.index') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-md font-medium transition-colors {{ Route::is('admin.mapel.*') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
+                    <i data-lucide="book-marked" class="w-3.5 h-3.5 {{ Route::is('admin.mapel.*') ? 'text-white' : 'text-slate-400' }}"></i>
                     <span>Mata Pelajaran</span>
                 </a>
-                <a href="{{ route('admin.jam.index') }}" class="flex items-center space-x-2.5 px-2.5 py-2 rounded-lg font-medium transition-colors {{ Route::is('admin.jam.*') ? 'bg-[#334155] text-white font-bold shadow-xs' : 'text-slate-300 hover:bg-slate-700/50 hover:text-white' }}">
-                    <i data-lucide="clock" class="w-4 h-4 {{ Route::is('admin.jam.*') ? 'text-white' : 'text-slate-400' }}"></i>
+                <a href="{{ route('admin.jam.index') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-md font-medium transition-colors {{ Route::is('admin.jam.*') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
+                    <i data-lucide="clock" class="w-3.5 h-3.5 {{ Route::is('admin.jam.*') ? 'text-white' : 'text-slate-400' }}"></i>
                     <span>Master Jam Pelajaran</span>
                 </a>
-                <a href="{{ route('admin.jadwal.index') }}" class="flex items-center space-x-2.5 px-2.5 py-2 rounded-lg font-medium transition-colors {{ Route::is('admin.jadwal.*') ? 'bg-[#334155] text-white font-bold shadow-xs' : 'text-slate-300 hover:bg-slate-700/50 hover:text-white' }}">
-                    <i data-lucide="calendar" class="w-4 h-4 {{ Route::is('admin.jadwal.*') ? 'text-white' : 'text-slate-400' }}"></i>
+                <a href="{{ route('admin.jadwal.index') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-md font-medium transition-colors {{ Route::is('admin.jadwal.*') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
+                    <i data-lucide="calendar" class="w-3.5 h-3.5 {{ Route::is('admin.jadwal.*') ? 'text-white' : 'text-slate-400' }}"></i>
                     <span>Jadwal Mengajar</span>
                 </a>
-                <a href="{{ route('admin.guru-piket.index') }}" class="flex items-center space-x-2.5 px-2.5 py-2 rounded-lg font-medium transition-colors {{ Route::is('admin.guru-piket.*') ? 'bg-[#334155] text-white font-bold shadow-xs' : 'text-slate-300 hover:bg-slate-700/50 hover:text-white' }}">
-                    <i data-lucide="user-check" class="w-4 h-4 {{ Route::is('admin.guru-piket.*') ? 'text-white' : 'text-slate-400' }}"></i>
+                <a href="{{ route('admin.guru-piket.index') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-md font-medium transition-colors {{ Route::is('admin.guru-piket.*') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
+                    <i data-lucide="user-check" class="w-3.5 h-3.5 {{ Route::is('admin.guru-piket.*') ? 'text-white' : 'text-slate-400' }}"></i>
                     <span>Kelola Guru Piket</span>
                 </a>
-                <a href="{{ route('admin.waka.index') }}" class="flex items-center space-x-2.5 px-2.5 py-2 rounded-lg font-medium transition-colors {{ Route::is('admin.waka.*') ? 'bg-[#334155] text-white font-bold shadow-xs' : 'text-slate-300 hover:bg-slate-700/50 hover:text-white' }}">
-                    <i data-lucide="crown" class="w-4 h-4 {{ Route::is('admin.waka.*') ? 'text-white' : 'text-slate-400' }}"></i>
+                <a href="{{ route('admin.waka.index') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-md font-medium transition-colors {{ Route::is('admin.waka.*') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
+                    <i data-lucide="shield" class="w-3.5 h-3.5 {{ Route::is('admin.waka.*') ? 'text-white' : 'text-slate-400' }}"></i>
                     <span>Kelola Waka</span>
                 </a>
 
                 <div class="pt-3 pb-1">
-                    <span class="px-2.5 text-[9.5px] font-bold text-slate-400 uppercase tracking-wider">Laporan & Pengguna</span>
+                    <span class="px-2 text-[9.5px] font-semibold text-slate-500 uppercase tracking-widest">Laporan & Pengguna</span>
                 </div>
-                <a href="{{ route('admin.rekap.index') }}" class="flex items-center space-x-2.5 px-2.5 py-2 rounded-lg font-medium transition-colors {{ Route::is('admin.rekap.*') ? 'bg-[#334155] text-white font-bold shadow-xs' : 'text-slate-300 hover:bg-slate-700/50 hover:text-white' }}">
-                    <i data-lucide="clipboard-list" class="w-4 h-4 {{ Route::is('admin.rekap.*') ? 'text-white' : 'text-slate-400' }}"></i>
+                <a href="{{ route('admin.rekap.index') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-md font-medium transition-colors {{ Route::is('admin.rekap.*') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
+                    <i data-lucide="clipboard-list" class="w-3.5 h-3.5 {{ Route::is('admin.rekap.*') ? 'text-white' : 'text-slate-400' }}"></i>
                     <span>Rekap Jurnal & Absensi</span>
                 </a>
-                <a href="{{ route('admin.users.index') }}" class="flex items-center space-x-2.5 px-2.5 py-2 rounded-lg font-medium transition-colors {{ Route::is('admin.users.*') ? 'bg-[#334155] text-white font-bold shadow-xs' : 'text-slate-300 hover:bg-slate-700/50 hover:text-white' }}">
-                    <i data-lucide="shield-check" class="w-4 h-4 {{ Route::is('admin.users.*') ? 'text-white' : 'text-slate-400' }}"></i>
+                <a href="{{ route('admin.users.index') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-md font-medium transition-colors {{ Route::is('admin.users.*') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
+                    <i data-lucide="shield-check" class="w-3.5 h-3.5 {{ Route::is('admin.users.*') ? 'text-white' : 'text-slate-400' }}"></i>
                     <span>Kelola Pengguna</span>
                 </a>
 
@@ -241,38 +195,38 @@
 
             {{-- ROLE 2: GURU MATA PELAJARAN (Juga untuk Wakasis karena mereka tetap mengajar) --}}
             @if(in_array(Auth::user()->role, ['guru', 'wakasis_siswa', 'wakasis_guru']))
-                <div class="pb-1.5 pt-4">
-                    <span class="px-3 text-[10px] font-bold text-[#8697C3]/70 uppercase tracking-wider">Pembelajaran</span>
+                <div class="pb-1 pt-3">
+                    <span class="px-2 text-[9.5px] font-semibold text-slate-500 uppercase tracking-widest">Pembelajaran</span>
                 </div>
-                <a href="{{ route('guru.dashboard') }}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150 {{ Route::is('guru.dashboard') ? 'bg-[#405078] text-white shadow-sm' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
-                    <i data-lucide="layout-dashboard" class="w-4 h-4 text-[#8697C3]"></i>
+                <a href="{{ route('guru.dashboard') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-md text-xs font-medium transition-colors {{ Route::is('guru.dashboard') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
+                    <i data-lucide="layout-dashboard" class="w-3.5 h-3.5 {{ Route::is('guru.dashboard') ? 'text-white' : 'text-slate-400' }}"></i>
                     <span>Jadwal & Jurnal Hari Ini</span>
                 </a>
-                <a href="{{ route('guru.jurnal.rekap') }}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150 {{ Route::is('guru.jurnal.rekap') ? 'bg-[#405078] text-white shadow-sm' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
-                    <i data-lucide="history" class="w-4 h-4 text-[#8697C3]"></i>
+                <a href="{{ route('guru.jurnal.rekap') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-md text-xs font-medium transition-colors {{ Route::is('guru.jurnal.rekap') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
+                    <i data-lucide="history" class="w-3.5 h-3.5 {{ Route::is('guru.jurnal.rekap') ? 'text-white' : 'text-slate-400' }}"></i>
                     <span>Riwayat Jurnal Saya</span>
                 </a>
                 @if(Auth::user()->guru && Auth::user()->guru->isWaliKelas())
-                    <a href="{{ route('guru.wali-kelas') }}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150 {{ Route::is('guru.wali-kelas') ? 'bg-[#405078] text-white shadow-sm' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
-                        <i data-lucide="users-2" class="w-4 h-4 text-[#8697C3]"></i>
+                    <a href="{{ route('guru.wali-kelas') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-md text-xs font-medium transition-colors {{ Route::is('guru.wali-kelas') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
+                        <i data-lucide="users" class="w-3.5 h-3.5 {{ Route::is('guru.wali-kelas') ? 'text-white' : 'text-slate-400' }}"></i>
                         <span>Rekap Wali Kelas</span>
                     </a>
                 @endif
-                <a href="{{ route('guru.izin.index') }}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150 {{ Route::is('guru.izin.*') ? 'bg-[#405078] text-white shadow-sm' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
-                    <i data-lucide="calendar-off" class="w-4 h-4 text-[#8697C3]"></i>
+                <a href="{{ route('guru.izin.index') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-md text-xs font-medium transition-colors {{ Route::is('guru.izin.*') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
+                    <i data-lucide="calendar-off" class="w-3.5 h-3.5 {{ Route::is('guru.izin.*') ? 'text-white' : 'text-slate-400' }}"></i>
                     <span>Pengajuan Izin Mengajar</span>
                 </a>
 
                 @if(Auth::user()->guru && Auth::user()->guru->isPiketHariIni())
-                    <div class="pt-4 pb-1.5">
-                        <span class="px-3 text-[10px] font-bold text-[#8697C3]/70 uppercase tracking-wider">Guru Piket Hari Ini</span>
+                    <div class="pt-3 pb-1">
+                        <span class="px-2 text-[9.5px] font-semibold text-slate-500 uppercase tracking-widest">Guru Piket Hari Ini</span>
                     </div>
-                    <a href="{{ route('piket.dashboard') }}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150 {{ Route::is('piket.dashboard') ? 'bg-[#405078] text-white shadow-sm' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
-                        <i data-lucide="clipboard-list" class="w-4 h-4 text-[#8697C3]"></i>
+                    <a href="{{ route('piket.dashboard') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-md text-xs font-medium transition-colors {{ Route::is('piket.dashboard') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
+                        <i data-lucide="clipboard-list" class="w-3.5 h-3.5 {{ Route::is('piket.dashboard') ? 'text-white' : 'text-slate-400' }}"></i>
                         <span>Input Dispen & Siswa Telat</span>
                     </a>
-                    <a href="{{ route('piket.monitoring-kelas') }}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150 {{ Route::is('piket.monitoring-kelas') ? 'bg-[#405078] text-white shadow-sm' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
-                        <i data-lucide="monitor" class="w-4 h-4 text-[#8697C3]"></i>
+                    <a href="{{ route('piket.monitoring-kelas') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-md text-xs font-medium transition-colors {{ Route::is('piket.monitoring-kelas') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
+                        <i data-lucide="monitor" class="w-3.5 h-3.5 {{ Route::is('piket.monitoring-kelas') ? 'text-white' : 'text-slate-400' }}"></i>
                         <span>Monitoring Kondisi Kelas</span>
                     </a>
                 @endif
@@ -280,90 +234,95 @@
 
             {{-- ROLE 3: GURU PIKET (Eksklusif) --}}
             @if(Auth::user()->role === 'guru_piket')
-                <div class="pb-1.5 pt-4">
-                    <span class="px-3 text-[10px] font-bold text-[#8697C3]/70 uppercase tracking-wider">Piket Monitoring</span>
+                <div class="pb-1 pt-3">
+                    <span class="px-2 text-[9.5px] font-semibold text-slate-500 uppercase tracking-widest">Piket Monitoring</span>
                 </div>
-                <a href="{{ route('piket.dashboard') }}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150 {{ Route::is('piket.dashboard') ? 'bg-[#405078] text-white shadow-sm' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
-                    <i data-lucide="clipboard-list" class="w-4 h-4 text-[#8697C3]"></i>
-                    <span>Input & Pantau Dispen</span>
+                <a href="{{ route('piket.dashboard') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-md text-xs font-medium transition-colors {{ Route::is('piket.dashboard') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
+                    <i data-lucide="clipboard-list" class="w-3.5 h-3.5 {{ Route::is('piket.dashboard') ? 'text-white' : 'text-slate-400' }}"></i>
+                    <span>Input Dispen & Siswa Telat</span>
                 </a>
-                <a href="{{ route('piket.monitoring-kelas') }}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150 {{ Route::is('piket.monitoring-kelas') ? 'bg-[#405078] text-white shadow-sm' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
-                    <i data-lucide="monitor" class="w-4 h-4 text-[#8697C3]"></i>
+                <a href="{{ route('piket.monitoring-kelas') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-md text-xs font-medium transition-colors {{ Route::is('piket.monitoring-kelas') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
+                    <i data-lucide="monitor" class="w-3.5 h-3.5 {{ Route::is('piket.monitoring-kelas') ? 'text-white' : 'text-slate-400' }}"></i>
                     <span>Monitoring Kondisi Kelas</span>
                 </a>
             @endif
 
-            {{-- ROLE 4: WAKIL KESISWAAN (SISWA) --}}
-            @if(Auth::user()->role === 'wakasis_siswa')
-                <div class="pb-1.5 pt-4">
-                    <span class="px-3 text-[10px] font-bold text-[#8697C3]/70 uppercase tracking-wider">Kesiswaan</span>
-                </div>
-                <a href="{{ route('wakasis.siswa.dashboard') }}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150 {{ Route::is('wakasis.siswa.dashboard') ? 'bg-[#405078] text-white shadow-sm' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
-                    <i data-lucide="check-square" class="w-4 h-4 text-[#8697C3]"></i>
-                    <span>Persetujuan Dispensasi</span>
-                </a>
-            @endif
-
-            {{-- ROLE 5: WAKA KURIKULUM & SDM (IZIN GURU) --}}
-            @if(Auth::user()->role === 'wakasis_guru')
-                <div class="pb-1.5 pt-4">
-                    <span class="px-3 text-[10px] font-bold text-[#8697C3]/70 uppercase tracking-wider">Kurikulum & SDM</span>
-                </div>
-                <a href="{{ route('wakasis.guru.dashboard') }}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150 {{ Route::is('wakasis.guru.dashboard') ? 'bg-[#405078] text-white shadow-sm' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
-                    <i data-lucide="file-check-2" class="w-4 h-4 text-[#8697C3]"></i>
-                    <span>Verifikasi Izin Guru</span>
-                </a>
-
-            @endif
-
-            {{-- ROLE 6: KEPALA SEKOLAH --}}
+            {{-- ROLE 4: KEPALA SEKOLAH --}}
             @if(Auth::user()->role === 'kepala_sekolah')
-                <div class="pb-1.5 pt-4">
-                    <span class="px-3 text-[10px] font-bold text-[#8697C3]/70 uppercase tracking-wider">Pimpinan</span>
+                <div class="pb-1 pt-3">
+                    <span class="px-2 text-[9.5px] font-semibold text-slate-500 uppercase tracking-widest">Eksekutif</span>
                 </div>
-                <a href="{{ route('kepsek.dashboard') }}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150 {{ Route::is('kepsek.dashboard') ? 'bg-[#405078] text-white shadow-sm' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
-                    <i data-lucide="pie-chart" class="w-4 h-4 text-[#8697C3]"></i>
-                    <span>Executive Dashboard</span>
+                <a href="{{ route('kepsek.dashboard') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-md text-xs font-medium transition-colors {{ Route::is('kepsek.dashboard') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
+                    <i data-lucide="bar-chart-3" class="w-3.5 h-3.5 {{ Route::is('kepsek.dashboard') ? 'text-white' : 'text-slate-400' }}"></i>
+                    <span>Executive Summary</span>
+                </a>
+                <a href="{{ route('kepsek.rekap.kegiatan') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-md text-xs font-medium transition-colors {{ Route::is('kepsek.rekap.kegiatan') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
+                    <i data-lucide="book-open" class="w-3.5 h-3.5 {{ Route::is('kepsek.rekap.kegiatan') ? 'text-white' : 'text-slate-400' }}"></i>
+                    <span>Jurnal & Guru Pengganti</span>
+                </a>
+                <a href="{{ route('kepsek.rekap.kepatuhan') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-md text-xs font-medium transition-colors {{ Route::is('kepsek.rekap.kepatuhan') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
+                    <i data-lucide="file-check" class="w-3.5 h-3.5 {{ Route::is('kepsek.rekap.kepatuhan') ? 'text-white' : 'text-slate-400' }}"></i>
+                    <span>Kepatuhan Guru Mengajar</span>
+                </a>
+                <a href="{{ route('kepsek.rekap.guru-piket') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-md text-xs font-medium transition-colors {{ Route::is('kepsek.rekap.guru-piket') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
+                    <i data-lucide="user-check" class="w-3.5 h-3.5 {{ Route::is('kepsek.rekap.guru-piket') ? 'text-white' : 'text-slate-400' }}"></i>
+                    <span>Kinerja Guru Piket</span>
                 </a>
             @endif
 
-            {{-- ROLE 7: SATPAM (POS KEAMANAN) --}}
+            {{-- ROLE 5: WAKIL KESISWAAN (WAKASIS) --}}
+            @if(in_array(Auth::user()->role, ['wakasis_siswa', 'wakasis_guru']))
+                <div class="pb-1 pt-3">
+                    <span class="px-2 text-[9.5px] font-semibold text-slate-500 uppercase tracking-widest">Kesiswaan</span>
+                </div>
+                <a href="{{ route('wakasis.dashboard') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-md text-xs font-medium transition-colors {{ Route::is('wakasis.dashboard') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
+                    <i data-lucide="shield-alert" class="w-3.5 h-3.5 {{ Route::is('wakasis.dashboard') ? 'text-white' : 'text-slate-400' }}"></i>
+                    <span>Analitik Kedisiplinan</span>
+                </a>
+                <a href="{{ route('wakasis.rekap.ketidakhadiran') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-md text-xs font-medium transition-colors {{ Route::is('wakasis.rekap.ketidakhadiran') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
+                    <i data-lucide="users-2" class="w-3.5 h-3.5 {{ Route::is('wakasis.rekap.ketidakhadiran') ? 'text-white' : 'text-slate-400' }}"></i>
+                    <span>Absensi & Siswa Bolos</span>
+                </a>
+                <a href="{{ route('wakasis.rekap.keterlambatan') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-md text-xs font-medium transition-colors {{ Route::is('wakasis.rekap.keterlambatan') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
+                    <i data-lucide="clock" class="w-3.5 h-3.5 {{ Route::is('wakasis.rekap.keterlambatan') ? 'text-white' : 'text-slate-400' }}"></i>
+                    <span>Keterlambatan Siswa</span>
+                </a>
+                <a href="{{ route('wakasis.rekap.dispensasi') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-md text-xs font-medium transition-colors {{ Route::is('wakasis.rekap.dispensasi') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
+                    <i data-lucide="file-badge-2" class="w-3.5 h-3.5 {{ Route::is('wakasis.rekap.dispensasi') ? 'text-white' : 'text-slate-400' }}"></i>
+                    <span>Dispensasi & Meninggalkan KBM</span>
+                </a>
+            @endif
+
+            {{-- ROLE 6: SATBER / SATPAM --}}
             @if(Auth::user()->role === 'satpam')
-                <div class="pb-1.5 pt-4">
-                    <span class="px-3 text-[10px] font-bold text-[#8697C3]/70 uppercase tracking-wider">Keamanan</span>
+                <div class="pb-1 pt-3">
+                    <span class="px-2 text-[9.5px] font-semibold text-slate-500 uppercase tracking-widest">Keamanan Gerbang</span>
                 </div>
-                <a href="{{ route('satpam.dashboard') }}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150 {{ Route::is('satpam.dashboard') ? 'bg-[#405078] text-white shadow-sm' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
-                    <i data-lucide="shield" class="w-4 h-4 text-[#8697C3]"></i>
-                    <span>Validasi Gerbang Siswa</span>
+                <a href="{{ route('satpam.dashboard') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-md text-xs font-medium transition-colors {{ Route::is('satpam.dashboard') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
+                    <i data-lucide="scan-face" class="w-3.5 h-3.5 {{ Route::is('satpam.dashboard') ? 'text-white' : 'text-slate-400' }}"></i>
+                    <span>Pencatatan Gerbang</span>
+                </a>
+                <a href="{{ route('satpam.riwayat') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-md text-xs font-medium transition-colors {{ Route::is('satpam.riwayat') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
+                    <i data-lucide="clock" class="w-3.5 h-3.5 {{ Route::is('satpam.riwayat') ? 'text-white' : 'text-slate-400' }}"></i>
+                    <span>Log Tamu & Siswa</span>
                 </a>
             @endif
 
-            {{-- ROLE 8: WALI MURID / ORANG TUA --}}
-            @if(Auth::user()->role === 'wali_murid')
-                <div class="pb-1.5 pt-4">
-                    <span class="px-3 text-[10px] font-bold text-[#8697C3]/70 uppercase tracking-wider">Wali Murid</span>
-                </div>
-                <a href="{{ route('wali.dashboard') }}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150 {{ Route::is('wali.dashboard') ? 'bg-[#405078] text-white shadow-sm' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
-                    <i data-lucide="user-check" class="w-4 h-4 text-[#8697C3]"></i>
-                    <span>Monitoring Presensi Anak</span>
-                </a>
-            @endif
-
-            <!-- User Info Card in Sidebar Bottom (Acrylic Glass Style) -->
-            <div class="pt-4 border-t border-white/10 mt-5 space-y-2">
-                <div class="px-3 py-2 rounded-xl bg-white/[0.05] border border-white/10 backdrop-blur-xs flex items-center space-x-2.5 hover:bg-white/[0.08] transition-colors">
-                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-[#4A5D8A] to-[#364467] text-white font-bold text-xs flex items-center justify-center flex-shrink-0 shadow-xs ring-1 ring-white/20">
+            <!-- User Info Card in Sidebar Bottom (Linear / Stripe Sleek Minimalist) -->
+            <div class="pt-3 border-t border-slate-800 mt-4 space-y-1.5 shrink-0">
+                <div class="px-2.5 py-2 rounded-md bg-slate-900 border border-slate-800 flex items-center space-x-2.5">
+                    <div class="w-6.5 h-6.5 rounded bg-slate-800 text-slate-200 font-bold text-[11px] flex items-center justify-center shrink-0 border border-slate-700">
                         {{ strtoupper(substr(Auth::user()->username, 0, 2)) }}
                     </div>
                     <div class="overflow-hidden flex-1">
-                        <p class="text-xs font-bold text-white truncate leading-tight">{{ Auth::user()->nama_display ?? Auth::user()->username }}</p>
-                        <p class="text-[9.5px] text-[#8697C3] uppercase tracking-wider truncate font-semibold mt-0.5">{{ str_replace('_', ' ', Auth::user()->role) }}</p>
+                        <p class="text-[11px] font-semibold text-white truncate leading-none">{{ Auth::user()->nama_display ?? Auth::user()->username }}</p>
+                        <p class="text-[9px] text-slate-400 uppercase tracking-wider truncate font-medium mt-1 leading-none">{{ str_replace('_', ' ', Auth::user()->role) }}</p>
                     </div>
                 </div>
 
                 <form action="{{ route('logout') }}" method="POST">
                     @csrf
-                    <button type="submit" class="w-full flex items-center space-x-2.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-rose-400/90 hover:bg-rose-500/10 hover:text-rose-300 transition-colors cursor-pointer">
+                    <button type="submit" class="w-full flex items-center space-x-2 px-2.5 py-1.5 rounded-md text-xs font-medium text-slate-400 hover:bg-rose-950/40 hover:text-rose-400 transition-colors cursor-pointer">
                         <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
                         <span>Keluar (Logout)</span>
                     </button>
@@ -373,72 +332,66 @@
     </aside>
     @endauth
 
-    <main class="flex-1 flex flex-col min-w-0 bg-[#F1F5F9]">
+    <main class="flex-1 flex flex-col min-w-0 md:h-screen md:overflow-hidden bg-[#F8FAFC]">
         @auth
-        <!-- Top Navigation Header (Clean Corporate Standard) -->
-        <header class="h-13 bg-white border-b border-slate-200 sticky top-0 z-30 flex items-center justify-between px-5 md:px-6 flex-shrink-0 shadow-2xs">
-            <div class="flex items-center space-x-2.5">
-                <span class="inline-flex items-center px-2.5 py-0.5 bg-[#1E293B] text-white rounded text-[11px] font-bold uppercase tracking-wider">
+        <!-- Top Navigation Header (Human Big-Tech Clean Precision - FIXED) -->
+        <header class="h-12 bg-white border-b border-slate-200 shrink-0 flex items-center justify-between px-5 shadow-2xs z-30">
+            <div class="flex items-center space-x-2">
+                <span class="inline-flex items-center px-2 py-0.5 bg-slate-100 text-slate-800 border border-slate-200 rounded text-[10.5px] font-semibold uppercase tracking-wider">
                     {{ str_replace('_', ' ', Auth::user()->role) }}
                 </span>
-                <span class="text-xs text-slate-300">•</span>
-                <span class="text-xs text-slate-600 font-semibold">SMK Negeri 1 (SMEA)</span>
+                <span class="text-xs text-slate-300">/</span>
+                <span class="text-xs text-slate-500 font-medium">SMK Negeri 1 (SMEA)</span>
             </div>
             
-            <div class="flex items-center space-x-3.5">
+            <div class="flex items-center space-x-3">
                 <!-- Date Display -->
-                <div class="hidden sm:flex items-center space-x-2 text-xs text-slate-600 font-medium bg-slate-100 px-3 py-1 rounded border border-slate-200">
-                    <i data-lucide="calendar" class="w-3.5 h-3.5 text-slate-500"></i>
+                <div class="hidden sm:flex items-center space-x-1.5 text-xs text-slate-600 font-medium bg-slate-50 px-2.5 py-1 rounded border border-slate-200">
+                    <i data-lucide="calendar" class="w-3 h-3 text-slate-400"></i>
                     <span>{{ date('l, d M Y') }}</span>
                 </div>
                 
                 <!-- Quick User Status -->
                 <div class="flex items-center space-x-2.5 pl-3 border-l border-slate-200">
-                    <div class="relative">
-                        <div class="w-8 h-8 rounded-full bg-[#1E293B] text-white flex items-center justify-center font-bold text-xs ring-1 ring-slate-200">
-                            {{ strtoupper(substr(Auth::user()->username, 0, 1)) }}
-                        </div>
-                        <span class="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-white"></span>
+                    <div class="w-6.5 h-6.5 rounded bg-slate-900 text-white flex items-center justify-center font-bold text-[11px]">
+                        {{ strtoupper(substr(Auth::user()->username, 0, 1)) }}
                     </div>
                     <div class="hidden lg:block text-left">
-                        <p class="text-xs font-bold text-slate-900 leading-tight">{{ Auth::user()->nama_display ?? Auth::user()->username }}</p>
-                        <p class="text-[10px] text-emerald-600 font-semibold leading-tight">Online</p>
+                        <p class="text-xs font-semibold text-slate-900 leading-none">{{ Auth::user()->nama_display ?? Auth::user()->username }}</p>
+                        <div class="flex items-center space-x-1 mt-0.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                            <span class="text-[10px] text-slate-500 leading-none">Online</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </header>
         @endauth
 
-        <!-- Body Page Contents -->
-        <div class="flex-1 p-4 md:p-6 max-w-[1600px] w-full mx-auto">
-            <!-- Flash Message Banner -->
+        <!-- Body Page Contents: Full Height SaaS Application Canvas -->
+        <div class="flex-1 p-3.5 md:p-4 max-w-[1600px] w-full mx-auto flex flex-col min-h-0 overflow-y-auto">
+            <!-- Compact Flash Notification -->
             @if (session('success'))
-                <div class="mb-6 p-4 bg-emerald-50 border-l-4 border-emerald-600 rounded-r-2xl text-emerald-800 flex items-start space-x-3 shadow-xs">
-                    <i data-lucide="check-circle-2" class="w-5 h-5 flex-shrink-0 text-emerald-600 mt-0.5"></i>
-                    <p class="text-xs font-semibold">{{ session('success') }}</p>
+                <div class="shrink-0 mb-3 p-2.5 bg-emerald-50 border border-emerald-200 rounded-lg text-emerald-800 text-xs font-semibold flex items-center space-x-2 shadow-2xs">
+                    <i data-lucide="check-circle" class="w-4 h-4 text-emerald-600 flex-shrink-0"></i>
+                    <span>{{ session('success') }}</span>
                 </div>
             @endif
 
             @if (session('info'))
-                <div class="mb-6 p-4 bg-sky-50 border-l-4 border-sky-600 rounded-r-2xl text-sky-800 flex items-start space-x-3 shadow-xs">
-                    <i data-lucide="info" class="w-5 h-5 flex-shrink-0 text-sky-600 mt-0.5"></i>
-                    <p class="text-xs font-semibold">{{ session('info') }}</p>
+                <div class="shrink-0 mb-3 p-2.5 bg-sky-50 border border-sky-200 rounded-lg text-sky-800 text-xs font-semibold flex items-center space-x-2 shadow-2xs">
+                    <i data-lucide="info" class="w-4 h-4 text-sky-600 flex-shrink-0"></i>
+                    <span>{{ session('info') }}</span>
                 </div>
             @endif
 
             @if ($errors->any())
-                <div class="mb-6 p-4 bg-rose-50 border-l-4 border-rose-600 rounded-r-2xl text-rose-800 shadow-xs">
-                    <div class="flex items-start space-x-3">
-                        <i data-lucide="alert-circle" class="w-5 h-5 flex-shrink-0 text-rose-600 mt-0.5"></i>
-                        <div class="text-xs">
-                            <p class="font-bold">Terjadi kesalahan validasi:</p>
-                            <ul class="list-disc list-inside mt-1 space-y-0.5 text-rose-700">
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    </div>
+                <div class="shrink-0 mb-3 p-2.5 bg-rose-50 border border-rose-200 rounded-lg text-rose-800 text-xs font-semibold shadow-2xs">
+                    <ul class="list-disc pl-4 space-y-0.5">
+                        @foreach ($errors->all() as $err)
+                            <li>{{ $err }}</li>
+                        @endforeach
+                    </ul>
                 </div>
             @endif
 

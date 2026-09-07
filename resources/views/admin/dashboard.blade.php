@@ -21,73 +21,73 @@
     </div>
 
     <!-- 1. Statistik Grid Utama (Klik untuk membuka halaman detail) -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
         <!-- Card 1: Siswa -->
-        <a href="{{ route('admin.siswa.index') }}" class="bg-white border border-slate-200 rounded-xl p-4.5 shadow-xs hover:border-slate-300 hover:shadow-sm transition-all flex items-start space-x-3.5 group cursor-pointer">
-            <div class="w-10 h-10 rounded-lg bg-blue-50 text-blue-700 border border-blue-100 flex items-center justify-center flex-shrink-0">
-                <i data-lucide="graduation-cap" class="w-5 h-5"></i>
+        <a href="{{ route('admin.siswa.index') }}" class="bg-white border border-slate-200 rounded-lg p-3.5 shadow-2xs hover:border-slate-300 transition-all flex items-start space-x-3 group cursor-pointer">
+            <div class="w-8 h-8 rounded bg-slate-100 text-slate-800 border border-slate-200 flex items-center justify-center flex-shrink-0">
+                <i data-lucide="graduation-cap" class="w-4 h-4"></i>
             </div>
             <div class="flex-1 min-w-0">
                 <div class="flex items-center justify-between">
-                    <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Siswa</p>
-                    <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 group-hover:text-slate-700 transition-colors"></i>
+                    <p class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Total Siswa</p>
+                    <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-700 transition-colors"></i>
                 </div>
-                <h3 class="text-2xl font-black text-slate-900 mt-1 tracking-tight tabular-nums">{{ number_format($totalSiswa, 0, ',', '.') }}</h3>
-                <p class="text-xs text-slate-500 mt-0.5 truncate">Lihat data siswa & rombel</p>
+                <h3 class="text-xl font-bold text-slate-900 mt-0.5 tracking-tight tabular-nums">{{ number_format($totalSiswa, 0, ',', '.') }}</h3>
+                <p class="text-[11px] text-slate-500 mt-0.5 truncate">Data siswa & rombel</p>
             </div>
         </a>
 
         <!-- Card 2: Guru & Staf -->
-        <a href="{{ route('admin.guru.index') }}" class="bg-white border border-slate-200 rounded-xl p-4.5 shadow-xs hover:border-slate-300 hover:shadow-sm transition-all flex items-start space-x-3.5 group cursor-pointer">
-            <div class="w-10 h-10 rounded-lg bg-indigo-50 text-indigo-700 border border-indigo-100 flex items-center justify-center flex-shrink-0">
-                <i data-lucide="users" class="w-5 h-5"></i>
+        <a href="{{ route('admin.guru.index') }}" class="bg-white border border-slate-200 rounded-lg p-3.5 shadow-2xs hover:border-slate-300 transition-all flex items-start space-x-3 group cursor-pointer">
+            <div class="w-8 h-8 rounded bg-slate-100 text-slate-800 border border-slate-200 flex items-center justify-center flex-shrink-0">
+                <i data-lucide="users" class="w-4 h-4"></i>
             </div>
             <div class="flex-1 min-w-0">
                 <div class="flex items-center justify-between">
-                    <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Guru & Pegawai</p>
-                    <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 group-hover:text-slate-700 transition-colors"></i>
+                    <p class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Guru & Pegawai</p>
+                    <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-700 transition-colors"></i>
                 </div>
-                <h3 class="text-2xl font-black text-slate-900 mt-1 tracking-tight tabular-nums">{{ $totalPegawai }}</h3>
-                <p class="text-xs text-slate-500 mt-0.5 truncate">{{ $totalGuru }} Guru • {{ $totalStaf }} Staf TU</p>
+                <h3 class="text-xl font-bold text-slate-900 mt-0.5 tracking-tight tabular-nums">{{ $totalPegawai }}</h3>
+                <p class="text-[11px] text-slate-500 mt-0.5 truncate">{{ $totalGuru }} Guru • {{ $totalStaf }} Staf TU</p>
             </div>
         </a>
 
         <!-- Card 3: Jadwal -->
-        <a href="{{ route('admin.jadwal.index') }}" class="bg-white border border-slate-200 rounded-xl p-4.5 shadow-xs hover:border-slate-300 hover:shadow-sm transition-all flex items-start space-x-3.5 group cursor-pointer">
-            <div class="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-100 flex items-center justify-center flex-shrink-0">
-                <i data-lucide="calendar" class="w-5 h-5"></i>
+        <a href="{{ route('admin.jadwal.index') }}" class="bg-white border border-slate-200 rounded-lg p-3.5 shadow-2xs hover:border-slate-300 transition-all flex items-start space-x-3 group cursor-pointer">
+            <div class="w-8 h-8 rounded bg-slate-100 text-slate-800 border border-slate-200 flex items-center justify-center flex-shrink-0">
+                <i data-lucide="calendar" class="w-4 h-4"></i>
             </div>
             <div class="flex-1 min-w-0">
                 <div class="flex items-center justify-between">
-                    <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Jadwal</p>
-                    <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 group-hover:text-slate-700 transition-colors"></i>
+                    <p class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Total Jadwal</p>
+                    <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-700 transition-colors"></i>
                 </div>
-                <h3 class="text-2xl font-black text-slate-900 mt-1 tracking-tight tabular-nums">{{ $totalJadwal }}</h3>
-                <p class="text-xs text-slate-500 mt-0.5 truncate">Kelola jadwal KBM mengajar</p>
+                <h3 class="text-xl font-bold text-slate-900 mt-0.5 tracking-tight tabular-nums">{{ $totalJadwal }}</h3>
+                <p class="text-[11px] text-slate-500 mt-0.5 truncate">Jadwal KBM mengajar</p>
             </div>
         </a>
 
         <!-- Card 4: Kepatuhan -->
-        <a href="{{ route('admin.rekap.kepatuhan') }}" class="bg-white border border-slate-200 rounded-xl p-4.5 shadow-xs hover:border-slate-300 hover:shadow-sm transition-all flex items-start space-x-3.5 group cursor-pointer">
-            <div class="w-10 h-10 rounded-lg bg-teal-50 text-teal-700 border border-teal-100 flex items-center justify-center flex-shrink-0">
-                <i data-lucide="check-circle-2" class="w-5 h-5"></i>
+        <a href="{{ route('admin.rekap.kepatuhan') }}" class="bg-white border border-slate-200 rounded-lg p-3.5 shadow-2xs hover:border-slate-300 transition-all flex items-start space-x-3 group cursor-pointer">
+            <div class="w-8 h-8 rounded bg-slate-100 text-slate-800 border border-slate-200 flex items-center justify-center flex-shrink-0">
+                <i data-lucide="check-circle" class="w-4 h-4"></i>
             </div>
             <div class="flex-1 min-w-0">
                 <div class="flex items-center justify-between">
-                    <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Kepatuhan Jurnal</p>
-                    <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400 group-hover:text-teal-700 transition-colors"></i>
+                    <p class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Kepatuhan Jurnal</p>
+                    <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-700 transition-colors"></i>
                 </div>
-                <h3 class="text-2xl font-black text-slate-900 mt-1 tracking-tight tabular-nums">{{ $persentaseKepatuhan }}%</h3>
-                <p class="text-xs text-slate-500 mt-0.5 truncate">Rekap kepatuhan per guru</p>
+                <h3 class="text-xl font-bold text-slate-900 mt-0.5 tracking-tight tabular-nums">{{ $persentaseKepatuhan }}%</h3>
+                <p class="text-[11px] text-slate-500 mt-0.5 truncate">Kepatuhan pengisian</p>
             </div>
         </a>
     </div>
 
     <!-- 2. REKAP ABSENSI SISWA HARI INI -->
-    <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-xs">
-        <div class="flex items-center justify-between mb-3.5">
-            <h3 class="font-bold text-slate-900 text-xs uppercase tracking-wider flex items-center space-x-2">
-                <i data-lucide="user-check" class="w-4 h-4 text-slate-700"></i>
+    <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-2xs">
+        <div class="flex items-center justify-between mb-3">
+            <h3 class="font-bold text-slate-900 text-xs uppercase tracking-tight flex items-center space-x-2">
+                <i data-lucide="user-check" class="w-3.5 h-3.5 text-slate-700"></i>
                 <span>Data Absensi Siswa Hari Ini</span>
             </h3>
             <span class="text-xs text-slate-500 font-medium">{{ $tanggalHariIniTeks }}</span>
@@ -95,68 +95,46 @@
 
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <!-- Hadir -->
-            <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-lg flex items-center space-x-3">
-                <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center flex-shrink-0">
-                    <i data-lucide="user-check" class="w-4 h-4"></i>
+            <div class="p-3 bg-slate-50 border border-slate-200 rounded-md flex items-center space-x-2.5">
+                <div class="w-7 h-7 rounded bg-emerald-100 text-emerald-700 flex items-center justify-center flex-shrink-0 font-bold text-xs">
+                    <i data-lucide="user-check" class="w-3.5 h-3.5"></i>
                 </div>
                 <div>
-                    <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Hadir</p>
-                    <h4 class="text-xl font-black text-slate-900 leading-tight tabular-nums">{{ $siswaHadirHariIni }}</h4>
-                    <p class="text-[10.5px] text-emerald-700 font-medium">Siswa KBM</p>
+                    <p class="text-[10.5px] font-semibold uppercase tracking-wider text-slate-500">Hadir</p>
+                    <h4 class="text-lg font-bold text-slate-900 leading-tight tabular-nums">{{ $siswaHadirHariIni }}</h4>
                 </div>
             </div>
 
             <!-- Sakit -->
-            <div onclick="openModalSiswaSakit()" class="p-3.5 bg-slate-50 border border-slate-200 hover:border-amber-300 rounded-lg flex items-center space-x-3 hover:bg-amber-50/30 transition-all cursor-pointer group">
-                <div class="w-8 h-8 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
-                    <i data-lucide="stethoscope" class="w-4 h-4"></i>
+            <div onclick="openModalSiswaSakit()" class="p-3 bg-slate-50 border border-slate-200 hover:border-amber-300 rounded-md flex items-center space-x-2.5 hover:bg-amber-50/20 transition-colors cursor-pointer group">
+                <div class="w-7 h-7 rounded bg-amber-100 text-amber-700 flex items-center justify-center flex-shrink-0 font-bold text-xs">
+                    <i data-lucide="thermometer" class="w-3.5 h-3.5"></i>
                 </div>
                 <div class="flex-1">
-                    <div class="flex items-center justify-between">
-                        <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Sakit</p>
-                        <span class="text-[10px] text-amber-700 font-bold underline flex items-center space-x-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <span>Lihat</span>
-                            <i data-lucide="chevron-right" class="w-3 h-3"></i>
-                        </span>
-                    </div>
-                    <h4 class="text-xl font-black text-slate-900 leading-tight tabular-nums">{{ $siswaSakitHariIni }}</h4>
-                    <p class="text-[10.5px] text-amber-700 font-medium">Terdata Sakit</p>
+                    <p class="text-[10.5px] font-semibold uppercase tracking-wider text-slate-500">Sakit</p>
+                    <h4 class="text-lg font-bold text-slate-900 leading-tight tabular-nums">{{ $siswaSakitHariIni }}</h4>
                 </div>
             </div>
 
             <!-- Izin / Dispen -->
-            <div onclick="openModalSiswaIzin()" class="p-3.5 bg-slate-50 border border-slate-200 hover:border-blue-300 rounded-lg flex items-center space-x-3 hover:bg-blue-50/30 transition-all cursor-pointer group">
-                <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
-                    <i data-lucide="file-badge" class="w-4 h-4"></i>
+            <div onclick="openModalSiswaIzin()" class="p-3 bg-slate-50 border border-slate-200 hover:border-blue-300 rounded-md flex items-center space-x-2.5 hover:bg-blue-50/20 transition-colors cursor-pointer group">
+                <div class="w-7 h-7 rounded bg-blue-100 text-blue-700 flex items-center justify-center flex-shrink-0 font-bold text-xs">
+                    <i data-lucide="file-badge" class="w-3.5 h-3.5"></i>
                 </div>
                 <div class="flex-1">
-                    <div class="flex items-center justify-between">
-                        <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Izin / Dispen</p>
-                        <span class="text-[10px] text-blue-700 font-bold underline flex items-center space-x-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <span>Lihat</span>
-                            <i data-lucide="chevron-right" class="w-3 h-3"></i>
-                        </span>
-                    </div>
-                    <h4 class="text-xl font-black text-slate-900 leading-tight tabular-nums">{{ $siswaIzinTotal }}</h4>
-                    <p class="text-[10.5px] text-blue-700 font-medium">Izin & Dispen Sah</p>
+                    <p class="text-[10.5px] font-semibold uppercase tracking-wider text-slate-500">Izin / Dispen</p>
+                    <h4 class="text-lg font-bold text-slate-900 leading-tight tabular-nums">{{ $siswaIzinTotal }}</h4>
                 </div>
             </div>
 
             <!-- Alpa -->
-            <div onclick="openModalSiswaAlpa()" class="p-3.5 bg-slate-50 border border-slate-200 hover:border-rose-300 rounded-lg flex items-center space-x-3 hover:bg-rose-50/30 transition-all cursor-pointer group">
-                <div class="w-8 h-8 rounded-full bg-rose-100 text-rose-700 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
-                    <i data-lucide="user-x" class="w-4 h-4"></i>
+            <div onclick="openModalSiswaAlpa()" class="p-3 bg-slate-50 border border-slate-200 hover:border-rose-300 rounded-md flex items-center space-x-2.5 hover:bg-rose-50/20 transition-colors cursor-pointer group">
+                <div class="w-7 h-7 rounded bg-rose-100 text-rose-700 flex items-center justify-center flex-shrink-0 font-bold text-xs">
+                    <i data-lucide="user-x" class="w-3.5 h-3.5"></i>
                 </div>
                 <div class="flex-1">
-                    <div class="flex items-center justify-between">
-                        <p class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Alpa</p>
-                        <span class="text-[10px] text-rose-700 font-bold underline flex items-center space-x-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <span>Lihat</span>
-                            <i data-lucide="chevron-right" class="w-3 h-3"></i>
-                        </span>
-                    </div>
-                    <h4 class="text-xl font-black text-slate-900 leading-tight tabular-nums">{{ $siswaAlpaHariIni }}</h4>
-                    <p class="text-[10.5px] text-rose-700 font-medium">Tanpa Keterangan</p>
+                    <p class="text-[10.5px] font-semibold uppercase tracking-wider text-slate-500">Alpa</p>
+                    <h4 class="text-lg font-bold text-slate-900 leading-tight tabular-nums">{{ $siswaAlpaHariIni }}</h4>
                 </div>
             </div>
         </div>

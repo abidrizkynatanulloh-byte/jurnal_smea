@@ -1,42 +1,76 @@
-@props(['paginator', 'perPageOptions' => [15, 30, 50, 100, 150]])
+@props(['paginator', 'perPageOptions' => [30, 50, 100, 150]])
 
 @if($paginator instanceof \Illuminate\Pagination\LengthAwarePaginator && $paginator->total() > 0)
-    <div class="px-6 py-4 bg-white border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-4 select-none">
-        <!-- Results per page & Counter (Sesuai Gambar 5 QS World University Rankings) -->
-        <div class="flex items-center space-x-3 text-sm text-gray-700">
-            <span class="font-normal text-gray-600">Results per page:</span>
-            <div class="relative inline-block">
-                <select onchange="changePerPage(this.value)" 
-                    class="appearance-none bg-white border border-gray-300 hover:border-gray-400 text-gray-800 text-sm font-semibold rounded px-3 py-1 pr-7 focus:outline-none focus:border-gray-500 cursor-pointer shadow-2xs">
-                    @foreach($perPageOptions as $opt)
-                        <option value="{{ $opt }}" {{ $paginator->perPage() == $opt ? 'selected' : '' }}>{{ $opt }}</option>
-                    @endforeach
-                </select>
-                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                    </svg>
-                </div>
-            </div>
-            <span class="font-normal text-gray-600 pl-1">
-                {{ $paginator->firstItem() ?? 0 }} – {{ $paginator->lastItem() ?? 0 }} of {{ number_format($paginator->total(), 0, ',', '.') }}
-            </span>
-        </div>
+    <div class="px-5 py-3.5 bg-white border-t border-slate-200 overflow-x-auto select-none">
+        <div class="flex items-center justify-between gap-6 min-w-max w-full">
+            <!-- Left Side: Results per page: [ 30 ^ ] 1 – 30 of 1504 (PERSIS GAMBAR 2) -->
+            <div class="flex items-center space-x-3 text-sm text-slate-700 whitespace-nowrap shrink-0">
+                <span class="font-normal text-slate-600 whitespace-nowrap">Results per page:</span>
+                
+                <!-- Custom Dropdown Popup (Sesuai Gambar 2) -->
+                <div class="relative inline-block text-left" id="perPageDropdownWrapper">
+                    <button type="button" onclick="togglePerPageMenu()" id="perPageBtn"
+                        class="h-9 px-3 bg-white border border-slate-300 hover:border-slate-400 text-slate-900 text-sm font-medium rounded flex items-center justify-between space-x-2.5 focus:outline-none transition-colors shadow-2xs cursor-pointer min-w-[62px]">
+                        <span id="currentPerPageVal">{{ $paginator->perPage() }}</span>
+                        <i data-lucide="chevron-up" id="perPageChevron" class="w-4 h-4 text-slate-500 transition-transform"></i>
+                    </button>
 
-        <!-- Number Pagination Navigation (Sesuai Gambar 5) -->
-        <div>
-            {{ $paginator->appends(request()->query())->links('vendor.pagination.custom') }}
+                    <!-- Popup Menu (Opens upwards matching Image 2) -->
+                    <div id="perPageMenu" class="hidden absolute bottom-full mb-1 left-0 w-full min-w-[62px] bg-white border border-slate-300 rounded shadow-md z-50 py-1 divide-y divide-slate-100">
+                        @foreach($perPageOptions as $opt)
+                            <button type="button" onclick="selectPerPage({{ $opt }})"
+                                class="w-full py-1.5 px-3 text-center text-sm font-medium hover:bg-slate-100 transition-colors {{ $paginator->perPage() == $opt ? 'font-bold text-slate-900 bg-slate-50' : 'text-slate-700' }}">
+                                {{ $opt }}
+                            </button>
+                        @endforeach
+                    </div>
+                </div>
+
+                <!-- Counter: 1 – 30 of 1504 -->
+                <span class="font-normal text-slate-700 whitespace-nowrap pl-1">
+                    {{ $paginator->firstItem() ?? 0 }} – {{ $paginator->lastItem() ?? 0 }} of {{ number_format($paginator->total(), 0, ',', '.') }}
+                </span>
+            </div>
+
+            <!-- Right Side: Number Pagination Navigation (PERSIS GAMBAR 2) -->
+            <div class="shrink-0">
+                {{ $paginator->appends(request()->query())->links('vendor.pagination.custom') }}
+            </div>
         </div>
     </div>
 
     <script>
-        if (typeof changePerPage === 'undefined') {
-            function changePerPage(val) {
-                const url = new URL(window.location.href);
-                url.searchParams.set('per_page', val);
-                url.searchParams.set('page', '1');
-                window.location.href = url.toString();
+        function togglePerPageMenu() {
+            const menu = document.getElementById('perPageMenu');
+            const chevron = document.getElementById('perPageChevron');
+            if (menu) {
+                const isHidden = menu.classList.contains('hidden');
+                if (isHidden) {
+                    menu.classList.remove('hidden');
+                    if (chevron) chevron.style.transform = 'rotate(180deg)';
+                } else {
+                    menu.classList.add('hidden');
+                    if (chevron) chevron.style.transform = 'rotate(0deg)';
+                }
             }
         }
+
+        function selectPerPage(val) {
+            const url = new URL(window.location.href);
+            url.searchParams.set('per_page', val);
+            url.searchParams.set('page', '1');
+            window.location.href = url.toString();
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            const wrapper = document.getElementById('perPageDropdownWrapper');
+            const menu = document.getElementById('perPageMenu');
+            const chevron = document.getElementById('perPageChevron');
+            if (wrapper && !wrapper.contains(e.target) && menu && !menu.classList.contains('hidden')) {
+                menu.classList.add('hidden');
+                if (chevron) chevron.style.transform = 'rotate(0deg)';
+            }
+        });
     </script>
 @endif
