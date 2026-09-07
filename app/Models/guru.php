@@ -32,6 +32,14 @@ class Guru extends Model
     ];
 
     /**
+     * Relasi ke akun User (satu guru memiliki satu akun user).
+     */
+    public function user()
+    {
+        return $this->hasOne(User::class, 'id_guru', 'id_guru');
+    }
+
+    /**
      * Cek apakah guru ini terdaftar sebagai wali kelas dari kelas manapun.
      */
     public function isWaliKelas()
