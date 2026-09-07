@@ -36,6 +36,10 @@ class SiswaController
             $query->where('id_kelas', $request->id_kelas);
         }
 
+        if ($request->filled('jenis_kelamin')) {
+            $query->where('jenis_kelamin', $request->jenis_kelamin);
+        }
+
         $perPage = (int) $request->input('per_page', 30);
         if ($perPage <= 0) $perPage = 30;
 
