@@ -71,7 +71,7 @@
                     <div>
                         <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Rombel / Kelas *</label>
                         <select name="id_kelas" required
-                            class="w-full h-8 px-2 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 font-medium focus:outline-none focus:border-slate-800 cursor-pointer">
+                            class="searchable-select w-full h-8 px-2 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 font-medium focus:outline-none focus:border-slate-800 cursor-pointer">
                             <option value="">-- Pilih Kelas --</option>
                             @foreach ($kelasList as $k)
                                 <option value="{{ $k->id_kelas }}" {{ old('id_kelas') == $k->id_kelas ? 'selected' : '' }}>

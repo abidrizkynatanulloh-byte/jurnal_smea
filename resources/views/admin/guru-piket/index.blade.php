@@ -120,7 +120,7 @@
 
             <div>
                 <label for="guruSelect" class="block text-xs font-semibold text-slate-700 mb-1">Pilih Guru *</label>
-                <select name="id_guru" id="guruSelect" required class="block w-full h-8 px-2.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 focus:outline-none focus:border-[#1E2538]">
+                <select name="id_guru" id="guruSelect" required class="searchable-select block w-full h-8 px-2.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 focus:outline-none focus:border-[#1E2538]">
                     <option value="">-- Pilih Guru --</option>
                     @foreach($guruList as $g)
                         <option value="{{ $g->id_guru }}">{{ $g->nama_guru }} ({{ $g->nip ?? '-' }})</option>

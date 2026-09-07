@@ -1,20 +1,34 @@
 <!DOCTYPE html>
-<html lang="id" class="bg-[#F4F6FA]">
+<html lang="id" class="bg-[#F4F6FA] dark:bg-[#0B0F19]">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Jurnal & Monitoring Esemkita')</title>
     
+    <!-- Instant Theme Loader (Zero Flicker) -->
+    <script>
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+
     <!-- Google Fonts: Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
+    <!-- Tom Select (Searchable Dropdowns) -->
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.4.3/dist/css/tom-select.default.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.4.3/dist/js/tom-select.complete.min.js"></script>
+
     <!-- Tailwind CSS CDN (Ensures instant, 100% reliable styling across Laragon subfolders & virtual hosts) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     fontFamily: {
@@ -79,7 +93,7 @@
             text-rendering: optimizeLegibility;
         }
 
-        /* Pure Crisp Scrollbar (Human High-End Desktop Software) */
+        /* Pure Crisp Scrollbar */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
@@ -95,6 +109,16 @@
             background: #94A3B8;
         }
 
+        html.dark ::-webkit-scrollbar-track {
+            background: #0F172A;
+        }
+        html.dark ::-webkit-scrollbar-thumb {
+            background: #334155;
+        }
+        html.dark ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+
         .custom-sidebar-scroll::-webkit-scrollbar {
             width: 4px;
         }
@@ -108,15 +132,173 @@
         .custom-sidebar-scroll::-webkit-scrollbar-thumb:hover {
             background: #475569;
         }
+
+        /* ================================================================ */
+        /* GLOBAL SEAMLESS DARK MODE RULES                                  */
+        /* ================================================================ */
+        html.dark body {
+            background-color: #0B0F19 !important;
+            color: #F1F5F9 !important;
+        }
+
+        html.dark .bg-white {
+            background-color: #131B2E !important;
+        }
+
+        html.dark .bg-\[\#F8FAFC\],
+        html.dark .bg-\[\#F4F6FA\] {
+            background-color: #0B0F19 !important;
+        }
+
+        html.dark .border-slate-200,
+        html.dark .border-slate-100,
+        html.dark .border-slate-300,
+        html.dark .border-\[\#D1D9EB\] {
+            border-color: #1E293B !important;
+        }
+
+        html.dark .divide-slate-100 > * + *,
+        html.dark .divide-slate-200 > * + *,
+        html.dark .divide-gray-100 > * + * {
+            border-color: #1E293B !important;
+        }
+
+        html.dark .text-slate-900,
+        html.dark .text-slate-800,
+        html.dark .text-gray-900,
+        html.dark .text-\[\#1E2538\] {
+            color: #F8FAFC !important;
+        }
+
+        html.dark .text-slate-700,
+        html.dark .text-slate-600,
+        html.dark .text-gray-700,
+        html.dark .text-gray-600 {
+            color: #CBD5E1 !important;
+        }
+
+        html.dark .text-slate-500,
+        html.dark .text-gray-500 {
+            color: #94A3B8 !important;
+        }
+
+        html.dark .text-slate-400,
+        html.dark .text-gray-400 {
+            color: #64748B !important;
+        }
+
+        html.dark input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]),
+        html.dark select,
+        html.dark textarea {
+            background-color: #182238 !important;
+            border-color: #2E3E5C !important;
+            color: #F1F5F9 !important;
+        }
+
+        html.dark input::placeholder,
+        html.dark textarea::placeholder {
+            color: #64748B !important;
+        }
+
+        html.dark .hover\:bg-slate-50:hover,
+        html.dark .hover\:bg-slate-50\/80:hover,
+        html.dark .hover\:bg-gray-50:hover,
+        html.dark .hover\:bg-gray-50\/50:hover {
+            background-color: #1A2640 !important;
+        }
+
+        html.dark thead tr {
+            background-color: #131B2E !important;
+            border-bottom-color: #1E293B !important;
+        }
+
+        html.dark thead th {
+            background-color: #131B2E !important;
+            color: #94A3B8 !important;
+            border-bottom-color: #1E293B !important;
+        }
+
+        html.dark .bg-slate-50,
+        html.dark .bg-slate-100,
+        html.dark .bg-gray-50,
+        html.dark .bg-gray-100 {
+            background-color: #182238 !important;
+            color: #E2E8F0 !important;
+        }
+
+        /* ================================================================ */
+        /* TOM SELECT COMPACT & DARK MODE STYLING                           */
+        /* ================================================================ */
+        .ts-wrapper {
+            font-size: 0.75rem !important; /* 12px */
+            line-height: 1rem !important;
+        }
+        .ts-control {
+            min-height: 2rem !important; /* 32px / h-8 */
+            height: 2rem !important;
+            padding: 0.2rem 0.6rem !important;
+            border-radius: 0.5rem !important; /* rounded-lg */
+            border: 1px solid #E2E8F0 !important;
+            background-color: #FFFFFF !important;
+            color: #0F172A !important;
+            display: flex !important;
+            align-items: center !important;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03) !important;
+        }
+        .ts-control input {
+            font-size: 0.75rem !important;
+            color: inherit !important;
+        }
+        .ts-dropdown {
+            border-radius: 0.5rem !important;
+            border: 1px solid #CBD5E1 !important;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15) !important;
+            font-size: 0.75rem !important;
+            background: #FFFFFF !important;
+            z-index: 99999 !important;
+        }
+        .ts-dropdown .option {
+            padding: 0.35rem 0.65rem !important;
+            font-size: 0.75rem !important;
+            color: #334155 !important;
+            cursor: pointer !important;
+        }
+        .ts-dropdown .active {
+            background-color: #F1F5F9 !important;
+            color: #0F172A !important;
+            font-weight: 600 !important;
+        }
+
+        html.dark .ts-control {
+            background-color: #182238 !important;
+            border-color: #2E3E5C !important;
+            color: #F1F5F9 !important;
+        }
+        html.dark .ts-control input {
+            color: #F1F5F9 !important;
+        }
+        html.dark .ts-dropdown {
+            background-color: #182238 !important;
+            border-color: #2E3E5C !important;
+            color: #F1F5F9 !important;
+        }
+        html.dark .ts-dropdown .option {
+            color: #CBD5E1 !important;
+        }
+        html.dark .ts-dropdown .active {
+            background-color: #253554 !important;
+            color: #FFFFFF !important;
+        }
     </style>
 </head>
-<body class="min-h-screen md:h-screen md:overflow-hidden font-sans antialiased text-slate-900 bg-[#F8FAFC] flex flex-col md:flex-row relative">
+<body class="min-h-screen md:h-screen md:overflow-hidden font-sans antialiased text-slate-900 dark:text-slate-100 bg-[#F8FAFC] dark:bg-[#0B0F19] flex flex-col md:flex-row relative">
 
     @auth
     <!-- ============================================================== -->
     <!-- SIDEBAR NAVIGATION (Linear / Vercel Dark Slate #0F172A)         -->
+    <!-- Border kanan melengkung halus sesuai instruksi user (Gambar 4)  -->
     <!-- ============================================================== -->
-    <aside class="w-full md:w-56 bg-[#0F172A] text-white flex-shrink-0 flex flex-col border-r border-slate-800 shadow-xs md:h-screen md:overflow-y-auto z-40">
+    <aside class="w-full md:w-56 bg-[#0F172A] text-white flex-shrink-0 flex flex-col border-r border-slate-800/80 shadow-xl md:h-screen md:overflow-y-auto z-40 md:rounded-r-2xl overflow-hidden">
         <!-- Brand Header -->
         <div class="h-12 flex items-center px-4 border-b border-slate-800 justify-between shrink-0">
             <div class="flex items-center space-x-2.5">
@@ -142,7 +324,7 @@
                 <div class="pt-1 pb-1">
                     <span class="px-2 text-[9.5px] font-semibold text-slate-500 uppercase tracking-widest">Utama</span>
                 </div>
-                <a href="{{ route('admin.dashboard') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-md font-medium transition-colors {{ Route::is('admin.dashboard') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
+                <a href="{{ route('admin.dashboard') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg font-medium transition-colors {{ Route::is('admin.dashboard') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
                     <i data-lucide="layout-dashboard" class="w-3.5 h-3.5 {{ Route::is('admin.dashboard') ? 'text-white' : 'text-slate-400' }}"></i>
                     <span>Dashboard Admin</span>
                 </a>
@@ -150,31 +332,31 @@
                 <div class="pt-3 pb-1">
                     <span class="px-2 text-[9.5px] font-semibold text-slate-500 uppercase tracking-widest">Master Data</span>
                 </div>
-                <a href="{{ route('admin.guru.index') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-md font-medium transition-colors {{ Route::is('admin.guru.*') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
+                <a href="{{ route('admin.guru.index') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg font-medium transition-colors {{ Route::is('admin.guru.*') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
                     <i data-lucide="users" class="w-3.5 h-3.5 {{ Route::is('admin.guru.*') ? 'text-white' : 'text-slate-400' }}"></i>
                     <span>Data Guru & Pegawai</span>
                 </a>
-                <a href="{{ route('admin.siswa.index') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-md font-medium transition-colors {{ Route::is('admin.siswa.*') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
+                <a href="{{ route('admin.siswa.index') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg font-medium transition-colors {{ Route::is('admin.siswa.*') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
                     <i data-lucide="graduation-cap" class="w-3.5 h-3.5 {{ Route::is('admin.siswa.*') ? 'text-white' : 'text-slate-400' }}"></i>
                     <span>Data Siswa</span>
                 </a>
-                <a href="{{ route('admin.mapel.index') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-md font-medium transition-colors {{ Route::is('admin.mapel.*') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
+                <a href="{{ route('admin.mapel.index') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg font-medium transition-colors {{ Route::is('admin.mapel.*') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
                     <i data-lucide="book-marked" class="w-3.5 h-3.5 {{ Route::is('admin.mapel.*') ? 'text-white' : 'text-slate-400' }}"></i>
                     <span>Mata Pelajaran</span>
                 </a>
-                <a href="{{ route('admin.jam.index') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-md font-medium transition-colors {{ Route::is('admin.jam.*') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
+                <a href="{{ route('admin.jam.index') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg font-medium transition-colors {{ Route::is('admin.jam.*') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
                     <i data-lucide="clock" class="w-3.5 h-3.5 {{ Route::is('admin.jam.*') ? 'text-white' : 'text-slate-400' }}"></i>
                     <span>Master Jam Pelajaran</span>
                 </a>
-                <a href="{{ route('admin.jadwal.index') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-md font-medium transition-colors {{ Route::is('admin.jadwal.*') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
+                <a href="{{ route('admin.jadwal.index') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg font-medium transition-colors {{ Route::is('admin.jadwal.*') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
                     <i data-lucide="calendar" class="w-3.5 h-3.5 {{ Route::is('admin.jadwal.*') ? 'text-white' : 'text-slate-400' }}"></i>
                     <span>Jadwal Mengajar</span>
                 </a>
-                <a href="{{ route('admin.guru-piket.index') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-md font-medium transition-colors {{ Route::is('admin.guru-piket.*') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
+                <a href="{{ route('admin.guru-piket.index') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg font-medium transition-colors {{ Route::is('admin.guru-piket.*') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
                     <i data-lucide="user-check" class="w-3.5 h-3.5 {{ Route::is('admin.guru-piket.*') ? 'text-white' : 'text-slate-400' }}"></i>
                     <span>Kelola Guru Piket</span>
                 </a>
-                <a href="{{ route('admin.waka.index') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-md font-medium transition-colors {{ Route::is('admin.waka.*') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
+                <a href="{{ route('admin.waka.index') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg font-medium transition-colors {{ Route::is('admin.waka.*') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
                     <i data-lucide="shield" class="w-3.5 h-3.5 {{ Route::is('admin.waka.*') ? 'text-white' : 'text-slate-400' }}"></i>
                     <span>Kelola Waka</span>
                 </a>
@@ -182,11 +364,11 @@
                 <div class="pt-3 pb-1">
                     <span class="px-2 text-[9.5px] font-semibold text-slate-500 uppercase tracking-widest">Laporan & Pengguna</span>
                 </div>
-                <a href="{{ route('admin.rekap.index') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-md font-medium transition-colors {{ Route::is('admin.rekap.*') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
+                <a href="{{ route('admin.rekap.index') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg font-medium transition-colors {{ Route::is('admin.rekap.*') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
                     <i data-lucide="clipboard-list" class="w-3.5 h-3.5 {{ Route::is('admin.rekap.*') ? 'text-white' : 'text-slate-400' }}"></i>
                     <span>Rekap Jurnal & Absensi</span>
                 </a>
-                <a href="{{ route('admin.users.index') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-md font-medium transition-colors {{ Route::is('admin.users.*') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
+                <a href="{{ route('admin.users.index') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg font-medium transition-colors {{ Route::is('admin.users.*') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
                     <i data-lucide="shield-check" class="w-3.5 h-3.5 {{ Route::is('admin.users.*') ? 'text-white' : 'text-slate-400' }}"></i>
                     <span>Kelola Pengguna</span>
                 </a>
@@ -198,21 +380,21 @@
                 <div class="pb-1 pt-3">
                     <span class="px-2 text-[9.5px] font-semibold text-slate-500 uppercase tracking-widest">Pembelajaran</span>
                 </div>
-                <a href="{{ route('guru.dashboard') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-md text-xs font-medium transition-colors {{ Route::is('guru.dashboard') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
+                <a href="{{ route('guru.dashboard') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg text-xs font-medium transition-colors {{ Route::is('guru.dashboard') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
                     <i data-lucide="layout-dashboard" class="w-3.5 h-3.5 {{ Route::is('guru.dashboard') ? 'text-white' : 'text-slate-400' }}"></i>
                     <span>Jadwal & Jurnal Hari Ini</span>
                 </a>
-                <a href="{{ route('guru.jurnal.rekap') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-md text-xs font-medium transition-colors {{ Route::is('guru.jurnal.rekap') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
+                <a href="{{ route('guru.jurnal.rekap') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg text-xs font-medium transition-colors {{ Route::is('guru.jurnal.rekap') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
                     <i data-lucide="history" class="w-3.5 h-3.5 {{ Route::is('guru.jurnal.rekap') ? 'text-white' : 'text-slate-400' }}"></i>
                     <span>Riwayat Jurnal Saya</span>
                 </a>
                 @if(Auth::user()->guru && Auth::user()->guru->isWaliKelas())
-                    <a href="{{ route('guru.wali-kelas') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-md text-xs font-medium transition-colors {{ Route::is('guru.wali-kelas') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
+                    <a href="{{ route('guru.wali-kelas') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg text-xs font-medium transition-colors {{ Route::is('guru.wali-kelas') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
                         <i data-lucide="users" class="w-3.5 h-3.5 {{ Route::is('guru.wali-kelas') ? 'text-white' : 'text-slate-400' }}"></i>
                         <span>Rekap Wali Kelas</span>
                     </a>
                 @endif
-                <a href="{{ route('guru.izin.index') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-md text-xs font-medium transition-colors {{ Route::is('guru.izin.*') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
+                <a href="{{ route('guru.izin.index') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg text-xs font-medium transition-colors {{ Route::is('guru.izin.*') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
                     <i data-lucide="calendar-off" class="w-3.5 h-3.5 {{ Route::is('guru.izin.*') ? 'text-white' : 'text-slate-400' }}"></i>
                     <span>Pengajuan Izin Mengajar</span>
                 </a>
@@ -221,11 +403,11 @@
                     <div class="pt-3 pb-1">
                         <span class="px-2 text-[9.5px] font-semibold text-slate-500 uppercase tracking-widest">Guru Piket Hari Ini</span>
                     </div>
-                    <a href="{{ route('piket.dashboard') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-md text-xs font-medium transition-colors {{ Route::is('piket.dashboard') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
+                    <a href="{{ route('piket.dashboard') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg text-xs font-medium transition-colors {{ Route::is('piket.dashboard') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
                         <i data-lucide="clipboard-list" class="w-3.5 h-3.5 {{ Route::is('piket.dashboard') ? 'text-white' : 'text-slate-400' }}"></i>
                         <span>Input Dispen & Siswa Telat</span>
                     </a>
-                    <a href="{{ route('piket.monitoring-kelas') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-md text-xs font-medium transition-colors {{ Route::is('piket.monitoring-kelas') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
+                    <a href="{{ route('piket.monitoring-kelas') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg text-xs font-medium transition-colors {{ Route::is('piket.monitoring-kelas') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
                         <i data-lucide="monitor" class="w-3.5 h-3.5 {{ Route::is('piket.monitoring-kelas') ? 'text-white' : 'text-slate-400' }}"></i>
                         <span>Monitoring Kondisi Kelas</span>
                     </a>
@@ -237,11 +419,11 @@
                 <div class="pb-1 pt-3">
                     <span class="px-2 text-[9.5px] font-semibold text-slate-500 uppercase tracking-widest">Piket Monitoring</span>
                 </div>
-                <a href="{{ route('piket.dashboard') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-md text-xs font-medium transition-colors {{ Route::is('piket.dashboard') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
+                <a href="{{ route('piket.dashboard') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg text-xs font-medium transition-colors {{ Route::is('piket.dashboard') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
                     <i data-lucide="clipboard-list" class="w-3.5 h-3.5 {{ Route::is('piket.dashboard') ? 'text-white' : 'text-slate-400' }}"></i>
                     <span>Input Dispen & Siswa Telat</span>
                 </a>
-                <a href="{{ route('piket.monitoring-kelas') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-md text-xs font-medium transition-colors {{ Route::is('piket.monitoring-kelas') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
+                <a href="{{ route('piket.monitoring-kelas') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg text-xs font-medium transition-colors {{ Route::is('piket.monitoring-kelas') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
                     <i data-lucide="monitor" class="w-3.5 h-3.5 {{ Route::is('piket.monitoring-kelas') ? 'text-white' : 'text-slate-400' }}"></i>
                     <span>Monitoring Kondisi Kelas</span>
                 </a>
@@ -252,19 +434,19 @@
                 <div class="pb-1 pt-3">
                     <span class="px-2 text-[9.5px] font-semibold text-slate-500 uppercase tracking-widest">Eksekutif</span>
                 </div>
-                <a href="{{ route('kepsek.dashboard') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-md text-xs font-medium transition-colors {{ Route::is('kepsek.dashboard') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
+                <a href="{{ route('kepsek.dashboard') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg text-xs font-medium transition-colors {{ Route::is('kepsek.dashboard') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
                     <i data-lucide="bar-chart-3" class="w-3.5 h-3.5 {{ Route::is('kepsek.dashboard') ? 'text-white' : 'text-slate-400' }}"></i>
                     <span>Executive Summary</span>
                 </a>
-                <a href="{{ route('kepsek.rekap.kegiatan') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-md text-xs font-medium transition-colors {{ Route::is('kepsek.rekap.kegiatan') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
+                <a href="{{ route('kepsek.rekap.kegiatan') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg text-xs font-medium transition-colors {{ Route::is('kepsek.rekap.kegiatan') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
                     <i data-lucide="book-open" class="w-3.5 h-3.5 {{ Route::is('kepsek.rekap.kegiatan') ? 'text-white' : 'text-slate-400' }}"></i>
                     <span>Jurnal & Guru Pengganti</span>
                 </a>
-                <a href="{{ route('kepsek.rekap.kepatuhan') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-md text-xs font-medium transition-colors {{ Route::is('kepsek.rekap.kepatuhan') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
+                <a href="{{ route('kepsek.rekap.kepatuhan') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg text-xs font-medium transition-colors {{ Route::is('kepsek.rekap.kepatuhan') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
                     <i data-lucide="file-check" class="w-3.5 h-3.5 {{ Route::is('kepsek.rekap.kepatuhan') ? 'text-white' : 'text-slate-400' }}"></i>
                     <span>Kepatuhan Guru Mengajar</span>
                 </a>
-                <a href="{{ route('kepsek.rekap.guru-piket') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-md text-xs font-medium transition-colors {{ Route::is('kepsek.rekap.guru-piket') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
+                <a href="{{ route('kepsek.rekap.guru-piket') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg text-xs font-medium transition-colors {{ Route::is('kepsek.rekap.guru-piket') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
                     <i data-lucide="user-check" class="w-3.5 h-3.5 {{ Route::is('kepsek.rekap.guru-piket') ? 'text-white' : 'text-slate-400' }}"></i>
                     <span>Kinerja Guru Piket</span>
                 </a>
@@ -275,19 +457,19 @@
                 <div class="pb-1 pt-3">
                     <span class="px-2 text-[9.5px] font-semibold text-slate-500 uppercase tracking-widest">Kesiswaan</span>
                 </div>
-                <a href="{{ route('wakasis.dashboard') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-md text-xs font-medium transition-colors {{ Route::is('wakasis.dashboard') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
+                <a href="{{ route('wakasis.dashboard') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg text-xs font-medium transition-colors {{ Route::is('wakasis.dashboard') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
                     <i data-lucide="shield-alert" class="w-3.5 h-3.5 {{ Route::is('wakasis.dashboard') ? 'text-white' : 'text-slate-400' }}"></i>
                     <span>Analitik Kedisiplinan</span>
                 </a>
-                <a href="{{ route('wakasis.rekap.ketidakhadiran') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-md text-xs font-medium transition-colors {{ Route::is('wakasis.rekap.ketidakhadiran') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
+                <a href="{{ route('wakasis.rekap.ketidakhadiran') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg text-xs font-medium transition-colors {{ Route::is('wakasis.rekap.ketidakhadiran') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
                     <i data-lucide="users-2" class="w-3.5 h-3.5 {{ Route::is('wakasis.rekap.ketidakhadiran') ? 'text-white' : 'text-slate-400' }}"></i>
                     <span>Absensi & Siswa Bolos</span>
                 </a>
-                <a href="{{ route('wakasis.rekap.keterlambatan') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-md text-xs font-medium transition-colors {{ Route::is('wakasis.rekap.keterlambatan') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
+                <a href="{{ route('wakasis.rekap.keterlambatan') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg text-xs font-medium transition-colors {{ Route::is('wakasis.rekap.keterlambatan') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
                     <i data-lucide="clock" class="w-3.5 h-3.5 {{ Route::is('wakasis.rekap.keterlambatan') ? 'text-white' : 'text-slate-400' }}"></i>
                     <span>Keterlambatan Siswa</span>
                 </a>
-                <a href="{{ route('wakasis.rekap.dispensasi') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-md text-xs font-medium transition-colors {{ Route::is('wakasis.rekap.dispensasi') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
+                <a href="{{ route('wakasis.rekap.dispensasi') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg text-xs font-medium transition-colors {{ Route::is('wakasis.rekap.dispensasi') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
                     <i data-lucide="file-badge-2" class="w-3.5 h-3.5 {{ Route::is('wakasis.rekap.dispensasi') ? 'text-white' : 'text-slate-400' }}"></i>
                     <span>Dispensasi & Meninggalkan KBM</span>
                 </a>
@@ -298,11 +480,11 @@
                 <div class="pb-1 pt-3">
                     <span class="px-2 text-[9.5px] font-semibold text-slate-500 uppercase tracking-widest">Keamanan Gerbang</span>
                 </div>
-                <a href="{{ route('satpam.dashboard') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-md text-xs font-medium transition-colors {{ Route::is('satpam.dashboard') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
+                <a href="{{ route('satpam.dashboard') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg text-xs font-medium transition-colors {{ Route::is('satpam.dashboard') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
                     <i data-lucide="scan-face" class="w-3.5 h-3.5 {{ Route::is('satpam.dashboard') ? 'text-white' : 'text-slate-400' }}"></i>
                     <span>Pencatatan Gerbang</span>
                 </a>
-                <a href="{{ route('satpam.riwayat') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-md text-xs font-medium transition-colors {{ Route::is('satpam.riwayat') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
+                <a href="{{ route('satpam.riwayat') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg text-xs font-medium transition-colors {{ Route::is('satpam.riwayat') ? 'bg-slate-800 text-white font-semibold shadow-2xs' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-100' }}">
                     <i data-lucide="clock" class="w-3.5 h-3.5 {{ Route::is('satpam.riwayat') ? 'text-white' : 'text-slate-400' }}"></i>
                     <span>Log Tamu & Siswa</span>
                 </a>
@@ -310,7 +492,7 @@
 
             <!-- User Info Card in Sidebar Bottom (Linear / Stripe Sleek Minimalist) -->
             <div class="pt-3 border-t border-slate-800 mt-4 space-y-1.5 shrink-0">
-                <div class="px-2.5 py-2 rounded-md bg-slate-900 border border-slate-800 flex items-center space-x-2.5">
+                <div class="px-2.5 py-2 rounded-lg bg-slate-900 border border-slate-800 flex items-center space-x-2.5">
                     <div class="w-6.5 h-6.5 rounded bg-slate-800 text-slate-200 font-bold text-[11px] flex items-center justify-center shrink-0 border border-slate-700">
                         {{ strtoupper(substr(Auth::user()->username, 0, 2)) }}
                     </div>
@@ -322,7 +504,7 @@
 
                 <form action="{{ route('logout') }}" method="POST">
                     @csrf
-                    <button type="submit" class="w-full flex items-center space-x-2 px-2.5 py-1.5 rounded-md text-xs font-medium text-slate-400 hover:bg-rose-950/40 hover:text-rose-400 transition-colors cursor-pointer">
+                    <button type="submit" class="w-full flex items-center space-x-2 px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:bg-rose-950/40 hover:text-rose-400 transition-colors cursor-pointer">
                         <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
                         <span>Keluar (Logout)</span>
                     </button>
@@ -332,35 +514,44 @@
     </aside>
     @endauth
 
-    <main class="flex-1 flex flex-col min-w-0 md:h-screen md:overflow-hidden bg-[#F8FAFC]">
+    <main class="flex-1 flex flex-col min-w-0 md:h-screen md:overflow-hidden bg-[#F8FAFC] dark:bg-[#0B0F19] transition-colors">
         @auth
         <!-- Top Navigation Header (Human Big-Tech Clean Precision - FIXED) -->
-        <header class="h-12 bg-white border-b border-slate-200 shrink-0 flex items-center justify-between px-5 shadow-2xs z-30">
+        <header class="h-12 bg-white dark:bg-[#0F172A] border-b border-slate-200 dark:border-slate-800 shrink-0 flex items-center justify-between px-4 sm:px-5 shadow-2xs z-30 transition-colors">
             <div class="flex items-center space-x-2">
-                <span class="inline-flex items-center px-2 py-0.5 bg-slate-100 text-slate-800 border border-slate-200 rounded text-[10.5px] font-semibold uppercase tracking-wider">
+                <span class="inline-flex items-center px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded text-[10.5px] font-semibold uppercase tracking-wider">
                     {{ str_replace('_', ' ', Auth::user()->role) }}
                 </span>
-                <span class="text-xs text-slate-300">/</span>
-                <span class="text-xs text-slate-500 font-medium">SMK Negeri 1 (SMEA)</span>
+                <span class="text-xs text-slate-300 dark:text-slate-600">/</span>
+                <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">SMK Negeri 1 (SMEA)</span>
             </div>
             
-            <div class="flex items-center space-x-3">
+            <div class="flex items-center space-x-2.5 sm:space-x-3">
+                <!-- Theme Toggle Button (Light & Dark Mode) -->
+                <button type="button" onclick="toggleTheme()" id="theme-toggle-btn"
+                    class="h-7.5 px-2.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/80 transition-all flex items-center space-x-1.5 shadow-2xs cursor-pointer text-xs font-semibold"
+                    title="Ganti Mode Terang / Gelap">
+                    <i data-lucide="sun" id="theme-icon-sun" class="w-3.5 h-3.5 text-amber-500 hidden dark:inline-block"></i>
+                    <i data-lucide="moon" id="theme-icon-moon" class="w-3.5 h-3.5 text-slate-600 dark:hidden inline-block"></i>
+                    <span class="hidden sm:inline text-[11px]" id="theme-label">Tema</span>
+                </button>
+
                 <!-- Date Display -->
-                <div class="hidden sm:flex items-center space-x-1.5 text-xs text-slate-600 font-medium bg-slate-50 px-2.5 py-1 rounded border border-slate-200">
+                <div class="hidden sm:flex items-center space-x-1.5 text-xs text-slate-600 dark:text-slate-300 font-medium bg-slate-50 dark:bg-slate-800 px-2.5 py-1 rounded border border-slate-200 dark:border-slate-700">
                     <i data-lucide="calendar" class="w-3 h-3 text-slate-400"></i>
                     <span>{{ date('l, d M Y') }}</span>
                 </div>
                 
                 <!-- Quick User Status -->
-                <div class="flex items-center space-x-2.5 pl-3 border-l border-slate-200">
-                    <div class="w-6.5 h-6.5 rounded bg-slate-900 text-white flex items-center justify-center font-bold text-[11px]">
+                <div class="flex items-center space-x-2.5 pl-2.5 sm:pl-3 border-l border-slate-200 dark:border-slate-700">
+                    <div class="w-6.5 h-6.5 rounded bg-slate-900 dark:bg-slate-700 text-white flex items-center justify-center font-bold text-[11px]">
                         {{ strtoupper(substr(Auth::user()->username, 0, 1)) }}
                     </div>
                     <div class="hidden lg:block text-left">
-                        <p class="text-xs font-semibold text-slate-900 leading-none">{{ Auth::user()->nama_display ?? Auth::user()->username }}</p>
+                        <p class="text-xs font-semibold text-slate-900 dark:text-white leading-none">{{ Auth::user()->nama_display ?? Auth::user()->username }}</p>
                         <div class="flex items-center space-x-1 mt-0.5">
                             <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                            <span class="text-[10px] text-slate-500 leading-none">Online</span>
+                            <span class="text-[10px] text-slate-500 dark:text-slate-400 leading-none">Online</span>
                         </div>
                     </div>
                 </div>
@@ -372,21 +563,28 @@
         <div class="flex-1 p-3.5 md:p-4 max-w-[1600px] w-full mx-auto flex flex-col min-h-0 overflow-y-auto">
             <!-- Compact Flash Notification -->
             @if (session('success'))
-                <div class="shrink-0 mb-3 p-2.5 bg-emerald-50 border border-emerald-200 rounded-lg text-emerald-800 text-xs font-semibold flex items-center space-x-2 shadow-2xs">
-                    <i data-lucide="check-circle" class="w-4 h-4 text-emerald-600 flex-shrink-0"></i>
+                <div class="shrink-0 mb-3 p-2.5 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 rounded-lg text-emerald-800 dark:text-emerald-300 text-xs font-semibold flex items-center space-x-2 shadow-2xs">
+                    <i data-lucide="check-circle" class="w-4 h-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0"></i>
                     <span>{{ session('success') }}</span>
                 </div>
             @endif
 
+            @if (session('error'))
+                <div class="shrink-0 mb-3 p-2.5 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/60 rounded-lg text-rose-800 dark:text-rose-300 text-xs font-semibold flex items-center space-x-2 shadow-2xs">
+                    <i data-lucide="alert-circle" class="w-4 h-4 text-rose-600 dark:text-rose-400 flex-shrink-0"></i>
+                    <span>{{ session('error') }}</span>
+                </div>
+            @endif
+
             @if (session('info'))
-                <div class="shrink-0 mb-3 p-2.5 bg-sky-50 border border-sky-200 rounded-lg text-sky-800 text-xs font-semibold flex items-center space-x-2 shadow-2xs">
-                    <i data-lucide="info" class="w-4 h-4 text-sky-600 flex-shrink-0"></i>
+                <div class="shrink-0 mb-3 p-2.5 bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-800/60 rounded-lg text-sky-800 dark:text-sky-300 text-xs font-semibold flex items-center space-x-2 shadow-2xs">
+                    <i data-lucide="info" class="w-4 h-4 text-sky-600 dark:text-sky-400 flex-shrink-0"></i>
                     <span>{{ session('info') }}</span>
                 </div>
             @endif
 
             @if ($errors->any())
-                <div class="shrink-0 mb-3 p-2.5 bg-rose-50 border border-rose-200 rounded-lg text-rose-800 text-xs font-semibold shadow-2xs">
+                <div class="shrink-0 mb-3 p-2.5 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/60 rounded-lg text-rose-800 dark:text-rose-300 text-xs font-semibold shadow-2xs">
                     <ul class="list-disc pl-4 space-y-0.5">
                         @foreach ($errors->all() as $err)
                             <li>{{ $err }}</li>
@@ -401,6 +599,44 @@
 
     <!-- Global Layout Scripts -->
     <script>
+        // Light & Dark Mode Toggle
+        function toggleTheme() {
+            const html = document.documentElement;
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        }
+
+        // Initialize Searchable Selects via TomSelect
+        function initSearchableSelects() {
+            if (typeof TomSelect === 'undefined') return;
+            
+            // Auto initialize on select elements with searchable-select class, or data-searchable, or form selects with > 4 options
+            document.querySelectorAll('select.searchable-select, select[data-searchable], select.tom-select').forEach(function(el) {
+                if (el.id === 'perPageSelect' || el.classList.contains('no-search')) return;
+                if (!el.tomselect) {
+                    try {
+                        new TomSelect(el, {
+                            create: false,
+                            maxOptions: 250,
+                            placeholder: el.querySelector('option[value=""]')?.textContent || 'Ketik untuk mencari...',
+                            allowEmptyOption: true,
+                            dropdownParent: 'body',
+                        });
+                    } catch(e) {
+                        console.warn('TomSelect init error:', e);
+                    }
+                }
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             if (typeof lucide !== 'undefined') {
                 lucide.createIcons();
@@ -414,6 +650,9 @@
                     sidebarNav.classList.toggle('hidden');
                 });
             }
+
+            // Init Searchable Dropdowns
+            initSearchableSelects();
         });
     </script>
     @stack('scripts')

@@ -1,10 +1,19 @@
 <!DOCTYPE html>
-<html lang="id" class="h-full bg-white">
+<html lang="id" class="h-full bg-white dark:bg-[#0B0F19]">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Jurnal & Monitoring Esemkita</title>
     
+    <!-- Instant Theme Loader (Zero Flicker) -->
+    <script>
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+
     <!-- Google Fonts: Inter & Instrument Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,6 +23,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     fontFamily: {
@@ -85,9 +95,35 @@
         .border-custom-accent {
             border-color: #8697C3;
         }
+
+        /* Dark Mode Global Rules */
+        html.dark body {
+            background-color: #0B0F19 !important;
+            color: #F1F5F9 !important;
+        }
+        html.dark .bg-white {
+            background-color: #0F172A !important;
+        }
+        html.dark .border-\[\#D1D9EB\], html.dark .border-slate-200 {
+            border-color: #1E293B !important;
+        }
+        html.dark .text-\[\#1E2538\] {
+            color: #F8FAFC !important;
+        }
+        html.dark .text-gray-500, html.dark .text-gray-400 {
+            color: #94A3B8 !important;
+        }
+        html.dark input:not([type="checkbox"]) {
+            background-color: #182238 !important;
+            border-color: #2E3E5C !important;
+            color: #F1F5F9 !important;
+        }
+        html.dark .bg-\[\#F8FAFC\] {
+            background-color: #182238 !important;
+        }
     </style>
 </head>
-<body class="h-full antialiased text-[#1E2538] bg-white">
+<body class="h-full antialiased text-[#1E2538] dark:text-slate-100 bg-white dark:bg-[#0B0F19]">
 
     <!-- Split-Screen Container -->
     <div class="min-h-screen flex flex-col lg:flex-row">
@@ -95,17 +131,26 @@
         <!-- ========================================================== -->
         <!-- LEFT SIDE: FORM LOGIN (Sesuai Layout Gambar / Mockup)       -->
         <!-- ========================================================== -->
-        <div class="w-full lg:w-[48%] xl:w-[45%] flex flex-col justify-between px-8 sm:px-14 md:px-20 lg:px-16 xl:px-24 py-10 lg:py-14 bg-white z-10">
+        <div class="w-full lg:w-[48%] xl:w-[45%] flex flex-col justify-between px-8 sm:px-14 md:px-20 lg:px-16 xl:px-24 py-10 lg:py-14 bg-white dark:bg-[#0F172A] z-10 transition-colors">
             
-            <!-- Top Branding -->
-            <div class="flex items-center space-x-3 mb-8 lg:mb-0">
-                <div class="w-10 h-10 rounded-xl bg-[#405078] flex items-center justify-center text-white shadow-md shadow-[#405078]/25">
-                    <i data-lucide="book-open-check" class="w-5 h-5"></i>
+            <!-- Top Branding & Theme Toggle -->
+            <div class="flex items-center justify-between mb-8 lg:mb-0">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-[#405078] flex items-center justify-center text-white shadow-md shadow-[#405078]/25">
+                        <i data-lucide="book-open-check" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <span class="font-bold text-lg tracking-tight text-[#405078] dark:text-indigo-400">JURNAL ESEMKITA</span>
+                        <span class="block text-[10px] font-semibold text-[#8697C3] uppercase tracking-widest -mt-1">Monitoring Terpadu</span>
+                    </div>
                 </div>
-                <div>
-                    <span class="font-bold text-lg tracking-tight text-[#405078]">JURNAL ESEMKITA</span>
-                    <span class="block text-[10px] font-semibold text-[#8697C3] uppercase tracking-widest -mt-1">Monitoring Terpadu</span>
-                </div>
+
+                <button type="button" onclick="toggleTheme()" id="theme-toggle-btn"
+                    class="h-8 px-2.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/80 transition-all flex items-center space-x-1.5 shadow-2xs cursor-pointer text-xs font-semibold"
+                    title="Ganti Mode Terang / Gelap">
+                    <i data-lucide="sun" class="w-4 h-4 text-amber-500 hidden dark:inline-block"></i>
+                    <i data-lucide="moon" class="w-4 h-4 text-slate-600 dark:hidden inline-block"></i>
+                </button>
             </div>
 
             <!-- Form Section -->
@@ -307,6 +352,15 @@
             } else {
                 passwordInput.type = 'password';
                 icon.setAttribute('data-lucide', 'eye');
+            }
+        function toggleTheme() {
+            const html = document.documentElement;
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
             }
             if (typeof lucide !== 'undefined') {
                 lucide.createIcons();

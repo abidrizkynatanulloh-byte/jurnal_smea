@@ -37,7 +37,7 @@
                 <div>
                     <label for="id_kelas" class="block text-[11px] font-semibold text-slate-700 mb-0.5">Kelas *</label>
                     <select name="id_kelas" id="id_kelas" required
-                        class="w-full h-8 px-2.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 font-medium focus:outline-none focus:border-slate-800 cursor-pointer">
+                        class="searchable-select w-full h-8 px-2.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 font-medium focus:outline-none focus:border-slate-800 cursor-pointer">
                         <option value="">-- Pilih Kelas --</option>
                         @foreach ($kelasList as $k)
                             <option value="{{ $k->id_kelas }}" {{ old('id_kelas') == $k->id_kelas ? 'selected' : '' }}>
@@ -77,7 +77,7 @@
                 <div>
                     <label for="kode_mapel" class="block text-[11px] font-semibold text-slate-700 mb-0.5">Mata Pelajaran *</label>
                     <select name="kode_mapel" id="kode_mapel" required
-                        class="w-full h-8 px-2.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 font-medium focus:outline-none focus:border-slate-800 cursor-pointer">
+                        class="searchable-select w-full h-8 px-2.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 font-medium focus:outline-none focus:border-slate-800 cursor-pointer">
                         <option value="">-- Pilih Mapel --</option>
                         @foreach ($mapelList as $m)
                             <option value="{{ $m->kode_mapel }}" {{ old('kode_mapel') == $m->kode_mapel ? 'selected' : '' }}>
@@ -90,7 +90,7 @@
                 <div>
                     <label for="id_guru" class="block text-[11px] font-semibold text-slate-700 mb-0.5">Guru Pengampu *</label>
                     <select name="id_guru" id="id_guru" required
-                        class="w-full h-8 px-2.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 font-medium focus:outline-none focus:border-slate-800 cursor-pointer">
+                        class="searchable-select w-full h-8 px-2.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 font-medium focus:outline-none focus:border-slate-800 cursor-pointer">
                         <option value="">-- Pilih Guru --</option>
                         @foreach ($guruList as $g)
                             <option value="{{ $g->id_guru }}" {{ old('id_guru') == $g->id_guru ? 'selected' : '' }}>
@@ -103,7 +103,7 @@
                 <div>
                     <label for="id_ruangan" class="block text-[11px] font-semibold text-slate-700 mb-0.5">Ruangan Kelas / Lab</label>
                     <select name="id_ruangan" id="id_ruangan"
-                        class="w-full h-8 px-2.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 font-medium focus:outline-none focus:border-slate-800 cursor-pointer">
+                        class="searchable-select w-full h-8 px-2.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 font-medium focus:outline-none focus:border-slate-800 cursor-pointer">
                         <option value="">-- Default Ruangan Kelas --</option>
                         @foreach ($ruanganList as $r)
                             <option value="{{ $r->id_ruangan }}" {{ old('id_ruangan') == $r->id_ruangan ? 'selected' : '' }}>
