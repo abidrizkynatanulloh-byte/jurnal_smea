@@ -153,7 +153,7 @@
                                         $waktuSelesaiIst1 = $jam5 ? substr($jam5->waktu_mulai, 0, 5) : \Carbon\Carbon::parse($j->waktu_selesai)->addMinutes(20)->format('H:i');
                                     @endphp
                                     <tr class="bg-amber-50/70 border-y border-amber-200/80 font-medium text-amber-900">
-                                        <td class="py-1.5 px-3.5 text-center font-bold text-amber-700 text-xs">☕</td>
+                                        <td class="py-1.5 px-3.5 text-center font-bold text-amber-700 text-xs"></td>
                                         <td class="py-1.5 px-3.5 font-bold font-mono tabular-nums text-xs text-amber-900">
                                             <span class="px-1.5 py-0.5 rounded bg-amber-100 border border-amber-300 text-amber-900 text-[10px] uppercase font-sans font-bold tracking-wide mr-2">
                                                 ISTIRAHAT 1
@@ -174,7 +174,7 @@
                                         $waktuSelesaiIst2 = $jam8 ? substr($jam8->waktu_mulai, 0, 5) : \Carbon\Carbon::parse($j->waktu_selesai)->addMinutes(90)->format('H:i');
                                     @endphp
                                     <tr class="bg-indigo-50/70 border-y border-indigo-200/80 font-medium text-indigo-900">
-                                        <td class="py-1.5 px-3.5 text-center font-bold text-indigo-700 text-xs">🍽️</td>
+                                        <td class="py-1.5 px-3.5 text-center font-bold text-indigo-700 text-xs"></td>
                                         <td class="py-1.5 px-3.5 font-bold font-mono tabular-nums text-xs text-indigo-900">
                                             <span class="px-1.5 py-0.5 rounded bg-indigo-100 border border-indigo-300 text-indigo-900 text-[10px] uppercase font-sans font-bold tracking-wide mr-2">
                                                 ISTIRAHAT 2 / ISHOMA
@@ -278,7 +278,7 @@
                                         $waktuSelesaiIst1 = $jam6 ? substr($jam6->waktu_mulai, 0, 5) : \Carbon\Carbon::parse($j->waktu_selesai)->addMinutes(20)->format('H:i');
                                     @endphp
                                     <tr class="bg-amber-50/70 border-y border-amber-200/80 font-medium text-amber-900">
-                                        <td class="py-1.5 px-3.5 text-center font-bold text-amber-700 text-xs">☕</td>
+                                        <td class="py-1.5 px-3.5 text-center font-bold text-amber-700 text-xs"></td>
                                         <td class="py-1.5 px-3.5 font-bold font-mono tabular-nums text-xs text-amber-900">
                                             <span class="px-1.5 py-0.5 rounded bg-amber-100 border border-amber-300 text-amber-900 text-[10px] uppercase font-sans font-bold tracking-wide mr-2">
                                                 ISTIRAHAT 1
@@ -299,7 +299,7 @@
                                         $waktuSelesaiIst2 = $jam9 ? substr($jam9->waktu_mulai, 0, 5) : \Carbon\Carbon::parse($j->waktu_selesai)->addMinutes(100)->format('H:i');
                                     @endphp
                                     <tr class="bg-indigo-50/70 border-y border-indigo-200/80 font-medium text-indigo-900">
-                                        <td class="py-1.5 px-3.5 text-center font-bold text-indigo-700 text-xs">🕌</td>
+                                        <td class="py-1.5 px-3.5 text-center font-bold text-indigo-700 text-xs"></td>
                                         <td class="py-1.5 px-3.5 font-bold font-mono tabular-nums text-xs text-indigo-900">
                                             <span class="px-1.5 py-0.5 rounded bg-indigo-100 border border-indigo-300 text-indigo-900 text-[10px] uppercase font-sans font-bold tracking-wide mr-2">
                                                 ISTIRAHAT 2 / JUMATAN
