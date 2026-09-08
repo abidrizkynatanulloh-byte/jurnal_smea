@@ -146,6 +146,49 @@
                                         </div>
                                     </td>
                                 </tr>
+                                @if ($j->jam_ke == 4)
+                                    @php
+                                        $jam5 = $jamReguler->firstWhere('jam_ke', 5);
+                                        $waktuMulaiIst1 = substr($j->waktu_selesai, 0, 5);
+                                        $waktuSelesaiIst1 = $jam5 ? substr($jam5->waktu_mulai, 0, 5) : \Carbon\Carbon::parse($j->waktu_selesai)->addMinutes(20)->format('H:i');
+                                    @endphp
+                                    <tr class="bg-amber-50/70 border-y border-amber-200/80 font-medium text-amber-900">
+                                        <td class="py-1.5 px-3.5 text-center font-bold text-amber-700 text-xs">☕</td>
+                                        <td class="py-1.5 px-3.5 font-bold font-mono tabular-nums text-xs text-amber-900">
+                                            <span class="px-1.5 py-0.5 rounded bg-amber-100 border border-amber-300 text-amber-900 text-[10px] uppercase font-sans font-bold tracking-wide mr-2">
+                                                ISTIRAHAT 1
+                                            </span>
+                                            {{ $waktuMulaiIst1 }} - {{ $waktuSelesaiIst1 }} WIB
+                                        </td>
+                                        <td class="py-1.5 px-3.5 text-center">
+                                            <span class="inline-block px-2 py-0.5 rounded text-[11px] font-semibold bg-amber-100 text-amber-800 border border-amber-300">
+                                                20 Menit
+                                            </span>
+                                        </td>
+                                        <td class="py-1.5 px-3.5 text-center text-slate-400 text-xs italic">-</td>
+                                    </tr>
+                                @elseif ($j->jam_ke == 7)
+                                    @php
+                                        $jam8 = $jamReguler->firstWhere('jam_ke', 8);
+                                        $waktuMulaiIst2 = substr($j->waktu_selesai, 0, 5);
+                                        $waktuSelesaiIst2 = $jam8 ? substr($jam8->waktu_mulai, 0, 5) : \Carbon\Carbon::parse($j->waktu_selesai)->addMinutes(90)->format('H:i');
+                                    @endphp
+                                    <tr class="bg-indigo-50/70 border-y border-indigo-200/80 font-medium text-indigo-900">
+                                        <td class="py-1.5 px-3.5 text-center font-bold text-indigo-700 text-xs">🍽️</td>
+                                        <td class="py-1.5 px-3.5 font-bold font-mono tabular-nums text-xs text-indigo-900">
+                                            <span class="px-1.5 py-0.5 rounded bg-indigo-100 border border-indigo-300 text-indigo-900 text-[10px] uppercase font-sans font-bold tracking-wide mr-2">
+                                                ISTIRAHAT 2 / ISHOMA
+                                            </span>
+                                            {{ $waktuMulaiIst2 }} - {{ $waktuSelesaiIst2 }} WIB
+                                        </td>
+                                        <td class="py-1.5 px-3.5 text-center">
+                                            <span class="inline-block px-2 py-0.5 rounded text-[11px] font-semibold bg-indigo-100 text-indigo-800 border border-indigo-300">
+                                                90 Menit
+                                            </span>
+                                        </td>
+                                        <td class="py-1.5 px-3.5 text-center text-slate-400 text-xs italic">-</td>
+                                    </tr>
+                                @endif
                             @empty
                                 <tr>
                                     <td colspan="4" class="py-6 text-center text-slate-400 italic text-xs">
@@ -198,6 +241,21 @@
                                     </td>
                                     <td class="py-2 px-3.5 text-center">
                                         <div class="flex items-center justify-center space-x-1">
+                                            @if ($j->is_aktif)
+                                                <form action="{{ route('admin.jam.nonaktifkan', $j->id_jam) }}" method="POST" class="inline" onsubmit="return confirm('Nonaktifkan jam ke-{{ $j->jam_ke }} ({{ $j->kelompok_hari }})?\nJam pelajaran setelahnya akan otomatis maju.')">
+                                                    @csrf
+                                                    <button type="submit" class="w-6.5 h-6.5 rounded-md border border-amber-200 bg-amber-50 hover:bg-amber-100 text-amber-700 flex items-center justify-center transition-colors shadow-2xs cursor-pointer" title="Nonaktifkan Jam (Otomatis Majukan Jam Setelahnya)">
+                                                        <i data-lucide="power" class="w-3 h-3"></i>
+                                                    </button>
+                                                </form>
+                                            @else
+                                                <form action="{{ route('admin.jam.aktifkan', $j->id_jam) }}" method="POST" class="inline" onsubmit="return confirm('Aktifkan kembali jam ke-{{ $j->jam_ke }} ({{ $j->kelompok_hari }})?\nJam pelajaran setelahnya akan otomatis mundur.')">
+                                                    @csrf
+                                                    <button type="submit" class="w-6.5 h-6.5 rounded-md border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 flex items-center justify-center transition-colors shadow-2xs cursor-pointer" title="Aktifkan Kembali Jam (Otomatis Mundurkan Jam Setelahnya)">
+                                                        <i data-lucide="power" class="w-3 h-3"></i>
+                                                    </button>
+                                                </form>
+                                            @endif
                                             <button type="button" 
                                                 onclick="openEditJamModal('{{ $j->id_jam }}', '{{ $j->jam_ke }}', '{{ $j->kelompok_hari }}', '{{ substr($j->waktu_mulai, 0, 5) }}', '{{ substr($j->waktu_selesai, 0, 5) }}', '{{ $j->is_aktif }}')"
                                                 class="w-6.5 h-6.5 rounded-md border border-slate-200 hover:border-slate-300 hover:bg-slate-100 text-slate-600 flex items-center justify-center transition-colors shadow-2xs cursor-pointer" title="Edit Jam">
@@ -213,6 +271,49 @@
                                         </div>
                                     </td>
                                 </tr>
+                                @if ($j->jam_ke == 5)
+                                    @php
+                                        $jam6 = $jamJumat->firstWhere('jam_ke', 6);
+                                        $waktuMulaiIst1 = substr($j->waktu_selesai, 0, 5);
+                                        $waktuSelesaiIst1 = $jam6 ? substr($jam6->waktu_mulai, 0, 5) : \Carbon\Carbon::parse($j->waktu_selesai)->addMinutes(20)->format('H:i');
+                                    @endphp
+                                    <tr class="bg-amber-50/70 border-y border-amber-200/80 font-medium text-amber-900">
+                                        <td class="py-1.5 px-3.5 text-center font-bold text-amber-700 text-xs">☕</td>
+                                        <td class="py-1.5 px-3.5 font-bold font-mono tabular-nums text-xs text-amber-900">
+                                            <span class="px-1.5 py-0.5 rounded bg-amber-100 border border-amber-300 text-amber-900 text-[10px] uppercase font-sans font-bold tracking-wide mr-2">
+                                                ISTIRAHAT 1
+                                            </span>
+                                            {{ $waktuMulaiIst1 }} - {{ $waktuSelesaiIst1 }} WIB
+                                        </td>
+                                        <td class="py-1.5 px-3.5 text-center">
+                                            <span class="inline-block px-2 py-0.5 rounded text-[11px] font-semibold bg-amber-100 text-amber-800 border border-amber-300">
+                                                20 Menit
+                                            </span>
+                                        </td>
+                                        <td class="py-1.5 px-3.5 text-center text-slate-400 text-xs italic">-</td>
+                                    </tr>
+                                @elseif ($j->jam_ke == 8)
+                                    @php
+                                        $jam9 = $jamJumat->firstWhere('jam_ke', 9);
+                                        $waktuMulaiIst2 = substr($j->waktu_selesai, 0, 5);
+                                        $waktuSelesaiIst2 = $jam9 ? substr($jam9->waktu_mulai, 0, 5) : \Carbon\Carbon::parse($j->waktu_selesai)->addMinutes(100)->format('H:i');
+                                    @endphp
+                                    <tr class="bg-indigo-50/70 border-y border-indigo-200/80 font-medium text-indigo-900">
+                                        <td class="py-1.5 px-3.5 text-center font-bold text-indigo-700 text-xs">🕌</td>
+                                        <td class="py-1.5 px-3.5 font-bold font-mono tabular-nums text-xs text-indigo-900">
+                                            <span class="px-1.5 py-0.5 rounded bg-indigo-100 border border-indigo-300 text-indigo-900 text-[10px] uppercase font-sans font-bold tracking-wide mr-2">
+                                                ISTIRAHAT 2 / JUMATAN
+                                            </span>
+                                            {{ $waktuMulaiIst2 }} - {{ $waktuSelesaiIst2 }} WIB
+                                        </td>
+                                        <td class="py-1.5 px-3.5 text-center">
+                                            <span class="inline-block px-2 py-0.5 rounded text-[11px] font-semibold bg-indigo-100 text-indigo-800 border border-indigo-300">
+                                                100 Menit
+                                            </span>
+                                        </td>
+                                        <td class="py-1.5 px-3.5 text-center text-slate-400 text-xs italic">-</td>
+                                    </tr>
+                                @endif
                             @empty
                                 <tr>
                                     <td colspan="4" class="py-6 text-center text-slate-400 italic text-xs">
