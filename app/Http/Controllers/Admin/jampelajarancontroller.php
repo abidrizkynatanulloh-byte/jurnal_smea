@@ -27,12 +27,25 @@ class JamPelajaranController
             'waktu_selesai.after' => 'Waktu selesai harus lebih dari waktu mulai.',
         ]);
 
-        // Cek unik per kelompok hari
-        $sudahAda = JamPelajaran::where('jam_ke', $request->jam_ke)
+        // Cek unik per kelompok hari (termasuk data soft deleted)
+        $existing = JamPelajaran::withTrashed()
+            ->where('jam_ke', $request->jam_ke)
             ->where('kelompok_hari', $request->kelompok_hari)
-            ->exists();
+            ->first();
 
-        if ($sudahAda) {
+        if ($existing) {
+            if ($existing->trashed()) {
+                $existing->restore();
+                $existing->update([
+                    'waktu_mulai'   => $request->waktu_mulai,
+                    'waktu_selesai' => $request->waktu_selesai,
+                    'is_aktif'      => 1,
+                ]);
+
+                return redirect()->route('admin.jam.index')
+                    ->with('success', "Jam ke-{$request->jam_ke} ({$request->kelompok_hari}) berhasil ditambahkan!");
+            }
+
             return back()->withErrors([
                 'jam_ke' => "Jam ke-{$request->jam_ke} untuk kelompok {$request->kelompok_hari} sudah ada.",
             ])->withInput();
@@ -89,7 +102,7 @@ class JamPelajaranController
     }
 
     /**
-     * Nonaktifkan jam → semua jam SETELAHNYA maju (lebih awal) sebesar durasi jam ini.
+     * Nonaktifkan jam → semua jam SETELAHNYA pada kelompok hari yang sama maju (lebih awal) sebesar durasi jam ini.
      */
     public function nonaktifkan($id)
     {
@@ -103,7 +116,9 @@ class JamPelajaranController
         $durasiMenit = Carbon::parse($jam->waktu_mulai)
             ->diffInMinutes(Carbon::parse($jam->waktu_selesai));
 
-        JamPelajaran::where('jam_ke', '>', $jam->jam_ke)->get()
+        JamPelajaran::where('kelompok_hari', $jam->kelompok_hari)
+            ->where('jam_ke', '>', $jam->jam_ke)
+            ->get()
             ->each(function ($j) use ($durasiMenit) {
                 $j->update([
                     'waktu_mulai'   => Carbon::parse($j->waktu_mulai)->subMinutes($durasiMenit)->format('H:i:s'),
@@ -114,11 +129,11 @@ class JamPelajaranController
         $jam->update(['is_aktif' => 0]);
 
         return redirect()->route('admin.jam.index')
-            ->with('success', "Jam ke-{$jam->jam_ke} dinonaktifkan! Jam setelahnya otomatis maju {$durasiMenit} menit.");
+            ->with('success', "Jam ke-{$jam->jam_ke} ({$jam->kelompok_hari}) dinonaktifkan! Jam setelahnya otomatis maju {$durasiMenit} menit.");
     }
 
     /**
-     * Aktifkan kembali jam → semua jam SETELAHNYA mundur sebesar durasi jam ini.
+     * Aktifkan kembali jam → semua jam SETELAHNYA pada kelompok hari yang sama mundur sebesar durasi jam ini.
      */
     public function aktifkan($id)
     {
@@ -132,7 +147,9 @@ class JamPelajaranController
         $durasiMenit = Carbon::parse($jam->waktu_mulai)
             ->diffInMinutes(Carbon::parse($jam->waktu_selesai));
 
-        JamPelajaran::where('jam_ke', '>', $jam->jam_ke)->get()
+        JamPelajaran::where('kelompok_hari', $jam->kelompok_hari)
+            ->where('jam_ke', '>', $jam->jam_ke)
+            ->get()
             ->each(function ($j) use ($durasiMenit) {
                 $j->update([
                     'waktu_mulai'   => Carbon::parse($j->waktu_mulai)->addMinutes($durasiMenit)->format('H:i:s'),
@@ -143,14 +160,14 @@ class JamPelajaranController
         $jam->update(['is_aktif' => 1]);
 
         return redirect()->route('admin.jam.index')
-            ->with('success', "Jam ke-{$jam->jam_ke} diaktifkan kembali! Jam setelahnya otomatis mundur {$durasiMenit} menit.");
+            ->with('success', "Jam ke-{$jam->jam_ke} ({$jam->kelompok_hari}) diaktifkan kembali! Jam setelahnya otomatis mundur {$durasiMenit} menit.");
     }
 
     public function destroy($id)
     {
-        $jam = JamPelajaran::findOrFail($id);
+        $jam = JamPelajaran::withTrashed()->findOrFail($id);
         $nomorJam = $jam->jam_ke;
-        $jam->delete();
+        $jam->forceDelete();
 
         return redirect()->route('admin.jam.index')
             ->with('success', "Sesi jam ke-{$nomorJam} berhasil dihapus permanen.");

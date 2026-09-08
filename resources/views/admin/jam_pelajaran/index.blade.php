@@ -116,6 +116,21 @@
                                     </td>
                                     <td class="py-2 px-3.5 text-center">
                                         <div class="flex items-center justify-center space-x-1">
+                                            @if ($j->is_aktif)
+                                                <form action="{{ route('admin.jam.nonaktifkan', $j->id_jam) }}" method="POST" class="inline" onsubmit="return confirm('Nonaktifkan jam ke-{{ $j->jam_ke }} ({{ $j->kelompok_hari }})?\nJam pelajaran setelahnya akan otomatis maju.')">
+                                                    @csrf
+                                                    <button type="submit" class="w-6.5 h-6.5 rounded-md border border-amber-200 bg-amber-50 hover:bg-amber-100 text-amber-700 flex items-center justify-center transition-colors shadow-2xs cursor-pointer" title="Nonaktifkan Jam (Otomatis Majukan Jam Setelahnya)">
+                                                        <i data-lucide="power" class="w-3 h-3"></i>
+                                                    </button>
+                                                </form>
+                                            @else
+                                                <form action="{{ route('admin.jam.aktifkan', $j->id_jam) }}" method="POST" class="inline" onsubmit="return confirm('Aktifkan kembali jam ke-{{ $j->jam_ke }} ({{ $j->kelompok_hari }})?\nJam pelajaran setelahnya akan otomatis mundur.')">
+                                                    @csrf
+                                                    <button type="submit" class="w-6.5 h-6.5 rounded-md border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 flex items-center justify-center transition-colors shadow-2xs cursor-pointer" title="Aktifkan Kembali Jam (Otomatis Mundurkan Jam Setelahnya)">
+                                                        <i data-lucide="power" class="w-3 h-3"></i>
+                                                    </button>
+                                                </form>
+                                            @endif
                                             <button type="button" 
                                                 onclick="openEditJamModal('{{ $j->id_jam }}', '{{ $j->jam_ke }}', '{{ $j->kelompok_hari }}', '{{ substr($j->waktu_mulai, 0, 5) }}', '{{ substr($j->waktu_selesai, 0, 5) }}', '{{ $j->is_aktif }}')"
                                                 class="w-6.5 h-6.5 rounded-md border border-slate-200 hover:border-slate-300 hover:bg-slate-100 text-slate-600 flex items-center justify-center transition-colors shadow-2xs cursor-pointer" title="Edit Jam">
