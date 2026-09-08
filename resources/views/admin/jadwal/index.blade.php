@@ -113,9 +113,9 @@
                     </select>
                 </div>
 
-                <div class="pt-1">
-                    <button type="submit" class="w-full h-8.5 bg-[#1E2538] hover:bg-[#161c2c] text-white rounded-lg text-xs font-semibold transition-colors flex items-center justify-center space-x-1.5 shadow-xs cursor-pointer">
-                        <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                <div class="pt-1.5">
+                    <button type="submit" class="w-full h-10.5 bg-[#1E2538] hover:bg-[#121724] text-white rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center space-x-2 shadow-xs cursor-pointer">
+                        <i data-lucide="plus" class="w-4 h-4"></i>
                         <span>Simpan Jadwal</span>
                     </button>
                 </div>
