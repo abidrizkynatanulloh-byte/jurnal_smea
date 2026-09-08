@@ -59,44 +59,94 @@ class JamPelajaranController
 
     /**
      * Update waktu sesi jam.
-     * Jika jam aktif terkecil diubah → semua jam lain ikut bergeser otomatis.
+     * Jika waktu selesai atau waktu mulai diubah → semua jam setelahnya pada kelompok hari yang sama ikut bergeser otomatis.
      */
     public function update(Request $request, $id)
     {
         $validated = $request->validate([
+            'jam_ke'        => 'required|integer|min:1',
+            'kelompok_hari' => 'required|in:Reguler,Jumat',
             'waktu_mulai'   => 'required',
-            'waktu_selesai' => 'required',
+            'waktu_selesai' => 'required|after:waktu_mulai',
+        ], [
+            'waktu_selesai.after' => 'Waktu selesai harus lebih dari waktu mulai.',
         ]);
 
         $jam = JamPelajaran::findOrFail($id);
 
-        $jamAktifTerkecil = JamPelajaran::where('is_aktif', 1)
-            ->orderBy('jam_ke', 'asc')->first();
+        // Cek jika jam_ke atau kelompok_hari diubah, pastikan tidak bentrok dengan data lain
+        $duplikat = JamPelajaran::withTrashed()
+            ->where('id_jam', '!=', $id)
+            ->where('jam_ke', $request->jam_ke)
+            ->where('kelompok_hari', $request->kelompok_hari)
+            ->first();
 
-        if ($jamAktifTerkecil && $jam->id_jam == $jamAktifTerkecil->id_jam) {
-            $selisihMenit = Carbon::parse($jam->waktu_mulai)
-                ->diffInMinutes(Carbon::parse($validated['waktu_mulai']), false);
+        if ($duplikat) {
+            if ($duplikat->trashed()) {
+                $duplikat->forceDelete();
+            } else {
+                return back()->withErrors([
+                    'jam_ke' => "Jam ke-{$request->jam_ke} untuk kelompok {$request->kelompok_hari} sudah digunakan oleh sesi lain.",
+                ])->withInput();
+            }
+        }
 
-            if ($selisihMenit !== 0) {
-                JamPelajaran::where('id_jam', '!=', $jam->id_jam)->get()
-                    ->each(function ($j) use ($selisihMenit) {
+        $isAktifBaru = $request->has('is_aktif') ? 1 : 0;
+
+        // Hitung selisih perubahan waktu selesai dan waktu mulai
+        $selisihSelesai = Carbon::parse($jam->waktu_selesai)
+            ->diffInMinutes(Carbon::parse($validated['waktu_selesai']), false);
+
+        $selisihMulai = Carbon::parse($jam->waktu_mulai)
+            ->diffInMinutes(Carbon::parse($validated['waktu_mulai']), false);
+
+        $pesan = "Jam ke-{$request->jam_ke} ({$request->kelompok_hari}) berhasil diperbarui!";
+
+        // Jika waktu_selesai diubah (misal durasi ditambah 1 menit), geser semua jam setelahnya
+        if ($selisihSelesai !== 0) {
+            JamPelajaran::where('kelompok_hari', $request->kelompok_hari)
+                ->where('jam_ke', '>', $jam->jam_ke)
+                ->get()
+                ->each(function ($j) use ($selisihSelesai) {
+                    $j->update([
+                        'waktu_mulai'   => Carbon::parse($j->waktu_mulai)->addMinutes($selisihSelesai)->format('H:i:s'),
+                        'waktu_selesai' => Carbon::parse($j->waktu_selesai)->addMinutes($selisihSelesai)->format('H:i:s'),
+                    ]);
+                });
+
+            $arah  = $selisihSelesai > 0 ? 'dimundurkan' : 'dimajukan';
+            $menit = abs($selisihSelesai);
+            $pesan = "Jam ke-{$request->jam_ke} diperbarui! Semua jam setelahnya ({$request->kelompok_hari}) otomatis {$arah} {$menit} menit.";
+        } elseif ($selisihMulai !== 0) {
+            // Jika hanya waktu_mulai jam pertama yang diubah
+            $jamPertama = JamPelajaran::where('kelompok_hari', $request->kelompok_hari)
+                ->orderBy('jam_ke', 'asc')
+                ->first();
+
+            if ($jamPertama && $jam->id_jam == $jamPertama->id_jam) {
+                JamPelajaran::where('kelompok_hari', $request->kelompok_hari)
+                    ->where('id_jam', '!=', $jam->id_jam)
+                    ->get()
+                    ->each(function ($j) use ($selisihMulai) {
                         $j->update([
-                            'waktu_mulai'   => Carbon::parse($j->waktu_mulai)->addMinutes($selisihMenit)->format('H:i:s'),
-                            'waktu_selesai' => Carbon::parse($j->waktu_selesai)->addMinutes($selisihMenit)->format('H:i:s'),
+                            'waktu_mulai'   => Carbon::parse($j->waktu_mulai)->addMinutes($selisihMulai)->format('H:i:s'),
+                            'waktu_selesai' => Carbon::parse($j->waktu_selesai)->addMinutes($selisihMulai)->format('H:i:s'),
                         ]);
                     });
 
-                $arah  = $selisihMenit > 0 ? 'dimajukan' : 'dimundurkan';
-                $menit = abs($selisihMenit);
-                $pesan = "Jam ke-{$jam->jam_ke} diperbarui! Semua jam lain otomatis {$arah} {$menit} menit.";
-            } else {
-                $pesan = "Waktu Jam ke-{$jam->jam_ke} diperbarui!";
+                $arah  = $selisihMulai > 0 ? 'dimundurkan' : 'dimajukan';
+                $menit = abs($selisihMulai);
+                $pesan = "Jam ke-{$request->jam_ke} diperbarui! Semua jam setelahnya ({$request->kelompok_hari}) otomatis {$arah} {$menit} menit.";
             }
-        } else {
-            $pesan = "Waktu Jam ke-{$jam->jam_ke} berhasil diperbarui!";
         }
 
-        $jam->update($validated);
+        $jam->update([
+            'jam_ke'        => $request->jam_ke,
+            'kelompok_hari' => $request->kelompok_hari,
+            'waktu_mulai'   => $request->waktu_mulai,
+            'waktu_selesai' => $request->waktu_selesai,
+            'is_aktif'      => $isAktifBaru,
+        ]);
 
         return redirect()->route('admin.jam.index')->with('success', $pesan);
     }
