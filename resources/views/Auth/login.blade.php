@@ -1,13 +1,14 @@
 <!DOCTYPE html>
-<html lang="id" class="h-full dark">
+<html lang="id" class="h-full">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Jurnal & Monitoring Esemkita</title>
     
-    <!-- Instant Theme Loader -->
+    <!-- Instant Theme Loader (Zero Flicker) -->
     <script>
-        if (localStorage.getItem('theme') === 'light') {
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
             document.documentElement.classList.remove('dark');
         } else {
             document.documentElement.classList.add('dark');
@@ -38,11 +39,80 @@
     <script src="https://cdn.jsdelivr.net/npm/lucide/dist/umd/lucide.min.js"></script>
 
     <style>
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
+        :root {
+            --bg-page: #EEF2F6;
+            --bg-left: #FFFFFF;
+            --text-title: #0F172A;
+            --text-subtitle: #475569;
+            --text-label: #334155;
+            --input-border-wrap: #CBD5E1;
+            --input-bg-inner: #FFFFFF;
+            --input-text: #0F172A;
+            --input-ph: #94A3B8;
+            --wave-fill: #FFFFFF;
+            --wave-ridge-1: #94A3B8;
+            --wave-ridge-2: #64748B;
+            --wave-ridge-3: #CBD5E1;
+            --wave-shadow: rgba(0, 0, 0, 0.08);
+            --card-fill: rgba(255, 255, 255, 0.82);
+            --card-border: rgba(255, 255, 255, 0.95);
+            --card-pill-bg: rgba(255, 255, 255, 0.9);
+            --card-pill-border: rgba(203, 213, 225, 0.8);
+            --card-title: #0F172A;
+            --card-subtitle: #334155;
+            --card-item-bg: rgba(255, 255, 255, 0.9);
+            --card-item-border: rgba(226, 232, 240, 0.95);
+            --card-item-text: #0F172A;
+            --card-item-icon-bg: #E0F2FE;
+            --card-item-icon: #0284C7;
+            --bottom-motto-bg: rgba(255, 255, 255, 0.85);
+            --bottom-motto-border: rgba(203, 213, 225, 0.6);
+            --bottom-motto-text: #475569;
+            --bg-overlay-start: rgba(238, 242, 246, 0.5);
+            --bg-overlay-end: rgba(226, 232, 240, 0.7);
         }
 
-        /* Moving Background Drift Animation */
+        html.dark {
+            --bg-page: #0E131F;
+            --bg-left: #0E131F;
+            --text-title: #FFFFFF;
+            --text-subtitle: #7A8DA6;
+            --text-label: #8E9DAE;
+            --input-border-wrap: #1E2838;
+            --input-bg-inner: #141C29;
+            --input-text: #F1F5F9;
+            --input-ph: #526379;
+            --wave-fill: #0E131F;
+            --wave-ridge-1: #1A2433;
+            --wave-ridge-2: #3A4D67;
+            --wave-ridge-3: #233144;
+            --wave-shadow: rgba(0, 0, 0, 0.6);
+            --card-fill: rgba(17, 24, 36, 0.68);
+            --card-border: rgba(255, 255, 255, 0.14);
+            --card-pill-bg: #1C293A;
+            --card-pill-border: #2B3E56;
+            --card-title: #FFFFFF;
+            --card-subtitle: #8E9EB3;
+            --card-item-bg: rgba(255, 255, 255, 0.04);
+            --card-item-border: rgba(255, 255, 255, 0.08);
+            --card-item-text: #D4E0EE;
+            --card-item-icon-bg: rgba(255, 255, 255, 0.06);
+            --card-item-icon: #38BDF8;
+            --bottom-motto-bg: rgba(255, 255, 255, 0.03);
+            --bottom-motto-border: rgba(255, 255, 255, 0.06);
+            --bottom-motto-text: #7B8FA6;
+            --bg-overlay-start: rgba(14, 19, 31, 0.6);
+            --bg-overlay-end: rgba(15, 23, 42, 0.85);
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-title);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Moving Background Drift */
         @keyframes bgMotion {
             0% {
                 transform: scale(1.02) translate(0%, 0%);
@@ -55,67 +125,67 @@
             }
         }
         .animate-bg-drift {
-            animation: bgMotion 28s ease-in-out infinite alternate;
+            animation: bgMotion 32s ease-in-out infinite alternate;
         }
 
-        /* Subtle Diagonal Glass Sheen Sweep on Right Card ("samar ga se kandel itu") */
-        @keyframes sheenSweep {
+        /* Slow, Calm, Subtle Glass Sheen Sweep ("samar & ga kecepeten") */
+        @keyframes sheenSweepSlow {
             0% {
-                transform: translateX(-160%) translateY(-160%) rotate(38deg);
+                transform: translateX(-180%) translateY(-180%) rotate(38deg);
                 opacity: 0;
             }
-            15% {
-                opacity: 1;
+            3% {
+                opacity: 0.85;
             }
-            50% {
-                transform: translateX(160%) translateY(160%) rotate(38deg);
-                opacity: 1;
+            20% {
+                transform: translateX(180%) translateY(180%) rotate(38deg);
+                opacity: 0.85;
             }
-            60% {
+            24% {
                 opacity: 0;
             }
             100% {
-                transform: translateX(160%) translateY(160%) rotate(38deg);
+                transform: translateX(180%) translateY(180%) rotate(38deg);
                 opacity: 0;
             }
         }
-        .sheen-sweep-layer {
+        .sheen-sweep-slow {
             position: absolute;
-            top: -120%;
-            left: -120%;
-            width: 340%;
-            height: 340%;
+            top: -150%;
+            left: -150%;
+            width: 400%;
+            height: 400%;
             background: linear-gradient(
                 90deg,
                 transparent 0%,
-                transparent 30%,
-                rgba(255, 255, 255, 0.03) 36%,
-                rgba(255, 255, 255, 0.14) 43%,
-                rgba(255, 255, 255, 0.22) 47%,
-                rgba(255, 255, 255, 0.06) 50%,
-                rgba(255, 255, 255, 0.18) 54%,
-                rgba(255, 255, 255, 0.03) 58%,
-                transparent 68%,
+                transparent 38%,
+                rgba(255, 255, 255, 0.02) 42%,
+                rgba(255, 255, 255, 0.08) 46%,
+                rgba(255, 255, 255, 0.14) 49%,
+                rgba(255, 255, 255, 0.04) 51%,
+                rgba(255, 255, 255, 0.09) 53%,
+                rgba(255, 255, 255, 0.02) 56%,
+                transparent 62%,
                 transparent 100%
             );
-            animation: sheenSweep 7s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+            animation: sheenSweepSlow 16s cubic-bezier(0.4, 0, 0.2, 1) infinite;
             pointer-events: none;
         }
 
-        /* Subtle Sheen Sweep for Input Boxes */
-        @keyframes inputSheenSweep {
+        /* Subtle Shimmer for Input Boxes */
+        @keyframes inputSheenSlow {
             0% {
                 transform: translateX(-180%) rotate(35deg);
                 opacity: 0;
             }
-            20% {
-                opacity: 0.8;
+            15% {
+                opacity: 0.5;
             }
-            50% {
+            45% {
                 transform: translateX(180%) rotate(35deg);
-                opacity: 0.8;
+                opacity: 0.5;
             }
-            60% {
+            52% {
                 opacity: 0;
             }
             100% {
@@ -133,13 +203,13 @@
                 90deg,
                 transparent 0%,
                 transparent 40%,
-                rgba(255, 255, 255, 0.08) 48%,
-                rgba(165, 243, 252, 0.15) 50%,
-                rgba(255, 255, 255, 0.08) 52%,
+                rgba(255, 255, 255, 0.05) 48%,
+                rgba(165, 243, 252, 0.12) 50%,
+                rgba(255, 255, 255, 0.05) 52%,
                 transparent 60%,
                 transparent 100%
             );
-            animation: inputSheenSweep 9s ease-in-out infinite;
+            animation: inputSheenSlow 12s ease-in-out infinite;
             pointer-events: none;
         }
 
@@ -149,11 +219,11 @@
             padding: 1.5px;
             border-radius: 12px;
             overflow: hidden;
-            background-color: #1E2838;
+            background-color: var(--input-border-wrap);
             transition: all 0.3s ease;
         }
         .beam-wrapper:hover, .beam-wrapper:focus-within {
-            background-color: #2D3D54;
+            background-color: #38BDF8;
         }
 
         .beam-rotator {
@@ -176,50 +246,21 @@
 
         /* Cycle 1: Username input beam rotates during 0s - 3.5s */
         @keyframes rotateBeamUser {
-            0% {
-                transform: rotate(0deg);
-                opacity: 0;
-            }
-            5% {
-                opacity: 1;
-            }
-            44% {
-                opacity: 1;
-            }
-            49% {
-                transform: rotate(360deg);
-                opacity: 0;
-            }
-            100% {
-                transform: rotate(360deg);
-                opacity: 0;
-            }
+            0% { transform: rotate(0deg); opacity: 0; }
+            5% { opacity: 1; }
+            44% { opacity: 1; }
+            49% { transform: rotate(360deg); opacity: 0; }
+            100% { transform: rotate(360deg); opacity: 0; }
         }
 
         /* Cycle 2: Password input beam rotates during 3.5s - 7s */
         @keyframes rotateBeamPass {
-            0% {
-                transform: rotate(0deg);
-                opacity: 0;
-            }
-            49% {
-                transform: rotate(0deg);
-                opacity: 0;
-            }
-            54% {
-                opacity: 1;
-            }
-            93% {
-                opacity: 1;
-            }
-            98% {
-                transform: rotate(360deg);
-                opacity: 0;
-            }
-            100% {
-                transform: rotate(360deg);
-                opacity: 0;
-            }
+            0% { transform: rotate(0deg); opacity: 0; }
+            49% { transform: rotate(0deg); opacity: 0; }
+            54% { opacity: 1; }
+            93% { opacity: 1; }
+            98% { transform: rotate(360deg); opacity: 0; }
+            100% { transform: rotate(360deg); opacity: 0; }
         }
 
         .beam-username {
@@ -229,81 +270,68 @@
             animation: rotateBeamPass 7s linear infinite;
         }
 
-        /* Continuous rotation when input is focused */
+        /* Continuous rotation on active focus */
         @keyframes rotateBeamActive {
-            from {
-                transform: rotate(0deg);
-            }
-            to {
-                transform: rotate(360deg);
-            }
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
         .beam-wrapper:focus-within .beam-rotator {
             opacity: 1 !important;
             animation: rotateBeamActive 2.8s linear infinite !important;
         }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 5px;
-            height: 5px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #0E131F;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #1E2838;
-            border-radius: 4px;
-        }
     </style>
 </head>
-<body class="h-full antialiased bg-[#0E131F] text-slate-100 overflow-x-hidden selection:bg-cyan-500/30 selection:text-cyan-200">
+<body class="h-full antialiased overflow-x-hidden selection:bg-cyan-500/30 selection:text-cyan-200">
 
-    <!-- Split-Screen Canvas -->
-    <div class="relative min-h-screen w-full lg:h-screen lg:overflow-hidden flex flex-col lg:flex-row bg-[#0E131F]">
+    <!-- Split-Screen Viewport -->
+    <div id="mainViewport" class="relative min-h-screen w-full lg:h-screen lg:overflow-hidden flex flex-col lg:flex-row">
 
         <!-- ========================================================== -->
-        <!-- BACKGROUND LAYER: RIGHT PHOTO WITH MOTION DRIFT           -->
+        <!-- BACKGROUND LAYER: PHOTO WITH MOTION DRIFT & AMBIENT GLOW   -->
         <!-- ========================================================== -->
         <div class="absolute inset-0 w-full h-full pointer-events-none overflow-hidden z-0">
-            <!-- Drift Photo -->
-            <div class="w-full h-full bg-cover bg-center animate-bg-drift filter brightness-[0.75] contrast-[1.05]"
+            <!-- Drift Architectural Photo -->
+            <div class="w-full h-full bg-cover bg-center animate-bg-drift filter brightness-[0.92] dark:brightness-[0.70] contrast-[1.05]"
                  style="background-image: url('https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=2000&q=80');">
             </div>
 
-            <!-- Deep Tint Overlay -->
-            <div class="absolute inset-0 bg-gradient-to-r from-[#0E131F] via-[#0E131F]/80 to-[#0F172A]/70"></div>
+            <!-- Tint Overlay Adapts to Mode -->
+            <div class="absolute inset-0 transition-colors duration-300"
+                 style="background: linear-gradient(105deg, var(--bg-overlay-start) 0%, var(--bg-overlay-end) 100%);"></div>
             
             <!-- Soft Ambient Glow Orbs -->
-            <div class="absolute top-1/4 right-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none animate-pulse" style="animation-duration: 8s;"></div>
-            <div class="absolute bottom-1/4 right-1/3 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none animate-pulse" style="animation-duration: 11s;"></div>
+            <div class="absolute top-1/4 right-1/4 w-96 h-96 bg-cyan-500/10 dark:bg-cyan-500/15 rounded-full blur-3xl pointer-events-none animate-pulse" style="animation-duration: 8s;"></div>
+            <div class="absolute bottom-1/4 right-1/3 w-80 h-80 bg-indigo-500/10 dark:bg-indigo-500/15 rounded-full blur-3xl pointer-events-none animate-pulse" style="animation-duration: 11s;"></div>
         </div>
 
         <!-- ========================================================== -->
-        <!-- LEFT PANEL: LOGIN FORM (Dark Slate Canvas #0E131F)         -->
+        <!-- LEFT PANEL: LOGIN FORM                                     -->
         <!-- ========================================================== -->
-        <div id="leftPanel" class="relative z-20 w-full lg:w-[46%] xl:w-[43%] min-h-screen flex flex-col justify-between px-8 sm:px-12 md:px-16 lg:px-14 xl:px-20 py-8 lg:py-10 bg-[#0E131F] shrink-0 shadow-2xl">
+        <div id="leftPanel" class="relative z-30 w-full lg:w-[42%] xl:w-[39%] min-h-screen flex flex-col justify-between px-7 sm:px-12 lg:px-14 xl:px-18 py-8 lg:py-10 shrink-0 shadow-2xl"
+             style="background-color: var(--bg-left); transition: background-color 0.3s ease;">
             
-            <!-- Top Branding & Status -->
+            <!-- Top Branding & Functional Theme Toggle -->
             <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-3.5">
                     <!-- Glowing Badge Logo -->
-                    <div class="w-11 h-11 rounded-xl bg-[#141C2A] border border-[#22364E] flex items-center justify-center text-cyan-400 shadow-[0_0_18px_rgba(56,189,248,0.25)] relative">
-                        <i data-lucide="compass" class="w-5 h-5 text-cyan-300"></i>
-                        <span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-400 rounded-full ring-2 ring-[#0E131F]"></span>
+                    <div class="w-11 h-11 rounded-xl bg-slate-100 dark:bg-[#141C2A] border border-cyan-500/30 dark:border-[#22364E] flex items-center justify-center text-cyan-600 dark:text-cyan-400 shadow-[0_0_18px_rgba(56,189,248,0.25)] relative">
+                        <i data-lucide="compass" class="w-5 h-5 text-cyan-500 dark:text-cyan-300"></i>
+                        <span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-500 rounded-full ring-2 ring-[var(--bg-left)]"></span>
                     </div>
                     <div>
-                        <span class="font-extrabold text-[15px] tracking-wider text-[#D1DBE8] uppercase block">JURNAL ESEMKITA</span>
-                        <span class="text-[10px] font-semibold text-[#5A6D87] uppercase tracking-widest block -mt-0.5">MONITORING TERPADU</span>
+                        <span class="font-extrabold text-[15px] tracking-wider text-slate-800 dark:text-[#D1DBE8] uppercase block">JURNAL ESEMKITA</span>
+                        <span class="text-[10px] font-semibold text-slate-500 dark:text-[#5A6D87] uppercase tracking-widest block -mt-0.5">MONITORING TERPADU</span>
                     </div>
                 </div>
 
-                <!-- Subtle Theme Toggle -->
+                <!-- Theme Toggle Button (Light & Dark Fully Functional) -->
                 <button type="button" onclick="toggleTheme()" id="themeToggleBtn"
-                    class="h-8 w-8 rounded-lg border border-[#233144] bg-[#141C29] text-slate-400 hover:text-white hover:border-[#384D6B] transition-all flex items-center justify-center cursor-pointer shadow-xs"
-                    title="Ganti Mode">
-                    <i data-lucide="sun" class="w-4 h-4 text-amber-400 hidden dark:inline-block"></i>
-                    <i data-lucide="moon" class="w-4 h-4 text-slate-400 dark:hidden inline-block"></i>
+                    class="h-9 w-9 rounded-xl border border-slate-300 dark:border-[#233144] bg-white dark:bg-[#141C29] text-slate-700 dark:text-slate-300 hover:text-cyan-500 dark:hover:text-cyan-300 hover:border-cyan-500/50 transition-all flex items-center justify-center cursor-pointer shadow-xs"
+                    title="Ganti Mode Siang / Malam">
+                    <span id="themeToggleIconWrap" class="flex items-center justify-center">
+                        <i data-lucide="sun" class="w-4.5 h-4.5 text-amber-500 hidden dark:inline-block"></i>
+                        <i data-lucide="moon" class="w-4.5 h-4.5 text-slate-700 dark:hidden inline-block"></i>
+                    </span>
                 </button>
             </div>
 
@@ -311,30 +339,30 @@
             <div class="my-auto py-6 max-w-md w-full">
                 <!-- Title & Description -->
                 <div class="mb-6">
-                    <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight leading-tight">
+                    <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight leading-tight" style="color: var(--text-title);">
                         Login to Jurnal Esemkita
                     </h1>
-                    <p class="text-xs text-[#7A8DA6] mt-2 leading-relaxed font-normal">
+                    <p class="text-xs mt-2 leading-relaxed font-normal" style="color: var(--text-subtitle);">
                         Sistem terintegrasi untuk pencatatan jurnal, absensi, monitoring kegiatan kelas, dan perizinan sekolah.
                     </p>
                 </div>
 
                 <!-- Flash Message: Success -->
                 @if (session('success'))
-                    <div class="mb-5 px-4 py-2.5 bg-[#122D28]/90 border border-[#1E5C4E]/70 rounded-xl text-emerald-300 flex items-center space-x-2.5 shadow-sm text-xs">
-                        <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+                    <div class="mb-5 px-4 py-2.5 bg-emerald-50 dark:bg-[#122D28]/90 border border-emerald-300 dark:border-[#1E5C4E]/70 rounded-xl text-emerald-800 dark:text-emerald-300 flex items-center space-x-2.5 shadow-sm text-xs">
+                        <i data-lucide="check-circle" class="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0"></i>
                         <span class="font-medium">{{ session('success') }}</span>
                     </div>
                 @endif
 
                 <!-- Flash Message: Errors -->
                 @if ($errors->any())
-                    <div class="mb-5 px-4 py-3 bg-[#38151B]/90 border border-[#69232F]/80 rounded-xl text-rose-300 text-xs shadow-sm">
+                    <div class="mb-5 px-4 py-3 bg-rose-50 dark:bg-[#38151B]/90 border border-rose-300 dark:border-[#69232F]/80 rounded-xl text-rose-800 dark:text-rose-300 text-xs shadow-sm">
                         <div class="flex items-start space-x-2.5">
-                            <i data-lucide="alert-circle" class="w-4 h-4 text-rose-400 shrink-0 mt-0.5"></i>
+                            <i data-lucide="alert-circle" class="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0 mt-0.5"></i>
                             <div>
-                                <p class="font-bold text-rose-200">Gagal Masuk:</p>
-                                <ul class="list-disc list-inside mt-0.5 space-y-0.5 text-[11px] text-rose-300/90">
+                                <p class="font-bold">Gagal Masuk:</p>
+                                <ul class="list-disc list-inside mt-0.5 space-y-0.5 text-[11px]">
                                     @foreach ($errors->all() as $error)
                                         <li>{{ $error }}</li>
                                     @endforeach
@@ -349,13 +377,13 @@
 
                     <!-- 1. Input Username (Rotating Border Beam 1) -->
                     <div>
-                        <label for="username" class="block text-[11.5px] font-semibold text-[#8E9DAE] mb-1.5">Username</label>
+                        <label for="username" class="block text-[11.5px] font-semibold mb-1.5" style="color: var(--text-label);">Username</label>
                         <div class="beam-wrapper group">
                             <!-- Rotating Border Beam Element -->
                             <div class="beam-rotator beam-username"></div>
                             
                             <!-- Inner Input Box -->
-                            <div class="relative bg-[#141C29] rounded-[10.5px] flex items-center overflow-hidden">
+                            <div class="relative rounded-[10.5px] flex items-center overflow-hidden" style="background-color: var(--input-bg-inner);">
                                 <!-- Subtle Sheen Sweep -->
                                 <div class="input-sheen"></div>
                                 
@@ -367,7 +395,8 @@
                                     placeholder="your-nip@esemkita / username" 
                                     required
                                     autocomplete="username"
-                                    class="w-full px-4 py-3 bg-transparent text-xs sm:text-sm text-slate-100 placeholder-[#526379] focus:outline-none transition-colors relative z-10"
+                                    class="w-full px-4 py-3 bg-transparent text-xs sm:text-sm focus:outline-none transition-colors relative z-10"
+                                    style="color: var(--input-text);"
                                 >
                             </div>
                         </div>
@@ -375,13 +404,13 @@
 
                     <!-- 2. Input Password (Rotating Border Beam 2) -->
                     <div>
-                        <label for="password" class="block text-[11.5px] font-semibold text-[#8E9DAE] mb-1.5">Password</label>
+                        <label for="password" class="block text-[11.5px] font-semibold mb-1.5" style="color: var(--text-label);">Password</label>
                         <div class="beam-wrapper group">
                             <!-- Rotating Border Beam Element (Delayed in sequence) -->
                             <div class="beam-rotator beam-password"></div>
                             
                             <!-- Inner Input Box -->
-                            <div class="relative bg-[#141C29] rounded-[10.5px] flex items-center overflow-hidden">
+                            <div class="relative rounded-[10.5px] flex items-center overflow-hidden" style="background-color: var(--input-bg-inner);">
                                 <!-- Subtle Sheen Sweep -->
                                 <div class="input-sheen"></div>
 
@@ -392,9 +421,10 @@
                                     placeholder="Your Password" 
                                     required
                                     autocomplete="current-password"
-                                    class="w-full px-4 py-3 bg-transparent text-xs sm:text-sm text-slate-100 placeholder-[#526379] focus:outline-none transition-colors pr-11 relative z-10"
+                                    class="w-full px-4 py-3 bg-transparent text-xs sm:text-sm focus:outline-none transition-colors pr-11 relative z-10"
+                                    style="color: var(--input-text);"
                                 >
-                                <button type="button" onclick="togglePasswordVisibility()" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-[#6C7D93] hover:text-cyan-400 transition-colors z-20 cursor-pointer" title="Lihat/Sembunyikan Password">
+                                <button type="button" onclick="togglePasswordVisibility()" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-cyan-500 dark:hover:text-cyan-400 transition-colors z-20 cursor-pointer" title="Lihat/Sembunyikan Password">
                                     <i id="passwordToggleIcon" data-lucide="eye" class="w-4 h-4"></i>
                                 </button>
                             </div>
@@ -408,11 +438,11 @@
                                 type="checkbox" 
                                 name="remember" 
                                 value="1" 
-                                class="w-4 h-4 rounded border-[#2E3D52] bg-[#141C29] text-cyan-500 focus:ring-cyan-500/20 focus:ring-offset-0 accent-cyan-500 cursor-pointer"
+                                class="w-4 h-4 rounded border-slate-300 dark:border-[#2E3D52] text-cyan-600 focus:ring-cyan-500/20 accent-cyan-500 cursor-pointer"
                             >
-                            <span class="text-[#7A8DA6] text-[11.5px] font-medium">Remember me</span>
+                            <span class="text-[11.5px] font-medium" style="color: var(--text-subtitle);">Remember me</span>
                         </label>
-                        <a href="javascript:void(0)" onclick="alert('Silakan hubungi admin Tata Usaha sekolah untuk mereset kata sandi akun Anda.')" class="text-[#7A8DA6] hover:text-cyan-400 text-[11.5px] font-medium transition-colors">
+                        <a href="javascript:void(0)" onclick="alert('Silakan hubungi admin Tata Usaha sekolah untuk mereset kata sandi akun Anda.')" class="hover:text-cyan-500 dark:hover:text-cyan-400 text-[11.5px] font-medium transition-colors" style="color: var(--text-subtitle);">
                             Forgot Password?
                         </a>
                     </div>
@@ -421,16 +451,16 @@
                     <div class="pt-2">
                         <button 
                             type="submit" 
-                            class="w-full py-3.5 px-6 rounded-xl font-bold text-xs sm:text-sm text-white tracking-wide bg-gradient-to-b from-[#2C3E55] to-[#1B293A] hover:from-[#354C68] hover:to-[#223348] border border-[#4A6E94]/40 hover:border-[#679BCE]/60 shadow-[0_0_20px_rgba(56,189,248,0.12)] hover:shadow-[0_0_25px_rgba(56,189,248,0.22)] transition-all duration-200 flex items-center justify-center space-x-2 cursor-pointer"
+                            class="w-full py-3.5 px-6 rounded-xl font-bold text-xs sm:text-sm text-white tracking-wide bg-gradient-to-r from-[#0284C7] to-[#0369A1] dark:from-[#2C3E55] dark:to-[#1B293A] hover:from-[#0369A1] hover:to-[#075985] dark:hover:from-[#354C68] dark:hover:to-[#223348] border border-sky-400/40 dark:border-[#4A6E94]/40 shadow-lg shadow-sky-500/20 dark:shadow-[0_0_20px_rgba(56,189,248,0.18)] transition-all duration-200 flex items-center justify-center space-x-2 cursor-pointer"
                         >
                             <span>Log In</span>
-                            <i data-lucide="arrow-right" class="w-4 h-4 text-cyan-400"></i>
+                            <i data-lucide="arrow-right" class="w-4 h-4 text-cyan-200 dark:text-cyan-400"></i>
                         </button>
                     </div>
                 </form>
 
                 <!-- Footer Status -->
-                <div class="mt-8 pt-5 border-t border-[#1C2636] flex items-center justify-between text-[11px] text-[#526379]">
+                <div class="mt-8 pt-5 border-t border-slate-200 dark:border-[#1C2636] flex items-center justify-between text-[11px] text-slate-500 dark:text-[#526379]">
                     <span class="flex items-center space-x-1.5">
                         <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
                         <span>Server Online • v2.0 Enterprise</span>
@@ -440,61 +470,94 @@
             </div>
 
             <!-- Bottom Copyright -->
-            <div class="text-[11px] text-[#48566A] pt-4">
+            <div class="text-[11px] text-slate-400 dark:text-[#48566A] pt-4">
                 &copy; {{ date('Y') }} SMK Negeri 1 Jurnal Esemkita. All rights reserved.
             </div>
-
-            <!-- ========================================================== -->
-            <!-- DYNAMIC MOVING LIQUID WAVE DIVIDER (Sesuai Gambar 4 & 5)   -->
-            <!-- ========================================================== -->
-            <svg id="waveSvg" class="hidden lg:block absolute top-0 -right-24 xl:-right-28 h-full w-28 xl:w-32 pointer-events-none z-30 overflow-visible" preserveAspectRatio="none">
-                <defs>
-                    <linearGradient id="waveRidgeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" stop-color="#1A2433" />
-                        <stop offset="50%" stop-color="#3A4D67" />
-                        <stop offset="100%" stop-color="#233144" />
-                    </linearGradient>
-                    <linearGradient id="waveHighlightGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" stop-color="rgba(103, 232, 249, 0.4)" />
-                        <stop offset="100%" stop-color="rgba(255, 255, 255, 0.1)" />
-                    </linearGradient>
-                </defs>
-                <!-- Solid Fill matching left panel background -->
-                <path id="waveFillPath" fill="#0E131F" d="" />
-                <!-- 3D Beveled Ridge Shadow Stroke -->
-                <path id="waveShadowPath" fill="none" stroke="rgba(0, 0, 0, 0.45)" stroke-width="9" stroke-linecap="round" d="" />
-                <!-- 3D Beveled Metallic Ridge Stroke -->
-                <path id="waveRidgePath" fill="none" stroke="url(#waveRidgeGrad)" stroke-width="5" stroke-linecap="round" d="" />
-                <!-- Subtle Crest Glow Stroke -->
-                <path id="waveHighlightPath" fill="none" stroke="url(#waveHighlightGrad)" stroke-width="1.8" stroke-linecap="round" d="" />
-            </svg>
         </div>
 
         <!-- ========================================================== -->
-        <!-- RIGHT PANEL: FLOATING GLASSMORPHISM CARD WITH SHEEN SWEEP  -->
+        <!-- FULL-SCREEN SYNCHRONIZED SVG WAVE & ADAPTIVE GLASS CARD    -->
+        <!-- Sesuai Gambar 1: Gelombang Besar & Sisi Kanan Ikut Goyang  -->
         <!-- ========================================================== -->
-        <div class="relative z-10 flex-1 flex items-center justify-center p-6 sm:p-10 lg:p-12 xl:p-16">
-            
-            <!-- Glassmorphism Card (Sesuai Gambar 4 & Gambar Sheen Terbaru) -->
-            <div class="relative max-w-lg xl:max-w-xl w-full backdrop-blur-2xl bg-[#111824]/65 border border-white/12 rounded-[28px] p-7 sm:p-8 xl:p-9 shadow-[0_24px_60px_rgba(0,0,0,0.55)] space-y-6 overflow-hidden">
-                
-                <!-- Subtle Diagonal Light Sheen Sweep ("samar ga se kandel itu") -->
-                <div class="sheen-sweep-layer"></div>
+        <svg id="fullWaveSvg" class="hidden lg:block absolute inset-0 w-full h-full pointer-events-none z-20 overflow-visible" preserveAspectRatio="none">
+            <defs>
+                <!-- Metallic Ridge Gradients -->
+                <linearGradient id="waveRidgeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="var(--wave-ridge-1)" />
+                    <stop offset="50%" stop-color="var(--wave-ridge-2)" />
+                    <stop offset="100%" stop-color="var(--wave-ridge-3)" />
+                </linearGradient>
+                <linearGradient id="waveHighlightGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="rgba(103, 232, 249, 0.7)" />
+                    <stop offset="100%" stop-color="rgba(255, 255, 255, 0.2)" />
+                </linearGradient>
 
+                <!-- Glass Card Left Edge Specular Reflection -->
+                <linearGradient id="cardLeftHighlightGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="rgba(255, 255, 255, 0.4)" />
+                    <stop offset="40%" stop-color="rgba(56, 189, 248, 0.45)" />
+                    <stop offset="70%" stop-color="rgba(255, 255, 255, 0.2)" />
+                    <stop offset="100%" stop-color="rgba(56, 189, 248, 0.35)" />
+                </linearGradient>
+
+                <!-- Soft Drop Shadow Filter for Card -->
+                <filter id="cardDropShadow" x="-10%" y="-10%" width="125%" height="125%">
+                    <feDropShadow dx="0" dy="20" stdDeviation="24" flood-color="#000000" flood-opacity="0.32" />
+                </filter>
+
+                <!-- Glass Card Shape Clip -->
+                <clipPath id="glassCardClip" clipPathUnits="userSpaceOnUse">
+                    <path id="glassCardClipPath" d="" />
+                </clipPath>
+            </defs>
+
+            <!-- 1. Left Panel Wave Fill (Besar Sesuai Gambar 1) -->
+            <path id="waveFillPath" style="fill: var(--wave-fill); transition: fill 0.3s ease;" d="" />
+
+            <!-- 2. Middle 3D Beveled Ridge (Garis Tengah Tebal & Bergelombang) -->
+            <path id="waveShadowPath" fill="none" stroke="var(--wave-shadow)" stroke-width="14" stroke-linecap="round" d="" />
+            <path id="waveRidgePath" fill="none" stroke="url(#waveRidgeGrad)" stroke-width="6" stroke-linecap="round" d="" />
+            <path id="waveHighlightPath" fill="none" stroke="url(#waveHighlightGrad)" stroke-width="2" stroke-linecap="round" d="" />
+
+            <!-- 3. Right Glass Card Background (Garis Kiri Ikut Goyang Sesuai Gelombang) -->
+            <path id="glassCardBgPath" style="fill: var(--card-fill); stroke: var(--card-border); stroke-width: 1.5; transition: fill 0.3s ease, stroke 0.3s ease;" filter="url(#cardDropShadow)" d="" />
+            <!-- Specular Highlight along the Wavy Left Edge of the Glass Card -->
+            <path id="glassCardEdgeHighlight" fill="none" stroke="url(#cardLeftHighlightGrad)" stroke-width="2" stroke-linecap="round" d="" />
+        </svg>
+
+        <!-- ========================================================== -->
+        <!-- FROSTED GLASS BLUR & CALM SHEEN LAYER                      -->
+        <!-- Coordinates match 1:1 with the full-screen SVG ClipPath   -->
+        <!-- ========================================================== -->
+        <div id="glassBlurLayer" class="hidden lg:block absolute inset-0 pointer-events-none z-22 overflow-hidden"
+             style="clip-path: url(#glassCardClip); -webkit-clip-path: url(#glassCardClip); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);">
+            <!-- Slow, Calm, Subtle Diagonal Glass Sheen Sweep ("samar & ga kecepeten") -->
+            <div class="sheen-sweep-slow"></div>
+        </div>
+
+        <!-- ========================================================== -->
+        <!-- RIGHT PANEL: CONTENT OVER SYNCHRONIZED GLASS CARD          -->
+        <!-- ========================================================== -->
+        <div id="rightContentWrap" class="relative z-25 flex-1 flex items-center justify-center lg:justify-end xl:justify-center p-6 sm:p-10 lg:p-12 lg:pr-14 xl:pr-20">
+            
+            <!-- Floating Container with Generous Padding From Wavy Left Edge -->
+            <div id="glassCardContent" class="relative max-w-md lg:max-w-lg xl:max-w-xl w-full p-7 sm:p-8 xl:p-9 space-y-6 overflow-visible transition-all pl-10 sm:pl-12 lg:pl-14">
+                
                 <!-- Top Badge & Subtitle -->
                 <div class="relative z-10 flex items-center space-x-3">
-                    <span class="px-3 py-1 bg-[#1C293A] border border-[#2B3E56] text-cyan-300 text-[10px] font-bold rounded-full uppercase tracking-wider shadow-xs">
+                    <span class="px-3.5 py-1 text-[10.5px] font-bold rounded-full uppercase tracking-wider shadow-xs"
+                          style="background-color: var(--card-pill-bg); border: 1px solid var(--card-pill-border); color: #0284C7;" class="dark:text-sky-400">
                         SISTEM TERINTEGRASI
                     </span>
-                    <span class="text-xs font-medium text-[#7E93AE]">Monitoring & Jurnal</span>
+                    <span class="text-xs font-medium" style="color: var(--card-subtitle);">Monitoring & Jurnal</span>
                 </div>
 
                 <!-- Card Heading -->
                 <div class="relative z-10">
-                    <h2 class="text-xl sm:text-2xl xl:text-[25px] font-extrabold text-white leading-snug tracking-tight">
+                    <h2 class="text-xl sm:text-2xl xl:text-[25px] font-extrabold leading-snug tracking-tight" style="color: var(--card-title);">
                         Pusat Monitoring dan Pembelajaran Sekolah Real-Time
                     </h2>
-                    <p class="text-xs text-[#8E9EB3] mt-2.5 leading-relaxed font-normal">
+                    <p class="text-xs mt-2.5 leading-relaxed font-normal" style="color: var(--card-subtitle);">
                         Menghubungkan 7 pilar sekolah: Tata Usaha, Guru, Guru Piket, Waka Kurikulum/Kesiswaan, Kepala Sekolah, Keamanan Satpam, serta Wali Murid dalam satu ekosistem digital.
                     </p>
                 </div>
@@ -502,32 +565,40 @@
                 <!-- 4 Feature Cards (2x2 Grid) -->
                 <div class="relative z-10 grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                     <!-- Feature 1 -->
-                    <div class="flex items-center space-x-3 p-3.5 rounded-xl bg-white/[0.04] border border-white/[0.08] hover:bg-white/[0.07] hover:border-white/[0.14] transition-all text-xs font-semibold text-[#D4E0EE] group">
-                        <div class="w-8 h-8 rounded-lg bg-white/[0.06] text-cyan-300 border border-white/[0.08] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                    <div class="flex items-center space-x-3 p-3.5 rounded-xl transition-all text-xs font-semibold group shadow-2xs"
+                         style="background-color: var(--card-item-bg); border: 1px solid var(--card-item-border); color: var(--card-item-text);">
+                        <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform"
+                             style="background-color: var(--card-item-icon-bg); color: var(--card-item-icon);">
                             <i data-lucide="clipboard-check" class="w-4 h-4"></i>
                         </div>
                         <span class="truncate">Jurnal & Absensi Kelas</span>
                     </div>
 
                     <!-- Feature 2 -->
-                    <div class="flex items-center space-x-3 p-3.5 rounded-xl bg-white/[0.04] border border-white/[0.08] hover:bg-white/[0.07] hover:border-white/[0.14] transition-all text-xs font-semibold text-[#D4E0EE] group">
-                        <div class="w-8 h-8 rounded-lg bg-white/[0.06] text-cyan-300 border border-white/[0.08] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                    <div class="flex items-center space-x-3 p-3.5 rounded-xl transition-all text-xs font-semibold group shadow-2xs"
+                         style="background-color: var(--card-item-bg); border: 1px solid var(--card-item-border); color: var(--card-item-text);">
+                        <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform"
+                             style="background-color: var(--card-item-icon-bg); color: var(--card-item-icon);">
                             <i data-lucide="key" class="w-4 h-4"></i>
                         </div>
                         <span class="truncate">Dispen & Validasi Satpam</span>
                     </div>
 
                     <!-- Feature 3 -->
-                    <div class="flex items-center space-x-3 p-3.5 rounded-xl bg-white/[0.04] border border-white/[0.08] hover:bg-white/[0.07] hover:border-white/[0.14] transition-all text-xs font-semibold text-[#D4E0EE] group">
-                        <div class="w-8 h-8 rounded-lg bg-white/[0.06] text-cyan-300 border border-white/[0.08] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                    <div class="flex items-center space-x-3 p-3.5 rounded-xl transition-all text-xs font-semibold group shadow-2xs"
+                         style="background-color: var(--card-item-bg); border: 1px solid var(--card-item-border); color: var(--card-item-text);">
+                        <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform"
+                             style="background-color: var(--card-item-icon-bg); color: var(--card-item-icon);">
                             <i data-lucide="clock" class="w-4 h-4"></i>
                         </div>
                         <span class="truncate">Monitoring Guru Terlambat</span>
                     </div>
 
                     <!-- Feature 4 -->
-                    <div class="flex items-center space-x-3 p-3.5 rounded-xl bg-white/[0.04] border border-white/[0.08] hover:bg-white/[0.07] hover:border-white/[0.14] transition-all text-xs font-semibold text-[#D4E0EE] group">
-                        <div class="w-8 h-8 rounded-lg bg-white/[0.06] text-cyan-300 border border-white/[0.08] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                    <div class="flex items-center space-x-3 p-3.5 rounded-xl transition-all text-xs font-semibold group shadow-2xs"
+                         style="background-color: var(--card-item-bg); border: 1px solid var(--card-item-border); color: var(--card-item-text);">
+                        <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform"
+                             style="background-color: var(--card-item-icon-bg); color: var(--card-item-icon);">
                             <i data-lucide="database" class="w-4 h-4"></i>
                         </div>
                         <span class="truncate">Rekapitulasi & Audit Log</span>
@@ -535,9 +606,10 @@
                 </div>
 
                 <!-- Bottom Motto -->
-                <div class="relative z-10 px-4 py-2.5 rounded-xl bg-white/[0.03] border border-white/[0.06] text-[11px] text-[#7B8FA6] font-medium flex items-center justify-between">
+                <div class="relative z-10 px-4 py-2.5 rounded-xl text-[11px] font-medium flex items-center justify-between shadow-2xs"
+                     style="background-color: var(--bottom-motto-bg); border: 1px solid var(--bottom-motto-border); color: var(--bottom-motto-text);">
                     <span>Esemkita SMEA • Menuju Sekolah Unggul & Transparan</span>
-                    <i data-lucide="sparkles" class="w-3.5 h-3.5 text-cyan-400 shrink-0"></i>
+                    <i data-lucide="sparkles" class="w-3.5 h-3.5 text-cyan-500 dark:text-cyan-400 shrink-0"></i>
                 </div>
             </div>
         </div>
@@ -547,13 +619,11 @@
     <!-- Scripts -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
-            }
-            initAnimatedWave();
+            applyTheme();
+            initSynchronizedWaveAndCard();
         });
 
-        // Password Show/Hide Toggle
+        // Toggle Password Show/Hide
         function togglePasswordVisibility() {
             const passwordInput = document.getElementById('password');
             const icon = document.getElementById('passwordToggleIcon');
@@ -569,7 +639,25 @@
             }
         }
 
-        // Theme Toggle (Light / Dark)
+        // Apply theme icon and state
+        function applyTheme() {
+            const isDark = document.documentElement.classList.contains('dark');
+            const wrap = document.getElementById('themeToggleIconWrap');
+            const btn = document.getElementById('themeToggleBtn');
+            if (wrap) {
+                wrap.innerHTML = isDark 
+                    ? '<i data-lucide="sun" class="w-4.5 h-4.5 text-amber-400"></i>' 
+                    : '<i data-lucide="moon" class="w-4.5 h-4.5 text-slate-700"></i>';
+            }
+            if (btn) {
+                btn.setAttribute('title', isDark ? 'Beralih ke Mode Siang (Terang)' : 'Beralih ke Mode Malam (Gelap)');
+            }
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        }
+
+        // Functional Light / Dark Mode Toggle
         function toggleTheme() {
             const html = document.documentElement;
             if (html.classList.contains('dark')) {
@@ -579,21 +667,24 @@
                 html.classList.add('dark');
                 localStorage.setItem('theme', 'dark');
             }
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
-            }
+            applyTheme();
         }
 
-        // Animated Liquid Wave Divider Logic
-        function initAnimatedWave() {
-            const waveSvg = document.getElementById('waveSvg');
+        // Synchronized Dynamic Wave & Right Card Wave
+        function initSynchronizedWaveAndCard() {
+            const fullWaveSvg = document.getElementById('fullWaveSvg');
             const leftPanel = document.getElementById('leftPanel');
+            const glassCardContent = document.getElementById('glassCardContent');
+
             const fillPath = document.getElementById('waveFillPath');
             const shadowPath = document.getElementById('waveShadowPath');
             const ridgePath = document.getElementById('waveRidgePath');
             const highlightPath = document.getElementById('waveHighlightPath');
+            const cardBgPath = document.getElementById('glassCardBgPath');
+            const cardClipPath = document.getElementById('glassCardClipPath');
+            const cardEdgeHighlight = document.getElementById('glassCardEdgeHighlight');
 
-            if (!waveSvg || !fillPath) return;
+            if (!fullWaveSvg || !fillPath) return;
 
             let startTime = null;
 
@@ -601,40 +692,101 @@
                 if (!startTime) startTime = time;
                 const elapsed = (time - startTime) * 0.001; // seconds
 
-                const height = leftPanel ? leftPanel.clientHeight : window.innerHeight;
-                const width = waveSvg.clientWidth || 110;
-                
-                // Base anchor parameters for organic S-wave
-                const baseMid = width * 0.45;
-                const steps = 36;
-                const dy = height / steps;
+                const H = window.innerHeight;
+                const W = window.innerWidth;
 
-                let points = [];
+                // Responsive anchor: ~40% of window width on desktop
+                const leftPanelWidth = leftPanel ? leftPanel.clientWidth : W * 0.40;
+                const baseMid = leftPanelWidth;
+
+                // Wave configuration matching Gambar 1 (Besar & Dalam)
+                // Total horizontal sweep ~130px - 150px!
+                const amp1 = 56;
+                const amp2 = 24;
+                const sOffset = 38;
+                const steps = 48;
+                const dy = H / steps;
+
+                function getWaveX(y, t) {
+                    const u = y / H;
+                    // Primary harmonic fluid wave with Gambar 1 curve phase
+                    const w1 = -Math.sin((u * 2.2 - 0.15) * Math.PI + t * 1.1) * amp1;
+                    const w2 = Math.cos((u * 3.4) * Math.PI + t * 1.5) * amp2;
+                    // S-curve bias matching Gambar 1
+                    const sShape = Math.sin(u * Math.PI) * sOffset;
+                    return baseMid + w1 + w2 + sShape;
+                }
+
+                let wavePoints = [];
                 for (let i = 0; i <= steps; i++) {
                     const y = i * dy;
-                    // Double harmonic fluid wave equation
-                    const wave1 = Math.sin(y * 0.0038 + elapsed * 1.6) * 18;
-                    const wave2 = Math.cos(y * 0.0075 + elapsed * 2.2) * 12;
-                    const sShape = Math.sin((y / height) * Math.PI) * 14;
-                    const x = baseMid + wave1 + wave2 + sShape;
-                    points.push({ x, y });
+                    const x = getWaveX(y, elapsed);
+                    wavePoints.push({ x, y });
                 }
 
-                // Construct smooth path string
-                let curveStr = `M ${points[0].x.toFixed(1)},${points[0].y.toFixed(1)}`;
-                for (let i = 1; i < points.length; i++) {
-                    curveStr += ` L ${points[i].x.toFixed(1)},${points[i].y.toFixed(1)}`;
+                // Construct wave curve string
+                let waveCurveStr = `M ${wavePoints[0].x.toFixed(1)},${wavePoints[0].y.toFixed(1)}`;
+                for (let i = 1; i < wavePoints.length; i++) {
+                    waveCurveStr += ` L ${wavePoints[i].x.toFixed(1)},${wavePoints[i].y.toFixed(1)}`;
                 }
 
-                // Fill path joins to (0,0) and (0,height) on the left panel edge
-                const fillStr = `M 0,0 L ${points[0].x.toFixed(1)},0 ` + 
-                                curveStr.substring(curveStr.indexOf('L')) + 
-                                ` L 0,${height} Z`;
+                // Left Panel Solid Fill Path
+                const fillStr = `M 0,0 L ${wavePoints[0].x.toFixed(1)},0 ` + 
+                                waveCurveStr.substring(waveCurveStr.indexOf('L')) + 
+                                ` L 0,${H} Z`;
 
                 fillPath.setAttribute('d', fillStr);
-                shadowPath.setAttribute('d', curveStr);
-                ridgePath.setAttribute('d', curveStr);
-                highlightPath.setAttribute('d', curveStr);
+                shadowPath.setAttribute('d', waveCurveStr);
+                ridgePath.setAttribute('d', waveCurveStr);
+                highlightPath.setAttribute('d', waveCurveStr);
+
+                // Synchronize Right Glass Card Left Boundary with the Wave!
+                if (glassCardContent && cardBgPath && cardClipPath) {
+                    const cardRect = glassCardContent.getBoundingClientRect();
+                    const cardTop = Math.max(16, cardRect.top);
+                    const cardBottom = Math.min(H - 16, cardRect.bottom);
+                    const cardRight = Math.min(W - 24, cardRect.right);
+                    const rRadius = 26;
+
+                    // Compute card left curve that parallels the wave with a constant 32px gap!
+                    const gap = 32; // Distance from wave to card
+                    let cardLeftPoints = [];
+                    const cardSteps = 28;
+                    const cardDy = (cardBottom - cardTop) / cardSteps;
+
+                    for (let i = 0; i <= cardSteps; i++) {
+                        const y = cardTop + i * cardDy;
+                        const x = getWaveX(y, elapsed) + gap;
+                        cardLeftPoints.push({ x, y });
+                    }
+
+                    // Build Card Closed Polygon / Shape Path
+                    let cardPathStr = `M ${cardRight - rRadius},${cardTop} `;
+                    cardPathStr += `A ${rRadius} ${rRadius} 0 0 1 ${cardRight},${cardTop + rRadius} `;
+                    cardPathStr += `L ${cardRight},${cardBottom - rRadius} `;
+                    cardPathStr += `A ${rRadius} ${rRadius} 0 0 1 ${cardRight - rRadius},${cardBottom} `;
+                    cardPathStr += `L ${cardLeftPoints[cardLeftPoints.length - 1].x.toFixed(1)},${cardBottom} `;
+                    
+                    // Trace up the wavy left edge in sync!
+                    for (let i = cardLeftPoints.length - 1; i >= 0; i--) {
+                        cardPathStr += `L ${cardLeftPoints[i].x.toFixed(1)},${cardLeftPoints[i].y.toFixed(1)} `;
+                    }
+
+                    cardPathStr += `L ${cardLeftPoints[0].x.toFixed(1)},${cardTop} `;
+                    cardPathStr += `L ${cardRight - rRadius},${cardTop} Z`;
+
+                    cardBgPath.setAttribute('d', cardPathStr);
+                    cardClipPath.setAttribute('d', cardPathStr);
+
+                    // Specular Highlight along the Card's Wavy Left Edge
+                    if (cardEdgeHighlight) {
+                        let edgeHighlightStr = `M ${cardLeftPoints[0].x.toFixed(1)},${cardLeftPoints[0].y.toFixed(1)}`;
+                        for (let i = 1; i < cardLeftPoints.length; i++) {
+                            edgeHighlightStr += ` L ${cardLeftPoints[i].x.toFixed(1)},${cardLeftPoints[i].y.toFixed(1)}`;
+                        }
+                        cardEdgeHighlight.setAttribute('d', edgeHighlightStr);
+                    }
+                }
 
                 requestAnimationFrame(animate);
             }
