@@ -64,9 +64,9 @@
                     </div>
                 </div>
 
-                <div class="pt-1">
-                    <button type="submit" class="w-full h-8.5 bg-[#1E2538] hover:bg-[#161c2c] text-white rounded-lg text-xs font-semibold transition-colors flex items-center justify-center space-x-1.5 shadow-xs cursor-pointer">
-                        <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                <div class="pt-1.5">
+                    <button type="submit" class="w-full h-10.5 bg-[#1E2538] hover:bg-[#121724] text-white rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center space-x-2 shadow-xs cursor-pointer">
+                        <i data-lucide="plus" class="w-4 h-4"></i>
                         <span>Tambah Jam Pelajaran</span>
                     </button>
                 </div>
@@ -229,61 +229,63 @@
     </div>
 </div>
 
-<!-- MODAL EDIT JAM PELAJARAN -->
-<div id="modalEditJam" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center hidden p-4">
-    <div class="bg-white border border-slate-200 rounded-xl shadow-xl max-w-sm w-full p-4.5 space-y-3">
-        <div class="flex items-center justify-between pb-2 border-b border-slate-100">
-            <span class="font-bold text-slate-900 text-xs uppercase tracking-tight flex items-center space-x-1.5">
-                <i data-lucide="edit-2" class="w-3.5 h-3.5 text-slate-700"></i>
+<!-- MODAL EDIT JAM PELAJARAN (Proporsional & Lebih Lega Sesuai Permintaan) -->
+<div id="modalEditJam" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center hidden p-4">
+    <div class="bg-white dark:bg-[#151B26] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl max-w-lg w-full p-6 sm:p-7 space-y-4">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+            <span class="font-bold text-slate-900 dark:text-slate-100 text-sm uppercase tracking-tight flex items-center space-x-2">
+                <div class="w-7 h-7 rounded-lg bg-[#1E2538] text-white flex items-center justify-center">
+                    <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
+                </div>
                 <span>Edit Sesi Jam Pelajaran</span>
             </span>
-            <button type="button" onclick="closeEditJamModal()" class="text-slate-400 hover:text-slate-600 p-1 cursor-pointer">
+            <button type="button" onclick="closeEditJamModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
                 <i data-lucide="x" class="w-4 h-4"></i>
             </button>
         </div>
 
-        <form id="formEditJam" method="POST" class="space-y-2.5">
+        <form id="formEditJam" method="POST" class="space-y-3.5">
             @csrf
             @method('PUT')
 
             <div>
-                <label for="edit_jam_ke" class="block text-[11px] font-semibold text-slate-700 mb-0.5">Jam Ke- *</label>
+                <label for="edit_jam_ke" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Jam Ke- *</label>
                 <input type="number" name="jam_ke" id="edit_jam_ke" required min="1"
-                    class="w-full h-8 px-2.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 font-mono focus:outline-none focus:border-slate-800">
+                    class="w-full h-10 px-3 bg-white dark:bg-[#1A2230] border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-slate-900 dark:text-slate-100 font-mono focus:outline-none focus:border-slate-800 transition-colors">
             </div>
 
             <div>
-                <label for="edit_kelompok_hari" class="block text-[11px] font-semibold text-slate-700 mb-0.5">Kelompok Hari *</label>
+                <label for="edit_kelompok_hari" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Kelompok Hari *</label>
                 <select name="kelompok_hari" id="edit_kelompok_hari" required 
-                    class="w-full h-8 px-2.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 font-medium focus:outline-none focus:border-slate-800 cursor-pointer">
+                    class="w-full h-10 px-3 bg-white dark:bg-[#1A2230] border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-slate-900 dark:text-slate-100 font-medium focus:outline-none focus:border-slate-800 cursor-pointer">
                     <option value="Reguler">Reguler (Senin - Kamis)</option>
                     <option value="Jumat">Jumat</option>
                 </select>
             </div>
 
-            <div class="grid grid-cols-2 gap-2">
+            <div class="grid grid-cols-2 gap-3">
                 <div>
-                    <label for="edit_waktu_mulai" class="block text-[11px] font-semibold text-slate-700 mb-0.5">Waktu Mulai *</label>
+                    <label for="edit_waktu_mulai" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Waktu Mulai *</label>
                     <input type="time" name="waktu_mulai" id="edit_waktu_mulai" required
-                        class="w-full h-8 px-2 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 font-mono focus:outline-none focus:border-slate-800">
+                        class="w-full h-10 px-3 bg-white dark:bg-[#1A2230] border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-slate-900 dark:text-slate-100 font-mono focus:outline-none focus:border-slate-800">
                 </div>
                 <div>
-                    <label for="edit_waktu_selesai" class="block text-[11px] font-semibold text-slate-700 mb-0.5">Waktu Selesai *</label>
+                    <label for="edit_waktu_selesai" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Waktu Selesai *</label>
                     <input type="time" name="waktu_selesai" id="edit_waktu_selesai" required
-                        class="w-full h-8 px-2 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 font-mono focus:outline-none focus:border-slate-800">
+                        class="w-full h-10 px-3 bg-white dark:bg-[#1A2230] border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-slate-900 dark:text-slate-100 font-mono focus:outline-none focus:border-slate-800">
                 </div>
             </div>
 
-            <div class="flex items-center space-x-2 pt-1">
-                <input type="checkbox" name="is_aktif" id="edit_is_aktif" value="1" class="rounded border-slate-300 text-slate-900 focus:ring-slate-900 cursor-pointer">
-                <label for="edit_is_aktif" class="text-xs font-semibold text-slate-700 cursor-pointer">Sesi Aktif Digunakan</label>
+            <div class="flex items-center space-x-2.5 pt-1">
+                <input type="checkbox" name="is_aktif" id="edit_is_aktif" value="1" class="w-4 h-4 rounded border-slate-300 text-slate-900 focus:ring-slate-900 cursor-pointer">
+                <label for="edit_is_aktif" class="text-xs font-semibold text-slate-700 dark:text-slate-300 cursor-pointer select-none">Sesi Aktif Digunakan</label>
             </div>
 
-            <div class="flex items-center justify-end space-x-2 pt-2 border-t border-slate-100">
-                <button type="button" onclick="closeEditJamModal()" class="h-8 px-3 border border-slate-200 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-50 cursor-pointer">
+            <div class="flex items-center justify-end space-x-2.5 pt-3 border-t border-slate-100 dark:border-slate-800">
+                <button type="button" onclick="closeEditJamModal()" class="h-10 px-4.5 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
                     Batal
                 </button>
-                <button type="submit" class="h-8 px-3.5 bg-[#1E2538] hover:bg-[#161c2c] text-white rounded-lg text-xs font-semibold transition-colors cursor-pointer shadow-2xs">
+                <button type="submit" class="h-10 px-5.5 bg-[#1E2538] hover:bg-[#121724] text-white rounded-xl text-xs sm:text-sm font-bold transition-colors cursor-pointer shadow-xs">
                     Simpan Perubahan
                 </button>
             </div>

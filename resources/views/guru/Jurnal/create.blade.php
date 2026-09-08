@@ -232,12 +232,12 @@
         </div>
 
         <!-- Tombol Simpan & Batal -->
-        <div class="flex items-center space-x-2 pt-1">
-            <button type="submit" class="h-8.5 px-4 bg-[#1E2538] hover:bg-[#161c2c] text-white rounded-lg font-semibold text-xs transition-colors shadow-2xs flex items-center space-x-1.5 cursor-pointer">
-                <i data-lucide="save" class="w-3.5 h-3.5"></i>
+        <div class="flex items-center space-x-2.5 pt-2">
+            <button type="submit" class="h-10.5 px-5 bg-[#1E2538] hover:bg-[#121724] text-white rounded-xl font-bold text-xs sm:text-sm transition-all shadow-xs flex items-center space-x-2 cursor-pointer">
+                <i data-lucide="save" class="w-4 h-4"></i>
                 <span>Simpan Jurnal & Presensi</span>
             </button>
-            <a href="{{ route('guru.dashboard') }}" class="h-8.5 px-3.5 border border-slate-200 hover:bg-slate-50 text-slate-600 rounded-lg text-xs font-semibold transition-colors flex items-center justify-center">
+            <a href="{{ route('guru.dashboard') }}" class="h-10.5 px-4.5 border border-slate-200 hover:bg-slate-50 text-slate-600 rounded-xl text-xs sm:text-sm font-semibold transition-colors flex items-center justify-center">
                 Batal
             </a>
         </div>
