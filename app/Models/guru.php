@@ -29,6 +29,7 @@ class Guru extends Model
         'jabatan',
         'email',
         'foto_profil',
+        'alasan_hapus',
     ];
 
     /**
@@ -37,6 +38,14 @@ class Guru extends Model
     public function user()
     {
         return $this->hasOne(User::class, 'id_guru', 'id_guru');
+    }
+
+    /**
+     * Relasi ke Penugasan Guru Piket.
+     */
+    public function piketAssignments()
+    {
+        return $this->hasMany(GuruPiket::class, 'id_guru', 'id_guru');
     }
 
     /**

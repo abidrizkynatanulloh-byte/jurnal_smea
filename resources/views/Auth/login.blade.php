@@ -43,31 +43,31 @@
             --bg-page: #EEF2F6;
             --bg-left: #FFFFFF;
             --text-title: #0F172A;
-            --text-subtitle: #475569;
-            --text-label: #334155;
+            --text-subtitle: #334155;
+            --text-label: #1E293B;
             --input-border-wrap: #CBD5E1;
             --input-bg-inner: #FFFFFF;
             --input-text: #0F172A;
-            --input-ph: #94A3B8;
+            --input-ph: #64748B;
             --wave-fill: #FFFFFF;
             --wave-ridge-1: #94A3B8;
             --wave-ridge-2: #64748B;
             --wave-ridge-3: #CBD5E1;
             --wave-shadow: rgba(0, 0, 0, 0.08);
-            --card-fill: rgba(255, 255, 255, 0.82);
+            --card-fill: rgba(255, 255, 255, 0.86);
             --card-border: rgba(255, 255, 255, 0.95);
-            --card-pill-bg: rgba(255, 255, 255, 0.9);
-            --card-pill-border: rgba(203, 213, 225, 0.8);
+            --card-pill-bg: rgba(255, 255, 255, 0.95);
+            --card-pill-border: rgba(203, 213, 225, 0.9);
             --card-title: #0F172A;
             --card-subtitle: #334155;
-            --card-item-bg: rgba(255, 255, 255, 0.9);
-            --card-item-border: rgba(226, 232, 240, 0.95);
+            --card-item-bg: rgba(255, 255, 255, 0.95);
+            --card-item-border: rgba(203, 213, 225, 0.95);
             --card-item-text: #0F172A;
             --card-item-icon-bg: #E0F2FE;
             --card-item-icon: #0284C7;
-            --bottom-motto-bg: rgba(255, 255, 255, 0.85);
-            --bottom-motto-border: rgba(203, 213, 225, 0.6);
-            --bottom-motto-text: #475569;
+            --bottom-motto-bg: rgba(255, 255, 255, 0.92);
+            --bottom-motto-border: rgba(203, 213, 225, 0.8);
+            --bottom-motto-text: #1E293B;
             --bg-overlay-start: rgba(238, 242, 246, 0.5);
             --bg-overlay-end: rgba(226, 232, 240, 0.7);
         }
@@ -76,31 +76,31 @@
             --bg-page: #0E131F;
             --bg-left: #0E131F;
             --text-title: #FFFFFF;
-            --text-subtitle: #7A8DA6;
-            --text-label: #8E9DAE;
+            --text-subtitle: #CBD5E1;
+            --text-label: #E2E8F0;
             --input-border-wrap: #1E2838;
             --input-bg-inner: #141C29;
-            --input-text: #F1F5F9;
-            --input-ph: #526379;
+            --input-text: #F8FAFC;
+            --input-ph: #64748B;
             --wave-fill: #0E131F;
             --wave-ridge-1: #1A2433;
-            --wave-ridge-2: #3A4D67;
+            --wave-ridge-2: #38BDF8;
             --wave-ridge-3: #233144;
             --wave-shadow: rgba(0, 0, 0, 0.6);
-            --card-fill: rgba(17, 24, 36, 0.68);
-            --card-border: rgba(255, 255, 255, 0.14);
-            --card-pill-bg: #1C293A;
-            --card-pill-border: #2B3E56;
+            --card-fill: rgba(12, 18, 30, 0.92);
+            --card-border: rgba(148, 210, 255, 0.28);
+            --card-pill-bg: #1E2D42;
+            --card-pill-border: #3B6090;
             --card-title: #FFFFFF;
-            --card-subtitle: #8E9EB3;
-            --card-item-bg: rgba(255, 255, 255, 0.04);
-            --card-item-border: rgba(255, 255, 255, 0.08);
-            --card-item-text: #D4E0EE;
-            --card-item-icon-bg: rgba(255, 255, 255, 0.06);
+            --card-subtitle: #F1F5F9;
+            --card-item-bg: rgba(255, 255, 255, 0.10);
+            --card-item-border: rgba(255, 255, 255, 0.20);
+            --card-item-text: #FFFFFF;
+            --card-item-icon-bg: rgba(56, 189, 248, 0.20);
             --card-item-icon: #38BDF8;
-            --bottom-motto-bg: rgba(255, 255, 255, 0.03);
-            --bottom-motto-border: rgba(255, 255, 255, 0.06);
-            --bottom-motto-text: #7B8FA6;
+            --bottom-motto-bg: rgba(255, 255, 255, 0.08);
+            --bottom-motto-border: rgba(255, 255, 255, 0.18);
+            --bottom-motto-text: #FFFFFF;
             --bg-overlay-start: rgba(14, 19, 31, 0.6);
             --bg-overlay-end: rgba(15, 23, 42, 0.85);
         }
@@ -307,8 +307,7 @@
         <!-- ========================================================== -->
         <!-- LEFT PANEL: LOGIN FORM                                     -->
         <!-- ========================================================== -->
-        <div id="leftPanel" class="relative z-30 w-full lg:w-[42%] xl:w-[39%] min-h-screen flex flex-col justify-between px-7 sm:px-12 lg:px-14 xl:px-18 py-8 lg:py-10 shrink-0 shadow-2xl"
-             style="background-color: var(--bg-left); transition: background-color 0.3s ease;">
+        <div id="leftPanel" class="relative z-30 w-full lg:w-[42%] xl:w-[39%] min-h-screen flex flex-col justify-between px-7 sm:px-12 lg:px-14 xl:px-18 py-8 lg:py-10 shrink-0 lg:bg-transparent bg-[var(--bg-left)] transition-colors duration-300">
             
             <!-- Top Branding & Functional Theme Toggle -->
             <div class="flex items-center justify-between">
@@ -529,7 +528,7 @@
         <!-- FROSTED GLASS BLUR & CALM SHEEN LAYER                      -->
         <!-- Coordinates match 1:1 with the full-screen SVG ClipPath   -->
         <!-- ========================================================== -->
-        <div id="glassBlurLayer" class="hidden lg:block absolute inset-0 pointer-events-none z-22 overflow-hidden"
+        <div id="glassBlurLayer" class="hidden lg:block absolute inset-0 pointer-events-none z-[22] overflow-hidden"
              style="clip-path: url(#glassCardClip); -webkit-clip-path: url(#glassCardClip); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);">
             <!-- Slow, Calm, Subtle Diagonal Glass Sheen Sweep ("samar & ga kecepeten") -->
             <div class="sheen-sweep-slow"></div>
@@ -538,7 +537,7 @@
         <!-- ========================================================== -->
         <!-- RIGHT PANEL: CONTENT OVER SYNCHRONIZED GLASS CARD          -->
         <!-- ========================================================== -->
-        <div id="rightContentWrap" class="relative z-25 flex-1 flex items-center justify-center lg:justify-end xl:justify-center p-6 sm:p-10 lg:p-12 lg:pr-14 xl:pr-20">
+        <div id="rightContentWrap" class="relative z-[25] flex-1 flex items-center justify-center lg:justify-end xl:justify-center p-6 sm:p-10 lg:p-12 lg:pr-14 xl:pr-20">
             
             <!-- Floating Container with Generous Padding From Wavy Left Edge -->
             <div id="glassCardContent" class="relative max-w-md lg:max-w-lg xl:max-w-xl w-full p-7 sm:p-8 xl:p-9 space-y-6 overflow-visible transition-all pl-10 sm:pl-12 lg:pl-14">
@@ -549,15 +548,15 @@
                           style="background-color: var(--card-pill-bg); border: 1px solid var(--card-pill-border); color: #0284C7;" class="dark:text-sky-400">
                         SISTEM TERINTEGRASI
                     </span>
-                    <span class="text-xs font-medium" style="color: var(--card-subtitle);">Monitoring & Jurnal</span>
+                    <span class="text-[13px] font-semibold" style="color: var(--card-subtitle);">Monitoring & Jurnal</span>
                 </div>
 
                 <!-- Card Heading -->
                 <div class="relative z-10">
-                    <h2 class="text-xl sm:text-2xl xl:text-[25px] font-extrabold leading-snug tracking-tight" style="color: var(--card-title);">
+                    <h2 class="text-xl sm:text-2xl xl:text-[26px] font-extrabold leading-snug tracking-tight" style="color: var(--card-title);">
                         Pusat Monitoring dan Pembelajaran Sekolah Real-Time
                     </h2>
-                    <p class="text-xs mt-2.5 leading-relaxed font-normal" style="color: var(--card-subtitle);">
+                    <p class="text-[13px] mt-2.5 leading-relaxed font-medium" style="color: var(--card-subtitle);">
                         Menghubungkan 7 pilar sekolah: Tata Usaha, Guru, Guru Piket, Waka Kurikulum/Kesiswaan, Kepala Sekolah, Keamanan Satpam, serta Wali Murid dalam satu ekosistem digital.
                     </p>
                 </div>
@@ -565,7 +564,7 @@
                 <!-- 4 Feature Cards (2x2 Grid) -->
                 <div class="relative z-10 grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                     <!-- Feature 1 -->
-                    <div class="flex items-center space-x-3 p-3.5 rounded-xl transition-all text-xs font-semibold group shadow-2xs"
+                    <div class="flex items-center space-x-3 p-3.5 rounded-xl transition-all text-xs font-bold group shadow-2xs"
                          style="background-color: var(--card-item-bg); border: 1px solid var(--card-item-border); color: var(--card-item-text);">
                         <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform"
                              style="background-color: var(--card-item-icon-bg); color: var(--card-item-icon);">
@@ -575,7 +574,7 @@
                     </div>
 
                     <!-- Feature 2 -->
-                    <div class="flex items-center space-x-3 p-3.5 rounded-xl transition-all text-xs font-semibold group shadow-2xs"
+                    <div class="flex items-center space-x-3 p-3.5 rounded-xl transition-all text-xs font-bold group shadow-2xs"
                          style="background-color: var(--card-item-bg); border: 1px solid var(--card-item-border); color: var(--card-item-text);">
                         <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform"
                              style="background-color: var(--card-item-icon-bg); color: var(--card-item-icon);">
@@ -585,7 +584,7 @@
                     </div>
 
                     <!-- Feature 3 -->
-                    <div class="flex items-center space-x-3 p-3.5 rounded-xl transition-all text-xs font-semibold group shadow-2xs"
+                    <div class="flex items-center space-x-3 p-3.5 rounded-xl transition-all text-xs font-bold group shadow-2xs"
                          style="background-color: var(--card-item-bg); border: 1px solid var(--card-item-border); color: var(--card-item-text);">
                         <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform"
                              style="background-color: var(--card-item-icon-bg); color: var(--card-item-icon);">
@@ -595,7 +594,7 @@
                     </div>
 
                     <!-- Feature 4 -->
-                    <div class="flex items-center space-x-3 p-3.5 rounded-xl transition-all text-xs font-semibold group shadow-2xs"
+                    <div class="flex items-center space-x-3 p-3.5 rounded-xl transition-all text-xs font-bold group shadow-2xs"
                          style="background-color: var(--card-item-bg); border: 1px solid var(--card-item-border); color: var(--card-item-text);">
                         <div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform"
                              style="background-color: var(--card-item-icon-bg); color: var(--card-item-icon);">
@@ -606,7 +605,7 @@
                 </div>
 
                 <!-- Bottom Motto -->
-                <div class="relative z-10 px-4 py-2.5 rounded-xl text-[11px] font-medium flex items-center justify-between shadow-2xs"
+                <div class="relative z-10 px-4 py-3 rounded-xl text-[12px] font-semibold flex items-center justify-between shadow-2xs"
                      style="background-color: var(--bottom-motto-bg); border: 1px solid var(--bottom-motto-border); color: var(--bottom-motto-text);">
                     <span>Esemkita SMEA • Menuju Sekolah Unggul & Transparan</span>
                     <i data-lucide="sparkles" class="w-3.5 h-3.5 text-cyan-500 dark:text-cyan-400 shrink-0"></i>
@@ -697,13 +696,12 @@
 
                 // Responsive anchor: ~40% of window width on desktop
                 const leftPanelWidth = leftPanel ? leftPanel.clientWidth : W * 0.40;
-                const baseMid = leftPanelWidth;
+                const baseMid = leftPanelWidth + 28;
 
-                // Wave configuration matching Gambar 1 (Besar & Dalam)
-                // Total horizontal sweep ~130px - 150px!
-                const amp1 = 56;
-                const amp2 = 24;
-                const sOffset = 38;
+                // Moderate & smooth wave configuration (Sedengan)
+                const amp1 = 30;
+                const amp2 = 12;
+                const sOffset = 18;
                 const steps = 48;
                 const dy = H / steps;
 
@@ -740,50 +738,59 @@
                 ridgePath.setAttribute('d', waveCurveStr);
                 highlightPath.setAttribute('d', waveCurveStr);
 
-                // Synchronize Right Glass Card Left Boundary with the Wave!
+                // Synchronize Right Glass Card (4 Smooth Rounded Corners & Wavy Left Boundary)
                 if (glassCardContent && cardBgPath && cardClipPath) {
                     const cardRect = glassCardContent.getBoundingClientRect();
-                    const cardTop = Math.max(16, cardRect.top);
-                    const cardBottom = Math.min(H - 16, cardRect.bottom);
-                    const cardRight = Math.min(W - 24, cardRect.right);
-                    const rRadius = 26;
+                    const rRadius = 24;
+                    const gap = 24; // Distance from 3D wave line
 
-                    // Compute card left curve that parallels the wave with a constant 32px gap!
-                    const gap = 32; // Distance from wave to card
+                    const cardTop = Math.max(16, cardRect.top - 12);
+                    const cardBottom = Math.min(H - 16, cardRect.bottom + 12);
+                    const cardRight = Math.min(W - 24, cardRect.right + 16);
+
+                    const cardSteps = 24;
+                    const startY = cardTop + rRadius;
+                    const endY = cardBottom - rRadius;
+                    const cardDy = (endY - startY) / cardSteps;
+
                     let cardLeftPoints = [];
-                    const cardSteps = 28;
-                    const cardDy = (cardBottom - cardTop) / cardSteps;
-
                     for (let i = 0; i <= cardSteps; i++) {
-                        const y = cardTop + i * cardDy;
+                        const y = startY + i * cardDy;
                         const x = getWaveX(y, elapsed) + gap;
                         cardLeftPoints.push({ x, y });
                     }
 
-                    // Build Card Closed Polygon / Shape Path
-                    let cardPathStr = `M ${cardRight - rRadius},${cardTop} `;
+                    const topLeftX = cardLeftPoints[0].x;
+                    const bottomLeftX = cardLeftPoints[cardLeftPoints.length - 1].x;
+
+                    // Closed Card Shape with 4 Smooth Rounded Arcs:
+                    let cardPathStr = `M ${(topLeftX + rRadius).toFixed(1)},${cardTop} `;
+                    cardPathStr += `L ${(cardRight - rRadius).toFixed(1)},${cardTop} `;
                     cardPathStr += `A ${rRadius} ${rRadius} 0 0 1 ${cardRight},${cardTop + rRadius} `;
                     cardPathStr += `L ${cardRight},${cardBottom - rRadius} `;
-                    cardPathStr += `A ${rRadius} ${rRadius} 0 0 1 ${cardRight - rRadius},${cardBottom} `;
-                    cardPathStr += `L ${cardLeftPoints[cardLeftPoints.length - 1].x.toFixed(1)},${cardBottom} `;
+                    cardPathStr += `A ${rRadius} ${rRadius} 0 0 1 ${(cardRight - rRadius).toFixed(1)},${cardBottom} `;
+                    cardPathStr += `L ${(bottomLeftX + rRadius).toFixed(1)},${cardBottom} `;
+                    cardPathStr += `A ${rRadius} ${rRadius} 0 0 1 ${bottomLeftX.toFixed(1)},${(cardBottom - rRadius).toFixed(1)} `;
                     
-                    // Trace up the wavy left edge in sync!
-                    for (let i = cardLeftPoints.length - 1; i >= 0; i--) {
+                    for (let i = cardLeftPoints.length - 2; i >= 1; i--) {
                         cardPathStr += `L ${cardLeftPoints[i].x.toFixed(1)},${cardLeftPoints[i].y.toFixed(1)} `;
                     }
 
-                    cardPathStr += `L ${cardLeftPoints[0].x.toFixed(1)},${cardTop} `;
-                    cardPathStr += `L ${cardRight - rRadius},${cardTop} Z`;
+                    cardPathStr += `L ${topLeftX.toFixed(1)},${(cardTop + rRadius).toFixed(1)} `;
+                    cardPathStr += `A ${rRadius} ${rRadius} 0 0 1 ${(topLeftX + rRadius).toFixed(1)},${cardTop} Z`;
 
                     cardBgPath.setAttribute('d', cardPathStr);
                     cardClipPath.setAttribute('d', cardPathStr);
 
-                    // Specular Highlight along the Card's Wavy Left Edge
+                    // Specular Highlight along Top-Left Arc, Wavy Left Edge, and Bottom-Left Arc
                     if (cardEdgeHighlight) {
-                        let edgeHighlightStr = `M ${cardLeftPoints[0].x.toFixed(1)},${cardLeftPoints[0].y.toFixed(1)}`;
-                        for (let i = 1; i < cardLeftPoints.length; i++) {
-                            edgeHighlightStr += ` L ${cardLeftPoints[i].x.toFixed(1)},${cardLeftPoints[i].y.toFixed(1)}`;
+                        let edgeHighlightStr = `M ${(topLeftX + rRadius).toFixed(1)},${cardTop} `;
+                        edgeHighlightStr += `A ${rRadius} ${rRadius} 0 0 0 ${topLeftX.toFixed(1)},${(cardTop + rRadius).toFixed(1)} `;
+                        for (let i = 1; i < cardLeftPoints.length - 1; i++) {
+                            edgeHighlightStr += `L ${cardLeftPoints[i].x.toFixed(1)},${cardLeftPoints[i].y.toFixed(1)} `;
                         }
+                        edgeHighlightStr += `L ${bottomLeftX.toFixed(1)},${(cardBottom - rRadius).toFixed(1)} `;
+                        edgeHighlightStr += `A ${rRadius} ${rRadius} 0 0 0 ${(bottomLeftX + rRadius).toFixed(1)},${cardBottom}`;
                         cardEdgeHighlight.setAttribute('d', edgeHighlightStr);
                     }
                 }

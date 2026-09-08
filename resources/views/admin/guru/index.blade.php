@@ -159,13 +159,11 @@
                                                 class="w-6.5 h-6.5 rounded border border-slate-200 hover:border-slate-300 hover:bg-slate-100 text-slate-600 flex items-center justify-center transition-colors shadow-2xs cursor-pointer" title="Edit Guru">
                                                 <i data-lucide="edit-2" class="w-3 h-3"></i>
                                             </button>
-                                            <form action="{{ route('admin.guru.destroy', $g->id_guru) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data {{ addslashes($g->nama_guru) }}?')">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="w-6.5 h-6.5 rounded border border-slate-200 hover:border-rose-200 hover:bg-rose-50 text-slate-400 hover:text-rose-600 flex items-center justify-center transition-colors shadow-2xs cursor-pointer" title="Hapus Guru">
-                                                    <i data-lucide="trash-2" class="w-3 h-3"></i>
-                                                </button>
-                                            </form>
+                                            <button type="button" 
+                                                onclick="openDeleteGuruModal('{{ $g->id_guru }}', '{{ addslashes($g->nama_guru) }}')"
+                                                class="w-6.5 h-6.5 rounded border border-slate-200 hover:border-rose-200 hover:bg-rose-50 text-slate-400 hover:text-rose-600 flex items-center justify-center transition-colors shadow-2xs cursor-pointer" title="Hapus Guru">
+                                                <i data-lucide="trash-2" class="w-3 h-3"></i>
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>
@@ -257,6 +255,62 @@
     </div>
 </div>
 
+<!-- MODAL KONFIRMASI HAPUS GURU DENGAN ALASAN -->
+<div id="modalDeleteGuru" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center hidden p-4">
+    <div class="bg-white dark:bg-[#151B26] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-4">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/60 flex items-center justify-center shrink-0">
+                <i data-lucide="trash-2" class="w-5 h-5 text-rose-600 dark:text-rose-400"></i>
+            </div>
+            <div>
+                <h3 class="font-bold text-slate-900 dark:text-slate-100 text-sm tracking-tight">Pindahkan Guru ke Sampah</h3>
+                <p class="text-[11.5px] text-slate-500 dark:text-slate-400 font-medium mt-0.5" id="deleteGuruNamaTarget"></p>
+            </div>
+        </div>
+
+        <form id="formDeleteGuru" method="POST" class="space-y-3.5 pt-1">
+            @csrf
+            @method('DELETE')
+
+            <div>
+                <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2">Alasan Penghapusan / Dipindahkan *</label>
+                <div class="space-y-2 text-xs">
+                    <label class="flex items-center space-x-3 px-3 py-2.5 bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/70 rounded-xl cursor-pointer hover:border-slate-300 dark:hover:border-slate-600 transition-colors">
+                        <input type="radio" name="alasan_preset_guru" value="Pensiun / Purna Tugas" onchange="setAlasanGuru(this.value)" checked class="w-4 h-4 accent-rose-600 cursor-pointer">
+                        <span class="font-semibold text-slate-800 dark:text-slate-200">Pensiun / Purna Tugas</span>
+                    </label>
+                    <label class="flex items-center space-x-3 px-3 py-2.5 bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/70 rounded-xl cursor-pointer hover:border-slate-300 dark:hover:border-slate-600 transition-colors">
+                        <input type="radio" name="alasan_preset_guru" value="Mengundurkan Diri / Resign" onchange="setAlasanGuru(this.value)" class="w-4 h-4 accent-rose-600 cursor-pointer">
+                        <span class="font-semibold text-slate-800 dark:text-slate-200">Mengundurkan Diri / Resign</span>
+                    </label>
+                    <label class="flex items-center space-x-3 px-3 py-2.5 bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/70 rounded-xl cursor-pointer hover:border-slate-300 dark:hover:border-slate-600 transition-colors">
+                        <input type="radio" name="alasan_preset_guru" value="Mutasi / Pindah Instansi" onchange="setAlasanGuru(this.value)" class="w-4 h-4 accent-rose-600 cursor-pointer">
+                        <span class="font-semibold text-slate-800 dark:text-slate-200">Mutasi / Pindah Instansi</span>
+                    </label>
+                    <label class="flex items-center space-x-3 px-3 py-2.5 bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/70 rounded-xl cursor-pointer hover:border-slate-300 dark:hover:border-slate-600 transition-colors">
+                        <input type="radio" name="alasan_preset_guru" value="" onchange="setAlasanGuru('')" class="w-4 h-4 accent-rose-600 cursor-pointer">
+                        <span class="font-semibold text-slate-800 dark:text-slate-200">Lainnya (Ketik Manual...)</span>
+                    </label>
+                </div>
+            </div>
+
+            <div>
+                <input type="text" name="alasan_hapus" id="inputAlasanGuru" value="Pensiun / Purna Tugas" placeholder="Tuliskan alasan detail..." required
+                    class="w-full h-10 px-3.5 bg-white dark:bg-[#1A2230] border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:border-rose-500 transition-colors shadow-2xs">
+            </div>
+
+            <div class="flex items-center justify-end space-x-2.5 pt-3 border-t border-slate-100 dark:border-slate-800">
+                <button type="button" onclick="closeDeleteGuruModal()" class="h-10 px-4.5 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
+                    Batal
+                </button>
+                <button type="submit" class="h-10 px-6 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold transition-colors cursor-pointer shadow-sm whitespace-nowrap shrink-0">
+                    Ya, Pindahkan ke Sampah
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
     let isFormFolded = false;
     function toggleFormPanel() {
@@ -289,6 +343,27 @@
 
     function closeEditGuruModal() {
         document.getElementById('modalEditGuru').classList.add('hidden');
+    }
+
+    function openDeleteGuruModal(id, nama) {
+        document.getElementById('deleteGuruNamaTarget').innerText = `Guru: ${nama}`;
+        document.getElementById('formDeleteGuru').action = `/admin/guru/${id}`;
+        document.getElementById('inputAlasanGuru').value = 'Pensiun / Purna Tugas';
+        document.getElementById('modalDeleteGuru').classList.remove('hidden');
+    }
+
+    function closeDeleteGuruModal() {
+        document.getElementById('modalDeleteGuru').classList.add('hidden');
+    }
+
+    function setAlasanGuru(val) {
+        const input = document.getElementById('inputAlasanGuru');
+        if (val) {
+            input.value = val;
+        } else {
+            input.value = '';
+            input.focus();
+        }
     }
 
     // Live Instant Search

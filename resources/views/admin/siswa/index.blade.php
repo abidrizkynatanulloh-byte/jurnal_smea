@@ -71,7 +71,7 @@
                     <div>
                         <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Rombel / Kelas *</label>
                         <select name="id_kelas" required
-                            class="searchable-select w-full h-8 px-2 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 font-medium focus:outline-none focus:border-slate-800 cursor-pointer">
+                            class="w-full h-8 px-2 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 font-medium focus:outline-none focus:border-slate-800 cursor-pointer">
                             <option value="">-- Pilih Kelas --</option>
                             @foreach ($kelasList as $k)
                                 <option value="{{ $k->id_kelas }}" {{ old('id_kelas') == $k->id_kelas ? 'selected' : '' }}>
@@ -152,60 +152,13 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100 text-slate-700" id="siswaTbody">
-                            @forelse ($siswaList as $idx => $s)
-                                <tr class="hover:bg-slate-50/80 transition-colors siswa-row" data-search="{{ strtolower($s->nama_siswa . ' ' . $s->nis . ' ' . $s->nisn . ' ' . ($s->kelas ? $s->kelas->nama_kelas : '')) }}">
-                                    <td class="py-2 px-3 text-center font-medium text-slate-400 text-xs tabular-nums">
-                                        {{ $siswaList->firstItem() + $idx }}
-                                    </td>
-                                    <td class="py-2 px-3 font-semibold text-slate-900 text-xs font-mono tabular-nums">{{ $s->nis }}</td>
-                                    <td class="py-2 px-3 text-xs text-slate-500 font-mono tabular-nums">{{ $s->nisn }}</td>
-                                    <td class="py-2 px-3 font-medium text-slate-900 text-xs leading-tight">{{ $s->nama_siswa }}</td>
-                                    <td class="py-2 px-2 text-center">
-                                        @if($s->jenis_kelamin === 'P')
-                                            <span class="inline-flex items-center justify-center w-5.5 h-5.5 rounded-md text-[11px] font-bold bg-pink-50 text-pink-700 border border-pink-200" title="Perempuan">P</span>
-                                        @else
-                                            <span class="inline-flex items-center justify-center w-5.5 h-5.5 rounded-md text-[11px] font-bold bg-blue-50 text-blue-700 border border-blue-200" title="Laki-laki">L</span>
-                                        @endif
-                                    </td>
-                                    <td class="py-2 px-3">
-                                        <span class="inline-block px-2 py-0.5 rounded text-[11px] font-medium bg-slate-100 text-slate-700 border border-slate-200">
-                                            {{ $s->kelas ? $s->kelas->nama_kelas : '-' }}
-                                        </span>
-                                    </td>
-                                    <td class="py-2 px-3 text-xs text-slate-500 font-mono tabular-nums">
-                                        {{ $s->no_hp_wali ?: '-' }}
-                                    </td>
-                                    <td class="py-2 px-3 text-center">
-                                        <div class="flex items-center justify-center space-x-1">
-                                            <button type="button" 
-                                                onclick="openEditModal('{{ $s->nis }}', '{{ addslashes($s->nama_siswa) }}', '{{ $s->nisn }}', '{{ $s->id_kelas }}', '{{ $s->jenis_kelamin ?? 'L' }}', '{{ $s->no_hp_wali ?? '' }}')"
-                                                class="w-6.5 h-6.5 rounded-md border border-slate-200 hover:border-slate-300 hover:bg-slate-100 text-slate-600 flex items-center justify-center transition-colors shadow-2xs cursor-pointer" title="Edit Siswa">
-                                                <i data-lucide="edit-2" class="w-3 h-3"></i>
-                                            </button>
-                                            <form action="{{ route('admin.siswa.destroy', $s->nis) }}" method="POST" onsubmit="return confirm('Pindahkan siswa {{ addslashes($s->nama_siswa) }} ke sampah?')">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="w-6.5 h-6.5 rounded-md border border-slate-200 hover:border-rose-200 hover:bg-rose-50 text-slate-400 hover:text-rose-600 flex items-center justify-center transition-colors shadow-2xs cursor-pointer" title="Hapus Siswa">
-                                                    <i data-lucide="trash-2" class="w-3 h-3"></i>
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="8" class="py-12 text-center text-slate-400 italic text-xs">
-                                        <i data-lucide="inbox" class="w-7 h-7 mx-auto mb-1.5 text-slate-300"></i>
-                                        Tidak ada data siswa yang sesuai.
-                                    </td>
-                                </tr>
-                            @endforelse
+                            @include('admin.siswa.partials.rows')
                         </tbody>
                     </table>
                 </div>
 
                 <!-- Bottom Pagination Bar (Sesuai Gambar 1 & Gambar 2) -->
-                <div class="shrink-0">
+                <div class="shrink-0" id="paginationContainer">
                     <x-pagination-bar :paginator="$siswaList" />
                 </div>
             </div>
@@ -289,6 +242,62 @@
     </div>
 </div>
 
+<!-- MODAL KONFIRMASI HAPUS SISWA DENGAN ALASAN -->
+<div id="modalDeleteSiswa" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center hidden p-4">
+    <div class="bg-white dark:bg-[#151B26] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-4">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/60 flex items-center justify-center shrink-0">
+                <i data-lucide="trash-2" class="w-5 h-5 text-rose-600 dark:text-rose-400"></i>
+            </div>
+            <div>
+                <h3 class="font-bold text-slate-900 dark:text-slate-100 text-sm tracking-tight">Pindahkan Siswa ke Sampah</h3>
+                <p class="text-[11.5px] text-slate-500 dark:text-slate-400 font-medium mt-0.5" id="deleteSiswaNamaTarget"></p>
+            </div>
+        </div>
+
+        <form id="formDeleteSiswa" method="POST" class="space-y-3.5 pt-1">
+            @csrf
+            @method('DELETE')
+
+            <div>
+                <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2">Alasan Penghapusan / Dipindahkan *</label>
+                <div class="space-y-2 text-xs">
+                    <label class="flex items-center space-x-3 px-3 py-2.5 bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/70 rounded-xl cursor-pointer hover:border-slate-300 dark:hover:border-slate-600 transition-colors">
+                        <input type="radio" name="alasan_preset_siswa" value="Lulus / Tamat Belajar" onchange="setAlasanSiswa(this.value)" checked class="w-4 h-4 accent-rose-600 cursor-pointer">
+                        <span class="font-semibold text-slate-800 dark:text-slate-200">Lulus / Tamat Belajar</span>
+                    </label>
+                    <label class="flex items-center space-x-3 px-3 py-2.5 bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/70 rounded-xl cursor-pointer hover:border-slate-300 dark:hover:border-slate-600 transition-colors">
+                        <input type="radio" name="alasan_preset_siswa" value="Pindah Sekolah / Mutasi" onchange="setAlasanSiswa(this.value)" class="w-4 h-4 accent-rose-600 cursor-pointer">
+                        <span class="font-semibold text-slate-800 dark:text-slate-200">Pindah Sekolah / Mutasi</span>
+                    </label>
+                    <label class="flex items-center space-x-3 px-3 py-2.5 bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/70 rounded-xl cursor-pointer hover:border-slate-300 dark:hover:border-slate-600 transition-colors">
+                        <input type="radio" name="alasan_preset_siswa" value="Dikeluarkan / Drop Out (DO)" onchange="setAlasanSiswa(this.value)" class="w-4 h-4 accent-rose-600 cursor-pointer">
+                        <span class="font-semibold text-slate-800 dark:text-slate-200">Dikeluarkan / Drop Out (DO)</span>
+                    </label>
+                    <label class="flex items-center space-x-3 px-3 py-2.5 bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/70 rounded-xl cursor-pointer hover:border-slate-300 dark:hover:border-slate-600 transition-colors">
+                        <input type="radio" name="alasan_preset_siswa" value="" onchange="setAlasanSiswa('')" class="w-4 h-4 accent-rose-600 cursor-pointer">
+                        <span class="font-semibold text-slate-800 dark:text-slate-200">Lainnya (Ketik Manual...)</span>
+                    </label>
+                </div>
+            </div>
+
+            <div>
+                <input type="text" name="alasan_hapus" id="inputAlasanSiswa" value="Lulus / Tamat Belajar" placeholder="Tuliskan alasan detail..." required
+                    class="w-full h-10 px-3.5 bg-white dark:bg-[#1A2230] border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:border-rose-500 transition-colors shadow-2xs">
+            </div>
+
+            <div class="flex items-center justify-end space-x-2.5 pt-3 border-t border-slate-100 dark:border-slate-800">
+                <button type="button" onclick="closeDeleteSiswaModal()" class="h-10 px-4.5 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
+                    Batal
+                </button>
+                <button type="submit" class="h-10 px-6 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold transition-colors cursor-pointer shadow-sm whitespace-nowrap shrink-0">
+                    Ya, Pindahkan ke Sampah
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
     let isFormFolded = false;
     function toggleFormPanel() {
@@ -325,21 +334,94 @@
         document.getElementById('modalEditSiswa').classList.add('hidden');
     }
 
-    // Live Instant Search
+    function openDeleteSiswaModal(nis, nama) {
+        document.getElementById('deleteSiswaNamaTarget').innerText = `Siswa: ${nama} (NIS: ${nis})`;
+        document.getElementById('formDeleteSiswa').action = `/admin/siswa/${nis}`;
+        document.getElementById('inputAlasanSiswa').value = 'Lulus / Tamat Belajar';
+        document.getElementById('modalDeleteSiswa').classList.remove('hidden');
+    }
+
+    function closeDeleteSiswaModal() {
+        document.getElementById('modalDeleteSiswa').classList.add('hidden');
+    }
+
+    function setAlasanSiswa(val) {
+        const input = document.getElementById('inputAlasanSiswa');
+        if (val) {
+            input.value = val;
+        } else {
+            input.value = '';
+            input.focus();
+        }
+    }
+
+    // Dynamic AJAX Live Search Across All 1,712 Students (Zero Page Reloads)
     document.addEventListener('DOMContentLoaded', function() {
         const searchInput = document.getElementById('liveSearchInput');
+        const searchForm = searchInput ? searchInput.closest('form') : null;
+        let ajaxTimer = null;
+
+        function performAjaxSearch() {
+            if (!searchInput) return;
+            const q = searchInput.value.trim();
+            const form = searchForm || searchInput.form;
+
+            const formData = new FormData(form);
+            formData.set('search', q);
+            const params = new URLSearchParams(formData);
+
+            fetch(`{{ route('admin.siswa.index') }}?${params.toString()}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                const tbody = document.getElementById('siswaTbody');
+                const pag = document.getElementById('paginationContainer');
+                if (tbody && data.html) {
+                    tbody.innerHTML = data.html;
+                }
+                if (pag && data.pagination) {
+                    pag.innerHTML = data.pagination;
+                }
+                if (typeof lucide !== 'undefined') {
+                    lucide.createIcons();
+                }
+            })
+            .catch(err => console.error('AJAX Live Search Error:', err));
+        }
+
         if (searchInput) {
             searchInput.addEventListener('input', function() {
-                const q = this.value.toLowerCase().trim();
+                const q = this.value.trim();
+                const qLower = q.toLowerCase();
+
+                // 1. Instant client-side visual filter on current DOM rows (0ms delay)
                 const rows = document.querySelectorAll('.siswa-row');
                 rows.forEach(row => {
                     const text = row.getAttribute('data-search') || '';
-                    if (text.includes(q)) {
+                    if (!qLower || text.includes(qLower)) {
                         row.style.display = '';
                     } else {
                         row.style.display = 'none';
                     }
                 });
+
+                // 2. Fast AJAX query (150ms debounce) searching ALL 1,712 students without page reloads
+                clearTimeout(ajaxTimer);
+                ajaxTimer = setTimeout(() => {
+                    performAjaxSearch();
+                }, 150);
+            });
+
+            // Prevent form submit refresh on Enter
+            searchInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    clearTimeout(ajaxTimer);
+                    performAjaxSearch();
+                }
             });
         }
     });

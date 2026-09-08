@@ -72,25 +72,25 @@ class UserSeeder extends Seeder
         );
 
         // =====================================================================
-        // 4. BUAT AKUN WAKA KESISWAAN (wakasis01 / wakasis123)
+        // 4. BUAT AKUN WAKA KESISWAAN GENERIC (wakasis01 / wakasis123)
         // =====================================================================
         User::updateOrCreate(
             ['username' => 'wakasis01'],
             [
                 'password'  => Hash::make('wakasis123'),
-                'role'      => 'wakasis_siswa',
+                'role'      => 'staf_tu',
                 'is_active' => 1,
             ]
         );
 
         // =====================================================================
-        // 5. BUAT AKUN WAKA KURIKULUM & SDM (wakakur01 / wakakur123)
+        // 5. BUAT AKUN WAKA KURIKULUM & SDM GENERIC (wakakur01 / wakakur123)
         // =====================================================================
         User::updateOrCreate(
             ['username' => 'wakakur01'],
             [
                 'password'  => Hash::make('wakakur123'),
-                'role'      => 'wakasis_guru',
+                'role'      => 'staf_tu',
                 'is_active' => 1,
             ]
         );

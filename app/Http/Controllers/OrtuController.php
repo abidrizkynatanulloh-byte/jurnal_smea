@@ -10,6 +10,7 @@ use App\Models\Jadwal;
 use App\Models\JurnalMengajar;
 use App\Models\JurnalDetailKetidakhadiran;
 use App\Models\DispenSiswa;
+use App\Models\IzinSiswa;
 use Carbon\Carbon;
 
 class OrtuController extends Controller
@@ -22,6 +23,10 @@ class OrtuController extends Controller
         $siswa = null;
         if ($user && $user->nisn_siswa) {
             $siswa = Siswa::with('kelas')->where('nisn', $user->nisn_siswa)->first();
+        }
+
+        if (!$siswa && $user && $user->username) {
+            $siswa = Siswa::with('kelas')->where('nisn', $user->username)->orWhere('nis', $user->username)->first();
         }
 
         // Fallback untuk testing jika relasi nisn_siswa belum di-set pada akun login
@@ -44,6 +49,7 @@ class OrtuController extends Controller
         $presensiPerJp = collect();
         $dispenHariIni = null;
         $rekapBulanIni = [
+            'hadir' => 0,
             'sakit' => 0,
             'izin'  => 0,
             'alpa'  => 0,
@@ -51,7 +57,7 @@ class OrtuController extends Controller
 
         if ($siswa && $siswa->id_kelas) {
             // 1. Jadwal kelas anak hari ini
-            $jadwalHariIni = Jadwal::with(['mapel', 'guru', 'ruangan'])
+            $jadwalHariIni = Jadwal::with(['mapel', 'guru', 'ruangan', 'jamMulaiData', 'jamSelesaiData'])
                 ->where('id_kelas', $siswa->id_kelas)
                 ->where('hari', $namaHari)
                 ->orderBy('jam_mulai')
@@ -63,8 +69,15 @@ class OrtuController extends Controller
                     ->where('tanggal', $hariIni)
                     ->first();
 
+                $waktuJam = '';
+                if ($j->jamMulaiData && $j->jamSelesaiData) {
+                    $wm = substr($j->jamMulaiData->waktu_mulai, 0, 5);
+                    $ws = substr($j->jamSelesaiData->waktu_selesai, 0, 5);
+                    $waktuJam = " ({$wm} - {$ws} WIB)";
+                }
+
                 $statusKehadiran = 'Belum Dimulai';
-                $badgeClass = 'bg-gray-100 text-gray-500';
+                $badgeClass = 'bg-slate-100 text-slate-500';
 
                 if ($jurnal) {
                     $tidakHadir = JurnalDetailKetidakhadiran::where('id_jurnal', $jurnal->id_jurnal)
@@ -74,23 +87,24 @@ class OrtuController extends Controller
                     if ($tidakHadir) {
                         $statusKehadiran = $tidakHadir->keterangan; // Sakit, Izin, atau Alpa
                         $badgeClass = match ($tidakHadir->keterangan) {
-                            'Sakit' => 'bg-blue-50 text-blue-700',
-                            'Izin'  => 'bg-amber-50 text-amber-700',
-                            default => 'bg-rose-50 text-rose-700',
+                            'Sakit' => 'bg-blue-50 text-blue-700 border border-blue-200',
+                            'Izin'  => 'bg-amber-50 text-amber-700 border border-amber-200',
+                            default => 'bg-rose-50 text-rose-700 border border-rose-200',
                         };
                     } else {
                         $statusKehadiran = 'Hadir';
-                        $badgeClass = 'bg-emerald-50 text-emerald-700';
+                        $badgeClass = 'bg-emerald-50 text-emerald-700 border border-emerald-200';
                     }
                 }
 
                 $presensiPerJp->push([
-                    'jam_ke'   => "Jam {$j->jam_mulai}-{$j->jam_selesai}",
-                    'mapel'    => $j->mapel ? $j->mapel->nama_mapel : 'Pelajaran',
-                    'guru'     => $j->guru ? $j->guru->nama_guru : '-',
-                    'ruangan'  => $j->ruangan ? $j->ruangan->nama_ruangan : '-',
-                    'status'   => $statusKehadiran,
-                    'badge'    => $badgeClass,
+                    'jam_ke'    => $j->jam_mulai == $j->jam_selesai ? "Jam {$j->jam_mulai}" : "Jam {$j->jam_mulai}–{$j->jam_selesai}",
+                    'waktu_jam' => $waktuJam,
+                    'mapel'     => $j->mapel ? $j->mapel->nama_mapel : 'Pelajaran',
+                    'guru'      => $j->guru ? $j->guru->nama_guru : '-',
+                    'ruangan'   => $j->ruangan ? $j->ruangan->nama_ruangan : '-',
+                    'status'    => $statusKehadiran,
+                    'badge'     => $badgeClass,
                 ]);
             }
 
@@ -113,9 +127,25 @@ class OrtuController extends Controller
             $rekapBulanIni['sakit'] = $ketidakhadiranList->where('keterangan', 'Sakit')->count();
             $rekapBulanIni['izin']  = $ketidakhadiranList->where('keterangan', 'Izin')->count();
             $rekapBulanIni['alpa']  = $ketidakhadiranList->where('keterangan', 'Alpa')->count();
+
+            // Total jurnal mengajar di kelas anak bulan ini
+            $totalJurnalKelas = JurnalMengajar::whereHas('jadwal', function($q) use ($siswa) {
+                $q->where('id_kelas', $siswa->id_kelas);
+            })->whereBetween('tanggal', [$awalBulan, $akhirBulan])->count();
+
+            $totalTidakHadir = $rekapBulanIni['sakit'] + $rekapBulanIni['izin'] + $rekapBulanIni['alpa'];
+            $rekapBulanIni['hadir'] = max(0, $totalJurnalKelas - $totalTidakHadir);
         }
 
-        // 5. Riwayat Ketidakhadiran (Semua Waktu) dikelompokkan per tanggal
+        // 5. Riwayat Izin yang diajukan Orang Tua
+        $riwayatIzin = [];
+        if ($siswa) {
+            $riwayatIzin = IzinSiswa::where('nis', $siswa->nis)
+                ->orderBy('created_at', 'desc')
+                ->get();
+        }
+
+        // 6. Riwayat Ketidakhadiran (Semua Waktu) dikelompokkan per tanggal
         $riwayatAbsen = [];
         if ($siswa) {
             $semuaKetidakhadiran = JurnalDetailKetidakhadiran::with(['jurnal.jadwal.jamMulaiData', 'jurnal.jadwal.jamSelesaiData'])
@@ -141,12 +171,8 @@ class OrtuController extends Controller
                 $groupedByDate[$tgl][$keterangan][] = $teksJam;
             }
             
-            // Format for view
             foreach ($groupedByDate as $tgl => $ketGroups) {
                 foreach ($ketGroups as $ket => $jams) {
-                    // Check if they are absent for all periods? Actually, we don't know the exact number of periods for that day easily here.
-                    // But if there are many, we can just list them. "Jam ke-1, Jam ke-2, Jam ke-3..."
-                    // A simple heuristic: if count > 4, maybe call it "Hampir Full / Full", or just list them.
                     $jamText = implode(', ', $jams);
                     if (count($jams) >= 4) {
                         $jamText = "1 Hari Full (" . count($jams) . " Sesi)";
@@ -161,7 +187,6 @@ class OrtuController extends Controller
                     ];
                 }
             }
-            // Sort by tanggal desc
             usort($riwayatAbsen, function($a, $b) {
                 return strtotime($b['tanggal']) - strtotime($a['tanggal']);
             });
@@ -174,7 +199,67 @@ class OrtuController extends Controller
             'presensiPerJp',
             'dispenHariIni',
             'rekapBulanIni',
+            'riwayatIzin',
             'riwayatAbsen'
         ));
+    }
+
+    /**
+     * Memproses Pengajuan Izin / Sakit dari Orang Tua (Wajib Melampirkan Foto/Surat Dokter)
+     */
+    public function storeIzin(Request $request)
+    {
+        $request->validate([
+            'kategori'        => 'required|in:Sakit,Izin,Dispen,Lainnya',
+            'alasan'          => 'required|string|max:1000',
+            'tanggal_mulai'   => 'required|date',
+            'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
+            'bukti_foto'      => 'required|image|mimes:jpeg,jpg,png,webp|max:5120',
+        ], [
+            'kategori.required'        => 'Kategori izin wajib dipilih.',
+            'alasan.required'          => 'Alasan ketidakhadiran wajib diisi.',
+            'tanggal_mulai.required'   => 'Tanggal mulai wajib diisi.',
+            'tanggal_selesai.required' => 'Tanggal selesai wajib diisi.',
+            'tanggal_selesai.after_or_equal' => 'Tanggal selesai tidak boleh kurang dari tanggal mulai.',
+            'bukti_foto.required'      => 'Bukti foto / surat dokter wajib diunggah.',
+            'bukti_foto.image'         => 'File bukti harus berupa gambar (JPG, PNG, WEBP).',
+            'bukti_foto.max'           => 'Ukuran foto maksimal 5 MB.',
+        ]);
+
+        $user = Auth::user();
+        $siswa = null;
+        if ($user && $user->nisn_siswa) {
+            $siswa = Siswa::where('nisn', $user->nisn_siswa)->first();
+        }
+        if (!$siswa && $user && $user->username) {
+            $siswa = Siswa::where('nisn', $user->username)->orWhere('nis', $user->username)->first();
+        }
+        if (!$siswa) {
+            $siswa = Siswa::first();
+        }
+
+        $fotoPath = null;
+        if ($request->hasFile('bukti_foto')) {
+            $file = $request->file('bukti_foto');
+            $filename = 'bukti_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $destinationPath = public_path('uploads/bukti_izin');
+            if (!file_exists($destinationPath)) {
+                mkdir($destinationPath, 0777, true);
+            }
+            $file->move($destinationPath, $filename);
+            $fotoPath = 'uploads/bukti_izin/' . $filename;
+        }
+
+        IzinSiswa::create([
+            'nis'             => $siswa->nis,
+            'kategori'        => $request->kategori,
+            'alasan'          => $request->alasan,
+            'tanggal_mulai'   => $request->tanggal_mulai,
+            'tanggal_selesai' => $request->tanggal_selesai,
+            'bukti_foto'      => $fotoPath,
+            'status'          => 'Pending',
+        ]);
+
+        return redirect()->back()->with('success', 'Pengajuan izin siswa berhasil dikirim. Menunggu verifikasi dari Guru Piket / Wali Kelas.');
     }
 }

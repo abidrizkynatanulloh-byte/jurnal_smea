@@ -28,6 +28,7 @@ class Siswa extends Model
         'kota_lahir',
         'tanggal_lahir',
         'alamat',
+        'alasan_hapus',
     ];
 
     /**

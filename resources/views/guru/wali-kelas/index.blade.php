@@ -217,9 +217,13 @@
                                                 </div>
                                             </div>
                                             <div class="bg-slate-50 px-4 py-2.5 sm:flex sm:flex-row-reverse border-t border-slate-100">
-                                                <button type="button" @click="modalTerbuka = false" class="h-7 px-3 bg-white border border-slate-200 rounded-lg text-xs font-semibold text-slate-700 hover:bg-slate-50">
-                                                    Tutup
-                                                </button>
+                                                <button 
+    type="button" 
+    @click="modalTerbuka = false" 
+    class="h-7 px-3 bg-white border border-slate-200 rounded-lg text-xs font-semibold text-slate-700 hover:bg-slate-50 active:bg-red-500 active:text-white"
+>
+    Tutup
+</button>
                                             </div>
                                         </div>
                                     </div>

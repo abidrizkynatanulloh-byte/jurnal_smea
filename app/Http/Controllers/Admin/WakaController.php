@@ -10,8 +10,8 @@ class WakaController
 {
     public function index()
     {
-        $wakaSiswa = User::where('role', 'wakasis_siswa')->with('guru')->get();
-        $wakaGuru = User::where('role', 'wakasis_guru')->with('guru')->get();
+        $wakaSiswa = User::where('role', 'wakasis_siswa')->whereNotNull('id_guru')->with('guru')->get();
+        $wakaGuru  = User::where('role', 'wakasis_guru')->whereNotNull('id_guru')->with('guru')->get();
         
         $semuaGuru = Guru::orderBy('nama_guru')->get();
 

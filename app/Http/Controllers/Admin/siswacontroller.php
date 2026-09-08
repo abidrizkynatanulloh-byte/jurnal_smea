@@ -46,6 +46,14 @@ class SiswaController
         $siswaList = $query->orderBy('nama_siswa')->paginate($perPage)->withQueryString();
         $totalSiswa = Siswa::count();
 
+        if ($request->ajax()) {
+            return response()->json([
+                'html'       => view('admin.siswa.partials.rows', compact('siswaList'))->render(),
+                'pagination' => view('components.pagination-bar', ['paginator' => $siswaList])->render(),
+                'count'      => $siswaList->total(),
+            ]);
+        }
+
         return view('admin.siswa.index', compact('siswaList', 'kelasList', 'totalSiswa'));
     }
 
@@ -142,9 +150,13 @@ class SiswaController
     /**
      * Soft Delete Data Siswa.
      */
-    public function destroy($nis)
+    public function destroy($nis, Request $request)
     {
         $siswa = Siswa::where('nis', $nis)->firstOrFail();
+        $alasan = $request->input('alasan_hapus', 'Tanpa Alasan Khusus');
+        $siswa->alasan_hapus = $alasan;
+        $siswa->save();
+
         $siswa->delete();
 
         return redirect()->route('admin.siswa.index')->with('success', 'Data siswa berhasil dipindahkan ke sampah.');

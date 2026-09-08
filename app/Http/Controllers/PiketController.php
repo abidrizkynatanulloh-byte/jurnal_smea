@@ -50,7 +50,69 @@ class PiketController extends Controller
             ->orderBy('id', 'desc')
             ->get();
 
-        return view('piket.dashboard', compact('daftarSiswa', 'dispenHariIni', 'siswaTelatHariIni', 'izinGuruPending'));
+        $izinSiswaPending = \App\Models\IzinSiswa::with(['siswa.kelas'])
+            ->where('status', 'Pending')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('piket.dashboard', compact('daftarSiswa', 'dispenHariIni', 'siswaTelatHariIni', 'izinGuruPending', 'izinSiswaPending'));
+    }
+
+    /**
+     * Memproses persetujuan (ACC) izin/sakit siswa dari orang tua oleh Guru Piket / Wali Kelas.
+     */
+    public function approveIzinSiswa(Request $request, $id)
+    {
+        $izin = \App\Models\IzinSiswa::with('siswa')->findOrFail($id);
+        $izin->update([
+            'status'         => 'Disetujui',
+            'disetujui_oleh' => Auth::id(),
+        ]);
+
+        // Otomatis buatkan record di DispenSiswa agar guru & piket dapat memantau
+        $start = \Carbon\Carbon::parse($izin->tanggal_mulai);
+        $end   = \Carbon\Carbon::parse($izin->tanggal_selesai);
+
+        for ($date = $start->copy(); $date->lte($end); $date->addDay()) {
+            $tglStr = $date->toDateString();
+
+            \App\Models\DispenSiswa::updateOrCreate(
+                [
+                    'nis'     => $izin->nis,
+                    'tanggal' => $tglStr,
+                ],
+                [
+                    'keperluan'          => "{$izin->kategori}: {$izin->alasan}",
+                    'jam_ke'             => 'Full Day',
+                    'jam_keluar_rencana' => '07:00:00',
+                    'jam_kembali_rencana'=> '15:30:00',
+                    'status'             => 'DISETUJUI',
+                    'disetujui_oleh'     => Auth::id(),
+                ]
+            );
+        }
+
+        AuditLog::log(
+            'Persetujuan Izin Siswa',
+            "Menerima izin {$izin->kategori} siswa: " . ($izin->siswa ? $izin->siswa->nama_siswa : $izin->nis)
+        );
+
+        return back()->with('success', "Permohonan izin {$izin->kategori} siswa " . ($izin->siswa ? $izin->siswa->nama_siswa : '') . " telah disetujui (ACC).");
+    }
+
+    /**
+     * Memproses penolakan izin/sakit siswa oleh Guru Piket / Wali Kelas.
+     */
+    public function rejectIzinSiswa(Request $request, $id)
+    {
+        $izin = \App\Models\IzinSiswa::with('siswa')->findOrFail($id);
+        $izin->update([
+            'status'            => 'Ditolak',
+            'disetujui_oleh'    => Auth::id(),
+            'catatan_penolakan' => $request->input('catatan_penolakan', 'Ditolak oleh piket/wali kelas.'),
+        ]);
+
+        return back()->with('info', "Permohonan izin siswa " . ($izin->siswa ? $izin->siswa->nama_siswa : '') . " telah ditolak.");
     }
 
     /**

@@ -210,5 +210,12 @@ Route::middleware('auth')->group(function () {
     // ---------------------------------------------------------------------
     Route::get('/ortu/dashboard', [OrtuController::class, 'index'])->name('wali.dashboard');
     Route::get('/wali/dashboard', [OrtuController::class, 'index'])->name('ortu.dashboard');
+    Route::post('/ortu/izin',     [OrtuController::class, 'storeIzin'])->name('ortu.izin.store');
+
+    // ---------------------------------------------------------------------
+    // 16. PERSETUJUAN IZIN SISWA (GURU PIKET / WALI KELAS)
+    // ---------------------------------------------------------------------
+    Route::post('/piket/izin-siswa/{id}/approve', [PiketController::class, 'approveIzinSiswa'])->name('piket.izin-siswa.approve');
+    Route::post('/piket/izin-siswa/{id}/reject',  [PiketController::class, 'rejectIzinSiswa'])->name('piket.izin-siswa.reject');
 
 });

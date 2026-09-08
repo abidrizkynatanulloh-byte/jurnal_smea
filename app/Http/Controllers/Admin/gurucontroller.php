@@ -27,9 +27,34 @@ class GuruController
             });
         }
 
-        // Filter Jabatan / Role
+        // Filter Jabatan / Role (Pencarian fleksibel di tabel guru, users, & penugasan piket)
         if ($request->filled('jabatan')) {
-            $query->where('jabatan', $request->jabatan);
+            $val = trim($request->jabatan);
+            $query->where(function ($q) use ($val) {
+                if ($val === 'Guru Piket' || $val === 'guru_piket') {
+                    $q->where('jabatan', 'LIKE', '%Piket%')
+                      ->orWhere('jabatan', 'guru_piket')
+                      ->orWhereHas('user', function ($u) {
+                          $u->where('role', 'guru_piket');
+                      })
+                      ->orWhereHas('piketAssignments');
+                } elseif ($val === 'Kepala Sekolah' || $val === 'kepala_sekolah') {
+                    $q->where('jabatan', 'LIKE', '%Kepala%')
+                      ->orWhereHas('user', function ($u) {
+                          $u->where('role', 'kepala_sekolah');
+                      });
+                } elseif (str_contains(strtolower($val), 'wakasis')) {
+                    $q->where('jabatan', 'LIKE', '%Wakasis%')
+                      ->orWhereHas('user', function ($u) use ($val) {
+                          $u->where('role', 'LIKE', '%wakasis%');
+                      });
+                } else {
+                    $q->where('jabatan', 'LIKE', "%{$val}%")
+                      ->orWhereHas('user', function ($u) use ($val) {
+                          $u->where('role', 'LIKE', "%{$val}%");
+                      });
+                }
+            });
         }
 
         $perPage = (int) $request->input('per_page', 30);
@@ -152,13 +177,17 @@ class GuruController
     /**
      * Soft Delete Data Guru.
      */
-    public function destroy($id)
+    public function destroy($id, Request $request)
     {
         $guru = Guru::findOrFail($id);
+        $alasan = $request->input('alasan_hapus', 'Tanpa Alasan Khusus');
+        $guru->alasan_hapus = $alasan;
+        $guru->save();
+
         User::where('id_guru', $guru->id_guru)->delete();
         $guru->delete();
 
-        return redirect()->route('admin.guru.index')->with('success', 'Data pegawai berhasil dihapus (Soft Delete).');
+        return redirect()->route('admin.guru.index')->with('success', 'Data pegawai berhasil dipindahkan ke sampah.');
     }
 
     /**
