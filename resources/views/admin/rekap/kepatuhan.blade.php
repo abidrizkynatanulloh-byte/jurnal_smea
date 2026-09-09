@@ -127,10 +127,11 @@
                                 @endif
                             </td>
                             <td class="py-2 px-3.5 text-center">
-                                @if(count($r['rincian_tertunggak']) > 0)
+                                @if(count($r['rincian_sesi']) > 0)
                                     <button type="button" onclick="toggleRincian({{ $idx }})"
-                                        class="h-6.5 px-2 border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 rounded-md text-xs font-semibold transition-colors cursor-pointer">
-                                        Lihat ({{ count($r['rincian_tertunggak']) }})
+                                        class="h-6.5 px-2.5 border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 rounded-md text-xs font-semibold transition-colors cursor-pointer inline-flex items-center space-x-1 shadow-2xs">
+                                        <i data-lucide="eye" class="w-3 h-3 text-slate-400"></i>
+                                        <span>Lihat ({{ count($r['rincian_sesi']) }})</span>
                                     </button>
                                 @else
                                     <span class="text-slate-300 text-xs">-</span>
@@ -138,22 +139,53 @@
                             </td>
                         </tr>
 
-                        <!-- Row Rincian Tertunggak (Accordion) -->
-                        @if(count($r['rincian_tertunggak']) > 0)
+                        <!-- Row Rincian Seluruh Sesi (Accordion) -->
+                        @if(count($r['rincian_sesi']) > 0)
                             <tr id="rincian-{{ $idx }}" class="hidden bg-slate-50/70 border-b border-slate-200">
-                                <td colspan="7" class="py-3 px-6 space-y-2">
-                                    <div class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-                                        Rincian Sesi Belum Diisi oleh {{ $r['nama_guru'] }}:
+                                <td colspan="7" class="py-3.5 px-6 space-y-2.5">
+                                    <div class="flex items-center justify-between">
+                                        <div class="text-xs font-bold text-slate-800 uppercase tracking-wider">
+                                            Rincian Sesi Mengajar Minggu Ini oleh {{ $r['nama_guru'] }}:
+                                        </div>
+                                        <div class="flex items-center space-x-3 text-[11px]">
+                                            <span class="inline-flex items-center space-x-1 text-emerald-700 font-semibold">
+                                                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                                                <span>Sudah Diisi ({{ $r['sesi_terisi'] }})</span>
+                                            </span>
+                                            <span class="inline-flex items-center space-x-1 text-rose-700 font-semibold">
+                                                <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                                                <span>Belum Diisi ({{ $r['sesi_tertunggak'] }})</span>
+                                            </span>
+                                        </div>
                                     </div>
+
                                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
-                                        @foreach($r['rincian_tertunggak'] as $detail)
-                                            <div class="p-2.5 bg-white border border-rose-200 rounded-lg text-xs space-y-1 shadow-2xs">
+                                        @foreach($r['rincian_sesi'] as $detail)
+                                            <div class="p-2.5 bg-white border rounded-lg text-xs space-y-1 shadow-2xs
+                                                @if($detail['status_kode'] === 'terisi') border-emerald-200 bg-emerald-50/10
+                                                @elseif($detail['status_kode'] === 'izin') border-amber-200 bg-amber-50/10
+                                                @elseif($detail['status_kode'] === 'tertunggak') border-rose-200 bg-rose-50/10
+                                                @else border-slate-200 bg-slate-50/30 @endif">
+                                                
                                                 <div class="flex items-center justify-between">
                                                     <span class="font-bold text-slate-900">{{ $detail['hari'] }}, {{ \Carbon\Carbon::parse($detail['tanggal'])->locale('id')->isoFormat('D MMM Y') }}</span>
-                                                    <span class="px-1.5 py-0.5 bg-rose-50 text-rose-700 font-bold rounded text-[10px]">{{ $detail['keterangan'] }}</span>
+                                                    <span class="px-1.5 py-0.5 font-bold rounded text-[10px]
+                                                        @if($detail['status_kode'] === 'terisi') bg-emerald-100 text-emerald-800
+                                                        @elseif($detail['status_kode'] === 'izin') bg-amber-100 text-amber-800
+                                                        @elseif($detail['status_kode'] === 'tertunggak') bg-rose-100 text-rose-800
+                                                        @else bg-slate-200 text-slate-700 @endif">
+                                                        {{ $detail['keterangan'] }}
+                                                    </span>
                                                 </div>
                                                 <p class="text-slate-800 font-semibold">{{ $detail['kelas'] }} • {{ $detail['mapel'] }}</p>
-                                                <p class="text-slate-500 text-[11px]">{{ $detail['jam'] }} ({{ $detail['ruangan'] }})</p>
+                                                <div class="flex items-center justify-between text-slate-500 text-[11px]">
+                                                    <span>{{ $detail['jam'] }} ({{ $detail['ruangan'] }})</span>
+                                                    @if($detail['id_jurnal'])
+                                                        <a href="{{ route('admin.rekap.show', $detail['id_jurnal']) }}" class="text-xs text-sky-600 hover:text-sky-700 font-bold underline flex items-center space-x-0.5">
+                                                            <span>Detail</span>
+                                                        </a>
+                                                    @endif
+                                                </div>
                                             </div>
                                         @endforeach
                                     </div>
@@ -181,9 +213,15 @@
         }
     }
 
-    // Live Instant Search
+    // Live Instant Search with Auto-close of Open Accordion Rows
     document.getElementById('kepatuhanSearch').addEventListener('input', function(e) {
         const query = e.target.value.toLowerCase().trim();
+        
+        // Auto-close ALL open detail accordion rows when searching!
+        document.querySelectorAll('[id^="rincian-"]').forEach(function(rincianRow) {
+            rincianRow.classList.add('hidden');
+        });
+
         const rows = document.querySelectorAll('.kepatuhan-row');
         rows.forEach(row => {
             const text = row.getAttribute('data-search') || '';

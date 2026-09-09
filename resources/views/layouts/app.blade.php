@@ -24,6 +24,9 @@
     <link href="https://cdn.jsdelivr.net/npm/tom-select@2.4.3/dist/css/tom-select.default.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/tom-select@2.4.3/dist/js/tom-select.complete.min.js"></script>
 
+    <!-- SweetAlert2 (Professional Confirmations & Notifications) -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <!-- Tailwind CSS CDN (Ensures instant, 100% reliable styling across Laragon subfolders & virtual hosts) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -204,8 +207,8 @@
             color: #64748B !important;
         }
 
-        html.dark input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]),
-        html.dark select,
+        html.dark input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not(.ts-control input),
+        html.dark select:not(.tomselected),
         html.dark textarea {
             background-color: #1A212D !important;
             border-color: #2D394C !important;
@@ -244,54 +247,119 @@
         }
 
         /* ================================================================ */
-        /* TOM SELECT COMPACT & DARK MODE STYLING                           */
         /* ================================================================ */
-        .ts-wrapper {
-            font-size: 0.75rem !important; /* 12px */
-            line-height: 1rem !important;
+        /* TOM SELECT COMPACT & NATIVE SELECT PERFECT VERTICAL ALIGNMENT    */
+        /* ================================================================ */
+        select:not(.tomselected) {
+            padding-top: 0 !important;
+            padding-bottom: 0 !important;
+            line-height: normal !important;
         }
+
+        label {
+            margin-bottom: 0.35rem !important;
+        }
+
         .ts-wrapper,
-        .ts-wrapper.single .ts-control {
+        .ts-wrapper.single,
+        .ts-wrapper.multi,
+        .ts-wrapper.plugin-remove_button {
+            font-size: 0.8125rem !important; /* 13px */
+            line-height: 1.25rem !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            height: auto !important;
             background: transparent !important;
             background-color: transparent !important;
-        }
-        .ts-control {
-            min-height: 2rem !important; /* 32px / h-8 */
-            height: 2rem !important;
-            padding: 0.2rem 0.6rem !important;
-            border-radius: 0.5rem !important;
             border: none !important;
-            background: transparent !important;
-            background-color: transparent !important;
-            background-image: none !important;
-            color: inherit !important;
+            border-color: transparent !important;
             box-shadow: none !important;
+        }
+
+        /* Complete Reset for TomSelect Backgrounds & Colors (Light & Dark Mode) */
+        .ts-wrapper,
+        .ts-wrapper *,
+        .ts-control,
+        .ts-control *,
+        .ts-control input,
+        .ts-control input:focus,
+        .ts-control.focus,
+        .ts-wrapper.focus,
+        .ts-wrapper.input-active,
+        .ts-wrapper.input-active *,
+        .ts-wrapper.input-active .ts-control,
+        .ts-wrapper.input-active .ts-control input {
+            box-shadow: none !important;
+            outline: none !important;
+        }
+
+        .ts-control {
+            display: flex !important;
+            align-items: center !important;
+            min-height: 2.25rem !important;
+            height: 2.25rem !important;
+            padding: 0 2rem 0 0.75rem !important;
+            border-radius: 0.625rem !important; /* 10px rounded-lg */
+            border: 1px solid #CBD5E1 !important;
+            background-color: #FFFFFF !important;
+            color: inherit !important;
             overflow: hidden !important;
+            box-sizing: border-box !important;
+            margin: 0 !important;
         }
         .ts-control > .item {
-            font-size: 0.6875rem !important; /* 11px */
-            line-height: 1.5rem !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            height: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            font-size: 0.8125rem !important;
+            font-weight: 500 !important;
+            line-height: 1 !important;
             white-space: nowrap !important;
+            color: inherit !important;
+            background: transparent !important;
         }
         .ts-control input {
-            font-size: 0.6875rem !important; /* 11px */
+            display: inline-flex !important;
+            align-items: center !important;
+            height: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            font-size: 0.8125rem !important;
+            line-height: 1 !important;
             color: inherit !important;
+            background: transparent !important;
         }
-        /* Hide selected item while searching/typing to avoid overlap confusion */
+
+        /* Perfectly position dropdown chevron icon in center vertical line */
+        .ts-wrapper.single .ts-control::after {
+            top: 50% !important;
+            margin-top: 0 !important;
+            transform: translateY(-50%) !important;
+            right: 0.75rem !important;
+            border-color: #64748B transparent transparent transparent !important;
+        }
+
+        /* Sembunyikan item pilihan lama saat user mengklik/mengetik pencarian agar bersih seperti aplikasi profesional */
         .ts-wrapper.input-active .ts-control .item {
             display: none !important;
         }
+
+        /* Light Mode Dropdown */
         .ts-dropdown {
-            border-radius: 0.5rem !important;
+            border-radius: 0.625rem !important;
             border: 1px solid #CBD5E1 !important;
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15) !important;
-            font-size: 0.75rem !important;
+            font-size: 0.8125rem !important;
             background: #FFFFFF !important;
             z-index: 99999 !important;
+            margin-top: 4px !important;
+            overflow: hidden !important;
         }
         .ts-dropdown .option {
-            padding: 0.35rem 0.65rem !important;
-            font-size: 0.75rem !important;
+            padding: 0.5rem 0.75rem !important;
+            font-size: 0.8125rem !important;
             color: #334155 !important;
             cursor: pointer !important;
         }
@@ -301,20 +369,26 @@
             font-weight: 600 !important;
         }
 
-        /* Dark Mode overrides for TomSelect (higher specificity to beat light !important) */
-        html.dark .ts-wrapper,
-        html.dark .ts-wrapper.single .ts-control,
-        html.dark .ts-wrapper .ts-control,
+        /* Dark Mode TomSelect Overrides */
         html.dark .ts-control {
+            border-color: #2D394C !important;
+            background-color: #1A212D !important;
+        }
+        html.dark .ts-wrapper.single .ts-control::after {
+            border-color: #94A3B8 transparent transparent transparent !important;
+        }
+        html.dark .ts-wrapper,
+        html.dark .ts-wrapper *,
+        html.dark .ts-control,
+        html.dark .ts-control *,
+        html.dark .ts-control input,
+        html.dark .ts-control input:focus,
+        html.dark .ts-wrapper.input-active,
+        html.dark .ts-wrapper.input-active *,
+        html.dark .ts-wrapper.input-active .ts-control,
+        html.dark .ts-wrapper.input-active .ts-control input {
             background: transparent !important;
             background-color: transparent !important;
-            background-image: none !important;
-            border-color: #2D394C !important;
-            color: #F1F5F9 !important;
-            box-shadow: none !important;
-        }
-        html.dark .ts-wrapper .ts-control input,
-        html.dark .ts-control input {
             color: #F1F5F9 !important;
         }
         html.dark .ts-wrapper .ts-control input::placeholder {
@@ -322,20 +396,20 @@
         }
         html.dark .ts-wrapper .ts-dropdown,
         html.dark .ts-dropdown {
-            background-color: #1A212D !important;
-            border-color: #2D394C !important;
+            background: #151B26 !important;
+            background-color: #151B26 !important;
+            border-color: #2B3548 !important;
             color: #F1F5F9 !important;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4) !important;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5) !important;
         }
         html.dark .ts-dropdown .option {
             color: #CBD5E1 !important;
+            background: transparent !important;
         }
-        html.dark .ts-dropdown .option:hover {
-            background-color: #26344A !important;
-            color: #FFFFFF !important;
-        }
+        html.dark .ts-dropdown .option:hover,
         html.dark .ts-dropdown .active {
-            background-color: #26344A !important;
+            background-color: #222C3D !important;
+            background: #222C3D !important;
             color: #FFFFFF !important;
         }
     </style>
@@ -488,40 +562,36 @@
                     <i data-lucide="bar-chart-3" class="w-3.5 h-3.5 {{ Route::is('kepsek.dashboard') ? 'text-[#0F4E5A] dark:text-white' : 'text-[#A2D2D6] dark:text-[#9CA3AF]' }}"></i>
                     <span>Executive Summary</span>
                 </a>
-                <a href="{{ route('kepsek.rekap.kegiatan') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg text-xs transition-all {{ Route::is('kepsek.rekap.kegiatan') ? 'bg-[#84C4C9] text-[#0F4E5A] font-bold shadow-xs dark:bg-[#2C2C2C] dark:text-white' : 'text-[#C7E8EA] hover:bg-white/10 hover:text-white dark:text-[#9CA3AF] dark:hover:bg-white/5 dark:hover:text-white font-medium' }}">
-                    <i data-lucide="book-open" class="w-3.5 h-3.5 {{ Route::is('kepsek.rekap.kegiatan') ? 'text-[#0F4E5A] dark:text-white' : 'text-[#A2D2D6] dark:text-[#9CA3AF]' }}"></i>
-                    <span>Jurnal & Guru Pengganti</span>
+                <a href="{{ route('admin.rekap.index') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg text-xs transition-all {{ Route::is('admin.rekap.index') ? 'bg-[#84C4C9] text-[#0F4E5A] font-bold shadow-xs dark:bg-[#2C2C2C] dark:text-white' : 'text-[#C7E8EA] hover:bg-white/10 hover:text-white dark:text-[#9CA3AF] dark:hover:bg-white/5 dark:hover:text-white font-medium' }}">
+                    <i data-lucide="book-open" class="w-3.5 h-3.5 {{ Route::is('admin.rekap.index') ? 'text-[#0F4E5A] dark:text-white' : 'text-[#A2D2D6] dark:text-[#9CA3AF]' }}"></i>
+                    <span>Rekap Jurnal & Mengajar</span>
                 </a>
-                <a href="{{ route('kepsek.rekap.kepatuhan') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg text-xs transition-all {{ Route::is('kepsek.rekap.kepatuhan') ? 'bg-[#84C4C9] text-[#0F4E5A] font-bold shadow-xs dark:bg-[#2C2C2C] dark:text-white' : 'text-[#C7E8EA] hover:bg-white/10 hover:text-white dark:text-[#9CA3AF] dark:hover:bg-white/5 dark:hover:text-white font-medium' }}">
-                    <i data-lucide="file-check" class="w-3.5 h-3.5 {{ Route::is('kepsek.rekap.kepatuhan') ? 'text-[#0F4E5A] dark:text-white' : 'text-[#A2D2D6] dark:text-[#9CA3AF]' }}"></i>
+                <a href="{{ route('admin.rekap.kepatuhan') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg text-xs transition-all {{ Route::is('admin.rekap.kepatuhan') ? 'bg-[#84C4C9] text-[#0F4E5A] font-bold shadow-xs dark:bg-[#2C2C2C] dark:text-white' : 'text-[#C7E8EA] hover:bg-white/10 hover:text-white dark:text-[#9CA3AF] dark:hover:bg-white/5 dark:hover:text-white font-medium' }}">
+                    <i data-lucide="file-check" class="w-3.5 h-3.5 {{ Route::is('admin.rekap.kepatuhan') ? 'text-[#0F4E5A] dark:text-white' : 'text-[#A2D2D6] dark:text-[#9CA3AF]' }}"></i>
                     <span>Kepatuhan Guru Mengajar</span>
                 </a>
-                <a href="{{ route('kepsek.rekap.guru-piket') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg text-xs transition-all {{ Route::is('kepsek.rekap.guru-piket') ? 'bg-[#84C4C9] text-[#0F4E5A] font-bold shadow-xs dark:bg-[#2C2C2C] dark:text-white' : 'text-[#C7E8EA] hover:bg-white/10 hover:text-white dark:text-[#9CA3AF] dark:hover:bg-white/5 dark:hover:text-white font-medium' }}">
-                    <i data-lucide="user-check" class="w-3.5 h-3.5 {{ Route::is('kepsek.rekap.guru-piket') ? 'text-[#0F4E5A] dark:text-white' : 'text-[#A2D2D6] dark:text-[#9CA3AF]' }}"></i>
-                    <span>Kinerja Guru Piket</span>
+                <a href="{{ route('admin.guru-piket.index') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg text-xs transition-all {{ Route::is('admin.guru-piket.index') ? 'bg-[#84C4C9] text-[#0F4E5A] font-bold shadow-xs dark:bg-[#2C2C2C] dark:text-white' : 'text-[#C7E8EA] hover:bg-white/10 hover:text-white dark:text-[#9CA3AF] dark:hover:bg-white/5 dark:hover:text-white font-medium' }}">
+                    <i data-lucide="user-check" class="w-3.5 h-3.5 {{ Route::is('admin.guru-piket.index') ? 'text-[#0F4E5A] dark:text-white' : 'text-[#A2D2D6] dark:text-[#9CA3AF]' }}"></i>
+                    <span>Penugasan Guru Piket</span>
                 </a>
             @endif
 
             {{-- ROLE 5: WAKIL KESISWAAN (WAKASIS) --}}
             @if(in_array(Auth::user()->role, ['wakasis_siswa', 'wakasis_guru']))
                 <div class="pb-1 pt-3">
-                    <span class="px-2 text-[9.5px] font-bold text-[#87B8BE] dark:text-[#71717A] uppercase tracking-widest">Kesiswaan</span>
+                    <span class="px-2 text-[9.5px] font-bold text-[#87B8BE] dark:text-[#71717A] uppercase tracking-widest">Kesiswaan & SDM</span>
                 </div>
-                <a href="{{ route('wakasis.dashboard') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg text-xs transition-all {{ Route::is('wakasis.dashboard') ? 'bg-[#84C4C9] text-[#0F4E5A] font-bold shadow-xs dark:bg-[#2C2C2C] dark:text-white' : 'text-[#C7E8EA] hover:bg-white/10 hover:text-white dark:text-[#9CA3AF] dark:hover:bg-white/5 dark:hover:text-white font-medium' }}">
-                    <i data-lucide="shield-alert" class="w-3.5 h-3.5 {{ Route::is('wakasis.dashboard') ? 'text-[#0F4E5A] dark:text-white' : 'text-[#A2D2D6] dark:text-[#9CA3AF]' }}"></i>
-                    <span>Analitik Kedisiplinan</span>
+                <a href="{{ route('wakasis.siswa.dashboard') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg text-xs transition-all {{ Route::is('wakasis.siswa.dashboard') ? 'bg-[#84C4C9] text-[#0F4E5A] font-bold shadow-xs dark:bg-[#2C2C2C] dark:text-white' : 'text-[#C7E8EA] hover:bg-white/10 hover:text-white dark:text-[#9CA3AF] dark:hover:bg-white/5 dark:hover:text-white font-medium' }}">
+                    <i data-lucide="shield-alert" class="w-3.5 h-3.5 {{ Route::is('wakasis.siswa.dashboard') ? 'text-[#0F4E5A] dark:text-white' : 'text-[#A2D2D6] dark:text-[#9CA3AF]' }}"></i>
+                    <span>Dispensasi Siswa</span>
                 </a>
-                <a href="{{ route('wakasis.rekap.ketidakhadiran') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg text-xs transition-all {{ Route::is('wakasis.rekap.ketidakhadiran') ? 'bg-[#84C4C9] text-[#0F4E5A] font-bold shadow-xs dark:bg-[#2C2C2C] dark:text-white' : 'text-[#C7E8EA] hover:bg-white/10 hover:text-white dark:text-[#9CA3AF] dark:hover:bg-white/5 dark:hover:text-white font-medium' }}">
-                    <i data-lucide="users-2" class="w-3.5 h-3.5 {{ Route::is('wakasis.rekap.ketidakhadiran') ? 'text-[#0F4E5A] dark:text-white' : 'text-[#A2D2D6] dark:text-[#9CA3AF]' }}"></i>
-                    <span>Absensi & Siswa Bolos</span>
+                <a href="{{ route('wakasis.guru.dashboard') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg text-xs transition-all {{ Route::is('wakasis.guru.dashboard') ? 'bg-[#84C4C9] text-[#0F4E5A] font-bold shadow-xs dark:bg-[#2C2C2C] dark:text-white' : 'text-[#C7E8EA] hover:bg-white/10 hover:text-white dark:text-[#9CA3AF] dark:hover:bg-white/5 dark:hover:text-white font-medium' }}">
+                    <i data-lucide="users-2" class="w-3.5 h-3.5 {{ Route::is('wakasis.guru.dashboard') ? 'text-[#0F4E5A] dark:text-white' : 'text-[#A2D2D6] dark:text-[#9CA3AF]' }}"></i>
+                    <span>Persetujuan Izin Guru</span>
                 </a>
-                <a href="{{ route('wakasis.rekap.keterlambatan') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg text-xs transition-all {{ Route::is('wakasis.rekap.keterlambatan') ? 'bg-[#84C4C9] text-[#0F4E5A] font-bold shadow-xs dark:bg-[#2C2C2C] dark:text-white' : 'text-[#C7E8EA] hover:bg-white/10 hover:text-white dark:text-[#9CA3AF] dark:hover:bg-white/5 dark:hover:text-white font-medium' }}">
-                    <i data-lucide="clock" class="w-3.5 h-3.5 {{ Route::is('wakasis.rekap.keterlambatan') ? 'text-[#0F4E5A] dark:text-white' : 'text-[#A2D2D6] dark:text-[#9CA3AF]' }}"></i>
-                    <span>Keterlambatan Siswa</span>
-                </a>
-                <a href="{{ route('wakasis.rekap.dispensasi') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg text-xs transition-all {{ Route::is('wakasis.rekap.dispensasi') ? 'bg-[#84C4C9] text-[#0F4E5A] font-bold shadow-xs dark:bg-[#2C2C2C] dark:text-white' : 'text-[#C7E8EA] hover:bg-white/10 hover:text-white dark:text-[#9CA3AF] dark:hover:bg-white/5 dark:hover:text-white font-medium' }}">
-                    <i data-lucide="file-badge-2" class="w-3.5 h-3.5 {{ Route::is('wakasis.rekap.dispensasi') ? 'text-[#0F4E5A] dark:text-white' : 'text-[#A2D2D6] dark:text-[#9CA3AF]' }}"></i>
-                    <span>Dispensasi & Meninggalkan KBM</span>
+                <a href="{{ route('piket.monitoring-kelas') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg text-xs transition-all {{ Route::is('piket.monitoring-kelas') ? 'bg-[#84C4C9] text-[#0F4E5A] font-bold shadow-xs dark:bg-[#2C2C2C] dark:text-white' : 'text-[#C7E8EA] hover:bg-white/10 hover:text-white dark:text-[#9CA3AF] dark:hover:bg-white/5 dark:hover:text-white font-medium' }}">
+                    <i data-lucide="monitor" class="w-3.5 h-3.5 {{ Route::is('piket.monitoring-kelas') ? 'text-[#0F4E5A] dark:text-white' : 'text-[#A2D2D6] dark:text-[#9CA3AF]' }}"></i>
+                    <span>Monitoring Kelas</span>
                 </a>
             @endif
 
@@ -532,11 +602,7 @@
                 </div>
                 <a href="{{ route('satpam.dashboard') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg text-xs transition-all {{ Route::is('satpam.dashboard') ? 'bg-[#84C4C9] text-[#0F4E5A] font-bold shadow-xs dark:bg-[#2C2C2C] dark:text-white' : 'text-[#C7E8EA] hover:bg-white/10 hover:text-white dark:text-[#9CA3AF] dark:hover:bg-white/5 dark:hover:text-white font-medium' }}">
                     <i data-lucide="scan-face" class="w-3.5 h-3.5 {{ Route::is('satpam.dashboard') ? 'text-[#0F4E5A] dark:text-white' : 'text-[#A2D2D6] dark:text-[#9CA3AF]' }}"></i>
-                    <span>Pencatatan Gerbang</span>
-                </a>
-                <a href="{{ route('satpam.riwayat') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg text-xs transition-all {{ Route::is('satpam.riwayat') ? 'bg-[#84C4C9] text-[#0F4E5A] font-bold shadow-xs dark:bg-[#2C2C2C] dark:text-white' : 'text-[#C7E8EA] hover:bg-white/10 hover:text-white dark:text-[#9CA3AF] dark:hover:bg-white/5 dark:hover:text-white font-medium' }}">
-                    <i data-lucide="clock" class="w-3.5 h-3.5 {{ Route::is('satpam.riwayat') ? 'text-[#0F4E5A] dark:text-white' : 'text-[#A2D2D6] dark:text-[#9CA3AF]' }}"></i>
-                    <span>Log Tamu & Siswa</span>
+                    <span>Pencatatan Gerbang & Dispen</span>
                 </a>
             @endif
 
@@ -595,7 +661,7 @@
                 
                 <!-- Quick User Status -->
                 <div class="flex items-center space-x-2.5 pl-2.5 sm:pl-3 border-l border-slate-200 dark:border-slate-700">
-                    <div class="w-6.5 h-6.5 rounded bg-[#166876] dark:bg-[#2C2C2C] text-[#E4CC67] dark:text-[#E0C47B] flex items-center justify-center font-bold text-[11px]">
+                    <div class="w-8 h-8 rounded-xl bg-[#166876] dark:bg-[#2C2C2C] text-[#E4CC67] dark:text-[#E0C47B] flex items-center justify-center font-extrabold text-xs shadow-2xs">
                         {{ strtoupper(substr(Auth::user()->username, 0, 1)) }}
                     </div>
                     <div class="hidden lg:block text-left">
@@ -677,12 +743,13 @@
                         new TomSelect(el, {
                             create: false,
                             maxOptions: 250,
-                            placeholder: 'Ketik untuk mencari...',
+                            placeholder: el.getAttribute('placeholder') || 'Cari / pilih...',
                             allowEmptyOption: true,
                             dropdownParent: 'body',
                             onChange: function(value) {
                                 // Trigger native change event so onchange/auto-submit works
                                 el.dispatchEvent(new Event('change', { bubbles: true }));
+                                this.blur();
                             }
                         });
                     } catch(e) {
@@ -708,6 +775,118 @@
 
             // Init Searchable Dropdowns
             initSearchableSelects();
+
+            // Intercept native confirm() form submissions and convert them to SweetAlert2 Popups
+            document.addEventListener('submit', function(e) {
+                const form = e.target;
+                if (!form || form.dataset.swalConfirmed === 'true') {
+                    if (form && form.dataset) delete form.dataset.swalConfirmed;
+                    return true;
+                }
+
+                const onsubmitAttr = form.getAttribute('onsubmit') || '';
+                if (onsubmitAttr.includes('confirm(') || form.dataset.confirm) {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+
+                    let msgText = form.dataset.confirm || 'Apakah Anda yakin ingin melanjutkan tindakan ini?';
+                    let match = onsubmitAttr.match(/confirm\((['"])(.*?)\1\)/);
+                    if (match && match[2]) {
+                        msgText = match[2].replace(/\\n/g, '<br>').replace(/\\'/g, "'").replace(/\\"/g, '"');
+                    }
+
+                    const isDark = document.documentElement.classList.contains('dark');
+
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire({
+                            title: 'Konfirmasi Tindakan',
+                            html: `<div class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 py-1">${msgText}</div>`,
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#1E2538',
+                            cancelButtonColor: '#64748B',
+                            confirmButtonText: 'Ya, Lanjutkan',
+                            cancelButtonText: 'Batal',
+                            reverseButtons: true,
+                            background: isDark ? '#151B26' : '#FFFFFF',
+                            color: isDark ? '#F1F5F9' : '#0F172A',
+                            customClass: {
+                                popup: 'rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl p-5',
+                                title: 'text-base font-bold text-slate-900 dark:text-white',
+                                confirmButton: 'px-5 py-2.5 rounded-xl text-xs font-bold shadow-xs cursor-pointer',
+                                cancelButton: 'px-5 py-2.5 rounded-xl text-xs font-bold shadow-xs cursor-pointer'
+                            }
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                form.dataset.swalConfirmed = 'true';
+                                form.submit();
+                            }
+                        });
+                    } else {
+                        form.dataset.swalConfirmed = 'true';
+                        form.submit();
+                    }
+
+                    return false;
+                }
+            }, true);
+
+            // Handle Laravel Flash Messages with SweetAlert2
+            const isDarkTheme = document.documentElement.classList.contains('dark');
+            @if(session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: "{{ session('success') }}",
+                    timer: 3000,
+                    timerProgressBar: true,
+                    showConfirmButton: false,
+                    background: isDarkTheme ? '#151B26' : '#FFFFFF',
+                    color: isDarkTheme ? '#F1F5F9' : '#0F172A',
+                    customClass: {
+                        popup: 'rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl p-5'
+                    }
+                });
+            @endif
+
+            @if(session('error'))
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal!',
+                    text: "{{ session('error') }}",
+                    background: isDarkTheme ? '#151B26' : '#FFFFFF',
+                    color: isDarkTheme ? '#F1F5F9' : '#0F172A',
+                    customClass: {
+                        popup: 'rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl p-5'
+                    }
+                });
+            @endif
+
+            @if(session('warning'))
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Peringatan!',
+                    text: "{{ session('warning') }}",
+                    background: isDarkTheme ? '#151B26' : '#FFFFFF',
+                    color: isDarkTheme ? '#F1F5F9' : '#0F172A',
+                    customClass: {
+                        popup: 'rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl p-5'
+                    }
+                });
+            @endif
+
+            @if(session('info'))
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Informasi',
+                    text: "{{ session('info') }}",
+                    background: isDarkTheme ? '#151B26' : '#FFFFFF',
+                    color: isDarkTheme ? '#F1F5F9' : '#0F172A',
+                    customClass: {
+                        popup: 'rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl p-5'
+                    }
+                });
+            @endif
         });
     </script>
     @stack('scripts')

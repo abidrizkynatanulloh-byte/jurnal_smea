@@ -14,4 +14,11 @@ class Kelas extends Model
     public $timestamps = false;
 
     protected $fillable = ['nama_kelas', 'wali_kelas', 'jumlah_siswa'];
+
+    protected static function booted()
+    {
+        static::addGlobalScope('excludeDummy', function ($builder) {
+            $builder->where('nama_kelas', '!=', 'Kelas_49');
+        });
+    }
 }

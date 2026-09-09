@@ -13,8 +13,8 @@
             </p>
         </div>
         <div class="flex items-center space-x-2.5">
-            <a href="{{ route('guru.jurnal.rekap') }}" class="h-8.5 px-3.5 bg-[#1E2538] hover:bg-[#161c2c] text-white rounded-lg text-xs font-semibold transition-colors flex items-center space-x-1.5 shadow-2xs">
-                <i data-lucide="history" class="w-3.5 h-3.5"></i>
+            <a href="{{ route('guru.jurnal.rekap') }}" class="h-9.5 px-6 bg-[#1E2538] hover:bg-[#161c2c] text-white rounded-xl text-xs font-bold transition-all flex items-center space-x-2 shadow-2xs cursor-pointer">
+                <i data-lucide="history" class="w-4 h-4"></i>
                 <span>Riwayat Jurnal Saya</span>
             </a>
         </div>

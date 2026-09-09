@@ -16,4 +16,12 @@ class Mapel extends Model
     public $timestamps = false;
 
     protected $fillable = ['kode_mapel', 'nama_mapel'];
+
+    /**
+     * Relasi ke Jadwal Mengajar (satu mapel bisa diajar di banyak jadwal).
+     */
+    public function jadwal()
+    {
+        return $this->hasMany(Jadwal::class, 'kode_mapel', 'kode_mapel');
+    }
 }

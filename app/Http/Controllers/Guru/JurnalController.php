@@ -231,13 +231,22 @@ class JurnalController
                 $q->where('id_guru', $guru->id_guru);
             });
 
+        if ($request->filled('dari')) {
+            $query->whereDate('tanggal', '>=', $request->dari);
+        }
+
+        if ($request->filled('sampai')) {
+            $query->whereDate('tanggal', '<=', $request->sampai);
+        }
+
         if ($request->filled('bulan')) {
             $query->whereMonth('tanggal', $request->bulan);
         }
 
-        $riwayatJurnal = $query->orderBy('tanggal', 'desc')->paginate(15);
+        $rekapList = $query->orderBy('tanggal', 'desc')->paginate(15);
+        $riwayatJurnal = $rekapList;
 
-        return view('guru.jurnal.rekap', compact('riwayatJurnal'));
+        return view('guru.jurnal.rekap', compact('rekapList', 'riwayatJurnal', 'guru'));
     }
 
     /**

@@ -45,7 +45,7 @@
                         <i data-lucide="calendar-days" class="w-4 h-4 text-slate-600"></i>
                         <span class="font-bold text-slate-900 text-xs uppercase tracking-wider">{{ $hari }}</span>
                     </div>
-                    <span class="px-2 py-0.5 bg-slate-200 text-slate-700 rounded-full text-[10.5px] font-bold">
+                    <span class="px-2.5 py-0.5 bg-slate-900 text-white dark:bg-slate-800 dark:text-slate-100 border border-slate-800 dark:border-slate-700 rounded-lg text-xs font-bold font-mono">
                         {{ count($piketPerHari[$hari]) }} Guru
                     </span>
                 </div>

@@ -90,12 +90,12 @@
                     class="block w-full text-xs text-slate-500 file:mr-3 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200 cursor-pointer">
             </div>
 
-            <div class="flex items-center space-x-2 pt-2">
-                <button type="submit" class="h-8.5 px-4 bg-[#1E2538] hover:bg-[#161c2c] text-white rounded-lg text-xs font-semibold transition-colors shadow-2xs flex items-center space-x-1.5 cursor-pointer">
-                    <i data-lucide="send" class="w-3.5 h-3.5"></i>
+            <div class="flex items-center space-x-3 pt-3">
+                <button type="submit" class="h-9.5 px-6 bg-[#1E2538] hover:bg-[#161c2c] text-white rounded-xl text-xs font-bold transition-all shadow-2xs flex items-center space-x-2 cursor-pointer">
+                    <i data-lucide="send" class="w-4 h-4"></i>
                     <span>Kirim Pengajuan Izin</span>
                 </button>
-                <a href="{{ route('guru.izin.index') }}" class="h-8.5 px-3 border border-slate-200 hover:bg-slate-50 text-slate-600 rounded-lg text-xs font-semibold flex items-center">
+                <a href="{{ route('guru.izin.index') }}" class="h-9.5 px-5 border border-slate-200 hover:bg-slate-50 text-slate-600 rounded-xl text-xs font-semibold flex items-center justify-center transition-colors">
                     Batal
                 </a>
             </div>

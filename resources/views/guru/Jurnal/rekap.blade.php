@@ -15,7 +15,7 @@
             </div>
             <h1 class="text-xl font-bold text-slate-900 tracking-tight">Riwayat Jurnal Mengajar</h1>
             <p class="text-xs text-slate-500 mt-0.5">
-                Rekapitulasi riwayat pengisian jurnal pembelajaran oleh <span class="font-bold text-slate-800">{{ $guru->nama_guru }}</span>
+                Rekapitulasi riwayat pengisian jurnal pembelajaran oleh <span class="font-bold text-slate-800">{{ $guru->nama_guru ?? Auth::user()->nama_display ?? Auth::user()->username }}</span>
             </p>
         </div>
     </div>

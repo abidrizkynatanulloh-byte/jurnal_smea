@@ -135,8 +135,14 @@ class RekapJurnalController
         $areaChartData = [];
         for ($i = 6; $i >= 0; $i--) {
             $d = Carbon::parse($tanggal)->subDays($i)->format('Y-m-d');
-            $areaChartLabels[] = Carbon::parse($d)->format('d M');
-            $areaChartData[] = JurnalMengajar::whereDate('tanggal', $d)->count();
+            $areaChartLabels[] = Carbon::parse($d)->translatedFormat('d M');
+            $queryArea = JurnalMengajar::whereDate('tanggal', $d);
+            if ($filterKelas) {
+                $queryArea->whereHas('jadwal', function($q) use ($filterKelas) {
+                    $q->where('id_kelas', $filterKelas);
+                });
+            }
+            $areaChartData[] = $queryArea->count();
         }
         
         $chartData = [
@@ -180,42 +186,59 @@ class RekapJurnalController
             
             $sesiSeharusnya = 0;
             $sesiTerisi = 0;
-            $rincianTertunggak = [];
+            $rincianSesi = [];
+            $sesiTertunggakCount = 0;
 
             foreach ($jadwalGuru as $j) {
                 $dayIndex = array_search($j->hari, $hariList);
                 if ($dayIndex === false) continue;
                 
                 $tanggalJadwal = $startOfWeek->copy()->addDays($dayIndex)->toDateString();
-                
-                // Jika jadwal sudah lewat atau hari ini
-                if ($tanggalJadwal <= $today->toDateString()) {
-                    $sesiSeharusnya++;
-                    
-                    $jurnal = JurnalMengajar::where('id_jadwal', $j->id_jadwal)
-                        ->whereDate('tanggal', $tanggalJadwal)
-                        ->first();
+                $isSudahLewatAtauHariIni = ($tanggalJadwal <= $today->toDateString());
 
+                $jurnal = JurnalMengajar::where('id_jadwal', $j->id_jadwal)
+                    ->whereDate('tanggal', $tanggalJadwal)
+                    ->first();
+
+                $izin = null;
+                if (!$jurnal) {
+                    $izin = IzinGuru::where('id_guru', $g->id_guru)
+                        ->where('status_akhir', 'Disetujui')
+                        ->whereDate('tanggal_mulai', '<=', $tanggalJadwal)
+                        ->whereDate('tanggal_selesai', '>=', $tanggalJadwal)
+                        ->first();
+                }
+
+                if ($isSudahLewatAtauHariIni) {
+                    $sesiSeharusnya++;
                     if ($jurnal) {
                         $sesiTerisi++;
+                        $statusKode = 'terisi';
+                        $statusText = 'Sudah Diisi';
+                    } elseif ($izin) {
+                        $statusKode = 'izin';
+                        $statusText = 'Izin Resmi (' . $izin->alasan . ')';
                     } else {
-                        $izin = IzinGuru::where('id_guru', $g->id_guru)
-                            ->where('status_akhir', 'Disetujui')
-                            ->whereDate('tanggal_mulai', '<=', $tanggalJadwal)
-                            ->whereDate('tanggal_selesai', '>=', $tanggalJadwal)
-                            ->first();
-
-                        $rincianTertunggak[] = [
-                            'tanggal'   => $tanggalJadwal,
-                            'hari'      => $j->hari,
-                            'jam'       => "Jam {$j->jam_mulai}-{$j->jam_selesai}",
-                            'kelas'     => $j->kelas ? $j->kelas->nama_kelas : '-',
-                            'mapel'     => $j->mapel ? $j->mapel->nama_mapel : '-',
-                            'ruangan'   => $j->ruangan ? $j->ruangan->nama_ruangan : '-',
-                            'keterangan'=> $izin ? 'Izin Resmi (' . $izin->alasan . ')' : 'Alpa / Belum Diisi',
-                        ];
+                        $sesiTertunggakCount++;
+                        $statusKode = 'tertunggak';
+                        $statusText = 'Alpa / Belum Diisi';
                     }
+                } else {
+                    $statusKode = 'mendatang';
+                    $statusText = 'Jadwal Mendatang';
                 }
+
+                $rincianSesi[] = [
+                    'id_jurnal'  => $jurnal ? $jurnal->id_jurnal : null,
+                    'tanggal'    => $tanggalJadwal,
+                    'hari'       => $j->hari,
+                    'jam'        => "Jam {$j->jam_mulai}-{$j->jam_selesai}",
+                    'kelas'      => $j->kelas ? $j->kelas->nama_kelas : '-',
+                    'mapel'      => $j->mapel ? $j->mapel->nama_mapel : '-',
+                    'ruangan'    => $j->ruangan ? $j->ruangan->nama_ruangan : '-',
+                    'status_kode'=> $statusKode,
+                    'keterangan' => $statusText,
+                ];
             }
 
             $persentase = $sesiSeharusnya > 0 ? round(($sesiTerisi / $sesiSeharusnya) * 100) : 100;
@@ -228,10 +251,10 @@ class RekapJurnalController
                 'total_jadwal'       => $totalJadwalSeminggu,
                 'sesi_seharusnya'    => $sesiSeharusnya,
                 'sesi_terisi'        => $sesiTerisi,
-                'sesi_tertunggak'    => count($rincianTertunggak),
+                'sesi_tertunggak'    => $sesiTertunggakCount,
                 'persentase'         => $persentase,
                 'is_patuh'           => $isPatuh,
-                'rincian_tertunggak' => $rincianTertunggak,
+                'rincian_sesi'       => $rincianSesi,
             ];
         });
 

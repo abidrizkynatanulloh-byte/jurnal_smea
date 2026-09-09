@@ -61,7 +61,7 @@
                 <div>
                     <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Role / Jabatan Sistem *</label>
                     <select name="role" required
-                        class="w-full h-8 px-2.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 font-medium focus:outline-none focus:border-slate-800 cursor-pointer">
+                        class="w-full h-9 px-3 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 font-medium focus:outline-none focus:border-slate-800 cursor-pointer">
                         <option value="guru" {{ old('role') == 'guru' ? 'selected' : '' }}>Guru Mata Pelajaran</option>
                         <option value="guru_piket" {{ old('role') == 'guru_piket' ? 'selected' : '' }}>Guru Piket</option>
                         <option value="kepala_sekolah" {{ old('role') == 'kepala_sekolah' ? 'selected' : '' }}>Kepala Sekolah</option>
@@ -100,7 +100,7 @@
                         </div>
 
                         <div class="w-full sm:w-40">
-                            <select name="jabatan" onchange="this.form.submit()" class="w-full h-8 px-2.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 font-medium focus:outline-none focus:border-slate-800 cursor-pointer">
+                            <select name="jabatan" onchange="this.form.submit()" class="w-full h-9 px-3 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 font-medium focus:outline-none focus:border-slate-800 cursor-pointer">
                                 <option value="">Semua Jabatan</option>
                                 <option value="Guru" {{ request('jabatan') == 'Guru' ? 'selected' : '' }}>Guru Mapel</option>
                                 <option value="Guru Piket" {{ request('jabatan') == 'Guru Piket' ? 'selected' : '' }}>Guru Piket</option>
@@ -336,7 +336,13 @@
         document.getElementById('edit_nama_guru').value = nama;
         document.getElementById('edit_nip').value = nip;
         document.getElementById('edit_no_hp').value = noHp;
-        document.getElementById('edit_role').value = role;
+        const roleSelect = document.getElementById('edit_role');
+        if (roleSelect) {
+            roleSelect.value = role;
+            if (roleSelect.tomselect) {
+                roleSelect.tomselect.setValue(role, true);
+            }
+        }
 
         document.getElementById('formEditGuru').action = `/admin/guru/${id}`;
         document.getElementById('modalEditGuru').classList.remove('hidden');

@@ -38,6 +38,9 @@
     <!-- Lucide Icons CDN -->
     <script src="https://cdn.jsdelivr.net/npm/lucide/dist/umd/lucide.min.js"></script>
 
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style>
         :root {
             --bg-page: #EEF2F6;
@@ -441,7 +444,7 @@
                             >
                             <span class="text-[11.5px] font-medium" style="color: var(--text-subtitle);">Remember me</span>
                         </label>
-                        <a href="javascript:void(0)" onclick="alert('Silakan hubungi admin Tata Usaha sekolah untuk mereset kata sandi akun Anda.')" class="hover:text-cyan-500 dark:hover:text-cyan-400 text-[11.5px] font-medium transition-colors" style="color: var(--text-subtitle);">
+                        <a href="javascript:void(0)" onclick="showForgotPasswordAlert()" class="hover:text-cyan-500 dark:hover:text-cyan-400 text-[11.5px] font-medium transition-colors" style="color: var(--text-subtitle);">
                             Forgot Password?
                         </a>
                     </div>
@@ -799,6 +802,24 @@
             }
 
             requestAnimationFrame(animate);
+        }
+
+        function showForgotPasswordAlert() {
+            const isDark = document.documentElement.classList.contains('dark');
+            Swal.fire({
+                title: 'Lupa Kata Sandi?',
+                html: '<div class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 py-1">Silakan hubungi admin <b>Tata Usaha sekolah</b> untuk mereset kata sandi akun Anda.</div>',
+                icon: 'info',
+                confirmButtonColor: '#0284C7',
+                confirmButtonText: 'Saya Mengerti',
+                background: isDark ? '#151B26' : '#FFFFFF',
+                color: isDark ? '#F1F5F9' : '#0F172A',
+                customClass: {
+                    popup: 'rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xl p-5',
+                    title: 'text-base font-bold text-slate-900 dark:text-white',
+                    confirmButton: 'px-5 py-2.5 rounded-xl text-xs font-bold shadow-xs cursor-pointer'
+                }
+            });
         }
     </script>
 </body>

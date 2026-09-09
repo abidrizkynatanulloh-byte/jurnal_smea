@@ -133,9 +133,9 @@
                             </td>
                             <td class="py-2 px-3 text-center">
                                 <div class="flex items-center justify-center space-x-1.5">
-                                    <form action="{{ route('piket.izin-siswa.approve', $is->id) }}" method="POST">
+                                    <form action="{{ route('piket.izin-siswa.approve', $is->id) }}" method="POST" data-confirm="ACC / Setujui izin siswa ini?">
                                         @csrf
-                                        <button type="submit" onclick="return confirm('ACC / Setujui izin siswa ini?')" class="h-7 px-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition-colors cursor-pointer inline-flex items-center space-x-1 shadow-2xs">
+                                        <button type="submit" class="h-7 px-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition-colors cursor-pointer inline-flex items-center space-x-1 shadow-2xs">
                                             <i data-lucide="check" class="w-3 h-3"></i>
                                             <span>ACC</span>
                                         </button>

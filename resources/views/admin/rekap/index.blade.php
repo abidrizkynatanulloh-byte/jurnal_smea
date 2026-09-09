@@ -8,7 +8,7 @@
     <div class="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
         <div class="flex items-center space-x-3">
             <h1 class="text-lg font-bold text-slate-900 tracking-tight">Rekapitulasi Jurnal & Kehadiran</h1>
-            <span class="px-2 py-0.5 text-[11px] font-semibold bg-slate-200 text-slate-700 rounded-md font-mono tabular-nums">
+            <span class="px-2.5 py-0.5 text-xs font-bold bg-emerald-50 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/80 rounded-lg font-mono tabular-nums shadow-2xs">
                 {{ $jurnalTersimpan->count() }} Tersimpan
             </span>
         </div>
@@ -346,10 +346,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const tooltipBg = isDark ? '#1E293B' : '#FFFFFF';
     
     // --- Area Chart (Tren 7 Hari) ---
+    const areaRawData = {!! json_encode($chartData['area_data']) !!};
+    const areaMaxVal = Math.max(5, ...areaRawData);
+
     const areaOptions = {
         series: [{
             name: 'Jurnal Terisi',
-            data: {!! json_encode($chartData['area_data']) !!}
+            data: areaRawData
         }],
         chart: {
             type: 'area',
@@ -363,25 +366,46 @@ document.addEventListener('DOMContentLoaded', function() {
             type: 'gradient',
             gradient: {
                 shadeIntensity: 1,
-                opacityFrom: 0.4,
+                opacityFrom: 0.45,
                 opacityTo: 0.05,
                 stops: [0, 100]
             }
         },
         dataLabels: { enabled: false },
-        stroke: { curve: 'smooth', width: 2 },
+        stroke: { curve: 'smooth', width: 2.5 },
+        markers: {
+            size: 4,
+            colors: ['#10B981'],
+            strokeColors: isDark ? '#1E293B' : '#FFFFFF',
+            strokeWidth: 2,
+            hover: { size: 6 }
+        },
         xaxis: {
             categories: {!! json_encode($chartData['area_labels']) !!},
             axisBorder: { show: false },
             axisTicks: { show: false },
-            labels: { style: { colors: textColor, fontSize: '10px' } }
+            tickAmount: 7,
+            labels: {
+                show: true,
+                hideOverlappingLabels: false,
+                style: { colors: textColor, fontSize: '10.5px', fontWeight: 500 }
+            }
         },
         yaxis: {
-            labels: { style: { colors: textColor, fontSize: '10px' }, formatter: (val) => Math.round(val) }
+            min: 0,
+            max: areaMaxVal,
+            tickAmount: areaMaxVal <= 5 ? areaMaxVal : 5,
+            labels: {
+                style: { colors: textColor, fontSize: '10.5px', fontWeight: 500 },
+                formatter: (val) => Math.round(val)
+            }
         },
-        grid: { borderColor: gridColor, strokeDashArray: 4, padding: { top: 0, right: 0, bottom: 0, left: 10 } },
+        grid: { borderColor: gridColor, strokeDashArray: 4, padding: { top: 10, right: 10, bottom: 0, left: 10 } },
         theme: { mode: isDark ? 'dark' : 'light' },
-        tooltip: { theme: isDark ? 'dark' : 'light' }
+        tooltip: {
+            theme: isDark ? 'dark' : 'light',
+            y: { formatter: (val) => `${val} Sesi Terisi` }
+        }
     };
     new ApexCharts(document.querySelector("#areaChart"), areaOptions).render();
 

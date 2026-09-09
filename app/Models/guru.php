@@ -49,6 +49,19 @@ class Guru extends Model
     }
 
     /**
+     * Relasi ke Jadwal Mengajar (satu guru memiliki banyak jadwal).
+     */
+    public function jadwal()
+    {
+        return $this->hasMany(Jadwal::class, 'id_guru', 'id_guru');
+    }
+
+    public function jadwals()
+    {
+        return $this->hasMany(Jadwal::class, 'id_guru', 'id_guru');
+    }
+
+    /**
      * Cek apakah guru ini terdaftar sebagai wali kelas dari kelas manapun.
      */
     public function isWaliKelas()
