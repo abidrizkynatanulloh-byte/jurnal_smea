@@ -110,7 +110,7 @@
             @csrf
             <div>
                 <label for="hariSelect" class="block text-xs font-semibold text-slate-700 mb-1">Pilih Hari *</label>
-                <select name="hari" id="hariSelect" required class="block w-full h-8 px-2.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 focus:outline-none focus:border-[#1E2538]">
+                <select name="hari" id="hariSelect" required class="searchable-select block w-full h-8 px-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-[#1E2538]">
                     <option value="">-- Pilih Hari --</option>
                     @foreach($hariList as $h)
                         <option value="{{ $h }}">{{ $h }}</option>
@@ -120,7 +120,7 @@
 
             <div>
                 <label for="guruSelect" class="block text-xs font-semibold text-slate-700 mb-1">Pilih Guru *</label>
-                <select name="id_guru" id="guruSelect" required class="searchable-select block w-full h-8 px-2.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 focus:outline-none focus:border-[#1E2538]">
+                <select name="id_guru" id="guruSelect" required class="searchable-select block w-full h-8 px-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-[#1E2538]">
                     <option value="">-- Pilih Guru --</option>
                     @foreach($guruList as $g)
                         <option value="{{ $g->id_guru }}">{{ $g->nama_guru }} ({{ $g->nip ?? '-' }})</option>
@@ -131,7 +131,7 @@
             <div>
                 <label for="keterangan" class="block text-xs font-semibold text-slate-700 mb-1">Keterangan / Posisi (Opsional)</label>
                 <input type="text" name="keterangan" id="keterangan" placeholder="Contoh: Koordinator Gerbang Barat / Piket Lt 2" 
-                    class="block w-full h-8 px-2.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 focus:outline-none focus:border-[#1E2538]">
+                    class="block w-full h-8 px-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-[#1E2538]">
             </div>
 
             <div class="flex items-center justify-end space-x-2 pt-2 border-t border-slate-100">
@@ -151,11 +151,24 @@
         const modal = document.getElementById('modalTambah');
         const hariSelect = document.getElementById('hariSelect');
         if (hari) {
-            hariSelect.value = hari;
+            if (hariSelect.tomselect) {
+                hariSelect.tomselect.setValue(hari);
+            } else {
+                hariSelect.value = hari;
+            }
         } else {
-            hariSelect.value = '';
+            if (hariSelect.tomselect) {
+                hariSelect.tomselect.setValue('');
+            } else {
+                hariSelect.value = '';
+            }
         }
         modal.classList.remove('hidden');
+        
+        // Ensure TomSelect is initialized if it failed while hidden
+        if (typeof initSearchableSelects === 'function') {
+            initSearchableSelects();
+        }
     }
 
     function closeModalTambah() {

@@ -250,21 +250,36 @@
             font-size: 0.75rem !important; /* 12px */
             line-height: 1rem !important;
         }
+        .ts-wrapper,
+        .ts-wrapper.single .ts-control {
+            background: transparent !important;
+            background-color: transparent !important;
+        }
         .ts-control {
             min-height: 2rem !important; /* 32px / h-8 */
             height: 2rem !important;
             padding: 0.2rem 0.6rem !important;
-            border-radius: 0.5rem !important; /* rounded-lg */
-            border: 1px solid #E2E8F0 !important;
-            background-color: #FFFFFF !important;
-            color: #0F172A !important;
-            display: flex !important;
-            align-items: center !important;
-            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03) !important;
+            border-radius: 0.5rem !important;
+            border: none !important;
+            background: transparent !important;
+            background-color: transparent !important;
+            background-image: none !important;
+            color: inherit !important;
+            box-shadow: none !important;
+            overflow: hidden !important;
+        }
+        .ts-control > .item {
+            font-size: 0.6875rem !important; /* 11px */
+            line-height: 1.5rem !important;
+            white-space: nowrap !important;
         }
         .ts-control input {
-            font-size: 0.75rem !important;
+            font-size: 0.6875rem !important; /* 11px */
             color: inherit !important;
+        }
+        /* Hide selected item while searching/typing to avoid overlap confusion */
+        .ts-wrapper.input-active .ts-control .item {
+            display: none !important;
         }
         .ts-dropdown {
             border-radius: 0.5rem !important;
@@ -286,21 +301,38 @@
             font-weight: 600 !important;
         }
 
+        /* Dark Mode overrides for TomSelect (higher specificity to beat light !important) */
+        html.dark .ts-wrapper,
+        html.dark .ts-wrapper.single .ts-control,
+        html.dark .ts-wrapper .ts-control,
         html.dark .ts-control {
-            background-color: #1A212D !important;
+            background: transparent !important;
+            background-color: transparent !important;
+            background-image: none !important;
             border-color: #2D394C !important;
             color: #F1F5F9 !important;
+            box-shadow: none !important;
         }
+        html.dark .ts-wrapper .ts-control input,
         html.dark .ts-control input {
             color: #F1F5F9 !important;
         }
+        html.dark .ts-wrapper .ts-control input::placeholder {
+            color: #64748B !important;
+        }
+        html.dark .ts-wrapper .ts-dropdown,
         html.dark .ts-dropdown {
             background-color: #1A212D !important;
             border-color: #2D394C !important;
             color: #F1F5F9 !important;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4) !important;
         }
         html.dark .ts-dropdown .option {
             color: #CBD5E1 !important;
+        }
+        html.dark .ts-dropdown .option:hover {
+            background-color: #26344A !important;
+            color: #FFFFFF !important;
         }
         html.dark .ts-dropdown .active {
             background-color: #26344A !important;
@@ -633,20 +665,25 @@
             }
         }
 
-        // Initialize Searchable Selects via TomSelect
+        // Initialize Searchable Selects via TomSelect (ALL selects globally)
         function initSearchableSelects() {
             if (typeof TomSelect === 'undefined') return;
             
-            document.querySelectorAll('select.searchable-select, select[data-searchable], select.tom-select').forEach(function(el) {
+            // Target ALL select elements, except pagination and explicitly excluded ones
+            document.querySelectorAll('select').forEach(function(el) {
                 if (el.id === 'perPageSelect' || el.classList.contains('no-search')) return;
                 if (!el.tomselect) {
                     try {
                         new TomSelect(el, {
                             create: false,
                             maxOptions: 250,
-                            placeholder: el.querySelector('option[value=""]')?.textContent || 'Ketik untuk mencari...',
+                            placeholder: 'Ketik untuk mencari...',
                             allowEmptyOption: true,
                             dropdownParent: 'body',
+                            onChange: function(value) {
+                                // Trigger native change event so onchange/auto-submit works
+                                el.dispatchEvent(new Event('change', { bubbles: true }));
+                            }
                         });
                     } catch(e) {
                         console.warn('TomSelect init error:', e);

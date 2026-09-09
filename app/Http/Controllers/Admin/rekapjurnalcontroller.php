@@ -116,6 +116,35 @@ class RekapJurnalController
             })
             ->values();
 
+        // --- CHART DATA PREPARATION ---
+        // 1. Pie Chart Data (Selected Day)
+        $totalTerisi = $jurnalTersimpan->count();
+        $totalAlpa = $guruAlpaList->where('status_rekap', 'Alpa')->count();
+        $totalIzin = $guruAlpaList->filter(fn($g) => str_contains($g->status_rekap, 'Sah'))->count();
+        $totalTerjadwal = $guruAlpaList->where('status_rekap', 'Terjadwal')->count();
+        
+        $pieChartData = [
+            'Terisi' => $totalTerisi,
+            'Alpa' => $totalAlpa,
+            'Izin' => $totalIzin,
+            'Terjadwal' => $totalTerjadwal
+        ];
+
+        // 2. Area Chart Data (Last 7 Days)
+        $areaChartLabels = [];
+        $areaChartData = [];
+        for ($i = 6; $i >= 0; $i--) {
+            $d = Carbon::parse($tanggal)->subDays($i)->format('Y-m-d');
+            $areaChartLabels[] = Carbon::parse($d)->format('d M');
+            $areaChartData[] = JurnalMengajar::whereDate('tanggal', $d)->count();
+        }
+        
+        $chartData = [
+            'pie' => $pieChartData,
+            'area_labels' => $areaChartLabels,
+            'area_data' => $areaChartData
+        ];
+
         return view('admin.rekap.index', compact(
             'tanggal',
             'namaHari',
@@ -123,7 +152,8 @@ class RekapJurnalController
             'daftarKelas',
             'jurnalTersimpan',
             'siswaAbsenList',
-            'guruAlpaList'
+            'guruAlpaList',
+            'chartData'
         ));
     }
 

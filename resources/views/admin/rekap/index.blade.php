@@ -23,19 +23,16 @@
                     <div class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-slate-400">
                         <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
                     </div>
-                    <input type="date" name="tanggal" id="tanggal" value="{{ $tanggal }}"
+                    <input type="date" name="tanggal" id="tanggal" value="{{ $tanggal }}" onchange="this.form.submit()"
                         class="w-full h-8 pl-8 pr-2.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 font-mono focus:outline-none focus:border-slate-800 cursor-pointer">
                 </div>
             </div>
 
-            <div class="flex-1 w-full">
+            <div class="flex-1 w-full relative z-20">
                 <label for="kelas" class="block text-[11px] font-semibold text-slate-700 mb-0.5">Filter Kelas</label>
                 <div class="relative">
-                    <div class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-slate-400">
-                        <i data-lucide="school" class="w-3.5 h-3.5"></i>
-                    </div>
-                    <select name="kelas" id="kelas"
-                        class="w-full h-8 pl-8 pr-2.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 font-medium focus:outline-none focus:border-slate-800 cursor-pointer appearance-none">
+                    <select name="kelas" id="kelas" onchange="this.form.submit()"
+                        class="searchable-select w-full h-8 pl-2.5 pr-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-900 dark:text-slate-200 font-medium focus:outline-none focus:border-slate-800 cursor-pointer appearance-none">
                         <option value="">Semua Kelas</option>
                         @foreach($daftarKelas as $kls)
                             <option value="{{ $kls->id_kelas }}" {{ $filterKelas == $kls->id_kelas ? 'selected' : '' }}>{{ $kls->nama_kelas }}</option>
@@ -45,10 +42,6 @@
             </div>
 
             <div class="flex space-x-1.5 w-full sm:w-auto">
-                <button type="submit" class="h-8 px-3.5 bg-[#1E2538] hover:bg-[#161c2c] text-white rounded-lg text-xs font-semibold transition-colors flex items-center justify-center space-x-1.5 cursor-pointer shadow-2xs">
-                    <i data-lucide="filter" class="w-3.5 h-3.5"></i>
-                    <span>Terapkan</span>
-                </button>
                 <a href="{{ route('admin.rekap.index') }}" class="h-8 px-3 border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 rounded-lg text-xs font-semibold transition-colors flex items-center justify-center space-x-1">
                     <i data-lucide="rotate-ccw" class="w-3 h-3"></i>
                     <span>Reset</span>
@@ -59,6 +52,38 @@
 
     <!-- SCROLLABLE BODY AREA -->
     <div class="flex-1 min-h-0 overflow-y-auto space-y-3">
+        <!-- SECTION 0: CHARTS -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-3 shrink-0">
+            <!-- Area Chart (Trend 7 Hari) -->
+            <div class="lg:col-span-2 bg-white border border-slate-200 rounded-lg shadow-2xs overflow-hidden flex flex-col">
+                <div class="px-3.5 py-2 border-b border-slate-200 bg-slate-50 flex items-center space-x-2">
+                    <i data-lucide="trending-up" class="w-3.5 h-3.5 text-emerald-600"></i>
+                    <span class="font-bold text-slate-900 text-xs uppercase tracking-tight">Tren Jurnal Terisi (7 Hari Terakhir)</span>
+                </div>
+                <div class="p-3 flex-1 min-h-[220px]">
+                    <div id="areaChart"></div>
+                </div>
+            </div>
+
+            <!-- Pie Chart (Proporsi Hari Ini) -->
+            <div class="bg-white border border-slate-200 rounded-lg shadow-2xs overflow-hidden flex flex-col">
+                <div class="px-3.5 py-2 border-b border-slate-200 bg-slate-50 flex items-center space-x-2">
+                    <i data-lucide="pie-chart" class="w-3.5 h-3.5 text-blue-600"></i>
+                    <span class="font-bold text-slate-900 text-xs uppercase tracking-tight">Persentase Hari Ini</span>
+                </div>
+                <div class="p-3 flex-1 flex flex-col items-center justify-center min-h-[220px]">
+                    <div id="pieChart" class="w-full flex justify-center"></div>
+                    <div class="mt-3 text-center w-full">
+                        @php
+                            $totalPie = $chartData['pie']['Terisi'] + $chartData['pie']['Alpa'] + $chartData['pie']['Izin'] + $chartData['pie']['Terjadwal'];
+                            $pctTerisi = $totalPie > 0 ? round(($chartData['pie']['Terisi'] / $totalPie) * 100, 1) : 0;
+                        @endphp
+                        <div class="text-xs font-bold text-slate-800">Tingkat Pengisian: {{ $pctTerisi }}%</div>
+                        <div class="text-[11px] text-slate-500">{{ $chartData['pie']['Terisi'] }} dari {{ $totalPie }} Jadwal Terisi</div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <!-- SECTION 1: STATUS KEHADIRAN GURU -->
         <div class="bg-white border border-slate-200 rounded-lg shadow-2xs overflow-hidden shrink-0">
             <div class="px-3.5 py-2 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between bg-slate-50 gap-2">
@@ -311,7 +336,97 @@
 </div>
 
 @push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script>
+document.addEventListener('DOMContentLoaded', function() {
+    // --- ApexCharts Dark/Light Mode Helper ---
+    const isDark = document.documentElement.classList.contains('dark');
+    const textColor = isDark ? '#94A3B8' : '#64748B';
+    const gridColor = isDark ? '#2D3543' : '#E2E8F0';
+    const tooltipBg = isDark ? '#1E293B' : '#FFFFFF';
+    
+    // --- Area Chart (Tren 7 Hari) ---
+    const areaOptions = {
+        series: [{
+            name: 'Jurnal Terisi',
+            data: {!! json_encode($chartData['area_data']) !!}
+        }],
+        chart: {
+            type: 'area',
+            height: 220,
+            toolbar: { show: false },
+            fontFamily: 'inherit',
+            background: 'transparent'
+        },
+        colors: ['#10B981'], // emerald-500
+        fill: {
+            type: 'gradient',
+            gradient: {
+                shadeIntensity: 1,
+                opacityFrom: 0.4,
+                opacityTo: 0.05,
+                stops: [0, 100]
+            }
+        },
+        dataLabels: { enabled: false },
+        stroke: { curve: 'smooth', width: 2 },
+        xaxis: {
+            categories: {!! json_encode($chartData['area_labels']) !!},
+            axisBorder: { show: false },
+            axisTicks: { show: false },
+            labels: { style: { colors: textColor, fontSize: '10px' } }
+        },
+        yaxis: {
+            labels: { style: { colors: textColor, fontSize: '10px' }, formatter: (val) => Math.round(val) }
+        },
+        grid: { borderColor: gridColor, strokeDashArray: 4, padding: { top: 0, right: 0, bottom: 0, left: 10 } },
+        theme: { mode: isDark ? 'dark' : 'light' },
+        tooltip: { theme: isDark ? 'dark' : 'light' }
+    };
+    new ApexCharts(document.querySelector("#areaChart"), areaOptions).render();
+
+    // --- Pie Chart (Proporsi Hari Ini) ---
+    const pieOptions = {
+        series: [
+            {{ $chartData['pie']['Terisi'] }},
+            {{ $chartData['pie']['Alpa'] }},
+            {{ $chartData['pie']['Izin'] }},
+            {{ $chartData['pie']['Terjadwal'] }}
+        ],
+        labels: ['Terisi', 'Alpa (Belum Isi)', 'Izin Sah', 'Terjadwal'],
+        chart: {
+            type: 'donut',
+            height: 200,
+            fontFamily: 'inherit',
+            background: 'transparent'
+        },
+        colors: ['#10B981', '#F43F5E', '#3B82F6', '#F59E0B'],
+        plotOptions: {
+            pie: {
+                donut: {
+                    size: '65%',
+                    labels: {
+                        show: true,
+                        name: { show: false },
+                        value: {
+                            show: true,
+                            fontSize: '20px',
+                            fontWeight: 700,
+                            color: isDark ? '#F8FAFC' : '#0F172A'
+                        }
+                    }
+                }
+            }
+        },
+        dataLabels: { enabled: false },
+        stroke: { show: false },
+        legend: { show: false },
+        theme: { mode: isDark ? 'dark' : 'light' },
+        tooltip: { theme: isDark ? 'dark' : 'light' }
+    };
+    new ApexCharts(document.querySelector("#pieChart"), pieOptions).render();
+});
+
 function openDetailModal(namaGuru, nip, mapel, kelas, ruangan, jamMulai, jamSelesai, status, tanggal, hari) {
     document.getElementById('modalNamaGuru').textContent = namaGuru;
     document.getElementById('modalNipGuru').textContent = 'NIP: ' + (nip && nip !== '-' ? nip : 'Belum diisi');

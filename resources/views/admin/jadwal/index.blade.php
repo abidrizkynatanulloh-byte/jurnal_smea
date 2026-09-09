@@ -37,7 +37,7 @@
                 <div>
                     <label for="id_kelas" class="block text-[11px] font-semibold text-slate-700 mb-0.5">Kelas *</label>
                     <select name="id_kelas" id="id_kelas" required
-                        class="searchable-select w-full h-8 px-2.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 font-medium focus:outline-none focus:border-slate-800 cursor-pointer">
+                        class="searchable-select w-full h-8 px-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-900 dark:text-slate-200 font-medium focus:outline-none focus:border-slate-800 cursor-pointer">
                         <option value="">-- Pilih Kelas --</option>
                         @foreach ($kelasList as $k)
                             <option value="{{ $k->id_kelas }}" {{ old('id_kelas') == $k->id_kelas ? 'selected' : '' }}>
@@ -51,7 +51,7 @@
                     <div>
                         <label for="hari" class="block text-[11px] font-semibold text-slate-700 mb-0.5">Hari *</label>
                         <select name="hari" id="hari" required
-                            class="w-full h-8 px-2.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 font-medium focus:outline-none focus:border-slate-800 cursor-pointer">
+                            class="searchable-select w-full h-8 px-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-900 dark:text-slate-200 font-medium focus:outline-none focus:border-slate-800 cursor-pointer">
                             <option value="Senin">Senin</option>
                             <option value="Selasa">Selasa</option>
                             <option value="Rabu">Rabu</option>
@@ -64,12 +64,12 @@
                         <div>
                             <label for="jam_mulai" class="block text-[11px] font-semibold text-slate-700 mb-0.5">Mulai</label>
                             <input type="number" name="jam_mulai" id="jam_mulai" min="1" max="15" value="{{ old('jam_mulai', 1) }}" required
-                                class="w-full h-8 px-2 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 text-center font-mono focus:outline-none focus:border-slate-800">
+                                class="w-full h-8 px-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-900 dark:text-slate-200 text-center font-mono focus:outline-none focus:border-slate-800">
                         </div>
                         <div>
                             <label for="jam_selesai" class="block text-[11px] font-semibold text-slate-700 mb-0.5">Selesai</label>
                             <input type="number" name="jam_selesai" id="jam_selesai" min="1" max="15" value="{{ old('jam_selesai', 2) }}" required
-                                class="w-full h-8 px-2 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 text-center font-mono focus:outline-none focus:border-slate-800">
+                                class="w-full h-8 px-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-900 dark:text-slate-200 text-center font-mono focus:outline-none focus:border-slate-800">
                         </div>
                     </div>
                 </div>
@@ -77,7 +77,7 @@
                 <div>
                     <label for="kode_mapel" class="block text-[11px] font-semibold text-slate-700 mb-0.5">Mata Pelajaran *</label>
                     <select name="kode_mapel" id="kode_mapel" required
-                        class="searchable-select w-full h-8 px-2.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 font-medium focus:outline-none focus:border-slate-800 cursor-pointer">
+                        class="searchable-select w-full h-8 px-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-900 dark:text-slate-200 font-medium focus:outline-none focus:border-slate-800 cursor-pointer">
                         <option value="">-- Pilih Mapel --</option>
                         @foreach ($mapelList as $m)
                             <option value="{{ $m->kode_mapel }}" {{ old('kode_mapel') == $m->kode_mapel ? 'selected' : '' }}>
@@ -90,7 +90,7 @@
                 <div>
                     <label for="id_guru" class="block text-[11px] font-semibold text-slate-700 mb-0.5">Guru Pengampu *</label>
                     <select name="id_guru" id="id_guru" required
-                        class="searchable-select w-full h-8 px-2.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 font-medium focus:outline-none focus:border-slate-800 cursor-pointer">
+                        class="searchable-select w-full h-8 px-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-900 dark:text-slate-200 font-medium focus:outline-none focus:border-slate-800 cursor-pointer">
                         <option value="">-- Pilih Guru --</option>
                         @foreach ($guruList as $g)
                             <option value="{{ $g->id_guru }}" {{ old('id_guru') == $g->id_guru ? 'selected' : '' }}>
@@ -103,7 +103,7 @@
                 <div>
                     <label for="id_ruangan" class="block text-[11px] font-semibold text-slate-700 mb-0.5">Ruangan Kelas / Lab</label>
                     <select name="id_ruangan" id="id_ruangan"
-                        class="searchable-select w-full h-8 px-2.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 font-medium focus:outline-none focus:border-slate-800 cursor-pointer">
+                        class="searchable-select w-full h-8 px-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-900 dark:text-slate-200 font-medium focus:outline-none focus:border-slate-800 cursor-pointer">
                         <option value="">-- Default Ruangan Kelas --</option>
                         @foreach ($ruanganList as $r)
                             <option value="{{ $r->id_ruangan }}" {{ old('id_ruangan') == $r->id_ruangan ? 'selected' : '' }}>
@@ -137,7 +137,7 @@
                         </div>
 
                         <div class="w-full sm:w-32">
-                            <select name="hari" onchange="this.form.submit()" class="w-full h-8 px-2.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 font-medium focus:outline-none focus:border-slate-800 cursor-pointer">
+                            <select name="hari" onchange="this.form.submit()" class="searchable-select w-full h-8 px-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-800 dark:text-slate-200 font-medium focus:outline-none focus:border-slate-800 cursor-pointer">
                                 <option value="">Semua Hari</option>
                                 @foreach(['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'] as $h)
                                     <option value="{{ $h }}" {{ request('hari') == $h ? 'selected' : '' }}>{{ $h }}</option>
@@ -146,7 +146,7 @@
                         </div>
 
                         <div class="w-full sm:w-36">
-                            <select name="id_kelas" onchange="this.form.submit()" class="w-full h-8 px-2.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 font-medium focus:outline-none focus:border-slate-800 cursor-pointer">
+                            <select name="id_kelas" onchange="this.form.submit()" class="searchable-select w-full h-8 px-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-800 dark:text-slate-200 font-medium focus:outline-none focus:border-slate-800 cursor-pointer">
                                 <option value="">Semua Kelas</option>
                                 @foreach ($kelasList as $k)
                                     <option value="{{ $k->id_kelas }}" {{ request('id_kelas') == $k->id_kelas ? 'selected' : '' }}>{{ $k->nama_kelas }}</option>
