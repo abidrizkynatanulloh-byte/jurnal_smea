@@ -77,7 +77,7 @@
                 </div>
 
                 <div class="pt-1.5">
-                    <button type="submit" class="w-full h-10.5 bg-[#1E2538] hover:bg-[#121724] text-white rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center space-x-2 shadow-xs cursor-pointer">
+                    <button type="submit" class="w-full h-11 px-5 py-2.5 bg-[#1E2538] hover:bg-[#121724] text-white rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center space-x-2 shadow-xs cursor-pointer">
                         <i data-lucide="plus" class="w-4 h-4"></i>
                         <span>Simpan Pegawai</span>
                     </button>
@@ -243,12 +243,12 @@
                     class="w-full h-10 px-3 bg-white dark:bg-[#1A2230] border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:border-slate-800 transition-colors">
             </div>
 
-            <div class="flex items-center justify-end space-x-2.5 pt-3 border-t border-slate-100 dark:border-slate-800">
-                <button type="button" onclick="closeEditGuruModal()" class="h-10 px-4.5 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
+            <div class="flex items-center justify-end space-x-3 pt-4 border-t border-slate-100 dark:border-slate-800">
+                <button type="button" onclick="closeEditGuruModal()" class="h-11 px-5 py-2.5 min-w-[90px] border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer flex items-center justify-center">
                     Batal
                 </button>
-                <button type="submit" class="h-10 px-5.5 bg-[#1E2538] hover:bg-[#121724] text-white rounded-xl text-xs sm:text-sm font-bold transition-colors cursor-pointer shadow-xs">
-                    Simpan Perubahan
+                <button type="submit" class="h-11 px-6 py-2.5 min-w-[150px] bg-[#1E2538] hover:bg-[#121724] text-white rounded-xl text-xs sm:text-sm font-bold transition-colors cursor-pointer shadow-xs flex items-center justify-center space-x-2">
+                    <span>Simpan Perubahan</span>
                 </button>
             </div>
         </form>
@@ -299,12 +299,13 @@
                     class="w-full h-10 px-3.5 bg-white dark:bg-[#1A2230] border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:border-rose-500 transition-colors shadow-2xs">
             </div>
 
-            <div class="flex items-center justify-end space-x-2.5 pt-3 border-t border-slate-100 dark:border-slate-800">
-                <button type="button" onclick="closeDeleteGuruModal()" class="h-10 px-4.5 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
+            <div class="flex items-center justify-end space-x-3 pt-4 border-t border-slate-100 dark:border-slate-800">
+                <button type="button" onclick="closeDeleteGuruModal()" class="h-11 px-5 py-2.5 min-w-[90px] border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer flex items-center justify-center">
                     Batal
                 </button>
-                <button type="submit" class="h-10 px-6 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold transition-colors cursor-pointer shadow-sm whitespace-nowrap shrink-0">
-                    Ya, Pindahkan ke Sampah
+                <button type="submit" class="h-11 px-6 py-2.5 min-w-[150px] bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs sm:text-sm font-bold transition-colors cursor-pointer shadow-sm whitespace-nowrap shrink-0 flex items-center justify-center space-x-1.5">
+                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    <span>Ya, Pindahkan ke Sampah</span>
                 </button>
             </div>
         </form>

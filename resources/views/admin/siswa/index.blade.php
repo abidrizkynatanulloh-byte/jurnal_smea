@@ -89,7 +89,7 @@
                 </div>
 
                 <div class="pt-1.5">
-                    <button type="submit" class="w-full h-10.5 bg-[#1E2538] hover:bg-[#121724] text-white rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center space-x-2 shadow-xs cursor-pointer">
+                    <button type="submit" class="w-full h-11 px-5 py-2.5 bg-[#1E2538] hover:bg-[#121724] text-white rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center space-x-2 shadow-xs cursor-pointer">
                         <i data-lucide="plus" class="w-4 h-4"></i>
                         <span>Simpan Data Siswa</span>
                     </button>
@@ -108,11 +108,11 @@
                                 <i data-lucide="search" class="w-3.5 h-3.5"></i>
                             </div>
                             <input type="text" name="search" id="liveSearchInput" value="{{ request('search') }}" placeholder="Cari Nama Siswa, NIS, atau NISN..." 
-                                class="w-full h-8 pl-8 pr-2.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-800 transition-colors">
+                                class="w-full h-9 pl-8 pr-3 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-800 transition-colors">
                         </div>
 
-                        <div class="w-full sm:w-36">
-                            <select name="id_kelas" onchange="this.form.submit()" class="w-full h-8 px-2 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 font-medium focus:outline-none focus:border-slate-800 cursor-pointer">
+                        <div class="w-full sm:w-44 shrink-0">
+                            <select name="id_kelas" onchange="this.form.submit()" class="w-full h-9 pl-3 pr-8 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 font-medium focus:outline-none focus:border-slate-800 cursor-pointer">
                                 <option value="">Semua Kelas</option>
                                 @foreach ($kelasList as $k)
                                     <option value="{{ $k->id_kelas }}" {{ request('id_kelas') == $k->id_kelas ? 'selected' : '' }}>{{ $k->nama_kelas }}</option>
@@ -120,8 +120,8 @@
                             </select>
                         </div>
 
-                        <div class="w-full sm:w-32">
-                            <select name="jenis_kelamin" onchange="this.form.submit()" class="w-full h-8 px-2 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 font-medium focus:outline-none focus:border-slate-800 cursor-pointer">
+                        <div class="w-full sm:w-44 shrink-0">
+                            <select name="jenis_kelamin" onchange="this.form.submit()" class="w-full h-9 pl-3 pr-8 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 font-medium focus:outline-none focus:border-slate-800 cursor-pointer">
                                 <option value="">Semua Kelamin</option>
                                 <option value="L" {{ request('jenis_kelamin') == 'L' ? 'selected' : '' }}>Laki-laki (L)</option>
                                 <option value="P" {{ request('jenis_kelamin') == 'P' ? 'selected' : '' }}>Perempuan (P)</option>
@@ -129,7 +129,7 @@
                         </div>
 
                         @if (request('search') || request('id_kelas') || request('jenis_kelamin'))
-                            <a href="{{ route('admin.siswa.index') }}" class="h-8 px-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-xs font-semibold flex items-center transition-colors shrink-0">
+                            <a href="{{ route('admin.siswa.index') }}" class="h-9 px-3.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-xs font-semibold flex items-center transition-colors shrink-0">
                                 Reset
                             </a>
                         @endif
@@ -230,12 +230,12 @@
                     class="w-full h-10 px-3 bg-white dark:bg-[#1A2230] border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-slate-900 dark:text-slate-100 font-mono focus:outline-none focus:border-slate-800 transition-colors">
             </div>
 
-            <div class="flex items-center justify-end space-x-2.5 pt-3 border-t border-slate-100 dark:border-slate-800">
-                <button type="button" onclick="closeEditModal()" class="h-10 px-4.5 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
+            <div class="flex items-center justify-end space-x-3 pt-4 border-t border-slate-100 dark:border-slate-800">
+                <button type="button" onclick="closeEditModal()" class="h-11 px-5 py-2.5 min-w-[90px] border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer flex items-center justify-center">
                     Batal
                 </button>
-                <button type="submit" class="h-10 px-5.5 bg-[#1E2538] hover:bg-[#121724] text-white rounded-xl text-xs sm:text-sm font-bold transition-colors cursor-pointer shadow-xs">
-                    Simpan Perubahan
+                <button type="submit" class="h-11 px-6 py-2.5 min-w-[150px] bg-[#1E2538] hover:bg-[#121724] text-white rounded-xl text-xs sm:text-sm font-bold transition-colors cursor-pointer shadow-xs flex items-center justify-center space-x-2">
+                    <span>Simpan Perubahan</span>
                 </button>
             </div>
         </form>
@@ -286,12 +286,13 @@
                     class="w-full h-10 px-3.5 bg-white dark:bg-[#1A2230] border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:border-rose-500 transition-colors shadow-2xs">
             </div>
 
-            <div class="flex items-center justify-end space-x-2.5 pt-3 border-t border-slate-100 dark:border-slate-800">
-                <button type="button" onclick="closeDeleteSiswaModal()" class="h-10 px-4.5 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
+            <div class="flex items-center justify-end space-x-3 pt-4 border-t border-slate-100 dark:border-slate-800">
+                <button type="button" onclick="closeDeleteSiswaModal()" class="h-11 px-5 py-2.5 min-w-[90px] border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer flex items-center justify-center">
                     Batal
                 </button>
-                <button type="submit" class="h-10 px-6 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold transition-colors cursor-pointer shadow-sm whitespace-nowrap shrink-0">
-                    Ya, Pindahkan ke Sampah
+                <button type="submit" class="h-11 px-6 py-2.5 min-w-[150px] bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs sm:text-sm font-bold transition-colors cursor-pointer shadow-sm whitespace-nowrap shrink-0 flex items-center justify-center space-x-1.5">
+                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    <span>Ya, Pindahkan ke Sampah</span>
                 </button>
             </div>
         </form>

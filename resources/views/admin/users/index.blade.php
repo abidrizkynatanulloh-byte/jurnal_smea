@@ -74,7 +74,7 @@
                 </div>
 
                 <div class="pt-1.5">
-                    <button type="submit" class="w-full h-10.5 bg-[#1E2538] hover:bg-[#121724] text-white rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center space-x-2 shadow-xs cursor-pointer">
+                    <button type="submit" class="w-full h-11 px-5 py-2.5 bg-[#1E2538] hover:bg-[#121724] text-white rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center space-x-2 shadow-xs cursor-pointer">
                         <i data-lucide="plus" class="w-4 h-4"></i>
                         <span>Simpan Pengguna</span>
                     </button>
