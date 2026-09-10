@@ -15,6 +15,7 @@ use App\Models\IzinGuru;
 use App\Models\AuditLog;
 use App\Models\Notifikasi;
 use App\Models\User;
+use App\Services\WhatsAppService;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
@@ -223,6 +224,9 @@ class PiketController extends Controller
             );
 
             DB::commit();
+
+            // Kirim notifikasi WA ke Wakasis Kesiswaan Siswa
+            WhatsAppService::sendDispenSiswaNotification($dispen);
 
             return redirect()->route('piket.dashboard')
                              ->with('success', 'Pengajuan dispen siswa berhasil dikirim ke Waka Kesiswaan.');

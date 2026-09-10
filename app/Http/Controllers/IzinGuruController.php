@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\IzinGuru;
 use App\Models\Jadwal;
 use App\Models\AuditLog;
+use App\Services\WhatsAppService;
 use Carbon\Carbon;
 
 class IzinGuruController extends Controller
@@ -88,6 +89,9 @@ class IzinGuruController extends Controller
             'Pengajuan Izin Guru',
             "Guru mengajukan izin: {$izin->alasan} dari {$izin->tanggal_mulai} s/d {$izin->tanggal_selesai}"
         );
+
+        // Kirim notifikasi WA ke Waka Guru dan Kepsek
+        WhatsAppService::sendIzinGuruNotification($izin);
 
         return redirect()->route('guru.izin.index')
             ->with('success', 'Pengajuan izin berhasil dikirim ke Waka Kurikulum untuk tahap persetujuan pertama.');

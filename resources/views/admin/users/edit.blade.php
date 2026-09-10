@@ -19,7 +19,7 @@
     <div class="bg-white border border-slate-200 rounded-xl shadow-xs p-4">
         <div class="flex items-center space-x-3 mb-3.5 pb-3 border-b border-slate-100">
             <div class="w-8 h-8 rounded-lg bg-[#1E2538] text-white flex items-center justify-center font-bold text-xs shrink-0">
-                {{ strtoupper(substr($user->username, 0, 2)) }}
+                {{ $user->initials }}
             </div>
             <div class="min-w-0">
                 <h3 class="font-bold text-slate-900 text-xs truncate">{{ $user->username }}</h3>

@@ -610,7 +610,7 @@
             <div class="pt-3 border-t border-[#104F5A] dark:border-[#252525] mt-4 space-y-1.5 shrink-0">
                 <div class="px-2.5 py-2 rounded-lg bg-[#104F5A] dark:bg-[#202020] border border-[#135A66] dark:border-[#2A2A2A] flex items-center space-x-2.5">
                     <div class="w-6.5 h-6.5 rounded bg-[#0B3B44] dark:bg-[#2C2C2C] text-[#E4CC67] dark:text-[#E0C47B] font-bold text-[11px] flex items-center justify-center shrink-0 border border-[#166876] dark:border-[#383838]">
-                        {{ strtoupper(substr(Auth::user()->username, 0, 2)) }}
+                        {{ Auth::user()->initials }}
                     </div>
                     <div class="overflow-hidden flex-1">
                         <p class="text-[11px] font-semibold text-white truncate leading-none">{{ Auth::user()->nama_display ?? Auth::user()->username }}</p>
@@ -662,7 +662,7 @@
                 <!-- Quick User Status -->
                 <div class="flex items-center space-x-2.5 pl-2.5 sm:pl-3 border-l border-slate-200 dark:border-slate-700">
                     <div class="w-8 h-8 rounded-xl bg-[#166876] dark:bg-[#2C2C2C] text-[#E4CC67] dark:text-[#E0C47B] flex items-center justify-center font-extrabold text-xs shadow-2xs">
-                        {{ strtoupper(substr(Auth::user()->username, 0, 1)) }}
+                        {{ Auth::user()->initials }}
                     </div>
                     <div class="hidden lg:block text-left">
                         <p class="text-xs font-semibold text-slate-900 dark:text-white leading-none">{{ Auth::user()->nama_display ?? Auth::user()->username }}</p>

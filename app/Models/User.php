@@ -90,6 +90,35 @@ class User extends Authenticatable
     }
 
     /**
+     * Accessor untuk inisial foto profil (PP) berdasarkan nama asli pengguna.
+     */
+    public function getInitialsAttribute(): string
+    {
+        $name = trim($this->nama_display);
+
+        // Hapus gelar belakang setelah koma (misal: ", S.Kom", ", M.Pd")
+        $nameWithoutDegree = preg_replace('/,.*$/', '', $name);
+
+        // Hapus gelar depan (misal: "Drs.", "Dr.", "Ir.", "H.", "Hjh.")
+        $nameWithoutDegree = preg_replace('/^(drs|dr|ir|h|hjh)\.\s*/i', '', $nameWithoutDegree);
+
+        // Hapus sebutan 'Wali dari ' jika role wali murid
+        $nameClean = trim(str_replace('Wali dari ', '', $nameWithoutDegree));
+
+        $words = array_values(array_filter(explode(' ', $nameClean)));
+
+        if (count($words) >= 2) {
+            $first = mb_substr($words[0], 0, 1);
+            $second = mb_substr($words[1], 0, 1);
+            return strtoupper($first . $second);
+        } elseif (count($words) === 1 && !empty($words[0])) {
+            return strtoupper(mb_substr($words[0], 0, 2));
+        }
+
+        return strtoupper(mb_substr($this->username, 0, 2));
+    }
+
+    /**
      * Relasi ke data Guru (untuk role: guru, guru_piket, kepsek, wakasis).
      */
     public function guru()

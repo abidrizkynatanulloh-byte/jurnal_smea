@@ -11,6 +11,7 @@ use App\Models\JurnalMengajar;
 use App\Models\JurnalDetailKetidakhadiran;
 use App\Models\DispenSiswa;
 use App\Models\IzinSiswa;
+use App\Services\WhatsAppService;
 use Carbon\Carbon;
 
 class OrtuController extends Controller
@@ -250,7 +251,7 @@ class OrtuController extends Controller
             $fotoPath = 'uploads/bukti_izin/' . $filename;
         }
 
-        IzinSiswa::create([
+        $izin = IzinSiswa::create([
             'nis'             => $siswa->nis,
             'kategori'        => $request->kategori,
             'alasan'          => $request->alasan,
@@ -259,6 +260,9 @@ class OrtuController extends Controller
             'bukti_foto'      => $fotoPath,
             'status'          => 'Pending',
         ]);
+
+        // Kirim notifikasi WA ke Guru Piket & Waka Kesiswaan
+        WhatsAppService::sendIzinSiswaNotification($izin);
 
         return redirect()->back()->with('success', 'Pengajuan izin siswa berhasil dikirim. Menunggu verifikasi dari Guru Piket / Wali Kelas.');
     }
