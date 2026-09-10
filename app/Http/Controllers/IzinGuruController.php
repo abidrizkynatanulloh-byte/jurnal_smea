@@ -79,7 +79,7 @@ class IzinGuruController extends Controller
             'kelas_terdampak' => $request->kelas_terdampak,
             'bukti_foto'      => $buktiPath,
             'status_waka'     => 'Menunggu',
-            'status_sdm'      => 'Disetujui',
+            'status_sdm'      => 'Menunggu',
             'status_piket'    => 'Menunggu',
             'status_kepsek'   => 'Menunggu',
             'status_akhir'    => 'Diajukan',
@@ -90,8 +90,8 @@ class IzinGuruController extends Controller
             "Guru mengajukan izin: {$izin->alasan} dari {$izin->tanggal_mulai} s/d {$izin->tanggal_selesai}"
         );
 
-        // Kirim notifikasi WA ke Waka Guru dan Kepsek
-        WhatsAppService::sendIzinGuruNotification($izin);
+        // Kirim notifikasi WA ke Waka Kurikulum & SDM
+        WhatsAppService::sendIzinGuruNotificationToWaka($izin);
 
         return redirect()->route('guru.izin.index')
             ->with('success', 'Pengajuan izin berhasil dikirim ke Waka Kurikulum untuk tahap persetujuan pertama.');

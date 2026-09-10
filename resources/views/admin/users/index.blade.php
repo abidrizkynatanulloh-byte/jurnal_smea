@@ -42,9 +42,15 @@
                         class="w-full h-8 px-2.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 font-medium focus:outline-none focus:border-slate-800 cursor-pointer">
                         <option value="">-- Pilih Role --</option>
                         @foreach ($roles as $key => $label)
-                            <option value="{{ $key }}" {{ old('role') == $key ? 'selected' : '' }}>
-                                {{ $label }}
-                            </option>
+                            @if($key === 'kepala_sekolah' && isset($existingKepsek) && $existingKepsek)
+                                <option value="{{ $key }}" disabled class="bg-slate-100 text-slate-400">
+                                    {{ $label }} (Sudah Ada: {{ $existingKepsek->nama_display }})
+                                </option>
+                            @else
+                                <option value="{{ $key }}" {{ old('role') == $key ? 'selected' : '' }}>
+                                    {{ $label }}
+                                </option>
+                            @endif
                         @endforeach
                     </select>
                 </div>
@@ -63,8 +69,14 @@
 
                 <div>
                     <label for="password" class="block text-[11px] font-semibold text-slate-700 mb-0.5">Password *</label>
-                    <input type="password" name="password" id="password" placeholder="Minimal 4 karakter" required
-                        class="w-full h-8 px-2.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-800 transition-colors">
+                    <div class="relative">
+                        <input type="password" name="password" id="password_user" placeholder="Minimal 4 karakter" required
+                            class="w-full h-8 pl-2.5 pr-8 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-800 transition-colors">
+                        <button type="button" onclick="togglePasswordVisibility('password_user', 'eye_user')" 
+                            class="absolute inset-y-0 right-0 pr-2.5 flex items-center text-slate-400 hover:text-slate-700 cursor-pointer" title="Lihat/Sembunyikan Password">
+                            <i data-lucide="eye" id="eye_user" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </div>
                 </div>
 
                 <div>
@@ -181,6 +193,25 @@
 </div>
 
 <script>
+    function togglePasswordVisibility(inputId, iconId) {
+        const input = document.getElementById(inputId);
+        const icon = document.getElementById(iconId);
+        if (!input) return;
+        if (input.type === 'password') {
+            input.type = 'text';
+            if (icon) {
+                icon.setAttribute('data-lucide', 'eye-off');
+                if (window.lucide) window.lucide.createIcons();
+            }
+        } else {
+            input.type = 'password';
+            if (icon) {
+                icon.setAttribute('data-lucide', 'eye');
+                if (window.lucide) window.lucide.createIcons();
+            }
+        }
+    }
+
     let formOpen = true;
     function toggleFormPanel() {
         const formPanel = document.getElementById('formPanel');

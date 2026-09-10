@@ -804,6 +804,25 @@
             requestAnimationFrame(animate);
         }
 
+        function togglePasswordVisibility() {
+            const input = document.getElementById('password');
+            const icon = document.getElementById('passwordToggleIcon');
+            if (!input) return;
+            if (input.type === 'password') {
+                input.type = 'text';
+                if (icon) {
+                    icon.setAttribute('data-lucide', 'eye-off');
+                    if (window.lucide) window.lucide.createIcons();
+                }
+            } else {
+                input.type = 'password';
+                if (icon) {
+                    icon.setAttribute('data-lucide', 'eye');
+                    if (window.lucide) window.lucide.createIcons();
+                }
+            }
+        }
+
         function showForgotPasswordAlert() {
             const isDark = document.documentElement.classList.contains('dark');
             Swal.fire({

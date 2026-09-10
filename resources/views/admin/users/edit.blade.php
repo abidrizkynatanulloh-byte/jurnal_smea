@@ -53,9 +53,15 @@
                     <select name="role" id="role" required
                         class="block w-full h-8 pl-8 pr-7 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 focus:outline-none focus:border-[#1E2538] transition-all cursor-pointer appearance-none">
                         @foreach ($roles as $key => $label)
-                            <option value="{{ $key }}" {{ old('role', $user->role) == $key ? 'selected' : '' }}>
-                                {{ $label }}
-                            </option>
+                            @if($key === 'kepala_sekolah' && isset($existingKepsek) && $existingKepsek && $user->id !== $existingKepsek->id)
+                                <option value="{{ $key }}" disabled class="bg-slate-100 text-slate-400">
+                                    {{ $label }} (Sudah Ada: {{ $existingKepsek->nama_display }})
+                                </option>
+                            @else
+                                <option value="{{ $key }}" {{ old('role', $user->role) == $key ? 'selected' : '' }}>
+                                    {{ $label }}
+                                </option>
+                            @endif
                         @endforeach
                     </select>
                     <div class="absolute inset-y-0 right-0 pr-2.5 flex items-center pointer-events-none text-slate-400">
@@ -71,8 +77,12 @@
                     <div class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-slate-400">
                         <i data-lucide="lock" class="w-3.5 h-3.5"></i>
                     </div>
-                    <input type="password" name="password" id="password" placeholder="Kosongkan jika tidak ingin diubah"
-                        class="block w-full h-8 pl-8 pr-2.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#1E2538] transition-all">
+                    <input type="password" name="password" id="password_edit_user" placeholder="Kosongkan jika tidak ingin diubah"
+                        class="block w-full h-8 pl-8 pr-8 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#1E2538] transition-all">
+                    <button type="button" onclick="togglePasswordVisibility('password_edit_user', 'eye_edit_user')" 
+                        class="absolute inset-y-0 right-0 pr-2.5 flex items-center text-slate-400 hover:text-slate-700 cursor-pointer" title="Lihat/Sembunyikan Password">
+                        <i data-lucide="eye" id="eye_edit_user" class="w-3.5 h-3.5"></i>
+                    </button>
                 </div>
                 <p class="text-[10px] text-slate-400 mt-0.5">Minimal 4 karakter, hanya diisi jika ingin mengubah password akun.</p>
             </div>
@@ -108,4 +118,25 @@
         </form>
     </div>
 </div>
+
+<script>
+    function togglePasswordVisibility(inputId, iconId) {
+        const input = document.getElementById(inputId);
+        const icon = document.getElementById(iconId);
+        if (!input) return;
+        if (input.type === 'password') {
+            input.type = 'text';
+            if (icon) {
+                icon.setAttribute('data-lucide', 'eye-off');
+                if (window.lucide) window.lucide.createIcons();
+            }
+        } else {
+            input.type = 'password';
+            if (icon) {
+                icon.setAttribute('data-lucide', 'eye');
+                if (window.lucide) window.lucide.createIcons();
+            }
+        }
+    }
+</script>
 @endsection

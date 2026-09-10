@@ -64,7 +64,11 @@
                         class="w-full h-9 px-3 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 font-medium focus:outline-none focus:border-slate-800 cursor-pointer">
                         <option value="guru" {{ old('role') == 'guru' ? 'selected' : '' }}>Guru Mata Pelajaran</option>
                         <option value="guru_piket" {{ old('role') == 'guru_piket' ? 'selected' : '' }}>Guru Piket</option>
-                        <option value="kepala_sekolah" {{ old('role') == 'kepala_sekolah' ? 'selected' : '' }}>Kepala Sekolah</option>
+                        @if(isset($existingKepsek) && $existingKepsek)
+                            <option value="kepala_sekolah" disabled class="bg-slate-100 text-slate-400">Kepala Sekolah (Sudah Ada: {{ $existingKepsek->nama_display }})</option>
+                        @else
+                            <option value="kepala_sekolah" {{ old('role') == 'kepala_sekolah' ? 'selected' : '' }}>Kepala Sekolah</option>
+                        @endif
                         <option value="wakasis_siswa" {{ old('role') == 'wakasis_siswa' ? 'selected' : '' }}>Wakil Kesiswaan (Siswa)</option>
                         <option value="wakasis_guru" {{ old('role') == 'wakasis_guru' ? 'selected' : '' }}>Wakil Kesiswaan (Guru / SDM)</option>
                     </select>
@@ -72,8 +76,14 @@
 
                 <div>
                     <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Password Akun Login *</label>
-                    <input type="password" name="password" placeholder="Minimal 4 karakter" required
-                        class="w-full h-8 px-2.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-800 transition-colors">
+                    <div class="relative">
+                        <input type="password" name="password" id="password_tambah_guru" placeholder="Minimal 4 karakter" required
+                            class="w-full h-8 pl-2.5 pr-8 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-800 transition-colors">
+                        <button type="button" onclick="togglePasswordVisibility('password_tambah_guru', 'eye_tambah_guru')" 
+                            class="absolute inset-y-0 right-0 pr-2.5 flex items-center text-slate-400 hover:text-slate-700 cursor-pointer" title="Lihat/Sembunyikan Password">
+                            <i data-lucide="eye" id="eye_tambah_guru" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </div>
                 </div>
 
                 <div class="pt-1.5">
@@ -239,8 +249,14 @@
 
             <div>
                 <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Ganti Password (Kosongkan jika tidak diubah)</label>
-                <input type="password" name="password" placeholder="Masukkan password baru..."
-                    class="w-full h-10 px-3 bg-white dark:bg-[#1A2230] border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:border-slate-800 transition-colors">
+                <div class="relative">
+                    <input type="password" name="password" id="edit_password_guru" placeholder="Masukkan password baru..."
+                        class="w-full h-10 pl-3 pr-9 bg-white dark:bg-[#1A2230] border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:border-slate-800 transition-colors">
+                    <button type="button" onclick="togglePasswordVisibility('edit_password_guru', 'eye_edit_guru')" 
+                        class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 cursor-pointer" title="Lihat/Sembunyikan Password">
+                        <i data-lucide="eye" id="eye_edit_guru" class="w-4 h-4"></i>
+                    </button>
+                </div>
             </div>
 
             <div class="flex items-center justify-end space-x-3 pt-4 border-t border-slate-100 dark:border-slate-800">
@@ -313,6 +329,25 @@
 </div>
 
 <script>
+    function togglePasswordVisibility(inputId, iconId) {
+        const input = document.getElementById(inputId);
+        const icon = document.getElementById(iconId);
+        if (!input) return;
+        if (input.type === 'password') {
+            input.type = 'text';
+            if (icon) {
+                icon.setAttribute('data-lucide', 'eye-off');
+                if (window.lucide) window.lucide.createIcons();
+            }
+        } else {
+            input.type = 'password';
+            if (icon) {
+                icon.setAttribute('data-lucide', 'eye');
+                if (window.lucide) window.lucide.createIcons();
+            }
+        }
+    }
+
     let isFormFolded = false;
     function toggleFormPanel() {
         const formCol = document.getElementById('formCol');

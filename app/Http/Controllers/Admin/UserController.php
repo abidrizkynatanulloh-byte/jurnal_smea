@@ -66,8 +66,9 @@ class UserController
 
         // Pagination data per halaman (mempertahankan kata kunci search saat ganti halaman)
         $users = $query->latest()->paginate($perPage)->withQueryString();
+        $existingKepsek = User::where('role', 'kepala_sekolah')->with('guru')->first();
 
-        return view('admin.users.index', compact('roles', 'users'));
+        return view('admin.users.index', compact('roles', 'users', 'existingKepsek'));
     }
 
     /**
@@ -89,6 +90,15 @@ class UserController
             'password.required' => 'Password wajib diisi.',
             'password.min'      => 'Password minimal 4 karakter.',
         ]);
+
+        if ($validated['role'] === 'kepala_sekolah') {
+            $existingKepsek = User::where('role', 'kepala_sekolah')->first();
+            if ($existingKepsek) {
+                return back()->withInput()->withErrors([
+                    'role' => 'Role Kepala Sekolah sudah terisi oleh ' . $existingKepsek->nama_display . '. Silakan ubah role atau hapus akun Kepala Sekolah yang lama terlebih dahulu.'
+                ]);
+            }
+        }
 
         DB::beginTransaction();
 
@@ -168,7 +178,9 @@ class UserController
             'wali_murid'     => 'Wali Murid / Orang Tua',
         ];
 
-        return view('admin.users.edit', compact('user', 'roles'));
+        $existingKepsek = User::where('role', 'kepala_sekolah')->with('guru')->first();
+
+        return view('admin.users.edit', compact('user', 'roles', 'existingKepsek'));
     }
 
     /**
@@ -189,6 +201,15 @@ class UserController
             'username.unique'   => 'Username ini sudah digunakan akun lain.',
             'password.min'      => 'Password baru minimal 4 karakter.',
         ]);
+
+        if ($validated['role'] === 'kepala_sekolah') {
+            $existingKepsek = User::where('role', 'kepala_sekolah')->where('id', '!=', $user->id)->first();
+            if ($existingKepsek) {
+                return back()->withInput()->withErrors([
+                    'role' => 'Role Kepala Sekolah sudah terisi oleh ' . $existingKepsek->nama_display . '. Silakan ubah role atau hapus akun Kepala Sekolah yang lama terlebih dahulu.'
+                ]);
+            }
+        }
 
         // 2. Data yang akan di-update
         $updateData = [

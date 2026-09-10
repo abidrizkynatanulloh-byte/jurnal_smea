@@ -7,6 +7,7 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Models\IzinGuru;
 use App\Models\AuditLog;
+use App\Services\WhatsAppService;
 
 class WakasisGuruController extends Controller
 {
@@ -76,9 +77,13 @@ class WakasisGuruController extends Controller
     public function approveSdm($id)
     {
         $izin = IzinGuru::findOrFail($id);
-        $izin->update(['status_sdm' => 'Disetujui']);
+        $izin->status_sdm = 'Disetujui';
+        $izin->cekDanUpdateStatusAkhir();
 
         AuditLog::log('Persetujuan Izin Guru - Bagian SDM', "SDM menyetujui izin {$izin->guru->nama_guru}");
+
+        // Kirim notifikasi WA ke Kepala Sekolah untuk pengesahan final
+        WhatsAppService::sendIzinGuruNotificationToKepsek($izin);
 
         return back()->with('success', "Izin Guru {$izin->guru->nama_guru} disetujui oleh SDM dan diteruskan ke Kepala Sekolah untuk pengesahan akhir.");
     }

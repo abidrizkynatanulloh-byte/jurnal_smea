@@ -69,153 +69,127 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     // ---------------------------------------------------------------------
-    // 1. DASHBOARD UTAMA TATA USAHA (ADMIN)
+    // 1. DASHBOARD UTAMA & MANAJEMEN TATA USAHA (ADMIN)
     // ---------------------------------------------------------------------
-    Route::get('/admin/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
-
-    // ---------------------------------------------------------------------
-    // 2. DATA GURU & PEGAWAI
-    // ---------------------------------------------------------------------
-    Route::get('/admin/guru',                    [GuruController::class, 'index']  )->name('admin.guru.index');
-    Route::post('/admin/guru',                   [GuruController::class, 'store']  )->name('admin.guru.store');
-    Route::put('/admin/guru/{id}',               [GuruController::class, 'update'] )->name('admin.guru.update');
-    Route::delete('/admin/guru/{id}',            [GuruController::class, 'destroy'])->name('admin.guru.destroy');
-    Route::get('/admin/guru/trash',              [GuruController::class, 'trash']  )->name('admin.guru.trash');
-    Route::post('/admin/guru/{id}/restore',      [GuruController::class, 'restore'])->name('admin.guru.restore');
-
-    // ---------------------------------------------------------------------
-    // 2B. KELOLA WAKA
-    // ---------------------------------------------------------------------
-    Route::get('/admin/waka',                    [\App\Http\Controllers\Admin\WakaController::class, 'index']  )->name('admin.waka.index');
-    Route::post('/admin/waka',                   [\App\Http\Controllers\Admin\WakaController::class, 'store']  )->name('admin.waka.store');
-    Route::delete('/admin/waka/{id}',            [\App\Http\Controllers\Admin\WakaController::class, 'destroy'])->name('admin.waka.destroy');
-
-    // ---------------------------------------------------------------------
-    // 3. DATA SISWA
-    // ---------------------------------------------------------------------
-    Route::get('/admin/siswa',                   [SiswaController::class, 'index']  )->name('admin.siswa.index');
-    Route::post('/admin/siswa',                  [SiswaController::class, 'store']  )->name('admin.siswa.store');
-    Route::put('/admin/siswa/{nis}',             [SiswaController::class, 'update'] )->name('admin.siswa.update');
-    Route::delete('/admin/siswa/{nis}',          [SiswaController::class, 'destroy'])->name('admin.siswa.destroy');
-    Route::get('/admin/siswa/trash',             [SiswaController::class, 'trash']  )->name('admin.siswa.trash');
-    Route::post('/admin/siswa/{nis}/restore',    [SiswaController::class, 'restore'])->name('admin.siswa.restore');
-
-    // ---------------------------------------------------------------------
-    // 4. DATA MATA PELAJARAN
-    // ---------------------------------------------------------------------
-    Route::get('/admin/mapel',                   [MapelController::class, 'index']  )->name('admin.mapel.index');
-    Route::post('/admin/mapel',                  [MapelController::class, 'store']  )->name('admin.mapel.store');
-    Route::put('/admin/mapel/{kode}',            [MapelController::class, 'update'] )->name('admin.mapel.update');
-    Route::delete('/admin/mapel/{kode}',         [MapelController::class, 'destroy'])->name('admin.mapel.destroy');
-
-    // ---------------------------------------------------------------------
-    // 5. MASTER JAM PELAJARAN
-    // ---------------------------------------------------------------------
-    Route::get('/admin/jam-pelajaran',                        [JamPelajaranController::class, 'index']      )->name('admin.jam.index');
-    Route::post('/admin/jam-pelajaran',                       [JamPelajaranController::class, 'store']      )->name('admin.jam.store');
-    Route::put('/admin/jam-pelajaran/{id}',                   [JamPelajaranController::class, 'update']     )->name('admin.jam.update');
-    Route::delete('/admin/jam-pelajaran/{id}',                [JamPelajaranController::class, 'destroy']    )->name('admin.jam.destroy');
-    Route::post('/admin/jam-pelajaran/{id}/nonaktifkan',      [JamPelajaranController::class, 'nonaktifkan'])->name('admin.jam.nonaktifkan');
-    Route::post('/admin/jam-pelajaran/{id}/aktifkan',         [JamPelajaranController::class, 'aktifkan']   )->name('admin.jam.aktifkan');
-
-    // ---------------------------------------------------------------------
-    // 6. JADWAL MENGAJAR (ADMIN)
-    // ---------------------------------------------------------------------
-    Route::get('/admin/jadwal',                  [JadwalController::class, 'index']  )->name('admin.jadwal.index');
-    Route::post('/admin/jadwal',                 [JadwalController::class, 'store']  )->name('admin.jadwal.store');
-    Route::delete('/admin/jadwal/{id}',          [JadwalController::class, 'destroy'])->name('admin.jadwal.destroy');
-
-    // ---------------------------------------------------------------------
-    // 7. REKAP JURNAL & KEHADIRAN (ADMIN)
-    // ---------------------------------------------------------------------
-    Route::get('/admin/rekap-jurnal',            [RekapJurnalController::class, 'index'])->name('admin.rekap.index');
-    Route::get('/admin/kepatuhan-jurnal',        [RekapJurnalController::class, 'kepatuhan'])->name('admin.rekap.kepatuhan');
-    Route::get('/admin/rekap-jurnal/{id}',       [RekapJurnalController::class, 'show'] )->name('admin.rekap.show');
-
-    // ---------------------------------------------------------------------
-    // 8. KELOLA USER & PENGGUNA (ADMIN)
-    // ---------------------------------------------------------------------
-    Route::get('/admin/users',                   [UserController::class, 'index']  )->name('admin.users.index');
-    Route::post('/admin/users',                  [UserController::class, 'store']  )->name('admin.users.store');
-    Route::get('/admin/users/{id}/edit',         [UserController::class, 'edit']   )->name('admin.users.edit');
-    Route::put('/admin/users/{id}',              [UserController::class, 'update'] )->name('admin.users.update');
-    Route::delete('/admin/users/{id}',           [UserController::class, 'destroy'])->name('admin.users.destroy');
-
-    // Kelola Guru Piket (Admin)
-    Route::get('/admin/guru-piket',              [AdminGuruPiketController::class, 'index']  )->name('admin.guru-piket.index');
-    Route::post('/admin/guru-piket',             [AdminGuruPiketController::class, 'store']  )->name('admin.guru-piket.store');
-    Route::delete('/admin/guru-piket/{id}',      [AdminGuruPiketController::class, 'destroy'])->name('admin.guru-piket.destroy');
+    Route::middleware('role:staf_tu')->group(function () {
+        Route::get('/admin/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
+        Route::get('/admin/guru',                    [GuruController::class, 'index']  )->name('admin.guru.index');
+        Route::post('/admin/guru',                   [GuruController::class, 'store']  )->name('admin.guru.store');
+        Route::put('/admin/guru/{id}',               [GuruController::class, 'update'] )->name('admin.guru.update');
+        Route::delete('/admin/guru/{id}',            [GuruController::class, 'destroy'])->name('admin.guru.destroy');
+        Route::get('/admin/guru/trash',              [GuruController::class, 'trash']  )->name('admin.guru.trash');
+        Route::post('/admin/guru/{id}/restore',      [GuruController::class, 'restore'])->name('admin.guru.restore');
+        Route::get('/admin/waka',                    [\App\Http\Controllers\Admin\WakaController::class, 'index']  )->name('admin.waka.index');
+        Route::post('/admin/waka',                   [\App\Http\Controllers\Admin\WakaController::class, 'store']  )->name('admin.waka.store');
+        Route::delete('/admin/waka/{id}',            [\App\Http\Controllers\Admin\WakaController::class, 'destroy'])->name('admin.waka.destroy');
+        Route::get('/admin/siswa',                   [SiswaController::class, 'index']  )->name('admin.siswa.index');
+        Route::post('/admin/siswa',                  [SiswaController::class, 'store']  )->name('admin.siswa.store');
+        Route::put('/admin/siswa/{nis}',             [SiswaController::class, 'update'] )->name('admin.siswa.update');
+        Route::delete('/admin/siswa/{nis}',          [SiswaController::class, 'destroy'])->name('admin.siswa.destroy');
+        Route::get('/admin/siswa/trash',             [SiswaController::class, 'trash']  )->name('admin.siswa.trash');
+        Route::post('/admin/siswa/{nis}/restore',    [SiswaController::class, 'restore'])->name('admin.siswa.restore');
+        Route::get('/admin/mapel',                   [MapelController::class, 'index']  )->name('admin.mapel.index');
+        Route::post('/admin/mapel',                  [MapelController::class, 'store']  )->name('admin.mapel.store');
+        Route::put('/admin/mapel/{kode}',            [MapelController::class, 'update'] )->name('admin.mapel.update');
+        Route::delete('/admin/mapel/{kode}',         [MapelController::class, 'destroy'])->name('admin.mapel.destroy');
+        Route::get('/admin/jam-pelajaran',                        [JamPelajaranController::class, 'index']      )->name('admin.jam.index');
+        Route::post('/admin/jam-pelajaran',                       [JamPelajaranController::class, 'store']      )->name('admin.jam.store');
+        Route::put('/admin/jam-pelajaran/{id}',                   [JamPelajaranController::class, 'update']     )->name('admin.jam.update');
+        Route::delete('/admin/jam-pelajaran/{id}',                [JamPelajaranController::class, 'destroy']    )->name('admin.jam.destroy');
+        Route::post('/admin/jam-pelajaran/{id}/nonaktifkan',      [JamPelajaranController::class, 'nonaktifkan'])->name('admin.jam.nonaktifkan');
+        Route::post('/admin/jam-pelajaran/{id}/aktifkan',         [JamPelajaranController::class, 'aktifkan']   )->name('admin.jam.aktifkan');
+        Route::get('/admin/jadwal',                  [JadwalController::class, 'index']  )->name('admin.jadwal.index');
+        Route::post('/admin/jadwal',                 [JadwalController::class, 'store']  )->name('admin.jadwal.store');
+        Route::delete('/admin/jadwal/{id}',          [JadwalController::class, 'destroy'])->name('admin.jadwal.destroy');
+        Route::get('/admin/rekap-jurnal',            [RekapJurnalController::class, 'index'])->name('admin.rekap.index');
+        Route::get('/admin/kepatuhan-jurnal',        [RekapJurnalController::class, 'kepatuhan'])->name('admin.rekap.kepatuhan');
+        Route::get('/admin/rekap-jurnal/{id}',       [RekapJurnalController::class, 'show'] )->name('admin.rekap.show');
+        Route::get('/admin/users',                   [UserController::class, 'index']  )->name('admin.users.index');
+        Route::post('/admin/users',                  [UserController::class, 'store']  )->name('admin.users.store');
+        Route::get('/admin/users/{id}/edit',         [UserController::class, 'edit']   )->name('admin.users.edit');
+        Route::put('/admin/users/{id}',              [UserController::class, 'update'] )->name('admin.users.update');
+        Route::delete('/admin/users/{id}',           [UserController::class, 'destroy'])->name('admin.users.destroy');
+        Route::get('/admin/guru-piket',              [AdminGuruPiketController::class, 'index']  )->name('admin.guru-piket.index');
+        Route::post('/admin/guru-piket',             [AdminGuruPiketController::class, 'store']  )->name('admin.guru-piket.store');
+        Route::delete('/admin/guru-piket/{id}',      [AdminGuruPiketController::class, 'destroy'])->name('admin.guru-piket.destroy');
+    });
 
     // ---------------------------------------------------------------------
     // 9. GURU PIKET (DISPEN & MONITORING KELAS & SISWA TELAT)
     // ---------------------------------------------------------------------
-    Route::get('/piket/dashboard',               [PiketController::class, 'index']          )->name('piket.dashboard');
-    Route::post('/piket/dispen',                 [PiketController::class, 'storeDispen']    )->name('piket.dispen.store');
-    Route::post('/piket/siswa-telat',            [PiketController::class, 'storeSiswaTelat'])->name('piket.siswa-telat.store');
-    Route::get('/piket/monitoring-kelas',        [PiketController::class, 'monitoringKelas'])->name('piket.monitoring-kelas');
-    Route::post('/piket/tugas-kelas',            [PiketController::class, 'storeTugasKelas'])->name('piket.tugas-kelas.store');
-    Route::post('/piket/izin-guru/{id}/approve', [PiketController::class, 'approveIzinGuru'])->name('piket.izin-guru.approve');
-    Route::post('/piket/izin-guru/{id}/reject',  [PiketController::class, 'rejectIzinGuru'] )->name('piket.izin-guru.reject');
+    Route::middleware('role:guru_piket,guru,staf_tu')->group(function () {
+        Route::get('/piket/dashboard',               [PiketController::class, 'index']          )->name('piket.dashboard');
+        Route::post('/piket/dispen',                 [PiketController::class, 'storeDispen']    )->name('piket.dispen.store');
+        Route::post('/piket/siswa-telat',            [PiketController::class, 'storeSiswaTelat'])->name('piket.siswa-telat.store');
+        Route::get('/piket/monitoring-kelas',        [PiketController::class, 'monitoringKelas'])->name('piket.monitoring-kelas');
+        Route::post('/piket/tugas-kelas',            [PiketController::class, 'storeTugasKelas'])->name('piket.tugas-kelas.store');
+        Route::post('/piket/izin-guru/{id}/approve', [PiketController::class, 'approveIzinGuru'])->name('piket.izin-guru.approve');
+        Route::post('/piket/izin-guru/{id}/reject',  [PiketController::class, 'rejectIzinGuru'] )->name('piket.izin-guru.reject');
+        Route::post('/piket/izin-siswa/{id}/approve', [PiketController::class, 'approveIzinSiswa'])->name('piket.izin-siswa.approve');
+        Route::post('/piket/izin-siswa/{id}/reject',  [PiketController::class, 'rejectIzinSiswa'])->name('piket.izin-siswa.reject');
+    });
 
     // ---------------------------------------------------------------------
     // 10. WAKIL KESISWAAN (DISPEN SISWA)
     // ---------------------------------------------------------------------
-    Route::get('/wakasis-siswa/dashboard',            [WakasisSiswaController::class, 'index']  )->name('wakasis.siswa.dashboard');
-    Route::post('/wakasis-siswa/dispen/{id}/approve', [WakasisSiswaController::class, 'approve'])->name('wakasis.siswa.dispen.approve');
-    Route::post('/wakasis-siswa/dispen/{id}/reject',  [WakasisSiswaController::class, 'reject'] )->name('wakasis.siswa.dispen.reject');
+    Route::middleware('role:wakasis_siswa,staf_tu')->group(function () {
+        Route::get('/wakasis-siswa/dashboard',            [WakasisSiswaController::class, 'index']  )->name('wakasis.siswa.dashboard');
+        Route::post('/wakasis-siswa/dispen/{id}/approve', [WakasisSiswaController::class, 'approve'])->name('wakasis.siswa.dispen.approve');
+        Route::post('/wakasis-siswa/dispen/{id}/reject',  [WakasisSiswaController::class, 'reject'] )->name('wakasis.siswa.dispen.reject');
+    });
 
     // ---------------------------------------------------------------------
     // 11. WAKA KURIKULUM & SDM (IZIN GURU)
     // ---------------------------------------------------------------------
-    Route::get('/wakasis-guru/dashboard',                 [WakasisGuruController::class, 'index']       )->name('wakasis.guru.dashboard');
-    Route::post('/wakasis-guru/izin/{id}/approve-waka',   [WakasisGuruController::class, 'approveWaka'] )->name('wakasis.guru.approve.waka');
-    Route::post('/wakasis-guru/izin/{id}/reject-waka',    [WakasisGuruController::class, 'rejectWaka']  )->name('wakasis.guru.reject.waka');
-    Route::post('/wakasis-guru/izin/{id}/approve-sdm',    [WakasisGuruController::class, 'approveSdm']  )->name('wakasis.guru.approve.sdm');
-    Route::post('/wakasis-guru/izin/{id}/reject-sdm',     [WakasisGuruController::class, 'rejectSdm']   )->name('wakasis.guru.reject.sdm');
+    Route::middleware('role:wakasis_guru')->group(function () {
+        Route::get('/wakasis-guru/dashboard',                 [WakasisGuruController::class, 'index']       )->name('wakasis.guru.dashboard');
+        Route::post('/wakasis-guru/izin/{id}/approve-waka',   [WakasisGuruController::class, 'approveWaka'] )->name('wakasis.guru.approve.waka');
+        Route::post('/wakasis-guru/izin/{id}/reject-waka',    [WakasisGuruController::class, 'rejectWaka']  )->name('wakasis.guru.reject.waka');
+        Route::post('/wakasis-guru/izin/{id}/approve-sdm',    [WakasisGuruController::class, 'approveSdm']  )->name('wakasis.guru.approve.sdm');
+        Route::post('/wakasis-guru/izin/{id}/reject-sdm',     [WakasisGuruController::class, 'rejectSdm']   )->name('wakasis.guru.reject.sdm');
+    });
 
     // ---------------------------------------------------------------------
     // 12. DASHBOARD & FITUR GURU
     // ---------------------------------------------------------------------
-    Route::get('/guru/dashboard',                [GuruDashboardController::class, 'index'])->name('guru.dashboard');
-    Route::get('/guru/wali-kelas',               [GuruDashboardController::class, 'waliKelas'])->name('guru.wali-kelas');
-
-    // Jurnal Mengajar
-    Route::get('/guru/jurnal/rekap',             [JurnalController::class, 'rekap'] )->name('guru.jurnal.rekap');
-    Route::get('/guru/jurnal/tertunggak',        [JurnalController::class, 'tertunggak'])->name('guru.jurnal.tertunggak');
-    Route::get('/guru/jurnal/input/{id_jadwal}', [JurnalController::class, 'create'])->name('guru.jurnal.create');
-    Route::post('/guru/jurnal',                  [JurnalController::class, 'store'] )->name('guru.jurnal.store');
-    Route::get('/guru/jurnal/{id_jurnal}',       [JurnalController::class, 'show']  )->name('guru.jurnal.show');
-
-    // Izin Guru
-    Route::get('/guru/izin',                     [IzinGuruController::class, 'index'] )->name('guru.izin.index');
-    Route::get('/guru/izin/create',              [IzinGuruController::class, 'create'])->name('guru.izin.create');
-    Route::post('/guru/izin',                    [IzinGuruController::class, 'store'] )->name('guru.izin.store');
+    Route::middleware('role:guru,guru_piket,wakasis_guru,wakasis_siswa,kepala_sekolah,staf_tu')->group(function () {
+        Route::get('/guru/dashboard',                [GuruDashboardController::class, 'index'])->name('guru.dashboard');
+        Route::get('/guru/wali-kelas',               [GuruDashboardController::class, 'waliKelas'])->name('guru.wali-kelas');
+        Route::get('/guru/jurnal/rekap',             [JurnalController::class, 'rekap'] )->name('guru.jurnal.rekap');
+        Route::get('/guru/jurnal/tertunggak',        [JurnalController::class, 'tertunggak'])->name('guru.jurnal.tertunggak');
+        Route::get('/guru/jurnal/input/{id_jadwal}', [JurnalController::class, 'create'])->name('guru.jurnal.create');
+        Route::post('/guru/jurnal',                  [JurnalController::class, 'store'] )->name('guru.jurnal.store');
+        Route::get('/guru/jurnal/{id_jurnal}',       [JurnalController::class, 'show']  )->name('guru.jurnal.show');
+        Route::get('/guru/izin',                     [IzinGuruController::class, 'index'] )->name('guru.izin.index');
+        Route::get('/guru/izin/create',              [IzinGuruController::class, 'create'])->name('guru.izin.create');
+        Route::post('/guru/izin',                    [IzinGuruController::class, 'store'] )->name('guru.izin.store');
+    });
 
     // ---------------------------------------------------------------------
     // 13. SATPAM (POS KEAMANAN & GERBANG)
     // ---------------------------------------------------------------------
-    Route::get('/satpam/dashboard',              [SatpamController::class, 'index']           )->name('satpam.dashboard');
-    Route::post('/satpam/dispen/{id}/keluar',    [SatpamController::class, 'konfirmasiKeluar'])->name('satpam.dispen.keluar');
-    Route::post('/satpam/dispen/{id}/kembali',   [SatpamController::class, 'konfirmasiKembali'])->name('satpam.dispen.kembali');
+    Route::middleware('role:satpam,staf_tu')->group(function () {
+        Route::get('/satpam/dashboard',              [SatpamController::class, 'index']           )->name('satpam.dashboard');
+        Route::post('/satpam/dispen/{id}/keluar',    [SatpamController::class, 'konfirmasiKeluar'])->name('satpam.dispen.keluar');
+        Route::post('/satpam/dispen/{id}/kembali',   [SatpamController::class, 'konfirmasiKembali'])->name('satpam.dispen.kembali');
+    });
 
     // ---------------------------------------------------------------------
     // 14. KEPALA SEKOLAH (EXECUTIVE MONITORING & TAHAP FINAL)
     // ---------------------------------------------------------------------
-    Route::get('/kepsek/dashboard',                    [KepsekController::class, 'index']          )->name('kepsek.dashboard');
-    Route::post('/kepsek/izin-guru/{id}/approve',      [KepsekController::class, 'approveIzinGuru'])->name('kepsek.izin-guru.approve');
-    Route::post('/kepsek/izin-guru/{id}/reject',       [KepsekController::class, 'rejectIzinGuru'] )->name('kepsek.izin-guru.reject');
+    Route::middleware('role:kepala_sekolah')->group(function () {
+        Route::get('/kepsek/dashboard',                    [KepsekController::class, 'index']          )->name('kepsek.dashboard');
+        Route::post('/kepsek/izin-guru/{id}/approve',      [KepsekController::class, 'approveIzinGuru'])->name('kepsek.izin-guru.approve');
+        Route::post('/kepsek/izin-guru/{id}/reject',       [KepsekController::class, 'rejectIzinGuru'] )->name('kepsek.izin-guru.reject');
+    });
 
     // ---------------------------------------------------------------------
     // 15. ORANG TUA / WALI MURID
     // ---------------------------------------------------------------------
-    Route::get('/ortu/dashboard', [OrtuController::class, 'index'])->name('wali.dashboard');
-    Route::get('/wali/dashboard', [OrtuController::class, 'index'])->name('ortu.dashboard');
-    Route::post('/ortu/izin',     [OrtuController::class, 'storeIzin'])->name('ortu.izin.store');
-
-    // ---------------------------------------------------------------------
-    // 16. PERSETUJUAN IZIN SISWA (GURU PIKET / WALI KELAS)
-    // ---------------------------------------------------------------------
-    Route::post('/piket/izin-siswa/{id}/approve', [PiketController::class, 'approveIzinSiswa'])->name('piket.izin-siswa.approve');
-    Route::post('/piket/izin-siswa/{id}/reject',  [PiketController::class, 'rejectIzinSiswa'])->name('piket.izin-siswa.reject');
+    Route::middleware('role:wali_murid,staf_tu')->group(function () {
+        Route::get('/ortu/dashboard', [OrtuController::class, 'index'])->name('wali.dashboard');
+        Route::get('/wali/dashboard', [OrtuController::class, 'index'])->name('ortu.dashboard');
+        Route::post('/ortu/izin',     [OrtuController::class, 'storeIzin'])->name('ortu.izin.store');
+    });
 
 });

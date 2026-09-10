@@ -62,8 +62,9 @@ class GuruController
 
         $guruList = $query->orderBy('nama_guru')->paginate($perPage)->withQueryString();
         $totalGuru = Guru::count();
+        $existingKepsek = User::where('role', 'kepala_sekolah')->with('guru')->first();
 
-        return view('admin.guru.index', compact('guruList', 'totalGuru'));
+        return view('admin.guru.index', compact('guruList', 'totalGuru', 'existingKepsek'));
     }
 
     /**
@@ -83,6 +84,15 @@ class GuruController
             'nama_guru.required' => 'Nama lengkap pegawai wajib diisi.',
             'password.required'  => 'Password wajib diisi.',
         ]);
+
+        if ($validated['role'] === 'kepala_sekolah') {
+            $existingKepsek = User::where('role', 'kepala_sekolah')->first();
+            if ($existingKepsek) {
+                return back()->withInput()->withErrors([
+                    'role' => 'Jabatan Kepala Sekolah sudah terisi oleh ' . $existingKepsek->nama_display . '. Silakan ubah role atau hapus akun Kepala Sekolah yang lama terlebih dahulu.'
+                ]);
+            }
+        }
 
         DB::beginTransaction();
         try {
@@ -136,6 +146,17 @@ class GuruController
             'nip.unique'         => 'NIP ini sudah terdaftar.',
             'nama_guru.required' => 'Nama lengkap pegawai wajib diisi.',
         ]);
+
+        if (isset($validated['role']) && $validated['role'] === 'kepala_sekolah') {
+            $existingKepsek = User::where('role', 'kepala_sekolah')
+                ->where('id_guru', '!=', $guru->id_guru)
+                ->first();
+            if ($existingKepsek) {
+                return back()->withInput()->withErrors([
+                    'role' => 'Jabatan Kepala Sekolah sudah terisi oleh ' . $existingKepsek->nama_display . '. Silakan ubah role atau hapus akun Kepala Sekolah yang lama terlebih dahulu.'
+                ]);
+            }
+        }
 
         DB::beginTransaction();
         try {

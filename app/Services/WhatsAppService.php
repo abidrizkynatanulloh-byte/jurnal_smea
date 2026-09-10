@@ -12,12 +12,30 @@ use Illuminate\Support\Facades\Log;
 class WhatsAppService
 {
     /**
-     * Kirim notifikasi WA saat ada pengajuan Izin Guru baru.
+     * Dapatkan Base URL aplikasi secara dinamis dari HTTP Request aktif atau .env.
+     *
+     * @return string
+     */
+    public static function getBaseUrl(): string
+    {
+        try {
+            if (request() && request()->getHttpHost()) {
+                return request()->getSchemeAndHttpHost();
+            }
+        } catch (\Throwable $e) {
+            // Ignore jika dipanggil dari CLI/queue tanpa HTTP request
+        }
+
+        return config('app.url', 'http://localhost:8000');
+    }
+
+    /**
+     * Kirim notifikasi WA ke Waka Kurikulum & Kepala Sekolah saat ada pengajuan Izin Guru baru.
      *
      * @param IzinGuru $izin
      * @return void
      */
-    public static function sendIzinGuruNotification(IzinGuru $izin): void
+    public static function sendIzinGuruNotificationToWaka(IzinGuru $izin): void
     {
         try {
             $izin->loadMissing('guru');
@@ -27,21 +45,100 @@ class WhatsAppService
             $alasan = $izin->alasan ?? '-';
             $keterangan = $izin->keterangan ?? '-';
 
-            $appUrl = config('app.url', 'http://localhost:8000');
-            $linkApproval = rtrim($appUrl, '/') . '/wakasis-guru/dashboard';
+            $appUrl = self::getBaseUrl();
 
-            $message = "[Izin Guru]\n\n" .
-                "Ada pengajuan izin guru baru yang memerlukan persetujuan:\n\n" .
+            // 1. Kirim Notifikasi ke Waka Kurikulum & SDM
+            $wakaRecipients = User::where('role', 'wakasis_guru')
+                ->with('guru')
+                ->where('is_active', true)
+                ->get();
+
+            $wakaNumbers = [];
+            foreach ($wakaRecipients as $r) {
+                if ($r->guru && !empty($r->guru->no_hp)) {
+                    $fn = self::formatPhoneNumber($r->guru->no_hp);
+                    if ($fn) $wakaNumbers[] = $fn;
+                }
+            }
+
+            if (!empty($wakaNumbers)) {
+                $linkWaka = rtrim($appUrl, '/') . '/wakasis-guru/dashboard';
+                $msgWaka = "[Izin Guru]\n\n" .
+                    "Ada pengajuan izin guru baru yang memerlukan persetujuan Waka Kurikulum & SDM:\n\n" .
+                    "📌 *Nama Guru* : {$namaGuru}\n" .
+                    "📅 *Tanggal*   : {$tglMulai} s/d {$tglSelesai}\n" .
+                    "📝 *Alasan*    : {$alasan}\n" .
+                    "ℹ️ *Keterangan*: {$keterangan}\n\n" .
+                    "Silakan buka tautan berikut untuk memproses persetujuan:\n" .
+                    "🔗 {$linkWaka}\n\n" .
+                    "Terima Kasih.";
+                self::sendBulkMessage($wakaNumbers, $msgWaka);
+            }
+
+            // 2. Kirim Notifikasi ke Kepala Sekolah (dengan Link Dashboard Kepsek)
+            $kepsekRecipients = User::where('role', 'kepala_sekolah')
+                ->with('guru')
+                ->where('is_active', true)
+                ->get();
+
+            $kepsekNumbers = [];
+            foreach ($kepsekRecipients as $r) {
+                if ($r->guru && !empty($r->guru->no_hp)) {
+                    $fn = self::formatPhoneNumber($r->guru->no_hp);
+                    if ($fn) $kepsekNumbers[] = $fn;
+                }
+            }
+
+            if (!empty($kepsekNumbers)) {
+                $linkKepsek = rtrim($appUrl, '/') . '/kepsek/dashboard';
+                $msgKepsek = "[Izin Guru]\n\n" .
+                    "Ada pengajuan izin guru baru dari {$namaGuru}:\n\n" .
+                    "📌 *Nama Guru* : {$namaGuru}\n" .
+                    "📅 *Tanggal*   : {$tglMulai} s/d {$tglSelesai}\n" .
+                    "📝 *Alasan*    : {$alasan}\n" .
+                    "ℹ️ *Keterangan*: {$keterangan}\n\n" .
+                    "Silakan buka tautan berikut untuk memantau & memberi persetujuan:\n" .
+                    "🔗 {$linkKepsek}\n\n" .
+                    "Terima Kasih.";
+                self::sendBulkMessage($kepsekNumbers, $msgKepsek);
+            }
+
+        } catch (\Throwable $e) {
+            Log::error("WhatsAppService Error sendIzinGuruNotificationToWaka (ID {$izin->id}): " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Kirim notifikasi WA ke Kepala Sekolah saat izin guru telah disetujui Waka Kurikulum & SDM.
+     *
+     * @param IzinGuru $izin
+     * @return void
+     */
+    public static function sendIzinGuruNotificationToKepsek(IzinGuru $izin): void
+    {
+        try {
+            $izin->loadMissing('guru');
+            $namaGuru = $izin->guru->nama_guru ?? 'Guru';
+            $tglMulai = date('d-m-Y', strtotime($izin->tanggal_mulai));
+            $tglSelesai = date('d-m-Y', strtotime($izin->tanggal_selesai));
+            $alasan = $izin->alasan ?? '-';
+            $keterangan = $izin->keterangan ?? '-';
+
+            $appUrl = self::getBaseUrl();
+            $linkApproval = rtrim($appUrl, '/') . '/kepsek/dashboard';
+
+            $message = "[Izin Guru - Pengesahan Kepsek]\n\n" .
+                "Pengajuan izin guru telah disetujui Waka Kurikulum & SDM. Memerlukan pengesahan final Kepala Sekolah:\n\n" .
                 "📌 *Nama Guru* : {$namaGuru}\n" .
                 "📅 *Tanggal*   : {$tglMulai} s/d {$tglSelesai}\n" .
                 "📝 *Alasan*    : {$alasan}\n" .
                 "ℹ️ *Keterangan*: {$keterangan}\n\n" .
-                "Silakan buka tautan berikut untuk memproses persetujuan:\n" .
+                "Silakan buka tautan berikut untuk memberikan pengesahan final:\n" .
                 "🔗 {$linkApproval}\n\n" .
                 "Terima Kasih.";
 
-            // Ambil akun Waka Guru dan Kepsek
-            $recipients = User::whereIn('role', ['wakasis_guru', 'kepala_sekolah'])
+            // Ambil akun Kepala Sekolah
+            $recipients = User::where('role', 'kepala_sekolah')
                 ->with('guru')
                 ->where('is_active', true)
                 ->get();
@@ -56,15 +153,20 @@ class WhatsAppService
                 }
             }
 
-            if (empty($phoneNumbers)) {
-                Log::info("WhatsAppService: Tidak ada nomor HP penerima (Waka Guru / Kepsek) yang valid untuk notifikasi IzinGuru ID {$izin->id}.");
-                return;
+            if (!empty($phoneNumbers)) {
+                self::sendBulkMessage($phoneNumbers, $message);
             }
-
-            self::sendBulkMessage($phoneNumbers, $message);
         } catch (\Throwable $e) {
-            Log::error("WhatsAppService Error (IzinGuru ID {$izin->id}): " . $e->getMessage());
+            Log::error("WhatsAppService Error sendIzinGuruNotificationToKepsek (ID {$izin->id}): " . $e->getMessage());
         }
+    }
+
+    /**
+     * Backward compatibility helper for Izin Guru notification.
+     */
+    public static function sendIzinGuruNotification(IzinGuru $izin): void
+    {
+        self::sendIzinGuruNotificationToWaka($izin);
     }
 
     /**
@@ -84,7 +186,7 @@ class WhatsAppService
             $jamMulai = $dispen->jam_keluar_rencana ?? '-';
             $jamKembali = $dispen->jam_kembali_rencana ?? 'Selesai';
 
-            $appUrl = config('app.url', 'http://localhost:8000');
+            $appUrl = self::getBaseUrl();
             $linkApproval = rtrim($appUrl, '/') . '/wakasis-siswa/dashboard';
 
             $message = "[Dispen Siswa]\n\n" .
@@ -141,7 +243,7 @@ class WhatsAppService
             $tglSelesai = date('d-m-Y', strtotime($izin->tanggal_selesai));
             $alasan = $izin->alasan ?? '-';
 
-            $appUrl = config('app.url', 'http://localhost:8000');
+            $appUrl = self::getBaseUrl();
             $linkApproval = rtrim($appUrl, '/') . '/piket/dashboard';
 
             $message = "[Izin Siswa]\n\n" .
@@ -200,13 +302,17 @@ class WhatsAppService
         $targetsStr = implode(',', array_unique($targetNumbers));
 
         try {
-            $response = Http::withHeaders([
-                'Authorization' => $token,
-            ])->timeout(10)->post('https://api.fonnte.com/send', [
-                'target' => $targetsStr,
-                'message' => $message,
-                'countryCode' => '62',
-            ]);
+            $response = Http::retry(3, 300)
+                ->withOptions(['force_ip_resolve' => 'v4'])
+                ->withHeaders([
+                    'Authorization' => $token,
+                ])
+                ->timeout(10)
+                ->post('https://api.fonnte.com/send', [
+                    'target' => $targetsStr,
+                    'message' => $message,
+                    'countryCode' => '62',
+                ]);
 
             if ($response->successful()) {
                 Log::info("WhatsAppService: Pesan WA berhasil dikirim ke {$targetsStr}.", $response->json() ?? []);

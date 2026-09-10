@@ -37,9 +37,9 @@ class IzinGuru extends Model
      */
     public function cekDanUpdateStatusAkhir()
     {
-        if ($this->status_waka === 'Ditolak' || $this->status_piket === 'Ditolak' || $this->status_kepsek === 'Ditolak') {
+        if ($this->status_waka === 'Ditolak' || $this->status_sdm === 'Ditolak' || $this->status_kepsek === 'Ditolak') {
             $this->status_akhir = 'Ditolak';
-        } elseif ($this->status_waka === 'Disetujui' && $this->status_piket === 'Disetujui' && $this->status_kepsek === 'Disetujui') {
+        } elseif ($this->status_waka === 'Disetujui' && $this->status_sdm === 'Disetujui' && $this->status_kepsek === 'Disetujui') {
             $this->status_akhir = 'Disetujui';
         } else {
             $this->status_akhir = 'Diajukan';
