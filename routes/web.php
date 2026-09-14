@@ -75,6 +75,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/admin/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
         Route::get('/admin/guru',                    [GuruController::class, 'index']  )->name('admin.guru.index');
         Route::post('/admin/guru',                   [GuruController::class, 'store']  )->name('admin.guru.store');
+        Route::post('/admin/guru/import',            [GuruController::class, 'importCsv'])->name('admin.guru.import');
+        Route::get('/admin/guru/template',           [GuruController::class, 'downloadTemplate'])->name('admin.guru.template');
         Route::put('/admin/guru/{id}',               [GuruController::class, 'update'] )->name('admin.guru.update');
         Route::delete('/admin/guru/{id}',            [GuruController::class, 'destroy'])->name('admin.guru.destroy');
         Route::get('/admin/guru/trash',              [GuruController::class, 'trash']  )->name('admin.guru.trash');
@@ -84,6 +86,8 @@ Route::middleware('auth')->group(function () {
         Route::delete('/admin/waka/{id}',            [\App\Http\Controllers\Admin\WakaController::class, 'destroy'])->name('admin.waka.destroy');
         Route::get('/admin/siswa',                   [SiswaController::class, 'index']  )->name('admin.siswa.index');
         Route::post('/admin/siswa',                  [SiswaController::class, 'store']  )->name('admin.siswa.store');
+        Route::post('/admin/siswa/import',           [SiswaController::class, 'importCsv'])->name('admin.siswa.import');
+        Route::get('/admin/siswa/template',          [SiswaController::class, 'downloadTemplate'])->name('admin.siswa.template');
         Route::put('/admin/siswa/{nis}',             [SiswaController::class, 'update'] )->name('admin.siswa.update');
         Route::delete('/admin/siswa/{nis}',          [SiswaController::class, 'destroy'])->name('admin.siswa.destroy');
         Route::get('/admin/siswa/trash',             [SiswaController::class, 'trash']  )->name('admin.siswa.trash');
@@ -100,6 +104,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/admin/jam-pelajaran/{id}/aktifkan',         [JamPelajaranController::class, 'aktifkan']   )->name('admin.jam.aktifkan');
         Route::get('/admin/jadwal',                  [JadwalController::class, 'index']  )->name('admin.jadwal.index');
         Route::post('/admin/jadwal',                 [JadwalController::class, 'store']  )->name('admin.jadwal.store');
+        Route::post('/admin/jadwal/import',          [JadwalController::class, 'importCsv'])->name('admin.jadwal.import');
+        Route::get('/admin/jadwal/template',         [JadwalController::class, 'downloadTemplate'])->name('admin.jadwal.template');
         Route::delete('/admin/jadwal/{id}',          [JadwalController::class, 'destroy'])->name('admin.jadwal.destroy');
         Route::get('/admin/rekap-jurnal',            [RekapJurnalController::class, 'index'])->name('admin.rekap.index');
         Route::get('/admin/kepatuhan-jurnal',        [RekapJurnalController::class, 'kepatuhan'])->name('admin.rekap.kepatuhan');

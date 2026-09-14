@@ -231,4 +231,251 @@ class GuruController
 
         return redirect()->route('admin.guru.trash')->with('success', 'Data guru berhasil dipulihkan!');
     }
+
+    /**
+     * Download Template CSV untuk Data Guru.
+     */
+    public function downloadTemplate()
+    {
+        $headers = [
+            "Content-Type" => "text/csv; charset=UTF-8",
+            "Content-Disposition" => "attachment; filename=template_import_guru.csv",
+        ];
+
+        $callback = function() {
+            $file = fopen('php://output', 'w');
+            // Write UTF-8 BOM for Excel compatibility
+            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
+            
+            fputcsv($file, ['nip', 'nama_guru', 'no_hp', 'role', 'password'], ';');
+            fputcsv($file, ['198001012005011001', 'Drs. Budi Santoso, M.Pd', '081234567890', 'guru', 'guru123'], ';');
+            fputcsv($file, ['198502022008022002', 'Siti Aminah, S.Pd', '082198765432', 'guru_piket', 'guru123'], ';');
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    /**
+     * Import Data Guru dari File CSV (Upsert / Update jika NIP sudah ada).
+     */
+    public function importCsv(Request $request)
+    {
+        $request->validate([
+            'file_csv' => 'required|file|max:10240',
+        ], [
+            'file_csv.required' => 'File wajib dipilih.',
+            'file_csv.max'      => 'Ukuran file maksimal 10MB.',
+        ]);
+
+        $file = $request->file('file_csv');
+        $rows = $this->parseCsv($file->getRealPath());
+
+        if (empty($rows)) {
+            return back()->withErrors(['file_csv' => 'File kosong atau tidak dapat dibaca.']);
+        }
+
+        $insertedCount = 0;
+        $updatedCount = 0;
+
+        foreach ($rows as $row) {
+            $nip = trim($row['nip'] ?? '');
+            $nama = trim($row['nama_guru'] ?? ($row['nama'] ?? ''));
+
+            if (empty($nip) || empty($nama)) {
+                continue;
+            }
+
+            $noHp = trim($row['no_hp'] ?? ($row['hp'] ?? ($row['whatsapp'] ?? '')));
+            $roleRaw = trim($row['role'] ?? ($row['jabatan'] ?? 'guru'));
+
+            $roleClean = match (strtolower($roleRaw)) {
+                'kepala sekolah', 'kepala_sekolah', 'kepsek' => 'kepala_sekolah',
+                'guru piket', 'guru_piket', 'piket' => 'guru_piket',
+                'wakasis siswa', 'wakasis_siswa' => 'wakasis_siswa',
+                'wakasis guru', 'wakasis_guru' => 'wakasis_guru',
+                'satpam' => 'satpam',
+                'staf tu', 'staf_tu', 'tu' => 'staf_tu',
+                default => 'guru',
+            };
+
+            $jabatan = match ($roleClean) {
+                'kepala_sekolah' => 'Kepala Sekolah',
+                'wakasis_siswa'  => 'Wakasis Siswa',
+                'wakasis_guru'   => 'Wakasis Guru',
+                'guru_piket'     => 'Guru Piket',
+                'satpam'         => 'Satpam',
+                'staf_tu'        => 'Staf TU',
+                default          => 'Guru',
+            };
+
+            $passwordRaw = !empty($row['password']) ? trim($row['password']) : 'guru123';
+
+            DB::beginTransaction();
+            try {
+                $existingGuru = Guru::withTrashed()->where('nip', $nip)->first();
+                if ($existingGuru) {
+                    $updatedCount++;
+                } else {
+                    $insertedCount++;
+                }
+
+                $guru = Guru::withTrashed()->updateOrCreate(
+                    ['nip' => $nip],
+                    [
+                        'nama_guru' => $nama,
+                        'no_hp'     => $noHp ?: null,
+                        'jabatan'   => $jabatan,
+                        'deleted_at'=> null,
+                    ]
+                );
+
+                User::withTrashed()->updateOrCreate(
+                    ['username' => $nip],
+                    [
+                        'password'  => Hash::make($passwordRaw),
+                        'role'      => $roleClean,
+                        'id_guru'   => $guru->id_guru,
+                        'is_active' => 1,
+                        'deleted_at'=> null,
+                    ]
+                );
+
+                DB::commit();
+            } catch (\Exception $e) {
+                DB::rollBack();
+            }
+        }
+
+        return redirect()->route('admin.guru.index')->with(
+            'success', 
+            "Import data guru selesai! Data baru: {$insertedCount}, Data diperbarui: {$updatedCount}."
+        );
+    }
+
+    /**
+     * Parse File CSV/TXT Multi-Format (Mendukung XML Excel .xls, HTML Table .xls, CSV, TSV, & BOM UTF-8).
+     */
+    private function parseCsv($filePath)
+    {
+        $content = file_get_contents($filePath);
+        $content = preg_replace('/^\xEF\xBB\xBF/', '', $content);
+
+        if (str_contains($content, '<Workbook') || str_contains($content, '<ss:Workbook')) {
+            return $this->parseXmlSpreadsheet($content);
+        }
+
+        if (str_contains($content, '<table') || str_contains($content, '<TABLE')) {
+            return $this->parseHtmlTable($content);
+        }
+
+        $lines = preg_split('/\r\n|\r|\n/', trim($content));
+        if (empty($lines)) return [];
+
+        if (isset($lines[0]) && str_starts_with(strtolower(trim($lines[0])), 'sep=')) {
+            array_shift($lines);
+        }
+
+        if (empty($lines)) return [];
+
+        $headerLine = $lines[0];
+        $delimiter = ',';
+        if (substr_count($headerLine, ';') > substr_count($headerLine, ',')) {
+            $delimiter = ';';
+        } elseif (substr_count($headerLine, "\t") > substr_count($headerLine, ',')) {
+            $delimiter = "\t";
+        }
+
+        $header = null;
+        $rows = [];
+
+        foreach ($lines as $line) {
+            $line = trim($line);
+            if ($line === '') continue;
+
+            $data = str_getcsv($line, $delimiter);
+            $cleanData = array_map(function($val) {
+                $v = trim($val);
+                if (str_starts_with($v, '="') && str_ends_with($v, '"')) {
+                    $v = substr($v, 2, -1);
+                }
+                return trim($v, "'\"\t ");
+            }, $data);
+
+            if (!$header) {
+                $header = array_map(function($h) {
+                    return strtolower(trim(preg_replace('/[^a-zA-Z0-9_]/', '', str_replace([' ', '-'], '_', strtolower($h)))));
+                }, $cleanData);
+            } else {
+                $row = [];
+                foreach ($header as $index => $col) {
+                    $row[$col] = isset($cleanData[$index]) ? trim($cleanData[$index]) : '';
+                }
+                $rows[] = $row;
+            }
+        }
+
+        return $rows;
+    }
+
+    private function parseXmlSpreadsheet($content)
+    {
+        $rows = [];
+        $header = null;
+
+        preg_match_all('/<Row[^>]*>(.*?)<\/Row>/is', $content, $rowMatches);
+        if (empty($rowMatches[1])) return [];
+
+        foreach ($rowMatches[1] as $rowXml) {
+            preg_match_all('/<Data[^>]*>(.*?)<\/Data>/is', $rowXml, $dataMatches);
+            $rowData = array_map('trim', $dataMatches[1] ?? []);
+            if (empty($rowData)) continue;
+
+            if (!$header) {
+                $header = array_map(function($h) {
+                    return strtolower(trim(preg_replace('/[^a-zA-Z0-9_]/', '', str_replace([' ', '-'], '_', strtolower($h)))));
+                }, $rowData);
+            } else {
+                $row = [];
+                foreach ($header as $index => $col) {
+                    $row[$col] = isset($rowData[$index]) ? trim($rowData[$index]) : '';
+                }
+                $rows[] = $row;
+            }
+        }
+
+        return $rows;
+    }
+
+    private function parseHtmlTable($content)
+    {
+        $rows = [];
+        $header = null;
+
+        preg_match_all('/<tr[^>]*>(.*?)<\/tr>/is', $content, $trMatches);
+        if (empty($trMatches[1])) return [];
+
+        foreach ($trMatches[1] as $trXml) {
+            preg_match_all('/<(?:td|th)[^>]*>(.*?)<\/(?:td|th)>/is', $trXml, $cellMatches);
+            $cellData = array_map(function($c) {
+                return trim(strip_tags($c));
+            }, $cellMatches[1] ?? []);
+
+            if (empty($cellData)) continue;
+
+            if (!$header) {
+                $header = array_map(function($h) {
+                    return strtolower(trim(preg_replace('/[^a-zA-Z0-9_]/', '', str_replace([' ', '-'], '_', strtolower($h)))));
+                }, $cellData);
+            } else {
+                $row = [];
+                foreach ($header as $index => $col) {
+                    $row[$col] = isset($cellData[$index]) ? trim($cellData[$index]) : '';
+                }
+                $rows[] = $row;
+            }
+        }
+
+        return $rows;
+    }
 }

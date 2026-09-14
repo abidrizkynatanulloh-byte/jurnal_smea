@@ -605,6 +605,14 @@
                     <span>Pencatatan Gerbang & Dispen</span>
                 </a>
             @endif
+            <!-- Bantuan & Pusat Informasi (Semua Role) -->
+            <div class="pt-3 pb-1">
+                <span class="px-2 text-[9.5px] font-bold text-[#87B8BE] dark:text-[#71717A] uppercase tracking-widest">Pusat Bantuan</span>
+            </div>
+            <button type="button" onclick="openBantuanModal()" class="w-full flex items-center space-x-2.5 px-2.5 h-8 rounded-lg text-xs transition-all text-[#C7E8EA] hover:bg-white/10 hover:text-white dark:text-[#9CA3AF] dark:hover:bg-white/5 dark:hover:text-white font-medium cursor-pointer text-left">
+                <i data-lucide="help-circle" class="w-3.5 h-3.5 text-[#A2D2D6] dark:text-[#9CA3AF]"></i>
+                <span>Bantuan & Layanan</span>
+            </button>
 
             <!-- User Info Card in Sidebar Bottom -->
             <div class="pt-3 border-t border-[#104F5A] dark:border-[#252525] mt-4 space-y-1.5 shrink-0">
@@ -644,6 +652,14 @@
             </div>
             
             <div class="flex items-center space-x-2.5 sm:space-x-3">
+                <!-- Bantuan Button -->
+                <button type="button" onclick="openBantuanModal()"
+                    class="h-7.5 px-2.5 rounded-lg border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 transition-all flex items-center space-x-1.5 shadow-2xs cursor-pointer text-xs font-semibold"
+                    title="Pusat Bantuan & Kontak WhatsApp">
+                    <i data-lucide="help-circle" class="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400"></i>
+                    <span class="hidden sm:inline text-[11px]">Bantuan</span>
+                </button>
+
                 <!-- Theme Toggle Button (Light & Dark Mode) -->
                 <button type="button" onclick="toggleTheme()" id="theme-toggle-btn"
                     class="h-7.5 px-2.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/80 transition-all flex items-center space-x-1.5 shadow-2xs cursor-pointer text-xs font-semibold"
@@ -714,8 +730,248 @@
         </div>
     </main>
 
+    <!-- Modal Pusat Bantuan (Semua Role) -->
+    <div id="modalBantuan" class="fixed inset-0 z-50 hidden overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-[#141412] border border-slate-200 dark:border-slate-800 rounded-2xl max-w-md w-full shadow-2xl overflow-hidden transform transition-all">
+            <!-- Modal Header -->
+            <div class="px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-900/50">
+                <div class="flex items-center space-x-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-950/70 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                        <i data-lucide="help-circle" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-bold text-slate-900 dark:text-white">Pusat Bantuan & Informasi</h3>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400">Layanan dukungan pengguna Jurnal Esemkita</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeBantuanModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="p-5 space-y-4 text-xs">
+                <p class="text-slate-600 dark:text-slate-300 leading-relaxed">
+                    Jika Anda mengalami kendala teknis, lupa kata sandi, atau memerlukan panduan penggunaan, silakan hubungi tim kami melalui saluran di bawah ini:
+                </p>
+
+                <!-- Contacts & Media Links -->
+                <div class="space-y-2.5">
+                    <!-- SALIN GAMBAR WHATSAPP ANDA KE: public/images/wa-icon.png -->
+                    <a href="https://wa.me/6285807106570?text=Halo%20Admin%20Jurnal%20Esemkita,%20saya%20butuh%20bantuan" target="_blank"
+                       class="flex items-center justify-between p-3 rounded-xl border border-emerald-200 dark:border-emerald-900/60 bg-emerald-50/50 dark:bg-emerald-950/30 hover:bg-emerald-100/60 dark:hover:bg-emerald-900/50 text-emerald-900 dark:text-emerald-200 transition-all group">
+                        <div class="flex items-center space-x-3">
+                            <img src="{{ asset('images/wa-icon.png') }}" 
+                                 onerror="this.onerror=null; this.src='https://cdn-icons-png.flaticon.com/512/3670/3670051.png';" 
+                                 class="w-8 h-8 rounded-lg object-cover shrink-0 shadow-xs" alt="WhatsApp Icon">
+                            <div>
+                                <p class="font-bold text-xs">WhatsApp Support (Admin)</p>
+                                <p class="text-[10.5px] text-emerald-700 dark:text-emerald-400">Klik untuk chat otomatis ke WhatsApp</p>
+                            </div>
+                        </div>
+                        <i data-lucide="external-link" class="w-4 h-4 text-emerald-500 group-hover:translate-x-0.5 transition-transform"></i>
+                    </a>
+
+                    <!-- SALIN GAMBAR INSTAGRAM ANDA KE: public/images/ig-icon.png -->
+                    <a href="https://instagram.com/smkn1smea" target="_blank"
+                       class="flex items-center justify-between p-3 rounded-xl border border-pink-200 dark:border-pink-900/60 bg-pink-50/50 dark:bg-pink-950/30 hover:bg-pink-100/60 dark:hover:bg-pink-900/50 text-pink-900 dark:text-pink-200 transition-all group">
+                        <div class="flex items-center space-x-3">
+                            <img src="{{ asset('images/ig-icon.png') }}" 
+                                 onerror="this.onerror=null; this.src='https://cdn-icons-png.flaticon.com/512/3955/3955024.png';" 
+                                 class="w-8 h-8 rounded-lg object-cover shrink-0 shadow-xs" alt="Instagram Icon">
+                            <div>
+                                <p class="font-bold text-xs">Instagram Resmi</p>
+                                <p class="text-[10.5px] text-pink-700 dark:text-pink-400">@smkn1smea</p>
+                            </div>
+                        </div>
+                        <i data-lucide="external-link" class="w-4 h-4 text-pink-500 group-hover:translate-x-0.5 transition-transform"></i>
+                    </a>
+
+                    <!-- SALIN GAMBAR TIKTOK ANDA KE: public/images/tiktok-icon.png -->
+                    <a href="https://tiktok.com/@smkn1smea" target="_blank"
+                       class="flex items-center justify-between p-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-900 dark:text-slate-100 transition-all group">
+                        <div class="flex items-center space-x-3">
+                            <img src="{{ asset('images/tiktok-icon.png') }}" 
+                                 onerror="this.onerror=null; this.src='https://cdn-icons-png.flaticon.com/512/3046/3046124.png';" 
+                                 class="w-8 h-8 rounded-lg object-cover shrink-0 shadow-xs" alt="TikTok Icon">
+                            <div>
+                                <p class="font-bold text-xs">TikTok Resmi</p>
+                                <p class="text-[10.5px] text-slate-500 dark:text-slate-400">@smkn1smea</p>
+                            </div>
+                        </div>
+                        <i data-lucide="external-link" class="w-4 h-4 text-slate-400 group-hover:translate-x-0.5 transition-transform"></i>
+                    </a>
+                </div>
+
+                <!-- Language Switcher Section -->
+                <div class="pt-3 border-t border-slate-100 dark:border-slate-800">
+                    <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
+                        <i data-lucide="globe" class="w-3.5 h-3.5 inline mr-1 text-slate-400"></i> Bahasa / Language
+                    </label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button type="button" onclick="setLanguage('id')" id="lang-id-btn"
+                            class="px-3 py-2 rounded-lg border text-xs font-semibold flex items-center justify-center space-x-2 transition-all bg-emerald-50 border-emerald-500 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-600">
+                            <span>🇮🇩 Indonesia</span>
+                        </button>
+                        <button type="button" onclick="setLanguage('en')" id="lang-en-btn"
+                            class="px-3 py-2 rounded-lg border text-xs font-semibold flex items-center justify-center space-x-2 transition-all bg-slate-50 border-slate-200 text-slate-600 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-300 hover:bg-slate-100">
+                            <span>🇬🇧 English</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="px-5 py-3 bg-slate-50 dark:bg-slate-900/80 border-t border-slate-100 dark:border-slate-800 text-right">
+                <button type="button" onclick="closeBantuanModal()" class="px-4 py-2 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-bold rounded-xl transition-colors">
+                    Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Global Layout Scripts -->
     <script>
+        function openBantuanModal() {
+            const modal = document.getElementById('modalBantuan');
+            if (modal) {
+                modal.classList.remove('hidden');
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+            }
+        }
+
+        function closeBantuanModal() {
+            const modal = document.getElementById('modalBantuan');
+            if (modal) {
+                modal.classList.add('hidden');
+            }
+        }
+
+        const i18nDict = {
+            'Dashboard Admin': { id: 'Dashboard Admin', en: 'Admin Dashboard' },
+            'Dashboard Tata Usaha': { id: 'Dashboard Tata Usaha', en: 'Administration Dashboard' },
+            'Data Guru & Pegawai': { id: 'Data Guru & Pegawai', en: 'Teachers & Staff Data' },
+            'Data Siswa': { id: 'Data Siswa', en: 'Students Data' },
+            'Mata Pelajaran': { id: 'Mata Pelajaran', en: 'Subjects' },
+            'Master Jam Pelajaran': { id: 'Master Jam Pelajaran', en: 'Lesson Hours Master' },
+            'Jadwal Mengajar': { id: 'Jadwal Mengajar', en: 'Teaching Schedule' },
+            'Kelola Guru Piket': { id: 'Kelola Guru Piket', en: 'Duty Teachers Mgmt' },
+            'Kelola Waka': { id: 'Kelola Waka', en: 'Vice Principal Mgmt' },
+            'Rekap Jurnal & Absensi': { id: 'Rekap Jurnal & Absensi', en: 'Journal & Attendance' },
+            'Kelola Pengguna': { id: 'Kelola Pengguna', en: 'User Management' },
+            'Jadwal & Jurnal Hari Ini': { id: 'Jadwal & Jurnal Hari Ini', en: "Today's Schedule & Journal" },
+            'Riwayat Jurnal Saya': { id: 'Riwayat Jurnal Saya', en: 'My Journal History' },
+            'Rekap Wali Kelas': { id: 'Rekap Wali Kelas', en: 'Homeroom Recap' },
+            'Pengajuan Izin Mengajar': { id: 'Pengajuan Izin Mengajar', en: 'Teaching Leave Request' },
+            'Input Dispen & Siswa Telat': { id: 'Input Dispen & Siswa Telat', en: 'Input Dispen & Late Students' },
+            'Monitoring Kondisi Kelas': { id: 'Monitoring Kondisi Kelas', en: 'Class Condition Monitoring' },
+            'Executive Summary': { id: 'Executive Summary', en: 'Executive Summary' },
+            'Rekap Jurnal & Mengajar': { id: 'Rekap Jurnal & Mengajar', en: 'Teaching & Journal Recap' },
+            'Kepatuhan Guru Mengajar': { id: 'Kepatuhan Guru Mengajar', en: 'Teacher Compliance' },
+            'Penugasan Guru Piket': { id: 'Penugasan Guru Piket', en: 'Duty Teacher Assignment' },
+            'Dispensasi Siswa': { id: 'Dispensasi Siswa', en: 'Student Dispensation' },
+            'Persetujuan Izin Guru': { id: 'Persetujuan Izin Guru', en: 'Teacher Leave Approval' },
+            'Monitoring Kelas': { id: 'Monitoring Kelas', en: 'Class Monitoring' },
+            'Pencatatan Gerbang & Dispen': { id: 'Pencatatan Gerbang & Dispen', en: 'Gate & Dispen Log' },
+            'Bantuan & Layanan': { id: 'Bantuan & Layanan', en: 'Help & Services' },
+            'Bantuan': { id: 'Bantuan', en: 'Help' },
+            'Tema': { id: 'Tema', en: 'Theme' },
+            'Keluar (Logout)': { id: 'Keluar (Logout)', en: 'Logout' },
+            'Pusat Bantuan': { id: 'Pusat Bantuan', en: 'Help Center' },
+            'Master Data': { id: 'Master Data', en: 'Master Data' },
+            'Laporan & Pengguna': { id: 'Laporan & Pengguna', en: 'Reports & Users' },
+            'Pembelajaran': { id: 'Pembelajaran', en: 'Learning' },
+            'Piket Monitoring': { id: 'Piket Monitoring', en: 'Duty Monitoring' },
+            'Eksekutif': { id: 'Eksekutif', en: 'Executive' },
+            'Kesiswaan & SDM': { id: 'Kesiswaan & SDM', en: 'Students & HR' },
+            'Keamanan Gerbang': { id: 'Keamanan Gerbang', en: 'Gate Security' },
+            'TOTAL SISWA': { id: 'TOTAL SISWA', en: 'TOTAL STUDENTS' },
+            'Data siswa & rombel': { id: 'Data siswa & rombel', en: 'Student & class data' },
+            'KEPATUHAN JURNAL': { id: 'KEPATUHAN JURNAL', en: 'JOURNAL COMPLIANCE' },
+            'Kepatuhan pengisian': { id: 'Kepatuhan pengisian', en: 'Filling compliance' },
+            'DATA ABSENSI SISWA HARI INI': { id: 'DATA ABSENSI SISWA HARI INI', en: "TODAY'S STUDENT ATTENDANCE" },
+            'HADIR': { id: 'HADIR', en: 'PRESENT' },
+            'ALPA': { id: 'ALPA', en: 'ABSENT' },
+            'IZIN': { id: 'IZIN', en: 'PERMISSION' },
+            'SAKIT': { id: 'SAKIT', en: 'SICK' },
+            'Lihat Rekapitulasi Jurnal': { id: 'Lihat Rekapitulasi Jurnal', en: 'View Journal Recap' },
+            'JADWAL MENGAJAR HARI INI': { id: 'JADWAL MENGAJAR HARI INI', en: "TODAY'S TEACHING SCHEDULE" },
+            'Pusat Bantuan & Informasi': { id: 'Pusat Bantuan & Informasi', en: 'Help Center & Information' },
+            'Layanan dukungan pengguna Jurnal Esemkita': { id: 'Layanan dukungan pengguna Jurnal Esemkita', en: 'User support service for Jurnal Esemkita' },
+            'WhatsApp Support (Admin)': { id: 'WhatsApp Support (Admin)', en: 'WhatsApp Support (Admin)' },
+            'Klik untuk chat otomatis ke WhatsApp': { id: 'Klik untuk chat otomatis ke WhatsApp', en: 'Click for auto chat on WhatsApp' },
+            'Instagram Resmi': { id: 'Instagram Resmi', en: 'Official Instagram' },
+            'TikTok Resmi': { id: 'TikTok Resmi', en: 'Official TikTok' },
+            'Bahasa / Language': { id: 'Bahasa / Language', en: 'Language / Bahasa' },
+            'Tutup': { id: 'Tutup', en: 'Close' },
+            'JUMLAH JADWAL': { id: 'JUMLAH JADWAL', en: 'TOTAL SCHEDULES' },
+            'KBM mengajar': { id: 'KBM mengajar', en: 'Teaching activity' },
+            'PERHATIAN OPERASIONAL': { id: 'PERHATIAN OPERASIONAL', en: 'OPERATIONAL ATTENTION' },
+            'Hari Ini': { id: 'Hari Ini', en: 'Today' },
+            'Status Jurnal': { id: 'Status Jurnal', en: 'Journal Status' },
+            'NO': { id: 'NO', en: 'NO' },
+            'JAM KE-': { id: 'JAM KE-', en: 'HOUR NO.' },
+            'KELAS': { id: 'KELAS', en: 'CLASS' },
+            'RUANGAN': { id: 'RUANGAN', en: 'ROOM' },
+            'STATUS JURNAL': { id: 'STATUS JURNAL', en: 'JOURNAL STATUS' }
+        };
+
+        function applyLanguage(lang) {
+            const targetLang = lang || 'id';
+            localStorage.setItem('app_language', targetLang);
+
+            // Update button styles in modal
+            const idBtn = document.getElementById('lang-id-btn');
+            const enBtn = document.getElementById('lang-en-btn');
+            const activeClass = 'bg-emerald-50 border-emerald-500 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-600';
+            const inactiveClass = 'bg-slate-50 border-slate-200 text-slate-600 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-300 hover:bg-slate-100';
+
+            if (idBtn && enBtn) {
+                if (targetLang === 'id') {
+                    idBtn.className = `px-3 py-2 rounded-lg border text-xs font-semibold flex items-center justify-center space-x-2 transition-all ${activeClass}`;
+                    enBtn.className = `px-3 py-2 rounded-lg border text-xs font-semibold flex items-center justify-center space-x-2 transition-all ${inactiveClass}`;
+                } else {
+                    enBtn.className = `px-3 py-2 rounded-lg border text-xs font-semibold flex items-center justify-center space-x-2 transition-all ${activeClass}`;
+                    idBtn.className = `px-3 py-2 rounded-lg border text-xs font-semibold flex items-center justify-center space-x-2 transition-all ${inactiveClass}`;
+                }
+            }
+
+            // Translate matching text elements across DOM
+            const elements = document.querySelectorAll('span, p, h1, h2, h3, h4, h5, button, a, th, td, label, div');
+            elements.forEach(el => {
+                el.childNodes.forEach(node => {
+                    if (node.nodeType === Node.TEXT_NODE) {
+                        const trimmed = node.nodeValue.trim();
+                        if (!trimmed) return;
+                        for (const [key, val] of Object.entries(i18nDict)) {
+                            if (targetLang === 'en' && trimmed === val.id) {
+                                node.nodeValue = node.nodeValue.replace(val.id, val.en);
+                                break;
+                            } else if (targetLang === 'id' && trimmed === val.en) {
+                                node.nodeValue = node.nodeValue.replace(val.en, val.id);
+                                break;
+                            }
+                        }
+                    }
+                });
+            });
+        }
+
+        function setLanguage(lang) {
+            applyLanguage(lang);
+            if (typeof Swal !== 'undefined') {
+                const isDark = document.documentElement.classList.contains('dark');
+                Swal.fire({
+                    icon: 'success',
+                    title: lang === 'id' ? 'Bahasa Indonesia' : 'English Selected',
+                    text: lang === 'id' ? 'Bahasa berhasil diubah ke Indonesia.' : 'App language successfully changed to English.',
+                    timer: 1800,
+                    showConfirmButton: false,
+                    background: isDark ? '#151B26' : '#FFFFFF',
+                    color: isDark ? '#F1F5F9' : '#0F172A'
+                });
+            }
+        }
         // Light & Dark Mode Toggle
         function toggleTheme() {
             const html = document.documentElement;
@@ -760,6 +1016,12 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
+            // Apply saved language preference
+            const savedLang = localStorage.getItem('app_language') || 'id';
+            if (savedLang === 'en') {
+                applyLanguage('en');
+            }
+
             if (typeof lucide !== 'undefined') {
                 lucide.createIcons();
             }

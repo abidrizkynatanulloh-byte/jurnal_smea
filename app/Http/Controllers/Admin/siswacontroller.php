@@ -181,4 +181,275 @@ class SiswaController
 
         return redirect()->route('admin.siswa.trash')->with('success', 'Data siswa berhasil dipulihkan!');
     }
+
+    /**
+     * Download Template CSV untuk Data Siswa.
+     */
+    public function downloadTemplate()
+    {
+        $headers = [
+            "Content-Type" => "text/csv; charset=UTF-8",
+            "Content-Disposition" => "attachment; filename=template_import_siswa.csv",
+        ];
+
+        $callback = function() {
+            $file = fopen('php://output', 'w');
+            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
+            
+            fputcsv($file, ['nis', 'nisn', 'nama_siswa', 'kelas', 'jenis_kelamin', 'no_hp_wali'], ';');
+            fputcsv($file, ['23451', '0051234567', 'Ahmad Rizki Pratama', 'X TKL 1', 'L', '081234567890'], ';');
+            fputcsv($file, ['23452', '0051234568', 'Siti Rahmawati', 'X TKL 1', 'P', '082198765432'], ';');
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    /**
+     * Import Data Siswa dari File Excel / CSV (Upsert / Update jika NIS/NISN sudah ada).
+     */
+    public function importCsv(Request $request)
+    {
+        $request->validate([
+            'file_csv' => 'required|file|max:10240',
+        ], [
+            'file_csv.required' => 'File wajib dipilih.',
+            'file_csv.max'      => 'Ukuran file maksimal 10MB.',
+        ]);
+
+        $file = $request->file('file_csv');
+        $rows = $this->parseCsv($file->getRealPath());
+
+        if (empty($rows)) {
+            return back()->withErrors(['file_csv' => 'File kosong atau tidak dapat dibaca.']);
+        }
+
+        $insertedCount = 0;
+        $updatedCount = 0;
+        $kelascache = [];
+
+        foreach ($rows as $row) {
+            $nis = trim($row['nis'] ?? '');
+            $nisn = trim($row['nisn'] ?? '');
+            $nama = trim($row['nama_siswa'] ?? ($row['nama'] ?? ''));
+            $kelasInput = trim($row['kelas'] ?? ($row['nama_kelas'] ?? ($row['id_kelas'] ?? '')));
+
+            if (empty($nis) || empty($nama)) {
+                continue;
+            }
+            if (empty($nisn)) {
+                $nisn = $nis;
+            }
+
+            $jk = strtoupper(trim($row['jenis_kelamin'] ?? ($row['jk'] ?? 'L')));
+            if ($jk !== 'P') $jk = 'L';
+            $noHpWali = trim($row['no_hp_wali'] ?? ($row['no_hp'] ?? ($row['hp'] ?? '')));
+
+            // Resolve Kelas ID
+            $idKelas = null;
+            if (!empty($kelasInput)) {
+                if (isset($kelascache[$kelasInput])) {
+                    $idKelas = $kelascache[$kelasInput];
+                } else {
+                    $k = Kelas::where('id_kelas', $kelasInput)
+                        ->orWhere('nama_kelas', $kelasInput)
+                        ->orWhere('nama_kelas', 'LIKE', $kelasInput)
+                        ->first();
+
+                    if (!$k) {
+                        // Automagically create class if not exists
+                        $k = Kelas::create([
+                            'nama_kelas' => $kelasInput,
+                        ]);
+                    }
+                    $idKelas = $k->id_kelas;
+                    $kelascache[$kelasInput] = $idKelas;
+                }
+            }
+
+            if (!$idKelas) {
+                // Default fallback to first class if not specified
+                $firstKelas = Kelas::first();
+                $idKelas = $firstKelas ? $firstKelas->id_kelas : null;
+            }
+
+            if (!$idKelas) continue;
+
+            DB::beginTransaction();
+            try {
+                $existingSiswa = Siswa::withTrashed()->where('nis', $nis)->first();
+                if ($existingSiswa) {
+                    $updatedCount++;
+                } else {
+                    $insertedCount++;
+                }
+
+                $dataToSave = [
+                    'nisn'          => $nisn,
+                    'nama_siswa'    => $nama,
+                    'id_kelas'      => $idKelas,
+                    'deleted_at'    => null,
+                ];
+
+                if (Schema::hasColumn('siswa', 'jenis_kelamin')) {
+                    $dataToSave['jenis_kelamin'] = $jk;
+                }
+                if (Schema::hasColumn('siswa', 'no_hp_wali')) {
+                    $dataToSave['no_hp_wali'] = $noHpWali ?: null;
+                }
+
+                $siswa = Siswa::withTrashed()->updateOrCreate(
+                    ['nis' => $nis],
+                    $dataToSave
+                );
+
+                // Create or update Wali Murid account with password 'ortu123'
+                User::withTrashed()->updateOrCreate(
+                    ['username' => $nisn],
+                    [
+                        'password'   => Hash::make('ortu123'),
+                        'role'       => 'wali_murid',
+                        'nisn_siswa' => $nisn,
+                        'is_active'  => 1,
+                        'deleted_at' => null,
+                    ]
+                );
+
+                DB::commit();
+            } catch (\Exception $e) {
+                DB::rollBack();
+            }
+        }
+
+        return redirect()->route('admin.siswa.index')->with(
+            'success',
+            "Import data siswa selesai! Data baru: {$insertedCount}, Data diperbarui: {$updatedCount}."
+        );
+    }
+
+    /**
+     * Parse File Multi-Format (Mendukung XML Excel .xls, HTML Table .xls, CSV, TSV, & BOM UTF-8).
+     */
+    private function parseCsv($filePath)
+    {
+        $content = file_get_contents($filePath);
+        $content = preg_replace('/^\xEF\xBB\xBF/', '', $content);
+
+        if (str_contains($content, '<Workbook') || str_contains($content, '<ss:Workbook')) {
+            return $this->parseXmlSpreadsheet($content);
+        }
+
+        if (str_contains($content, '<table') || str_contains($content, '<TABLE')) {
+            return $this->parseHtmlTable($content);
+        }
+
+        $lines = preg_split('/\r\n|\r|\n/', trim($content));
+        if (empty($lines)) return [];
+
+        if (isset($lines[0]) && str_starts_with(strtolower(trim($lines[0])), 'sep=')) {
+            array_shift($lines);
+        }
+
+        if (empty($lines)) return [];
+
+        $headerLine = $lines[0];
+        $delimiter = ',';
+        if (substr_count($headerLine, ';') > substr_count($headerLine, ',')) {
+            $delimiter = ';';
+        } elseif (substr_count($headerLine, "\t") > substr_count($headerLine, ',')) {
+            $delimiter = "\t";
+        }
+
+        $header = null;
+        $rows = [];
+
+        foreach ($lines as $line) {
+            $line = trim($line);
+            if ($line === '') continue;
+
+            $data = str_getcsv($line, $delimiter);
+            $cleanData = array_map(function($val) {
+                $v = trim($val);
+                if (str_starts_with($v, '="') && str_ends_with($v, '"')) {
+                    $v = substr($v, 2, -1);
+                }
+                return trim($v, "'\"\t ");
+            }, $data);
+
+            if (!$header) {
+                $header = array_map(function($h) {
+                    return strtolower(trim(preg_replace('/[^a-zA-Z0-9_]/', '', str_replace([' ', '-'], '_', strtolower($h)))));
+                }, $cleanData);
+            } else {
+                $row = [];
+                foreach ($header as $index => $col) {
+                    $row[$col] = isset($cleanData[$index]) ? trim($cleanData[$index]) : '';
+                }
+                $rows[] = $row;
+            }
+        }
+
+        return $rows;
+    }
+
+    private function parseXmlSpreadsheet($content)
+    {
+        $rows = [];
+        $header = null;
+
+        preg_match_all('/<Row[^>]*>(.*?)<\/Row>/is', $content, $rowMatches);
+        if (empty($rowMatches[1])) return [];
+
+        foreach ($rowMatches[1] as $rowXml) {
+            preg_match_all('/<Data[^>]*>(.*?)<\/Data>/is', $rowXml, $dataMatches);
+            $rowData = array_map('trim', $dataMatches[1] ?? []);
+            if (empty($rowData)) continue;
+
+            if (!$header) {
+                $header = array_map(function($h) {
+                    return strtolower(trim(preg_replace('/[^a-zA-Z0-9_]/', '', str_replace([' ', '-'], '_', strtolower($h)))));
+                }, $rowData);
+            } else {
+                $row = [];
+                foreach ($header as $index => $col) {
+                    $row[$col] = isset($rowData[$index]) ? trim($rowData[$index]) : '';
+                }
+                $rows[] = $row;
+            }
+        }
+
+        return $rows;
+    }
+
+    private function parseHtmlTable($content)
+    {
+        $rows = [];
+        $header = null;
+
+        preg_match_all('/<tr[^>]*>(.*?)<\/tr>/is', $content, $trMatches);
+        if (empty($trMatches[1])) return [];
+
+        foreach ($trMatches[1] as $trXml) {
+            preg_match_all('/<(?:td|th)[^>]*>(.*?)<\/(?:td|th)>/is', $trXml, $cellMatches);
+            $cellData = array_map(function($c) {
+                return trim(strip_tags($c));
+            }, $cellMatches[1] ?? []);
+
+            if (empty($cellData)) continue;
+
+            if (!$header) {
+                $header = array_map(function($h) {
+                    return strtolower(trim(preg_replace('/[^a-zA-Z0-9_]/', '', str_replace([' ', '-'], '_', strtolower($h)))));
+                }, $cellData);
+            } else {
+                $row = [];
+                foreach ($header as $index => $col) {
+                    $row[$col] = isset($cellData[$index]) ? trim($cellData[$index]) : '';
+                }
+                $rows[] = $row;
+            }
+        }
+
+        return $rows;
+    }
 }
