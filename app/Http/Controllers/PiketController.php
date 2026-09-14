@@ -194,42 +194,65 @@ class PiketController extends Controller
     public function storeDispen(Request $request)
     {
         $request->validate([
-            'nis'                 => 'required|exists:siswa,nis',
+            'nis'                 => 'required',
+            'jenis_dispen'        => 'nullable|string|in:sekolah,pribadi',
             'keperluan'           => 'required|string|max:255',
             'jam_ke'              => 'nullable|string|max:50',
             'jam_keluar_rencana'  => 'required',
             'jam_kembali_rencana' => 'nullable',
         ], [
-            'nis.required'                => 'Silakan pilih siswa yang mengajukan dispen.',
+            'nis.required'                => 'Silakan pilih minimal satu siswa yang mengajukan dispen.',
             'keperluan.required'          => 'Alasan / keperluan dispen wajib diisi.',
             'jam_keluar_rencana.required' => 'Rencana jam keluar wajib diisi.',
         ]);
 
+        $nisList = is_array($request->nis) ? array_filter($request->nis) : [$request->nis];
+        if (empty($nisList)) {
+            return redirect()->back()->withInput()->with('error', 'Silakan pilih minimal satu siswa yang valid.');
+        }
+
+        // Cek jenis dispen (Default 'sekolah' untuk keperluan sekolah/lomba)
+        $jenisDispen = $request->input('jenis_dispen', 'sekolah');
+        $isAutoApproved = ($jenisDispen === 'sekolah');
+        $status = $isAutoApproved ? 'Disetujui' : 'Menunggu';
+        $disetujuiOleh = $isAutoApproved ? Auth::id() : null;
+
         DB::beginTransaction();
 
         try {
-            $dispen = DispenSiswa::create([
-                'nis'                 => $request->nis,
-                'keperluan'           => $request->keperluan,
-                'jam_ke'              => $request->jam_ke,
-                'tanggal'             => date('Y-m-d'),
-                'jam_keluar_rencana'  => $request->jam_keluar_rencana,
-                'jam_kembali_rencana' => $request->jam_kembali_rencana,
-                'status'              => 'Menunggu',
-            ]);
+            $createdDispens = [];
 
-            AuditLog::log(
-                'Pengajuan Dispen Siswa',
-                "Guru Piket mengajukan dispen untuk siswa NIS: {$request->nis} ({$request->keperluan})"
-            );
+            foreach ($nisList as $nis) {
+                $dispen = DispenSiswa::create([
+                    'nis'                 => $nis,
+                    'keperluan'           => $request->keperluan,
+                    'jam_ke'              => $request->jam_ke,
+                    'tanggal'             => date('Y-m-d'),
+                    'jam_keluar_rencana'  => $request->jam_keluar_rencana,
+                    'jam_kembali_rencana' => $request->jam_kembali_rencana,
+                    'status'              => $status,
+                    'disetujui_oleh'     => $disetujuiOleh,
+                ]);
+
+                $createdDispens[] = $dispen;
+
+                AuditLog::log(
+                    'Pengajuan Dispen Siswa',
+                    "Guru Piket mencatat dispen untuk siswa NIS: {$nis} ({$request->keperluan}) - Status: {$status}"
+                );
+            }
 
             DB::commit();
 
-            // Kirim notifikasi WA ke Wakasis Kesiswaan Siswa
-            WhatsAppService::sendDispenSiswaNotification($dispen);
+            // Kirim 1 notifikasi WA rangkuman ke Wakasis Kesiswaan Siswa
+            WhatsAppService::sendDispenSiswaNotification($createdDispens);
 
-            return redirect()->route('piket.dashboard')
-                             ->with('success', 'Pengajuan dispen siswa berhasil dikirim ke Waka Kesiswaan.');
+            $jumlahSiswa = count($createdDispens);
+            $msg = $isAutoApproved
+                ? "Dispensasi {$jumlahSiswa} siswa berhasil dicatat dan disetujui otomatis (Keperluan Sekolah/Lomba). Notifikasi telah dikirim ke Waka Kesiswaan."
+                : "Pengajuan dispensasi {$jumlahSiswa} siswa berhasil dikirim ke Waka Kesiswaan.";
+
+            return redirect()->route('piket.dashboard')->with('success', $msg);
 
         } catch (\Exception $e) {
             DB::rollBack();

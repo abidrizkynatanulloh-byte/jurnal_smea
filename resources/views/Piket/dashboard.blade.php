@@ -213,15 +213,25 @@
                 @csrf
 
                 <div>
-                    <label for="nis" class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Pilih Siswa (NISN / NIS / Nama)</label>
-                    <select name="nis" id="nis" required 
-                        class="block w-full h-8 px-2.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 focus:outline-none focus:border-[#1E2538] transition-all cursor-pointer">
-                        <option value="">-- Pilih Siswa --</option>
+                    <label for="nis" class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Pilih Siswa (Bisa Pilih >1 Siswa)</label>
+                    <select name="nis[]" id="nis" multiple required 
+                        placeholder="Cari / pilih satu atau beberapa siswa..."
+                        class="block w-full bg-white border border-slate-200 rounded-lg text-xs text-slate-800 focus:outline-none focus:border-[#1E2538] transition-all cursor-pointer">
                         @foreach ($daftarSiswa as $s)
-                            <option value="{{ $s->nis }}" {{ old('nis') == $s->nis ? 'selected' : '' }}>
+                            <option value="{{ $s->nis }}">
                                 [NISN: {{ $s->nisn ?? '-' }}] {{ $s->nis }} - {{ $s->nama_siswa }} ({{ $s->kelas ? $s->kelas->nama_kelas : '-' }})
                             </option>
                         @endforeach
+                    </select>
+                    <p class="text-[10px] text-slate-400 mt-1">Pilih beberapa siswa sekaligus jika memiliki keperluan dispen yang sama.</p>
+                </div>
+
+                <div>
+                    <label for="jenis_dispen" class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Kategori Dispensasi</label>
+                    <select name="jenis_dispen" id="jenis_dispen" 
+                        class="block w-full h-8 px-2.5 bg-white border border-slate-200 rounded-lg text-xs font-semibold text-slate-800 focus:outline-none focus:border-[#1E2538] transition-all cursor-pointer">
+                        <option value="sekolah" selected>🏆 Keperluan Sekolah / Lomba (Otomatis Disetujui)</option>
+                        <option value="pribadi">👤 Keperluan Pribadi / Lainnya (Memerlukan ACC Waka)</option>
                     </select>
                 </div>
 
@@ -252,7 +262,7 @@
 
                 <button type="submit" class="w-full mt-1.5 h-8.5 px-3 bg-[#1E2538] hover:bg-[#161c2c] text-white rounded-lg font-semibold text-xs transition-colors shadow-2xs flex items-center justify-center space-x-1.5 cursor-pointer">
                     <i data-lucide="send" class="w-3.5 h-3.5"></i>
-                    <span>Kirim Pengajuan Kesiswaan</span>
+                    <span>Simpan Pengajuan Dispensasi</span>
                 </button>
             </form>
         </div>
@@ -276,7 +286,7 @@
                                 <th class="py-2 px-3.5 w-40">Siswa (NISN/NIS)</th>
                                 <th class="py-2 px-3.5 w-32">Jam Pelajaran</th>
                                 <th class="py-2 px-3.5">Alasan Keperluan</th>
-                                <th class="py-2 px-3.5 w-36 text-center">Status Wakasis</th>
+                                <th class="py-2 px-3.5 w-36 text-center">Status Dispensasi</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100 text-slate-700">
@@ -305,12 +315,12 @@
                                         @elseif ($d->status === 'Disetujui')
                                             <span class="inline-flex items-center px-2 py-0.5 bg-emerald-50 text-emerald-700 text-[10px] font-semibold rounded-md border border-emerald-200/60 space-x-1">
                                                 <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
-                                                <span>Disetujui Wakasis</span>
+                                                <span>Disetujui</span>
                                             </span>
                                         @else
                                             <span class="inline-flex items-center px-2 py-0.5 bg-rose-50 text-rose-700 text-[10px] font-semibold rounded-md border border-rose-200/60 space-x-1">
                                                 <span class="w-1.5 h-1.5 bg-rose-500 rounded-full"></span>
-                                                <span>Ditolak Wakasis</span>
+                                                <span>Ditolak</span>
                                             </span>
                                         @endif
                                     </td>

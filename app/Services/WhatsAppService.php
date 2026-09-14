@@ -171,32 +171,58 @@ class WhatsAppService
 
     /**
      * Kirim notifikasi WA saat ada pengajuan Dispen Siswa oleh Guru Piket.
+     * Dapat menerima single object DispenSiswa, array of DispenSiswa, atau Collection.
      *
-     * @param DispenSiswa $dispen
+     * @param DispenSiswa|array|\Illuminate\Support\Collection $dispenInput
      * @return void
      */
-    public static function sendDispenSiswaNotification(DispenSiswa $dispen): void
+    public static function sendDispenSiswaNotification($dispenInput): void
     {
         try {
-            $dispen->loadMissing('siswa.kelas');
-            $namaSiswa = $dispen->siswa->nama_siswa ?? 'Siswa';
-            $kelas = $dispen->siswa->kelas->nama_kelas ?? '-';
-            $tanggal = date('d-m-Y', strtotime($dispen->tanggal));
-            $keperluan = $dispen->keperluan ?? '-';
-            $jamMulai = $dispen->jam_keluar_rencana ?? '-';
-            $jamKembali = $dispen->jam_kembali_rencana ?? 'Selesai';
+            if ($dispenInput instanceof DispenSiswa) {
+                $dispens = collect([$dispenInput]);
+            } elseif (is_iterable($dispenInput)) {
+                $dispens = collect($dispenInput);
+            } else {
+                return;
+            }
+
+            if ($dispens->isEmpty()) {
+                return;
+            }
+
+            $firstDispen = $dispens->first();
+            $firstDispen->loadMissing('siswa.kelas');
+            $tanggal = date('d-m-Y', strtotime($firstDispen->tanggal));
+            $keperluan = $firstDispen->keperluan ?? '-';
+            $jamMulai = $firstDispen->jam_keluar_rencana ? substr($firstDispen->jam_keluar_rencana, 0, 5) : '-';
+            $jamKembali = $firstDispen->jam_kembali_rencana ? substr($firstDispen->jam_kembali_rencana, 0, 5) : 'Selesai KBM';
+            
+            $isAutoApproved = ($firstDispen->status === 'Disetujui');
+            $statusLabel = $isAutoApproved ? 'Disetujui Otomatis (Keperluan Sekolah/Lomba)' : 'Menunggu Persetujuan Waka';
+
+            $daftarSiswaText = "";
+            foreach ($dispens as $idx => $d) {
+                $d->loadMissing('siswa.kelas');
+                $nama = $d->siswa->nama_siswa ?? 'Siswa';
+                $kelas = $d->siswa->kelas->nama_kelas ?? '-';
+                $num = $idx + 1;
+                $daftarSiswaText .= "  {$num}. *{$nama}* ({$kelas})\n";
+            }
 
             $appUrl = self::getBaseUrl();
-            $linkApproval = rtrim($appUrl, '/') . '/wakasis-siswa/dashboard';
+            $linkDashboard = rtrim($appUrl, '/') . '/wakasis-siswa/dashboard';
 
-            $message = "[Dispen Siswa]\n\n" .
-                "Ada pengajuan dispensasi siswa baru yang memerlukan persetujuan:\n\n" .
-                "🎓 *Nama Siswa* : {$namaSiswa} ({$kelas})\n" .
-                "📅 *Tanggal*    : {$tanggal}\n" .
-                "⏰ *Waktu*      : {$jamMulai} - {$jamKembali}\n" .
-                "📝 *Keperluan*  : {$keperluan}\n\n" .
-                "Silakan buka tautan berikut untuk memproses persetujuan:\n" .
-                "🔗 {$linkApproval}\n\n" .
+            $message = "[Pemberitahuan Dispen Siswa]\n\n" .
+                "Terdaftar pengajuan dispensasi siswa dari Guru Piket:\n\n" .
+                "📝 *Keperluan* : {$keperluan}\n" .
+                "📅 *Tanggal*   : {$tanggal}\n" .
+                "⏰ *Waktu*     : {$jamMulai} - {$jamKembali}\n" .
+                "📌 *Status*    : *{$statusLabel}*\n\n" .
+                "🎓 *Daftar Siswa* (" . count($dispens) . " siswa):\n" .
+                $daftarSiswaText . "\n" .
+                "Silakan buka tautan berikut untuk memantau data dispensasi:\n" .
+                "🔗 {$linkDashboard}\n\n" .
                 "Terima Kasih.";
 
             // Ambil akun Waka Kesiswaan Siswa
@@ -216,13 +242,13 @@ class WhatsAppService
             }
 
             if (empty($phoneNumbers)) {
-                Log::info("WhatsAppService: Tidak ada nomor HP penerima (Wakasis Siswa) yang valid untuk DispenSiswa ID {$dispen->id}.");
+                Log::info("WhatsAppService: Tidak ada nomor HP penerima (Wakasis Siswa) yang valid untuk DispenSiswa.");
                 return;
             }
 
             self::sendBulkMessage($phoneNumbers, $message);
         } catch (\Throwable $e) {
-            Log::error("WhatsAppService Error (DispenSiswa ID {$dispen->id}): " . $e->getMessage());
+            Log::error("WhatsAppService Error (DispenSiswa Notification): " . $e->getMessage());
         }
     }
 

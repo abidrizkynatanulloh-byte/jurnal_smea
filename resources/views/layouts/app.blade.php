@@ -674,6 +674,12 @@
                     <i data-lucide="calendar" class="w-3.5 h-3.5 text-slate-400"></i>
                     <span>{{ date('l, d M Y') }}</span>
                 </div>
+
+                <!-- Live Real-Time Clock Display -->
+                <div class="flex items-center space-x-1.5 text-xs text-slate-800 dark:text-slate-100 font-bold font-mono bg-slate-50 dark:bg-[#222220] px-2.5 py-1 rounded border border-slate-200 dark:border-slate-700 shadow-2xs" title="Waktu Real-Time WIB">
+                    <i data-lucide="clock" class="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 animate-pulse"></i>
+                    <span id="realtime-clock-display">--:--:-- WIB</span>
+                </div>
                 
                 <!-- Quick User Status -->
                 <div class="flex items-center space-x-2.5 pl-2.5 sm:pl-3 border-l border-slate-200 dark:border-slate-700">
@@ -1015,6 +1021,23 @@
             });
         }
 
+        // Live Real-Time Clock
+        function startRealtimeClock() {
+            const clockEl = document.getElementById('realtime-clock-display');
+            if (!clockEl) return;
+
+            function update() {
+                const now = new Date();
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                const seconds = String(now.getSeconds()).padStart(2, '0');
+                clockEl.textContent = `${hours}:${minutes}:${seconds} WIB`;
+            }
+
+            update();
+            setInterval(update, 1000);
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             // Apply saved language preference
             const savedLang = localStorage.getItem('app_language') || 'id';
@@ -1025,6 +1048,9 @@
             if (typeof lucide !== 'undefined') {
                 lucide.createIcons();
             }
+
+            // Start Real-Time Live Clock
+            startRealtimeClock();
 
             // Mobile Menu Toggle logic
             const menuToggle = document.getElementById('mobile-menu-toggle');
