@@ -3,7 +3,7 @@
         <td class="py-2 px-3 text-center font-medium text-slate-400 text-xs tabular-nums">
             {{ $siswaList->firstItem() + $idx }}
         </td>
-        <td class="py-2 px-3 font-semibold text-slate-900 text-xs font-mono tabular-nums">{{ $s->nis }}</td>
+        <td class="py-2 px-3 font-semibold text-slate-900 text-xs font-mono tabular-nums">{{ $s->nis ?: '-' }}</td>
         <td class="py-2 px-3 text-xs text-slate-500 font-mono tabular-nums">{{ $s->nisn }}</td>
         <td class="py-2 px-3 font-medium text-slate-900 text-xs leading-tight">{{ $s->nama_siswa }}</td>
         <td class="py-2 px-2 text-center">
@@ -24,12 +24,12 @@
         <td class="py-2 px-3 text-center">
             <div class="flex items-center justify-center space-x-1">
                 <button type="button" 
-                    onclick="openEditModal('{{ $s->nis }}', '{{ addslashes($s->nama_siswa) }}', '{{ $s->nisn }}', '{{ $s->id_kelas }}', '{{ $s->jenis_kelamin ?? 'L' }}', '{{ $s->no_hp_wali ?? '' }}')"
+                    onclick="openEditModal('{{ $s->nisn }}', '{{ addslashes($s->nama_siswa) }}', '{{ $s->nisn }}', '{{ $s->id_kelas }}', '{{ $s->jenis_kelamin ?? 'L' }}', '{{ $s->no_hp_wali ?? '' }}', '{{ $s->nis ?? '' }}')"
                     class="w-6.5 h-6.5 rounded-md border border-slate-200 hover:border-slate-300 hover:bg-slate-100 text-slate-600 flex items-center justify-center transition-colors shadow-2xs cursor-pointer" title="Edit Siswa">
                     <i data-lucide="edit-2" class="w-3 h-3"></i>
                 </button>
                 <button type="button" 
-                    onclick="openDeleteSiswaModal('{{ $s->nis }}', '{{ addslashes($s->nama_siswa) }}')"
+                    onclick="openDeleteSiswaModal('{{ $s->nisn }}', '{{ addslashes($s->nama_siswa) }}')"
                     class="w-6.5 h-6.5 rounded-md border border-slate-200 hover:border-rose-200 hover:bg-rose-50 text-slate-400 hover:text-rose-600 flex items-center justify-center transition-colors shadow-2xs cursor-pointer" title="Pindahkan ke Sampah">
                     <i data-lucide="trash-2" class="w-3 h-3"></i>
                 </button>

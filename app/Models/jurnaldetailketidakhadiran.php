@@ -28,6 +28,6 @@ class JurnalDetailKetidakhadiran extends Model
 
     public function siswa()
     {
-        return $this->belongsTo(Siswa::class, 'id_siswa', 'nis');
+        return $this->belongsTo(Siswa::class, 'id_siswa', 'nisn');
     }
 }

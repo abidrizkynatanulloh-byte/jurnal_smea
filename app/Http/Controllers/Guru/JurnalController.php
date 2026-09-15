@@ -171,6 +171,7 @@ class JurnalController
 
         // 3. Simpan ketidakhadiran siswa (Sakit, Izin, Alpa, Dispen)
         if ($request->filled('ketidakhadiran')) {
+            $alphaStudents = [];
             foreach ($request->ketidakhadiran as $nis => $keterangan) {
                 if (in_array($keterangan, ['Sakit', 'Izin', 'Alpa', 'Dispen'])) {
                     $refIzin = PengajuanIzinSiswa::where('nis', $nis)
@@ -185,7 +186,15 @@ class JurnalController
                         'ref_izin_id'  => $refIzin ? $refIzin->id : null,
                         'dicatat_oleh' => $user->id,
                     ]);
+
+                    if ($keterangan === 'Alpa') {
+                        $alphaStudents[] = $nis;
+                    }
                 }
+            }
+
+            if (!empty($alphaStudents)) {
+                \App\Services\WhatsAppService::sendAlphaSiswaNotification($alphaStudents, $jurnal);
             }
         }
 

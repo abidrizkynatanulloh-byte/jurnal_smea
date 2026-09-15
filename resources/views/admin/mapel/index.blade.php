@@ -89,42 +89,14 @@
                                 <th class="py-2.5 px-3.5 text-center w-20 bg-white">AKSI</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-100 text-slate-700">
-                            @forelse ($mapelList as $m)
-                                <tr class="hover:bg-slate-50/80 transition-colors mapel-row" data-search="{{ strtolower($m->kode_mapel . ' ' . $m->nama_mapel) }}">
-                                    <td class="py-2 px-3.5 font-semibold text-slate-900 font-mono text-xs tabular-nums">{{ $m->kode_mapel }}</td>
-                                    <td class="py-2 px-3.5 font-medium text-slate-900 text-xs">{{ $m->nama_mapel }}</td>
-                                    <td class="py-2 px-3.5 text-center">
-                                        <div class="flex items-center justify-center space-x-1">
-                                            <button type="button" 
-                                                onclick="openEditMapelModal('{{ $m->kode_mapel }}', '{{ addslashes($m->nama_mapel) }}')"
-                                                class="w-6.5 h-6.5 rounded-md border border-slate-200 hover:border-slate-300 hover:bg-slate-100 text-slate-600 flex items-center justify-center transition-colors shadow-2xs cursor-pointer" title="Edit Mapel">
-                                                <i data-lucide="edit-2" class="w-3 h-3"></i>
-                                            </button>
-                                            <form action="{{ route('admin.mapel.destroy', $m->kode_mapel) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus mapel {{ addslashes($m->nama_mapel) }}?')">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="w-6.5 h-6.5 rounded-md border border-slate-200 hover:border-rose-200 hover:bg-rose-50 text-slate-400 hover:text-rose-600 flex items-center justify-center transition-colors shadow-2xs cursor-pointer" title="Hapus Mapel">
-                                                    <i data-lucide="trash-2" class="w-3 h-3"></i>
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="3" class="py-12 text-center text-slate-400 italic text-xs">
-                                        <i data-lucide="inbox" class="w-7 h-7 mx-auto mb-1.5 text-slate-300"></i>
-                                        Tidak ada data mata pelajaran.
-                                    </td>
-                                </tr>
-                            @endforelse
+                        <tbody class="divide-y divide-slate-100 text-slate-700" id="mapelTbody">
+                            @include('admin.mapel.partials.rows', ['mapelList' => $mapelList])
                         </tbody>
                     </table>
                 </div>
 
                 <!-- Bottom Pagination Bar (Sesuai Gambar 1 & Gambar 2) -->
-                <div class="shrink-0">
+                <div class="shrink-0" id="paginationContainer">
                     <x-pagination-bar :paginator="$mapelList" />
                 </div>
             </div>
@@ -206,21 +178,57 @@
         document.getElementById('modalEditMapel').classList.add('hidden');
     }
 
-    // Live Instant Search
+    // Dynamic AJAX Live Search Across All Mapel (Zero Page Reloads)
     document.addEventListener('DOMContentLoaded', function() {
         const searchInput = document.getElementById('liveSearchMapel');
+        const searchForm = searchInput ? searchInput.closest('form') : null;
+        let ajaxTimer = null;
+
+        function performAjaxSearch() {
+            if (!searchInput) return;
+            const q = searchInput.value.trim();
+            const form = searchForm || searchInput.form;
+
+            const formData = new FormData(form);
+            formData.set('search', q);
+            const params = new URLSearchParams(formData);
+
+            fetch(`{{ route('admin.mapel.index') }}?${params.toString()}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                const tbody = document.getElementById('mapelTbody');
+                const pag = document.getElementById('paginationContainer');
+                if (tbody && data.html) {
+                    tbody.innerHTML = data.html;
+                }
+                if (pag && data.pagination) {
+                    pag.innerHTML = data.pagination;
+                }
+                if (typeof lucide !== 'undefined') {
+                    lucide.createIcons();
+                }
+            })
+            .catch(err => console.error('AJAX Live Search Error:', err));
+        }
+
         if (searchInput) {
             searchInput.addEventListener('input', function() {
-                const q = this.value.toLowerCase().trim();
-                const rows = document.querySelectorAll('.mapel-row');
-                rows.forEach(row => {
-                    const text = row.getAttribute('data-search') || '';
-                    if (text.includes(q)) {
-                        row.style.display = '';
-                    } else {
-                        row.style.display = 'none';
-                    }
-                });
+                clearTimeout(ajaxTimer);
+                ajaxTimer = setTimeout(() => {
+                    performAjaxSearch();
+                }, 200);
+            });
+
+            searchInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    clearTimeout(ajaxTimer);
+                    performAjaxSearch();
+                }
             });
         }
     });

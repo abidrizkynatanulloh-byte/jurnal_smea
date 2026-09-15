@@ -146,14 +146,42 @@ class JadwalController
             $idKelas = $kelas->id_kelas;
 
             // 2. Resolve Mapel
+            $mapelInputClean = strtoupper(trim($mapelInput));
             $mapel = Mapel::where('kode_mapel', $mapelInput)
+                ->orWhere('kode_mapel', $mapelInputClean)
                 ->orWhere('nama_mapel', $mapelInput)
                 ->orWhere('nama_mapel', 'LIKE', $mapelInput)
                 ->first();
+
             if (!$mapel) {
-                // If mapel doesn't exist, generate a code or skip
-                $kodeMapelAuto = strtoupper(substr(preg_replace('/[^a-zA-Z0-9]/', '', $mapelInput), 0, 10));
-                if (empty($kodeMapelAuto)) $kodeMapelAuto = 'MPL-' . rand(100, 999);
+                $aliasMap = [
+                    'MTK' => 'MTK', 'MATEMATIKA' => 'MTK',
+                    'BIND' => 'BIND', 'B. INDONESIA' => 'BIND', 'BAHASA INDONESIA' => 'BIND',
+                    'BING' => 'BING', 'B. INGGRIS' => 'BING', 'BAHASA INGGRIS' => 'BING',
+                    'PAI' => 'PAIBP', 'PAIBP' => 'PAIBP', 'PAI & BP' => 'PAIBP',
+                    'PJOK' => 'PJOK', 'PENJAS' => 'PJOK',
+                    'PPKN' => 'PPKN', 'PANCASILA' => 'PPKN',
+                    'IPAS' => 'IPAS', 'INF' => 'INF', 'INFORMATIKA' => 'INF',
+                    'SEJ' => 'SEJ', 'SEJARAH' => 'SEJ',
+                    'BJAW' => 'BJAW', 'B. JAWA' => 'BJAW', 'BAHASA JAWA' => 'BJAW',
+                ];
+
+                if (isset($aliasMap[$mapelInputClean])) {
+                    $targetCode = $aliasMap[$mapelInputClean];
+                    $mapel = Mapel::where('kode_mapel', $targetCode)->first();
+                }
+            }
+
+            if (!$mapel) {
+                // If mapel doesn't exist, create automatically with clean singkatan/code
+                $kodeMapelAuto = strtoupper(preg_replace('/[^a-zA-Z0-9\-]/', '', str_replace(' ', '-', $mapelInput)));
+                if (strlen($kodeMapelAuto) > 25) {
+                    $kodeMapelAuto = substr($kodeMapelAuto, 0, 25);
+                }
+                if (empty($kodeMapelAuto)) {
+                    $kodeMapelAuto = 'MPL-' . rand(100, 999);
+                }
+
                 $mapel = Mapel::firstOrCreate(
                     ['kode_mapel' => $kodeMapelAuto],
                     ['nama_mapel' => $mapelInput]
@@ -237,6 +265,10 @@ class JadwalController
             return $this->parseHtmlTable($content);
         }
 
+        if (str_starts_with($content, "PK\x03\x04")) {
+            return $this->parseXlsxZip($filePath);
+        }
+
         $lines = preg_split('/\r\n|\r|\n/', trim($content));
         if (empty($lines)) return [];
 
@@ -278,6 +310,7 @@ class JadwalController
                 $row = [];
                 foreach ($header as $index => $col) {
                     $row[$col] = isset($cleanData[$index]) ? trim($cleanData[$index]) : '';
+                    $row[$index] = isset($cleanData[$index]) ? trim($cleanData[$index]) : '';
                 }
                 $rows[] = $row;
             }
@@ -339,6 +372,85 @@ class JadwalController
                 $row = [];
                 foreach ($header as $index => $col) {
                     $row[$col] = isset($cellData[$index]) ? trim($cellData[$index]) : '';
+                }
+                $rows[] = $row;
+            }
+        }
+
+        return $rows;
+    }
+
+    private function parseXlsxZip($filePath)
+    {
+        if (!class_exists('ZipArchive')) {
+            return [];
+        }
+
+        $zip = new \ZipArchive();
+        if ($zip->open($filePath) !== true) {
+            return [];
+        }
+
+        $sharedStrings = [];
+        $sharedStringsXml = $zip->getFromName('xl/sharedStrings.xml');
+        if ($sharedStringsXml) {
+            $xml = @simplexml_load_string($sharedStringsXml);
+            if ($xml) {
+                foreach ($xml->children() as $node) {
+                    if ($node->getName() === 'si') {
+                        if (isset($node->t)) {
+                            $sharedStrings[] = (string) $node->t;
+                        } elseif (isset($node->r)) {
+                            $t = '';
+                            foreach ($node->r as $r) {
+                                $t .= (string) $r->t;
+                            }
+                            $sharedStrings[] = $t;
+                        } else {
+                            $sharedStrings[] = '';
+                        }
+                    }
+                }
+            }
+        }
+
+        $sheetXml = $zip->getFromName('xl/worksheets/sheet1.xml');
+        $zip->close();
+
+        if (!$sheetXml) {
+            return [];
+        }
+
+        $xml = @simplexml_load_string($sheetXml);
+        if (!$xml || !isset($xml->sheetData->row)) {
+            return [];
+        }
+
+        $rows = [];
+        $header = null;
+
+        foreach ($xml->sheetData->row as $rowNode) {
+            $rowData = [];
+            foreach ($rowNode->c as $cell) {
+                $type = (string) $cell['t'];
+                $val = (string) $cell->v;
+                if ($type === 's' && isset($sharedStrings[(int)$val])) {
+                    $val = $sharedStrings[(int)$val];
+                }
+                $rowData[] = trim($val);
+            }
+
+            if (empty($rowData) || count(array_filter($rowData)) === 0) continue;
+
+            if (!$header) {
+                $header = array_map(function($h) {
+                    return strtolower(trim(preg_replace('/[^a-zA-Z0-9_]/', '', str_replace([' ', '-'], '_', strtolower($h)))));
+                }, $rowData);
+            } else {
+                $row = [];
+                foreach ($header as $index => $col) {
+                    $row[$col] = isset($rowData[$index]) ? trim($rowData[$index]) : '';
+                    $row[$index] = isset($rowData[$index]) ? trim($rowData[$index]) : '';
                 }
                 $rows[] = $row;
             }

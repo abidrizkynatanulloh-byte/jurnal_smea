@@ -146,56 +146,13 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100 text-slate-700" id="guruTbody">
-                            @forelse ($guruList as $idx => $g)
-                                <tr class="hover:bg-slate-50/80 transition-colors guru-row" data-search="{{ strtolower($g->nama_guru . ' ' . $g->nip . ' ' . $g->jabatan) }}">
-                                    <td class="py-2 px-3.5 text-center font-medium text-slate-400 text-xs tabular-nums">
-                                        {{ $guruList->firstItem() + $idx }}
-                                    </td>
-                                    <td class="py-2 px-3.5">
-                                        <p class="font-semibold text-slate-900 text-xs leading-tight">{{ $g->nama_guru }}</p>
-                                        <p class="text-[11px] text-slate-400 font-mono tabular-nums mt-0.5">NIP: {{ $g->nip }}</p>
-                                    </td>
-                                    <td class="py-2 px-3.5">
-                                        <span class="inline-block px-2 py-0.5 rounded text-[11px] font-medium border
-                                            @if($g->jabatan === 'Kepala Sekolah') bg-emerald-50 text-emerald-800 border-emerald-200
-                                            @elseif(str_contains($g->jabatan, 'Wakasis')) bg-indigo-50 text-indigo-800 border-indigo-200
-                                            @elseif($g->jabatan === 'Guru Piket') bg-amber-50 text-amber-800 border-amber-200
-                                            @else bg-slate-100 text-slate-700 border-slate-200 @endif">
-                                            {{ $g->jabatan ?? 'Guru' }}
-                                        </span>
-                                    </td>
-                                    <td class="py-2 px-3.5 text-xs text-slate-600 font-mono tabular-nums">
-                                        {{ $g->no_hp ?: '-' }}
-                                    </td>
-                                    <td class="py-2 px-3.5 text-center">
-                                        <div class="flex items-center justify-center space-x-1">
-                                            <button type="button" 
-                                                onclick="openEditGuruModal('{{ $g->id_guru }}', '{{ addslashes($g->nama_guru) }}', '{{ $g->nip }}', '{{ $g->no_hp ?? '' }}', '{{ $g->user ? $g->user->role : 'guru' }}')"
-                                                class="w-6.5 h-6.5 rounded border border-slate-200 hover:border-slate-300 hover:bg-slate-100 text-slate-600 flex items-center justify-center transition-colors shadow-2xs cursor-pointer" title="Edit Guru">
-                                                <i data-lucide="edit-2" class="w-3 h-3"></i>
-                                            </button>
-                                            <button type="button" 
-                                                onclick="openDeleteGuruModal('{{ $g->id_guru }}', '{{ addslashes($g->nama_guru) }}')"
-                                                class="w-6.5 h-6.5 rounded border border-slate-200 hover:border-rose-200 hover:bg-rose-50 text-slate-400 hover:text-rose-600 flex items-center justify-center transition-colors shadow-2xs cursor-pointer" title="Hapus Guru">
-                                                <i data-lucide="trash-2" class="w-3 h-3"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="5" class="py-12 text-center text-slate-400 italic text-xs">
-                                        <i data-lucide="inbox" class="w-7 h-7 mx-auto mb-1.5 text-slate-300"></i>
-                                        Tidak ada data guru yang sesuai.
-                                    </td>
-                                </tr>
-                            @endforelse
+                            @include('admin.guru.partials.rows', ['guruList' => $guruList])
                         </tbody>
                     </table>
                 </div>
 
                 <!-- Bottom Pagination Bar (Sesuai Gambar 1 & Gambar 2) -->
-                <div class="shrink-0">
+                <div class="shrink-0" id="paginationContainer">
                     <x-pagination-bar :paginator="$guruList" />
                 </div>
             </div>
@@ -474,21 +431,57 @@
         }
     }
 
-    // Live Instant Search
+    // Dynamic AJAX Live Search Across All Teachers (Zero Page Reloads)
     document.addEventListener('DOMContentLoaded', function() {
         const searchInput = document.getElementById('liveSearchGuru');
+        const searchForm = searchInput ? searchInput.closest('form') : null;
+        let ajaxTimer = null;
+
+        function performAjaxSearch() {
+            if (!searchInput) return;
+            const q = searchInput.value.trim();
+            const form = searchForm || searchInput.form;
+
+            const formData = new FormData(form);
+            formData.set('search', q);
+            const params = new URLSearchParams(formData);
+
+            fetch(`{{ route('admin.guru.index') }}?${params.toString()}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                const tbody = document.getElementById('guruTbody');
+                const pag = document.getElementById('paginationContainer');
+                if (tbody && data.html) {
+                    tbody.innerHTML = data.html;
+                }
+                if (pag && data.pagination) {
+                    pag.innerHTML = data.pagination;
+                }
+                if (typeof lucide !== 'undefined') {
+                    lucide.createIcons();
+                }
+            })
+            .catch(err => console.error('AJAX Live Search Error:', err));
+        }
+
         if (searchInput) {
             searchInput.addEventListener('input', function() {
-                const q = this.value.toLowerCase().trim();
-                const rows = document.querySelectorAll('.guru-row');
-                rows.forEach(row => {
-                    const text = row.getAttribute('data-search') || '';
-                    if (text.includes(q)) {
-                        row.style.display = '';
-                    } else {
-                        row.style.display = 'none';
-                    }
-                });
+                clearTimeout(ajaxTimer);
+                ajaxTimer = setTimeout(() => {
+                    performAjaxSearch();
+                }, 200);
+            });
+
+            searchInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    clearTimeout(ajaxTimer);
+                    performAjaxSearch();
+                }
             });
         }
     });

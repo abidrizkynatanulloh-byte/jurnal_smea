@@ -64,6 +64,14 @@ class GuruController
         $totalGuru = Guru::count();
         $existingKepsek = User::where('role', 'kepala_sekolah')->with('guru')->first();
 
+        if ($request->ajax()) {
+            return response()->json([
+                'html'       => view('admin.guru.partials.rows', compact('guruList'))->render(),
+                'pagination' => view('components.pagination-bar', ['paginator' => $guruList])->render(),
+                'count'      => $guruList->total(),
+            ]);
+        }
+
         return view('admin.guru.index', compact('guruList', 'totalGuru', 'existingKepsek'));
     }
 
@@ -277,6 +285,7 @@ class GuruController
 
         $insertedCount = 0;
         $updatedCount = 0;
+        $passwordCache = [];
 
         foreach ($rows as $row) {
             $nip = trim($row['nip'] ?? '');
@@ -310,6 +319,9 @@ class GuruController
             };
 
             $passwordRaw = !empty($row['password']) ? trim($row['password']) : 'guru123';
+            if (!isset($passwordCache[$passwordRaw])) {
+                $passwordCache[$passwordRaw] = Hash::make($passwordRaw);
+            }
 
             DB::beginTransaction();
             try {
@@ -333,7 +345,7 @@ class GuruController
                 User::withTrashed()->updateOrCreate(
                     ['username' => $nip],
                     [
-                        'password'  => Hash::make($passwordRaw),
+                        'password'  => $passwordCache[$passwordRaw],
                         'role'      => $roleClean,
                         'id_guru'   => $guru->id_guru,
                         'is_active' => 1,

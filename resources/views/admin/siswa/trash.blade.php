@@ -79,7 +79,7 @@
                                     <button type="button" onclick="showSiswaDetailModal('{{ addslashes($s->nama_siswa) }}', '{{ $s->nis }}', '{{ $s->nisn ?: '-' }}', '{{ $s->jenis_kelamin === 'P' ? 'Perempuan (P)' : 'Laki-laki (L)' }}', '{{ $s->kelas ? addslashes($s->kelas->nama_kelas) : '-' }}', '{{ $s->no_hp_wali ?: '-' }}', '{{ addslashes($s->alasan_hapus ?: 'Tidak ada alasan dicatat') }}', '{{ $s->deleted_at ? $s->deleted_at->translatedFormat('d M Y, H:i') : '-' }}')" class="h-7 px-2 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 rounded-lg text-xs font-semibold transition-colors inline-flex items-center space-x-1 cursor-pointer" title="Lihat Detail Alasan">
                                         <i data-lucide="eye" class="w-3 h-3"></i>
                                     </button>
-                                    <form action="{{ route('admin.siswa.restore', $s->nis) }}" method="POST" onsubmit="return confirm('Pulihkan data siswa {{ addslashes($s->nama_siswa) }}?')">
+                                    <form action="{{ route('admin.siswa.restore', $s->nisn ?: $s->nis) }}" method="POST" onsubmit="return confirm('Pulihkan data siswa {{ addslashes($s->nama_siswa) }}?')">
                                         @csrf
                                         <button type="submit" class="h-7 px-2.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 rounded-lg text-xs font-semibold transition-colors inline-flex items-center space-x-1 cursor-pointer" title="Pulihkan Data Siswa">
                                             <i data-lucide="rotate-ccw" class="w-3 h-3"></i>

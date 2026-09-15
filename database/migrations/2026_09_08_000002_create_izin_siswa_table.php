@@ -28,8 +28,6 @@ return new class extends Migration
             $table->softDeletes();
 
             $table->index('nis');
-            $table->foreign('nis')->references('nis')->on('siswa')->onDelete('cascade');
-            $table->foreign('disetujui_oleh')->references('id')->on('users')->onDelete('set null');
         });
     }
 

@@ -60,19 +60,20 @@ class SiswaController
     /**
      * Menyimpan Siswa Baru + Otomatis Buat Akun Login untuk Wali Murid.
      */
+    /**
+     * Menyimpan Siswa Baru + Otomatis Buat Akun Login untuk Wali Murid.
+     */
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nis'           => 'required|string|max:10|unique:siswa,nis',
             'nisn'          => 'required|string|max:20|unique:siswa,nisn|unique:users,username',
+            'nis'           => 'nullable|string|max:20',
             'nama_siswa'    => 'required|string|max:100',
             'id_kelas'      => 'required|exists:kelas,id_kelas',
             'jenis_kelamin' => 'nullable|in:L,P',
             'no_hp_wali'    => 'nullable|string|max:25',
         ], [
-            'nis.required'        => 'Nomor Induk Siswa (NIS) wajib diisi.',
-            'nis.unique'          => 'NIS ini sudah terdaftar.',
-            'nisn.required'       => 'NISN wajib diisi.',
+            'nisn.required'       => 'Nomor Induk Siswa Nasional (NISN) wajib diisi.',
             'nisn.unique'         => 'NISN ini sudah terdaftar.',
             'nama_siswa.required' => 'Nama lengkap siswa wajib diisi.',
             'id_kelas.required'   => 'Pilih kelas siswa.',
@@ -81,8 +82,8 @@ class SiswaController
         DB::beginTransaction();
         try {
             $dataToSave = [
-                'nis'           => $validated['nis'],
                 'nisn'          => $validated['nisn'],
+                'nis'           => $validated['nis'] ?: null,
                 'nama_siswa'    => $validated['nama_siswa'],
                 'id_kelas'      => $validated['id_kelas'],
                 'jenis_kelamin' => $validated['jenis_kelamin'] ?? 'L',
@@ -95,11 +96,11 @@ class SiswaController
             // 1. Simpan profil siswa
             $siswa = Siswa::create($dataToSave);
 
-            // 2. Buat akun login Wali Murid otomatis (Password default: wali123)
+            // 2. Buat akun login Wali Murid otomatis (Password default: ortu123)
             User::updateOrCreate(
                 ['username' => $validated['nisn']],
                 [
-                    'password'   => Hash::make('wali123'),
+                    'password'   => Hash::make('ortu123'),
                     'role'       => 'wali_murid',
                     'nisn_siswa' => $validated['nisn'],
                     'is_active'  => 1,
@@ -117,13 +118,14 @@ class SiswaController
     /**
      * Memperbarui Data Siswa.
      */
-    public function update(Request $request, $nis)
+    public function update(Request $request, $id)
     {
-        $siswa = Siswa::where('nis', $nis)->firstOrFail();
+        $siswa = Siswa::where('nisn', $id)->orWhere('nis', $id)->firstOrFail();
 
         $validated = $request->validate([
             'nama_siswa'    => 'required|string|max:100',
-            'nisn'          => 'required|string|max:20|unique:siswa,nisn,' . $siswa->nis . ',nis',
+            'nisn'          => 'required|string|max:20|unique:siswa,nisn,' . $siswa->nisn . ',nisn',
+            'nis'           => 'nullable|string|max:20',
             'id_kelas'      => 'required|exists:kelas,id_kelas',
             'jenis_kelamin' => 'nullable|in:L,P',
             'no_hp_wali'    => 'nullable|string|max:25',
@@ -132,6 +134,7 @@ class SiswaController
         $updateData = [
             'nama_siswa' => $validated['nama_siswa'],
             'nisn'       => $validated['nisn'],
+            'nis'        => $validated['nis'] ?: null,
             'id_kelas'   => $validated['id_kelas'],
         ];
 
@@ -150,9 +153,9 @@ class SiswaController
     /**
      * Soft Delete Data Siswa.
      */
-    public function destroy($nis, Request $request)
+    public function destroy($id, Request $request)
     {
-        $siswa = Siswa::where('nis', $nis)->firstOrFail();
+        $siswa = Siswa::where('nisn', $id)->orWhere('nis', $id)->firstOrFail();
         $alasan = $request->input('alasan_hapus', 'Tanpa Alasan Khusus');
         $siswa->alasan_hapus = $alasan;
         $siswa->save();
@@ -174,9 +177,9 @@ class SiswaController
     /**
      * Memulihkan Data Siswa dari Sampah (Restore).
      */
-    public function restore($nis)
+    public function restore($id)
     {
-        $siswa = Siswa::onlyTrashed()->where('nis', $nis)->firstOrFail();
+        $siswa = Siswa::onlyTrashed()->where('nisn', $id)->orWhere('nis', $id)->firstOrFail();
         $siswa->restore();
 
         return redirect()->route('admin.siswa.trash')->with('success', 'Data siswa berhasil dipulihkan!');
@@ -228,102 +231,134 @@ class SiswaController
         $updatedCount = 0;
         $kelascache = [];
 
-        foreach ($rows as $row) {
-            $nis = trim($row['nis'] ?? '');
-            $nisn = trim($row['nisn'] ?? '');
-            $nama = trim($row['nama_siswa'] ?? ($row['nama'] ?? ''));
-            $kelasInput = trim($row['kelas'] ?? ($row['nama_kelas'] ?? ($row['id_kelas'] ?? '')));
+        // Pre-compute default password hash once for all 2000+ students
+        $defaultOrtuHash = Hash::make('ortu123');
+        $hasJk = Schema::hasColumn('siswa', 'jenis_kelamin');
+        $hasNoHpWali = Schema::hasColumn('siswa', 'no_hp_wali');
 
-            if (empty($nis) || empty($nama)) {
-                continue;
-            }
-            if (empty($nisn)) {
-                $nisn = $nis;
-            }
+        DB::beginTransaction();
+        try {
+            foreach ($rows as $row) {
+                // NISN sebagai identitas utama (primary identifier)
+                $nisn = trim($row['nisn'] ?? ($row['nisn_siswa'] ?? ($row[1] ?? ($row[0] ?? ''))));
+                $nis  = trim($row['nis'] ?? ($row['no_induk'] ?? ($row['nis_siswa'] ?? ($row[0] ?? ($row[1] ?? '')))));
+                $nama = trim($row['nama_siswa'] ?? ($row['nama'] ?? ($row['nama_lengkap'] ?? ($row['siswa'] ?? ($row[2] ?? '')))));
+                $kelasInput = trim($row['kelas'] ?? ($row['nama_kelas'] ?? ($row['id_kelas'] ?? ($row[3] ?? ''))));
 
-            $jk = strtoupper(trim($row['jenis_kelamin'] ?? ($row['jk'] ?? 'L')));
-            if ($jk !== 'P') $jk = 'L';
-            $noHpWali = trim($row['no_hp_wali'] ?? ($row['no_hp'] ?? ($row['hp'] ?? '')));
+                if (empty($nama)) {
+                    continue;
+                }
+                if (empty($nisn) && empty($nis)) {
+                    continue;
+                }
+                if (empty($nisn)) {
+                    $nisn = $nis;
+                }
+                if (empty($nis)) {
+                    $nis = $nisn;
+                }
 
-            // Resolve Kelas ID
-            $idKelas = null;
-            if (!empty($kelasInput)) {
-                if (isset($kelascache[$kelasInput])) {
-                    $idKelas = $kelascache[$kelasInput];
-                } else {
-                    $k = Kelas::where('id_kelas', $kelasInput)
-                        ->orWhere('nama_kelas', $kelasInput)
-                        ->orWhere('nama_kelas', 'LIKE', $kelasInput)
-                        ->first();
+                $jk = strtoupper(trim($row['jenis_kelamin'] ?? ($row['jk'] ?? ($row['lp'] ?? ($row[4] ?? 'L')))));
+                if ($jk !== 'P') $jk = 'L';
+                $noHpWali = trim($row['no_hp_wali'] ?? ($row['no_hp'] ?? ($row['hp'] ?? ($row['whatsapp'] ?? ($row[5] ?? '')))));
 
-                    if (!$k) {
-                        // Automagically create class if not exists
-                        $k = Kelas::create([
-                            'nama_kelas' => $kelasInput,
-                        ]);
+                // Resolve Kelas ID
+                $idKelas = null;
+                if (!empty($kelasInput)) {
+                    if (isset($kelascache[$kelasInput])) {
+                        $idKelas = $kelascache[$kelasInput];
+                    } else {
+                        $k = Kelas::where('id_kelas', $kelasInput)
+                            ->orWhere('nama_kelas', $kelasInput)
+                            ->orWhere('nama_kelas', 'LIKE', $kelasInput)
+                            ->first();
+
+                        if (!$k) {
+                            // Automagically create class if not exists
+                            $k = Kelas::create([
+                                'nama_kelas' => $kelasInput,
+                            ]);
+                        }
+                        $idKelas = $k->id_kelas;
+                        $kelascache[$kelasInput] = $idKelas;
                     }
-                    $idKelas = $k->id_kelas;
-                    $kelascache[$kelasInput] = $idKelas;
                 }
-            }
 
-            if (!$idKelas) {
-                // Default fallback to first class if not specified
-                $firstKelas = Kelas::first();
-                $idKelas = $firstKelas ? $firstKelas->id_kelas : null;
-            }
-
-            if (!$idKelas) continue;
-
-            DB::beginTransaction();
-            try {
-                $existingSiswa = Siswa::withTrashed()->where('nis', $nis)->first();
-                if ($existingSiswa) {
-                    $updatedCount++;
-                } else {
-                    $insertedCount++;
+                if (!$idKelas) {
+                    // Default fallback to first class if not specified
+                    $firstKelas = Kelas::first();
+                    $idKelas = $firstKelas ? $firstKelas->id_kelas : null;
                 }
+
+                if (!$idKelas) continue;
 
                 $dataToSave = [
-                    'nisn'          => $nisn,
-                    'nama_siswa'    => $nama,
-                    'id_kelas'      => $idKelas,
-                    'deleted_at'    => null,
+                    'nis'        => $nis,
+                    'nisn'       => $nisn,
+                    'nama_siswa' => $nama,
+                    'id_kelas'   => $idKelas,
+                    'deleted_at' => null,
                 ];
 
-                if (Schema::hasColumn('siswa', 'jenis_kelamin')) {
+                if ($hasJk) {
                     $dataToSave['jenis_kelamin'] = $jk;
                 }
-                if (Schema::hasColumn('siswa', 'no_hp_wali')) {
+                if ($hasNoHpWali) {
                     $dataToSave['no_hp_wali'] = $noHpWali ?: null;
                 }
 
-                $siswa = Siswa::withTrashed()->updateOrCreate(
-                    ['nis' => $nis],
-                    $dataToSave
-                );
+                // Cari siswa berdasarkan NIS atau NISN (termasuk soft deleted)
+                $existingSiswa = Siswa::withTrashed()
+                    ->where('nis', $nis)
+                    ->orWhere('nisn', $nisn)
+                    ->first();
 
-                // Create or update Wali Murid account with password 'ortu123'
-                User::withTrashed()->updateOrCreate(
-                    ['username' => $nisn],
-                    [
-                        'password'   => Hash::make('ortu123'),
-                        'role'       => 'wali_murid',
-                        'nisn_siswa' => $nisn,
-                        'is_active'  => 1,
-                        'deleted_at' => null,
-                    ]
-                );
+                if ($existingSiswa) {
+                    $updatedCount++;
+                    if ($existingSiswa->trashed()) {
+                        $existingSiswa->restore();
+                    }
+                    $existingSiswa->update($dataToSave);
+                } else {
+                    $insertedCount++;
+                    Siswa::create($dataToSave);
+                }
 
-                DB::commit();
-            } catch (\Exception $e) {
-                DB::rollBack();
+                // Create or update Wali Murid account using pre-hashed password
+                $existingUser = User::withTrashed()
+                    ->where('username', $nisn)
+                    ->orWhere('username', $nis)
+                    ->first();
+
+                $userData = [
+                    'username'   => $nisn,
+                    'password'   => $defaultOrtuHash,
+                    'role'       => 'wali_murid',
+                    'nisn_siswa' => $nisn,
+                    'is_active'  => 1,
+                    'deleted_at' => null,
+                ];
+
+                if ($existingUser) {
+                    if ($existingUser->trashed()) {
+                        $existingUser->restore();
+                    }
+                    $existingUser->update($userData);
+                } else {
+                    User::create($userData);
+                }
             }
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->withErrors(['file_csv' => 'Gagal mengimpor data: ' . $e->getMessage()]);
         }
+
+        $totalProcessed = $insertedCount + $updatedCount;
 
         return redirect()->route('admin.siswa.index')->with(
             'success',
-            "Import data siswa selesai! Data baru: {$insertedCount}, Data diperbarui: {$updatedCount}."
+            "Import data siswa selesai! Total {$totalProcessed} data siswa berhasil diproses (Data baru: {$insertedCount}, Data diperbarui/dipulihkan: {$updatedCount})."
         );
     }
 
@@ -341,6 +376,10 @@ class SiswaController
 
         if (str_contains($content, '<table') || str_contains($content, '<TABLE')) {
             return $this->parseHtmlTable($content);
+        }
+
+        if (str_starts_with($content, "PK\x03\x04")) {
+            return $this->parseXlsxZip($filePath);
         }
 
         $lines = preg_split('/\r\n|\r|\n/', trim($content));
@@ -384,6 +423,7 @@ class SiswaController
                 $row = [];
                 foreach ($header as $index => $col) {
                     $row[$col] = isset($cleanData[$index]) ? trim($cleanData[$index]) : '';
+                    $row[$index] = isset($cleanData[$index]) ? trim($cleanData[$index]) : '';
                 }
                 $rows[] = $row;
             }
@@ -413,6 +453,7 @@ class SiswaController
                 $row = [];
                 foreach ($header as $index => $col) {
                     $row[$col] = isset($rowData[$index]) ? trim($rowData[$index]) : '';
+                    $row[$index] = isset($rowData[$index]) ? trim($rowData[$index]) : '';
                 }
                 $rows[] = $row;
             }
@@ -445,11 +486,114 @@ class SiswaController
                 $row = [];
                 foreach ($header as $index => $col) {
                     $row[$col] = isset($cellData[$index]) ? trim($cellData[$index]) : '';
+                    $row[$index] = isset($cellData[$index]) ? trim($cellData[$index]) : '';
                 }
                 $rows[] = $row;
             }
         }
 
         return $rows;
+    }
+
+    private function parseXlsxZip($filePath)
+    {
+        if (!class_exists('ZipArchive')) {
+            return [];
+        }
+
+        $zip = new \ZipArchive();
+        if ($zip->open($filePath) !== true) {
+            return [];
+        }
+
+        // 1. Read Shared Strings
+        $sharedStrings = [];
+        $sharedStringsXml = $zip->getFromName('xl/sharedStrings.xml');
+        if ($sharedStringsXml) {
+            $xml = @simplexml_load_string($sharedStringsXml);
+            if ($xml) {
+                foreach ($xml->children() as $node) {
+                    if ($node->getName() === 'si') {
+                        if (isset($node->t)) {
+                            $sharedStrings[] = (string) $node->t;
+                        } elseif (isset($node->r)) {
+                            $t = '';
+                            foreach ($node->r as $r) {
+                                $t .= (string) $r->t;
+                            }
+                            $sharedStrings[] = $t;
+                        } else {
+                            $sharedStrings[] = '';
+                        }
+                    }
+                }
+            }
+        }
+
+        // 2. Read Sheet1
+        $sheetXml = $zip->getFromName('xl/worksheets/sheet1.xml');
+        $zip->close();
+
+        if (!$sheetXml) {
+            return [];
+        }
+
+        $xml = @simplexml_load_string($sheetXml);
+        if (!$xml || !isset($xml->sheetData->row)) {
+            return [];
+        }
+
+        $rows = [];
+        $header = null;
+
+        foreach ($xml->sheetData->row as $rowNode) {
+            $rowData = [];
+            foreach ($rowNode->c as $cell) {
+                $type = (string) $cell['t'];
+                $val = (string) $cell->v;
+                if ($type === 's' && isset($sharedStrings[(int)$val])) {
+                    $val = $sharedStrings[(int)$val];
+                }
+                $rowData[] = trim($val);
+            }
+
+            if (empty($rowData) || count(array_filter($rowData)) === 0) continue;
+
+            if (!$header) {
+                $header = array_map(function($h) {
+                    return strtolower(trim(preg_replace('/[^a-zA-Z0-9_]/', '', str_replace([' ', '-'], '_', strtolower($h)))));
+                }, $rowData);
+            } else {
+                $row = [];
+                foreach ($header as $index => $col) {
+                    $row[$col] = isset($rowData[$index]) ? trim($rowData[$index]) : '';
+                    $row[$index] = isset($rowData[$index]) ? trim($rowData[$index]) : '';
+                }
+                $rows[] = $row;
+            }
+        }
+
+        return $rows;
+    }
+
+    /**
+     * Hapus Seluruh Data Siswa & Akun Wali Murid di Database (Reset Total).
+     */
+    public function truncateAll(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            // 1. Hapus permanen seluruh data siswa
+            Siswa::withTrashed()->forceDelete();
+
+            // 2. Hapus permanen seluruh akun user role wali_murid
+            User::withTrashed()->where('role', 'wali_murid')->forceDelete();
+
+            DB::commit();
+            return redirect()->route('admin.siswa.index')->with('success', 'Seluruh data siswa & akun wali murid di database berhasil dikosongkan!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->withErrors(['error' => 'Gagal mengosongkan data siswa: ' . $e->getMessage()]);
+        }
     }
 }

@@ -190,26 +190,56 @@ class JamPelajaranController
 
     /**
      * Mengurutkan dan merapikan kembali jadwal seluruh jam pelajaran aktif secara berurutan.
-     * Memperhitungkan waktu istirahat resmi:
-     * - Senin-Kamis: Istirahat 1 = 20m (sela Jam 4-5), Istirahat 2 = 90m (sela Jam 7-8).
-     * - Jumat: Istirahat 1 = 20m (sela Jam 4-5), Istirahat 2 = 100m (sela Jam 8-9).
+     * Jika Jam ke-1 dinonaktifkan, jam aktif pertama otomatis dimajukan ke jam awal sekolah (07.00).
      */
     private function recalculateSchedule($kelompokHari)
     {
+        // 1. Dapatkan jam pelajaran pertama sebagai patokan jam mulai sekolah (misal 07:00)
+        $firstSession = JamPelajaran::withTrashed()
+            ->where('kelompok_hari', $kelompokHari)
+            ->orderBy('jam_ke', 'asc')
+            ->first();
+
+        $baseStartTime = $firstSession ? $firstSession->waktu_mulai : '07:00:00';
+        if (empty($baseStartTime)) {
+            $baseStartTime = '07:00:00';
+        }
+
+        // 2. Dapatkan seluruh jam pelajaran yang aktif
         $jamList = JamPelajaran::where('kelompok_hari', $kelompokHari)
             ->where('is_aktif', 1)
             ->orderBy('jam_ke', 'asc')
             ->get();
 
-        if ($jamList->count() <= 1) {
+        if ($jamList->isEmpty()) {
             return;
         }
 
+        // 3. Set jam pelajaran aktif pertama agar mulai tepat di jam awal sekolah (baseStartTime)
+        $firstActive = $jamList[0];
+        $durasiFirst = Carbon::parse($firstActive->waktu_mulai)
+            ->diffInMinutes(Carbon::parse($firstActive->waktu_selesai));
+
+        if ($durasiFirst <= 0) {
+            $durasiFirst = ($kelompokHari === 'Jumat') ? 35 : 40;
+        }
+
+        $newFirstMulai   = Carbon::parse($baseStartTime);
+        $newFirstSelesai = (clone $newFirstMulai)->addMinutes($durasiFirst);
+
+        $firstActive->update([
+            'waktu_mulai'   => $newFirstMulai->format('H:i:s'),
+            'waktu_selesai' => $newFirstSelesai->format('H:i:s'),
+        ]);
+
+        $jamList[0]->waktu_mulai   = $newFirstMulai->format('H:i:s');
+        $jamList[0]->waktu_selesai = $newFirstSelesai->format('H:i:s');
+
+        // 4. Hitung dan sesuaikan jam pelajaran aktif berikutnya secara berurutan
         for ($i = 0; $i < $jamList->count() - 1; $i++) {
             $current = $jamList[$i];
             $next    = $jamList[$i + 1];
 
-            // Durasi jam next (dalam menit)
             $durasiNext = Carbon::parse($next->waktu_mulai)
                 ->diffInMinutes(Carbon::parse($next->waktu_selesai));
 
@@ -217,10 +247,8 @@ class JamPelajaranController
                 $durasiNext = ($kelompokHari === 'Jumat') ? 35 : 40;
             }
 
-            // Hitung jeda istirahat antara jam current dan jam next
             $gapMenit = $this->getBreakGapMinutes($kelompokHari, $current->jam_ke, $next->jam_ke);
 
-            // Waktu mulai baru untuk jam next = waktu selesai jam current + gap istirahat
             $newNextMulai   = Carbon::parse($current->waktu_selesai)->addMinutes($gapMenit);
             $newNextSelesai = (clone $newNextMulai)->addMinutes($durasiNext);
 
@@ -229,7 +257,6 @@ class JamPelajaranController
                 'waktu_selesai' => $newNextSelesai->format('H:i:s'),
             ]);
 
-            // Update memori instance untuk iterasi berikutnya dalam loop
             $jamList[$i + 1]->waktu_mulai   = $newNextMulai->format('H:i:s');
             $jamList[$i + 1]->waktu_selesai = $newNextSelesai->format('H:i:s');
         }

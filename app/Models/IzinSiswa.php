@@ -35,7 +35,7 @@ class IzinSiswa extends Model
      */
     public function siswa()
     {
-        return $this->belongsTo(Siswa::class, 'nis', 'nis');
+        return $this->belongsTo(Siswa::class, 'nis', 'nisn');
     }
 
     /**

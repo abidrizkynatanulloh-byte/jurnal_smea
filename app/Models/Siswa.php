@@ -17,8 +17,8 @@ class Siswa extends Model
     // Nama tabel di database
     protected $table = 'siswa';
 
-    // Primary key tabel siswa adalah string NIS (bukan ID angka biasa)
-    protected $primaryKey = 'nis';
+    // Primary key tabel siswa adalah string NISN (bukan ID angka biasa)
+    protected $primaryKey = 'nisn';
     public $incrementing = false;
     protected $keyType = 'string';
 

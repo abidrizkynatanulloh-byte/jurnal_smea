@@ -6,6 +6,11 @@ use App\Models\IzinGuru;
 use App\Models\DispenSiswa;
 use App\Models\IzinSiswa;
 use App\Models\User;
+use App\Models\Siswa;
+use App\Models\Guru;
+use App\Models\Kelas;
+use App\Models\JurnalMengajar;
+use App\Models\Notifikasi;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -383,5 +388,139 @@ class WhatsAppService
         }
 
         return $cleaned;
+    }
+
+    /**
+     * Kirim notifikasi WA ke Ortu/Wali & Wali Kelas saat siswa tercatat Alpa pada presensi jurnal.
+     *
+     * @param array|string $nisInput Single NIS or Array of NIS
+     * @param JurnalMengajar|int $jurnalInput JurnalMengajar instance or ID Jurnal
+     * @return void
+     */
+    public static function sendAlphaSiswaNotification($nisInput, $jurnalInput): void
+    {
+        try {
+            $nisList = is_array($nisInput) ? $nisInput : [$nisInput];
+            if (empty($nisList)) {
+                return;
+            }
+
+            // Load Jurnal dengan relasi pendukung
+            $jurnal = $jurnalInput instanceof JurnalMengajar 
+                ? $jurnalInput 
+                : JurnalMengajar::find($jurnalInput);
+
+            if (!$jurnal) {
+                return;
+            }
+
+            $jurnal->loadMissing(['jadwal.kelas', 'jadwal.mapel', 'jadwal.guru']);
+
+            $tanggal = date('d-m-Y', strtotime($jurnal->tanggal));
+            $mapel = $jurnal->jadwal->mapel->nama_mapel ?? 'Mata Pelajaran';
+            $guruPengajar = $jurnal->jadwal->guru->nama_guru ?? 'Guru Pengajar';
+            $jamMulai = $jurnal->jadwal->jam_mulai ?? null;
+            $jamSelesai = $jurnal->jadwal->jam_selesai ?? null;
+            $jamInfo = ($jamMulai && $jamSelesai) ? "(Jam ke-{$jamMulai} s/d {$jamSelesai})" : "";
+
+            // Pengelompokan data siswa Alpa per Wali Kelas
+            $waliKelasMap = []; // [ id_guru => [ 'guru' => Guru, 'kelas' => Kelas, 'siswa_list' => [] ] ]
+
+            foreach ($nisList as $nis) {
+                $siswa = Siswa::with('kelas')->find($nis);
+                if (!$siswa) continue;
+
+                $namaSiswa = $siswa->nama_siswa;
+                $namaKelas = $siswa->kelas->nama_kelas ?? '-';
+
+                // 1. Kirim WA ke Orang Tua / Wali Siswa jika ada nomor HP Wali
+                if (!empty($siswa->no_hp_wali)) {
+                    $formattedOrtu = self::formatPhoneNumber($siswa->no_hp_wali);
+                    if ($formattedOrtu) {
+                        $msgOrtu = "[Pemberitahuan Presensi Siswa]\n\n" .
+                            "Yth. Orang Tua / Wali dari *{$namaSiswa}*,\n\n" .
+                            "Informasi ketidakhadiran siswa di sekolah:\n\n" .
+                            "🎓 *Nama Siswa* : {$namaSiswa}\n" .
+                            "🏫 *Kelas*      : {$namaKelas}\n" .
+                            "📅 *Tanggal*    : {$tanggal}\n" .
+                            "📚 *Mata Pelajaran*: {$mapel} {$jamInfo}\n" .
+                            "👨‍🏫 *Guru Pengajar*: {$guruPengajar}\n" .
+                            "⚠️ *Keterangan* : *ALPA (Tanpa Keterangan)*\n\n" .
+                            "Mohon konfirmasi atau hubungi Wali Kelas jika siswa berhalangan hadir.\n\n" .
+                            "Terima Kasih.\nSMK Negeri 1";
+
+                        self::sendBulkMessage([$formattedOrtu], $msgOrtu);
+                    }
+                }
+
+                // 2. Kelompokkan data untuk Notifikasi Wali Kelas
+                if ($siswa->kelas && !empty($siswa->kelas->wali_kelas)) {
+                    $waliVal = $siswa->kelas->wali_kelas;
+                    $waliGuru = Guru::where('nip', $waliVal)
+                        ->orWhere('id_guru', $waliVal)
+                        ->orWhere('nama_guru', $waliVal)
+                        ->first();
+
+                    if ($waliGuru) {
+                        $key = $waliGuru->id_guru;
+                        if (!isset($waliKelasMap[$key])) {
+                            $waliKelasMap[$key] = [
+                                'guru'       => $waliGuru,
+                                'kelas'      => $siswa->kelas,
+                                'siswa_list' => [],
+                            ];
+                        }
+                        $waliKelasMap[$key]['siswa_list'][] = $namaSiswa;
+
+                        // Buat notifikasi dalam aplikasi jika Wali Kelas memiliki akun user
+                        if ($waliGuru->user) {
+                            Notifikasi::create([
+                                'untuk_user_id' => $waliGuru->user->id,
+                                'judul'         => "Siswa Alpa: {$namaSiswa}",
+                                'pesan'         => "Siswa {$namaSiswa} ({$namaKelas}) tercatat Alpa pada mata pelajaran {$mapel} tanggal {$tanggal}.",
+                                'jenis'         => 'siswa_alpha',
+                                'ref_id'        => $jurnal->id_jurnal,
+                                'sudah_dibaca'  => 0,
+                                'created_at'    => now(),
+                            ]);
+                        }
+                    }
+                }
+            }
+
+            // 3. Kirim rekap pesan WA ke Wali Kelas
+            foreach ($waliKelasMap as $data) {
+                $waliGuru = $data['guru'];
+                $kelasObj = $data['kelas'];
+                $siswaList = $data['siswa_list'];
+
+                if (empty($waliGuru->no_hp)) continue;
+
+                $formattedWali = self::formatPhoneNumber($waliGuru->no_hp);
+                if (!$formattedWali) continue;
+
+                $daftarText = "";
+                foreach ($siswaList as $idx => $sNama) {
+                    $num = $idx + 1;
+                    $daftarText .= "  {$num}. *{$sNama}*\n";
+                }
+
+                $msgWali = "[Laporan Siswa Alpa - Wali Kelas]\n\n" .
+                    "Yth. Bpk/Ibu Wali Kelas *{$kelasObj->nama_kelas}*,\n\n" .
+                    "Laporan siswa tercatat *ALPA (Tanpa Keterangan)* pada presensi kelas:\n\n" .
+                    "📅 *Tanggal*    : {$tanggal}\n" .
+                    "📚 *Mata Pelajaran*: {$mapel} {$jamInfo}\n" .
+                    "👨‍🏫 *Guru Pengajar*: {$guruPengajar}\n\n" .
+                    "📌 *Daftar Siswa Alpa* (" . count($siswaList) . " siswa):\n" .
+                    $daftarText . "\n" .
+                    "Notifikasi otomatis ini juga telah dikirimkan ke WhatsApp Orang Tua/Wali siswa yang bersangkutan.\n\n" .
+                    "Terima Kasih.";
+
+                self::sendBulkMessage([$formattedWali], $msgWali);
+            }
+
+        } catch (\Throwable $e) {
+            Log::error("WhatsAppService Error (sendAlphaSiswaNotification): " . $e->getMessage());
+        }
     }
 }

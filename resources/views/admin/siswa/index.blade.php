@@ -27,6 +27,13 @@
                 <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                 <span>Sampah</span>
             </a>
+            <form action="{{ route('admin.siswa.reset') }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin MENGHAPUS SELURUH data siswa & akun wali murid dari database? Action ini akan mengosongkan tabel siswa.');" class="inline">
+                @csrf
+                <button type="submit" class="h-8 px-3 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs font-semibold transition-colors flex items-center space-x-1.5 shadow-2xs cursor-pointer">
+                    <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                    <span>Kosongkan DB</span>
+                </button>
+            </form>
         </div>
     </div>
 
@@ -46,14 +53,14 @@
                 @csrf
 
                 <div>
-                    <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Nomor Induk Siswa (NIS) *</label>
-                    <input type="text" name="nis" value="{{ old('nis') }}" placeholder="Contoh: 23456" required
+                    <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Nomor Induk Siswa (NIS) <span class="text-slate-400 font-normal">(Opsional)</span></label>
+                    <input type="text" name="nis" value="{{ old('nis') }}" placeholder="Boleh dikosongkan..."
                         class="w-full h-8 px-2.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-800 font-mono transition-colors">
                 </div>
 
                 <div>
                     <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Nomor Induk Siswa Nasional (NISN) *</label>
-                    <input type="text" name="nisn" value="{{ old('nisn') }}" placeholder="10 Digit NISN (Akun Login Siswa)" required
+                    <input type="text" name="nisn" value="{{ old('nisn') }}" placeholder="10 Digit NISN (Akun Login Ortu Siswa)" required
                         class="w-full h-8 px-2.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-800 font-mono transition-colors">
                 </div>
 
@@ -191,9 +198,9 @@
             @method('PUT')
 
             <div>
-                <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Nomor Induk Siswa (NIS) *</label>
-                <input type="text" name="nis" id="edit_nis" required readonly
-                    class="w-full h-10 px-3 bg-slate-50 dark:bg-[#1A2230]/60 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-slate-600 dark:text-slate-400 font-mono focus:outline-none cursor-not-allowed">
+                <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Nomor Induk Siswa (NIS) <span class="text-slate-400 font-normal">(Opsional)</span></label>
+                <input type="text" name="nis" id="edit_nis" placeholder="Boleh dikosongkan..."
+                    class="w-full h-10 px-3 bg-white dark:bg-[#1A2230] border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-slate-900 dark:text-slate-100 font-mono focus:outline-none focus:border-slate-800 transition-colors">
             </div>
 
             <div>
@@ -384,15 +391,15 @@
         }
     }
 
-    function openEditModal(nis, nama, nisn, idKelas, jk, noHpWali) {
-        document.getElementById('edit_nis').value = nis;
+    function openEditModal(targetKey, nama, nisn, idKelas, jk, noHpWali, nis) {
+        document.getElementById('edit_nis').value = nis || '';
         document.getElementById('edit_nama').value = nama;
         document.getElementById('edit_nisn').value = nisn;
         document.getElementById('edit_kelas').value = idKelas;
         document.getElementById('edit_jk').value = jk;
         document.getElementById('edit_no_hp_wali').value = noHpWali;
 
-        document.getElementById('formEditSiswa').action = `/admin/siswa/${nis}`;
+        document.getElementById('formEditSiswa').action = `/admin/siswa/${targetKey}`;
         document.getElementById('modalEditSiswa').classList.remove('hidden');
     }
 
@@ -400,9 +407,9 @@
         document.getElementById('modalEditSiswa').classList.add('hidden');
     }
 
-    function openDeleteSiswaModal(nis, nama) {
-        document.getElementById('deleteSiswaNamaTarget').innerText = `Siswa: ${nama} (NIS: ${nis})`;
-        document.getElementById('formDeleteSiswa').action = `/admin/siswa/${nis}`;
+    function openDeleteSiswaModal(targetKey, nama) {
+        document.getElementById('deleteSiswaNamaTarget').innerText = `Siswa: ${nama} (NISN: ${targetKey})`;
+        document.getElementById('formDeleteSiswa').action = `/admin/siswa/${targetKey}`;
         document.getElementById('inputAlasanSiswa').value = 'Lulus / Tamat Belajar';
         document.getElementById('modalDeleteSiswa').classList.remove('hidden');
     }
@@ -460,25 +467,11 @@
 
         if (searchInput) {
             searchInput.addEventListener('input', function() {
-                const q = this.value.trim();
-                const qLower = q.toLowerCase();
-
-                // 1. Instant client-side visual filter on current DOM rows (0ms delay)
-                const rows = document.querySelectorAll('.siswa-row');
-                rows.forEach(row => {
-                    const text = row.getAttribute('data-search') || '';
-                    if (!qLower || text.includes(qLower)) {
-                        row.style.display = '';
-                    } else {
-                        row.style.display = 'none';
-                    }
-                });
-
-                // 2. Fast AJAX query (150ms debounce) searching ALL 1,712 students without page reloads
+                // Fast AJAX query (200ms debounce) searching ALL students without page reloads
                 clearTimeout(ajaxTimer);
                 ajaxTimer = setTimeout(() => {
                     performAjaxSearch();
-                }, 150);
+                }, 200);
             });
 
             // Prevent form submit refresh on Enter

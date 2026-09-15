@@ -21,4 +21,18 @@ class Kelas extends Model
             $builder->where('nama_kelas', '!=', 'Kelas_49');
         });
     }
+
+    public function waliKelasGuru()
+    {
+        return $this->belongsTo(Guru::class, 'wali_kelas', 'nip');
+    }
+
+    public function getWaliKelasGuruDataAttribute()
+    {
+        if (empty($this->wali_kelas)) return null;
+        return Guru::where('nip', $this->wali_kelas)
+            ->orWhere('id_guru', $this->wali_kelas)
+            ->orWhere('nama_guru', $this->wali_kelas)
+            ->first();
+    }
 }

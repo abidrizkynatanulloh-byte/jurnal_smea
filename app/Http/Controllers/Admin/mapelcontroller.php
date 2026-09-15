@@ -26,6 +26,14 @@ class MapelController
         $mapelList = $query->orderBy('kode_mapel')->paginate($perPage)->withQueryString();
         $totalMapel = Mapel::count();
 
+        if ($request->ajax()) {
+            return response()->json([
+                'html'       => view('admin.mapel.partials.rows', compact('mapelList'))->render(),
+                'pagination' => view('components.pagination-bar', ['paginator' => $mapelList])->render(),
+                'count'      => $mapelList->total(),
+            ]);
+        }
+
         return view('admin.mapel.index', compact('mapelList', 'totalMapel'));
     }
 
@@ -35,10 +43,10 @@ class MapelController
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'kode_mapel' => 'required|string|max:10|unique:mapel,kode_mapel',
+            'kode_mapel' => 'required|string|max:30|unique:mapel,kode_mapel',
             'nama_mapel' => 'required|string|max:150',
         ], [
-            'kode_mapel.required' => 'Kode mapel wajib diisi.',
+            'kode_mapel.required' => 'Kode / Singkatan mapel wajib diisi.',
             'kode_mapel.unique'   => 'Kode mapel ini sudah digunakan.',
             'nama_mapel.required' => 'Nama mata pelajaran wajib diisi.',
         ]);
@@ -54,7 +62,7 @@ class MapelController
     public function update(Request $request, $kode)
     {
         $validated = $request->validate([
-            'kode_mapel' => 'required|string|max:10|unique:mapel,kode_mapel,' . $kode . ',kode_mapel',
+            'kode_mapel' => 'required|string|max:30|unique:mapel,kode_mapel,' . $kode . ',kode_mapel',
             'nama_mapel' => 'required|string|max:150',
         ], [
             'kode_mapel.required' => 'Kode mapel wajib diisi.',
