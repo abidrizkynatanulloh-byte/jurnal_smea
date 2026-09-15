@@ -660,6 +660,14 @@
                     <span class="hidden sm:inline text-[11px]">Bantuan</span>
                 </button>
 
+                <!-- Audit Log Button -->
+                <button type="button" onclick="openAuditLogModal()"
+                    class="h-7.5 px-2.5 rounded-lg border border-indigo-200 dark:border-indigo-800 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-all flex items-center space-x-1.5 shadow-2xs cursor-pointer text-xs font-semibold"
+                    title="Lihat Log Aktivitas Sistem">
+                    <i data-lucide="activity" class="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400"></i>
+                    <span class="hidden sm:inline text-[11px]">Audit Log</span>
+                </button>
+
                 <!-- Theme Toggle Button (Light & Dark Mode) -->
                 <button type="button" onclick="toggleTheme()" id="theme-toggle-btn"
                     class="h-7.5 px-2.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/80 transition-all flex items-center space-x-1.5 shadow-2xs cursor-pointer text-xs font-semibold"
@@ -836,8 +844,70 @@
         </div>
     </div>
 
+    <!-- Modal Audit Log (Berlaku untuk Semua Role) -->
+    <div id="modalAuditLog" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-[#151B26] border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl max-w-2xl w-full overflow-hidden flex flex-col max-h-[85vh]">
+            <div class="px-4 py-3 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-[#1E2538]">
+                <div class="flex items-center space-x-2">
+                    <i data-lucide="activity" class="w-4 h-4 text-indigo-600 dark:text-indigo-400"></i>
+                    <h3 class="font-bold text-slate-900 dark:text-white text-xs">Audit Log Aktivitas Sistem (Real-Time)</h3>
+                </div>
+                <button onclick="closeAuditLogModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-white cursor-pointer">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+            <div class="p-4 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800 text-xs">
+                @forelse($globalAuditLogs ?? [] as $log)
+                    <div class="py-2.5 flex items-start space-x-3">
+                        <div class="p-1.5 bg-slate-100 dark:bg-slate-800 rounded-lg text-indigo-600 dark:text-indigo-400 mt-0.5 shrink-0">
+                            <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="font-bold text-slate-900 dark:text-white truncate">{{ $log->action }}</span>
+                                <span class="text-[10px] text-slate-400 font-mono shrink-0">
+                                    {{ \Carbon\Carbon::parse($log->created_at)->locale('id')->diffForHumans() }}
+                                </span>
+                            </div>
+                            <p class="text-slate-600 dark:text-slate-300 text-xs mt-0.5 leading-relaxed">{{ $log->description }}</p>
+                            <div class="flex items-center space-x-2 mt-1 text-[10px] text-slate-400">
+                                <span>Oleh: <strong class="text-slate-700 dark:text-slate-200">{{ $log->user ? $log->user->nama_display : 'Sistem' }}</strong></span>
+                                <span>•</span>
+                                <span>IP: {{ $log->ip_address ?? '-' }}</span>
+                            </div>
+                        </div>
+                    </div>
+                @empty
+                    <div class="py-8 text-center text-slate-400 italic text-xs">
+                        Belum ada aktivitas penting yang tercatat dalam audit log.
+                    </div>
+                @endforelse
+            </div>
+            <div class="px-4 py-2.5 bg-slate-50 dark:bg-slate-900/80 border-t border-slate-100 dark:border-slate-800 text-right">
+                <button type="button" onclick="closeAuditLogModal()" class="px-3.5 py-1.5 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-bold rounded-lg transition-colors cursor-pointer">
+                    Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Global Layout Scripts -->
     <script>
+        function openAuditLogModal() {
+            const modal = document.getElementById('modalAuditLog');
+            if (modal) {
+                modal.classList.remove('hidden');
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+            }
+        }
+
+        function closeAuditLogModal() {
+            const modal = document.getElementById('modalAuditLog');
+            if (modal) {
+                modal.classList.add('hidden');
+            }
+        }
+
         function openBantuanModal() {
             const modal = document.getElementById('modalBantuan');
             if (modal) {

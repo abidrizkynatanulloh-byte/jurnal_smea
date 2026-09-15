@@ -26,5 +26,20 @@ class AppServiceProvider extends ServiceProvider
         try {
             \Illuminate\Support\Facades\DB::table('kelas')->where('nama_kelas', 'LIKE', '%Kelas_49%')->delete();
         } catch (\Throwable $e) {}
+
+        // Injeksi data Audit Log terbaru secara otomatis ke layout utama untuk SEMUA ROLE
+        \Illuminate\Support\Facades\View::composer('layouts.app', function ($view) {
+            if (\Illuminate\Support\Facades\Auth::check()) {
+                try {
+                    $globalAuditLogs = \App\Models\AuditLog::with('user')
+                        ->orderBy('id', 'desc')
+                        ->take(20)
+                        ->get();
+                    $view->with('globalAuditLogs', $globalAuditLogs);
+                } catch (\Throwable $e) {
+                    $view->with('globalAuditLogs', collect());
+                }
+            }
+        });
     }
 }
