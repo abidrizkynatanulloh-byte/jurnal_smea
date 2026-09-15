@@ -201,8 +201,8 @@
                     <div class="rounded-lg overflow-hidden bg-black border border-slate-200 aspect-video relative flex items-center justify-center">
                         <video id="kamera-video" class="w-full h-full object-cover" autoplay playsinline></video>
                     </div>
-                    <button type="button" id="btn-capture" class="w-full h-8.5 px-3.5 bg-[#1E2538] hover:bg-[#161c2c] text-white rounded-lg text-xs font-semibold transition-colors shadow-2xs flex items-center justify-center space-x-1.5 cursor-pointer">
-                        <i data-lucide="camera" class="w-3.5 h-3.5"></i>
+                    <button type="button" id="btn-capture" class="w-full min-h-[44px] py-2.5 px-4 bg-[#1E2538] hover:bg-[#121724] text-white rounded-xl text-xs sm:text-sm font-bold tracking-wide transition-all shadow-xs hover:shadow-md flex items-center justify-center space-x-2 cursor-pointer">
+                        <i data-lucide="camera" class="w-4 h-4"></i>
                         <span>Jepret Foto Sekarang</span>
                     </button>
                 </div>
@@ -212,8 +212,8 @@
                     <div class="rounded-lg overflow-hidden bg-black border border-slate-200 aspect-video relative flex items-center justify-center">
                         <img id="hasil-foto" class="w-full h-full object-cover" />
                     </div>
-                    <button type="button" id="btn-retake" class="w-full h-8.5 px-3.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-semibold transition-colors shadow-2xs flex items-center justify-center space-x-1.5 cursor-pointer">
-                        <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                    <button type="button" id="btn-retake" class="w-full min-h-[44px] py-2.5 px-4 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs sm:text-sm font-bold tracking-wide transition-all shadow-xs hover:shadow-md flex items-center justify-center space-x-2 cursor-pointer">
+                        <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
                         <span>Ulangi Pengambilan Foto</span>
                     </button>
                 </div>
@@ -233,11 +233,11 @@
 
         <!-- Tombol Simpan & Batal -->
         <div class="flex items-center space-x-3 pt-3">
-            <button type="submit" class="h-11 px-6 py-2.5 bg-[#1E2538] hover:bg-[#121724] text-white rounded-xl font-bold text-xs sm:text-sm transition-all shadow-xs flex items-center space-x-2 cursor-pointer">
+            <button type="submit" class="min-h-[48px] py-3.5 px-7 bg-[#1E2538] hover:bg-[#121724] text-white rounded-xl font-bold text-sm tracking-wide transition-all shadow-sm hover:shadow-md flex items-center space-x-2.5 cursor-pointer">
                 <i data-lucide="save" class="w-4 h-4"></i>
                 <span>Simpan Jurnal & Presensi</span>
             </button>
-            <a href="{{ route('guru.dashboard') }}" class="h-11 px-5 py-2.5 min-w-[90px] border border-slate-200 hover:bg-slate-50 text-slate-600 rounded-xl text-xs sm:text-sm font-semibold transition-colors flex items-center justify-center cursor-pointer">
+            <a href="{{ route('guru.dashboard') }}" class="min-h-[48px] px-6 py-3.5 min-w-[100px] border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-xl text-sm font-semibold transition-colors flex items-center justify-center cursor-pointer shadow-2xs">
                 Batal
             </a>
         </div>

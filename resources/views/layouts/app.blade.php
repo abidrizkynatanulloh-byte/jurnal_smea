@@ -837,7 +837,7 @@
 
             <!-- Modal Footer -->
             <div class="px-5 py-3 bg-slate-50 dark:bg-slate-900/80 border-t border-slate-100 dark:border-slate-800 text-right">
-                <button type="button" onclick="closeBantuanModal()" class="px-4 py-2 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-bold rounded-xl transition-colors">
+                <button type="button" onclick="closeBantuanModal()" class="h-10 px-6 min-w-[100px] bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs sm:text-sm font-bold rounded-xl transition-colors cursor-pointer shadow-2xs">
                     Tutup
                 </button>
             </div>
@@ -883,8 +883,8 @@
                     </div>
                 @endforelse
             </div>
-            <div class="px-4 py-2.5 bg-slate-50 dark:bg-slate-900/80 border-t border-slate-100 dark:border-slate-800 text-right">
-                <button type="button" onclick="closeAuditLogModal()" class="px-3.5 py-1.5 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-bold rounded-lg transition-colors cursor-pointer">
+            <div class="px-5 py-3 bg-slate-50 dark:bg-slate-900/80 border-t border-slate-100 dark:border-slate-800 text-right">
+                <button type="button" onclick="closeAuditLogModal()" class="h-10 px-6 min-w-[100px] bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs sm:text-sm font-bold rounded-xl transition-colors cursor-pointer shadow-2xs">
                     Tutup
                 </button>
             </div>

@@ -17,7 +17,7 @@
             <p class="text-xs text-slate-500 mt-0.5">Kelola pengajuan perizinan dan pantau proses verifikasi berjenjang</p>
         </div>
         <div>
-            <a href="{{ route('guru.izin.create') }}" class="h-9.5 px-6 bg-[#1E2538] hover:bg-[#161c2c] text-white rounded-xl text-xs font-bold transition-all flex items-center space-x-2 shadow-2xs cursor-pointer">
+            <a href="{{ route('guru.izin.create') }}" class="h-11 px-6 bg-[#1E2538] hover:bg-[#121724] text-white rounded-xl text-sm font-bold transition-all flex items-center space-x-2 shadow-xs hover:shadow-md cursor-pointer">
                 <i data-lucide="plus" class="w-4 h-4"></i>
                 <span>Ajukan Izin Baru</span>
             </a>

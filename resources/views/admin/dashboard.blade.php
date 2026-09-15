@@ -315,8 +315,8 @@
                 </table>
             </div>
         </div>
-        <div class="px-4 py-2 border-t border-slate-200 bg-slate-50 flex justify-end">
-            <button onclick="closeModalAlpa()" class="h-8 px-3.5 bg-[#1E2538] hover:bg-[#161c2c] text-white text-xs font-semibold rounded-lg cursor-pointer">
+        <div class="px-5 py-3 border-t border-slate-200 bg-slate-50 flex justify-end">
+            <button onclick="closeModalAlpa()" class="h-10 px-6 min-w-[100px] bg-[#1E2538] hover:bg-[#121724] text-white text-xs sm:text-sm font-bold rounded-xl transition-all cursor-pointer shadow-xs hover:shadow-md flex items-center justify-center">
                 Tutup
             </button>
         </div>
@@ -371,8 +371,8 @@
                 </table>
             </div>
         </div>
-        <div class="px-4 py-2 border-t border-slate-200 bg-slate-50 flex justify-end">
-            <button onclick="closeModalKemarin()" class="h-8 px-3.5 bg-[#1E2538] hover:bg-[#161c2c] text-white text-xs font-semibold rounded-lg cursor-pointer">
+        <div class="px-5 py-3 border-t border-slate-200 bg-slate-50 flex justify-end">
+            <button onclick="closeModalKemarin()" class="h-10 px-6 min-w-[100px] bg-[#1E2538] hover:bg-[#121724] text-white text-xs sm:text-sm font-bold rounded-xl transition-all cursor-pointer shadow-xs hover:shadow-md flex items-center justify-center">
                 Tutup
             </button>
         </div>
@@ -436,8 +436,8 @@
                 </table>
             </div>
         </div>
-        <div class="px-4 py-2 border-t border-slate-200 bg-slate-50 flex justify-end">
-            <button onclick="closeModalSiswaSakit()" class="h-8 px-3.5 bg-[#1E2538] hover:bg-[#161c2c] text-white text-xs font-semibold rounded-lg cursor-pointer">
+        <div class="px-5 py-3 border-t border-slate-200 bg-slate-50 flex justify-end">
+            <button onclick="closeModalSiswaSakit()" class="h-10 px-6 min-w-[100px] bg-[#1E2538] hover:bg-[#121724] text-white text-xs sm:text-sm font-bold rounded-xl transition-all cursor-pointer shadow-xs hover:shadow-md flex items-center justify-center">
                 Tutup
             </button>
         </div>
@@ -544,8 +544,8 @@
                 </div>
             @endif
         </div>
-        <div class="px-4 py-2 border-t border-slate-200 bg-slate-50 flex justify-end">
-            <button onclick="closeModalSiswaIzin()" class="h-8 px-3.5 bg-[#1E2538] hover:bg-[#161c2c] text-white text-xs font-semibold rounded-lg cursor-pointer">
+        <div class="px-5 py-3 border-t border-slate-200 bg-slate-50 flex justify-end">
+            <button onclick="closeModalSiswaIzin()" class="h-10 px-6 min-w-[100px] bg-[#1E2538] hover:bg-[#121724] text-white text-xs sm:text-sm font-bold rounded-xl transition-all cursor-pointer shadow-xs hover:shadow-md flex items-center justify-center">
                 Tutup
             </button>
         </div>
@@ -609,8 +609,8 @@
                 </table>
             </div>
         </div>
-        <div class="px-4 py-2 border-t border-slate-200 bg-slate-50 flex justify-end">
-            <button onclick="closeModalSiswaAlpa()" class="h-8 px-3.5 bg-[#1E2538] hover:bg-[#161c2c] text-white text-xs font-semibold rounded-lg cursor-pointer">
+        <div class="px-5 py-3 border-t border-slate-200 bg-slate-50 flex justify-end">
+            <button onclick="closeModalSiswaAlpa()" class="h-10 px-6 min-w-[100px] bg-[#1E2538] hover:bg-[#121724] text-white text-xs sm:text-sm font-bold rounded-xl transition-all cursor-pointer shadow-xs hover:shadow-md flex items-center justify-center">
                 Tutup
             </button>
         </div>

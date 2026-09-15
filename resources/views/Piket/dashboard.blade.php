@@ -260,10 +260,12 @@
                     </div>
                 </div>
 
-                <button type="submit" class="w-full mt-1.5 h-8.5 px-3 bg-[#1E2538] hover:bg-[#161c2c] text-white rounded-lg font-semibold text-xs transition-colors shadow-2xs flex items-center justify-center space-x-1.5 cursor-pointer">
-                    <i data-lucide="send" class="w-3.5 h-3.5"></i>
-                    <span>Simpan Pengajuan Dispensasi</span>
-                </button>
+                <div class="pt-1.5">
+                    <button type="submit" class="w-full min-h-[48px] py-3.5 px-6 bg-[#1E2538] hover:bg-[#121724] text-white rounded-xl text-sm font-bold tracking-wide transition-all flex items-center justify-center space-x-2.5 shadow-sm hover:shadow-md cursor-pointer shrink-0">
+                        <i data-lucide="send" class="w-4 h-4"></i>
+                        <span>Simpan Pengajuan Dispensasi</span>
+                    </button>
+                </div>
             </form>
         </div>
 
@@ -383,10 +385,12 @@
                         class="block w-full h-8 px-2.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#1E2538] transition-all">
                 </div>
 
-                <button type="submit" class="w-full mt-1.5 h-8.5 px-3 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-semibold text-xs transition-colors shadow-2xs flex items-center justify-center space-x-1.5 cursor-pointer">
-                    <i data-lucide="save" class="w-3.5 h-3.5"></i>
-                    <span>Simpan Data Keterlambatan</span>
-                </button>
+                <div class="pt-1.5">
+                    <button type="submit" class="w-full min-h-[48px] py-3.5 px-6 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-sm font-bold tracking-wide transition-all flex items-center justify-center space-x-2.5 shadow-sm hover:shadow-md cursor-pointer shrink-0">
+                        <i data-lucide="save" class="w-4 h-4"></i>
+                        <span>Simpan Data Keterlambatan</span>
+                    </button>
+                </div>
             </form>
         </div>
 

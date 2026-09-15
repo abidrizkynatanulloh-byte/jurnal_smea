@@ -58,9 +58,9 @@
                     </select>
                 </div>
 
-                <div class="pt-1">
-                    <button type="submit" class="w-full h-8.5 px-3.5 bg-[#1E2538] hover:bg-[#161c2c] text-white rounded-lg text-xs font-semibold transition-all shadow-2xs flex items-center justify-center space-x-1.5 cursor-pointer">
-                        <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                <div class="pt-1.5">
+                    <button type="submit" class="w-full min-h-[48px] py-3.5 px-6 bg-[#1E2538] hover:bg-[#121724] text-white rounded-xl text-sm font-bold tracking-wide transition-all flex items-center justify-center space-x-2.5 shadow-sm hover:shadow-md cursor-pointer shrink-0">
+                        <i data-lucide="check" class="w-4 h-4"></i>
                         <span>Terapkan Wewenang</span>
                     </button>
                 </div>

@@ -177,11 +177,11 @@
                     class="block w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#1E2538]"></textarea>
             </div>
 
-            <div class="flex space-x-2 pt-1">
-                <button type="submit" class="flex-1 h-8.5 bg-[#1E2538] hover:bg-[#161c2c] text-white rounded-lg text-xs font-semibold transition-colors shadow-2xs cursor-pointer">
-                    Simpan & Publikasikan Tugas
+            <div class="flex items-center space-x-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+                <button type="submit" class="flex-1 min-h-[48px] py-3.5 px-6 bg-[#1E2538] hover:bg-[#121724] text-white rounded-xl text-sm font-bold tracking-wide transition-all shadow-xs hover:shadow-md cursor-pointer flex items-center justify-center space-x-2">
+                    <span>Simpan & Publikasikan Tugas</span>
                 </button>
-                <button type="button" onclick="tutupModalTugas()" class="h-8.5 px-3 border border-slate-200 hover:bg-slate-50 text-slate-600 rounded-lg text-xs font-semibold">
+                <button type="button" onclick="tutupModalTugas()" class="h-11 px-6 min-w-[100px] border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-xl text-sm font-semibold transition-colors flex items-center justify-center cursor-pointer shadow-2xs">
                     Batal
                 </button>
             </div>

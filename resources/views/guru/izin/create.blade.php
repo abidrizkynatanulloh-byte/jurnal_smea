@@ -91,11 +91,11 @@
             </div>
 
             <div class="flex items-center space-x-3 pt-3">
-                <button type="submit" class="h-9.5 px-6 bg-[#1E2538] hover:bg-[#161c2c] text-white rounded-xl text-xs font-bold transition-all shadow-2xs flex items-center space-x-2 cursor-pointer">
+                <button type="submit" class="min-h-[48px] py-3.5 px-7 bg-[#1E2538] hover:bg-[#121724] text-white rounded-xl font-bold text-sm tracking-wide transition-all shadow-sm hover:shadow-md flex items-center space-x-2.5 cursor-pointer">
                     <i data-lucide="send" class="w-4 h-4"></i>
                     <span>Kirim Pengajuan Izin</span>
                 </button>
-                <a href="{{ route('guru.izin.index') }}" class="h-9.5 px-5 border border-slate-200 hover:bg-slate-50 text-slate-600 rounded-xl text-xs font-semibold flex items-center justify-center transition-colors">
+                <a href="{{ route('guru.izin.index') }}" class="min-h-[48px] px-6 py-3.5 min-w-[100px] border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-xl text-sm font-semibold transition-colors flex items-center justify-center cursor-pointer shadow-2xs">
                     Batal
                 </a>
             </div>

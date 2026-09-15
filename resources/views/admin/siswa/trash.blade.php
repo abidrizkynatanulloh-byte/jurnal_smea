@@ -159,8 +159,8 @@
             </div>
         </div>
 
-        <div class="flex justify-end pt-2">
-            <button type="button" onclick="closeSiswaDetailModal()" class="h-10 px-6 bg-rose-600 hover:bg-rose-700 active:bg-rose-800 text-white rounded-xl text-xs font-bold transition-all cursor-pointer shadow-sm">
+        <div class="flex justify-end pt-3 border-t border-slate-100 dark:border-slate-800">
+            <button type="button" onclick="closeSiswaDetailModal()" class="h-11 px-7 min-w-[120px] bg-rose-600 hover:bg-rose-700 active:bg-rose-800 text-white rounded-xl text-sm font-bold transition-all cursor-pointer shadow-sm hover:shadow-md flex items-center justify-center">
                 Tutup
             </button>
         </div>

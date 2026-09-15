@@ -327,8 +327,8 @@
         </div>
 
         <!-- Modal Footer -->
-        <div class="pt-2 border-t border-slate-100 flex items-center justify-end">
-            <button type="button" onclick="closeDetailModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold rounded-lg transition-colors cursor-pointer shadow-2xs">
+        <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end">
+            <button type="button" onclick="closeDetailModal()" class="h-11 px-7 min-w-[120px] bg-[#1E2538] hover:bg-[#121724] text-white rounded-xl text-sm font-bold transition-all cursor-pointer shadow-xs hover:shadow-md flex items-center justify-center">
                 Tutup
             </button>
         </div>

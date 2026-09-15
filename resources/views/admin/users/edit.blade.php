@@ -106,12 +106,12 @@
             </div>
 
             <!-- Action Buttons -->
-            <div class="flex items-center space-x-2 pt-2.5 border-t border-slate-100">
-                <button type="submit" class="flex-1 h-8.5 px-3.5 bg-[#1E2538] hover:bg-[#161c2c] text-white rounded-lg font-semibold text-xs transition-colors shadow-2xs flex items-center justify-center space-x-1.5 cursor-pointer">
-                    <i data-lucide="check" class="w-3.5 h-3.5"></i>
+            <div class="flex items-center space-x-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+                <button type="submit" class="flex-1 min-h-[48px] py-3.5 px-6 bg-[#1E2538] hover:bg-[#121724] text-white rounded-xl font-bold text-sm tracking-wide transition-all shadow-sm hover:shadow-md flex items-center justify-center space-x-2 cursor-pointer">
+                    <i data-lucide="check" class="w-4 h-4"></i>
                     <span>Simpan Perubahan</span>
                 </button>
-                <a href="{{ route('admin.users.index') }}" class="h-8.5 px-3.5 border border-slate-200 hover:bg-slate-50 text-slate-600 rounded-lg text-xs font-semibold transition-colors flex items-center justify-center">
+                <a href="{{ route('admin.users.index') }}" class="min-h-[48px] px-6 py-3.5 min-w-[100px] border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-xl text-sm font-semibold transition-colors flex items-center justify-center shadow-2xs cursor-pointer">
                     Batal
                 </a>
             </div>
