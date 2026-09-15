@@ -120,6 +120,25 @@
                             @if($iz->keterangan)
                                 <p><span class="font-semibold text-slate-500">Keterangan:</span> {{ $iz->keterangan }}</p>
                             @endif
+                            <div class="pt-1 flex items-center space-x-2">
+                                <button type="button" onclick="openDetailApprovalModal({
+                                    title: 'Pengesahan Izin Guru (Kepala Sekolah)',
+                                    applicantName: '{{ addslashes($iz->guru ? $iz->guru->nama_guru : "-") }}',
+                                    applicantMeta: 'NIP: {{ $iz->guru ? $iz->guru->nip : "-" }}',
+                                    category: '{{ $iz->alasan }}',
+                                    period: '{{ \Carbon\Carbon::parse($iz->tanggal_mulai)->locale("id")->isoFormat("D MMM Y") }} s/d {{ \Carbon\Carbon::parse($iz->tanggal_selesai)->locale("id")->isoFormat("D MMM Y") }}',
+                                    reason: '{{ addslashes($iz->keterangan ?? "-") }}',
+                                    extra: '{{ $iz->kelas_terdampak ? "Kelas Terdampak: " . addslashes($iz->kelas_terdampak) : "" }}',
+                                    proofUrl: '{{ $iz->bukti_foto ? (\Illuminate\Support\Str::startsWith($iz->bukti_foto, ["http", "uploads/", "storage/"]) ? asset($iz->bukti_foto) : asset("storage/" . $iz->bukti_foto)) : "" }}',
+                                    approveUrl: '{{ route("kepsek.izin-guru.approve", $iz->id) }}',
+                                    approveText: 'Sahkan Izin (Setujui)',
+                                    rejectUrl: '{{ route("kepsek.izin-guru.reject", $iz->id) }}',
+                                    rejectInputName: 'catatan_penolakan'
+                                })" class="w-full h-7 bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-700 rounded-lg text-xs font-bold transition-colors cursor-pointer flex items-center justify-center space-x-1">
+                                    <i data-lucide="eye" class="w-3.5 h-3.5 text-blue-600"></i>
+                                    <span>Lihat Detail & Bukti Surat</span>
+                                </button>
+                            </div>
                         </div>
 
                         <div class="flex items-center space-x-2 pt-0.5">

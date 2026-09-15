@@ -116,8 +116,15 @@
                 if (typeof lucide !== 'undefined') {
                     lucide.createIcons();
                 }
+                if (typeof initSearchableSelects === 'function') {
+                    initSearchableSelects();
+                }
             })
             .catch(err => console.error('AJAX Search Error:', err));
+        }
+
+        if (typeof initSearchableSelects === 'function') {
+            initSearchableSelects();
         }
 
         if (searchInput) {

@@ -1250,7 +1250,176 @@
                 });
             @endif
         });
+
+        // Global Detail & Bukti Surat Approval Modal Function
+        function openDetailApprovalModal(cfg) {
+            document.getElementById('previewModalTitle').innerText = cfg.title || 'Detail Pengajuan & Bukti Surat';
+            document.getElementById('previewModalSubtitle').innerText = cfg.subtitle || 'Verifikasi rincian permohonan';
+            document.getElementById('previewApplicantName').innerText = cfg.applicantName || '-';
+            document.getElementById('previewApplicantMeta').innerText = cfg.applicantMeta || '-';
+            document.getElementById('previewCategory').innerText = cfg.category || '-';
+            document.getElementById('previewPeriod').innerText = cfg.period || '-';
+            document.getElementById('previewReason').innerText = cfg.reason || '-';
+
+            const extraEl = document.getElementById('previewExtra');
+            if (cfg.extra) {
+                extraEl.innerText = cfg.extra;
+                extraEl.classList.remove('hidden');
+            } else {
+                extraEl.classList.add('hidden');
+            }
+
+            // Proof Container (Photo / File / Fallback)
+            const proofContainer = document.getElementById('previewProofContainer');
+            proofContainer.innerHTML = '';
+
+            if (cfg.proofUrl) {
+                const isImage = /\.(jpg|jpeg|png|webp|gif)($|\?)/i.test(cfg.proofUrl);
+                if (isImage) {
+                    proofContainer.innerHTML = `
+                        <div class="relative group w-full flex flex-col items-center">
+                            <img src="${cfg.proofUrl}" alt="Bukti Surat" class="max-h-72 rounded-xl object-contain border border-slate-200 dark:border-slate-700 shadow-sm transition-all hover:scale-[1.01]">
+                            <a href="${cfg.proofUrl}" target="_blank" class="mt-2 text-xs font-bold text-blue-600 hover:text-blue-800 dark:text-blue-400 inline-flex items-center space-x-1">
+                                <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                                <span>Buka Gambar Ukuran Penuh</span>
+                            </a>
+                        </div>
+                    `;
+                } else {
+                    proofContainer.innerHTML = `
+                        <div class="flex flex-col items-center space-y-2 py-3">
+                            <i data-lucide="file-text" class="w-10 h-10 text-slate-400"></i>
+                            <p class="text-xs text-slate-600 dark:text-slate-300 font-medium">Dokumen Surat Terlampir</p>
+                            <a href="${cfg.proofUrl}" target="_blank" class="px-3.5 py-1.5 bg-[#1E2538] hover:bg-[#121724] text-white rounded-lg text-xs font-bold transition-all shadow-xs inline-flex items-center space-x-1.5">
+                                <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                                <span>Buka / Unduh Dokumen</span>
+                            </a>
+                        </div>
+                    `;
+                }
+            } else {
+                proofContainer.innerHTML = `
+                    <div class="py-4 text-slate-400 italic text-xs flex flex-col items-center space-y-1">
+                        <i data-lucide="image-off" class="w-8 h-8 text-slate-300 dark:text-slate-600"></i>
+                        <span>Pemohon Tidak Melampirkan Bukti Foto/Surat</span>
+                    </div>
+                `;
+            }
+
+            // Footer Action Forms (ACC & Tolak)
+            const footer = document.getElementById('previewModalFooter');
+            let actionsHtml = '';
+
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || '';
+
+            if (cfg.approveUrl) {
+                actionsHtml += `
+                    <form action="${cfg.approveUrl}" method="POST" class="w-full sm:w-auto">
+                        <input type="hidden" name="_token" value="${csrfToken}">
+                        <button type="submit" class="w-full sm:w-auto h-9 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-1.5 shadow-xs cursor-pointer">
+                            <i data-lucide="check" class="w-4 h-4"></i>
+                            <span>${cfg.approveText || 'Setujui / ACC'}</span>
+                        </button>
+                    </form>
+                `;
+            }
+
+            if (cfg.rejectUrl) {
+                const inputName = cfg.rejectInputName || 'catatan';
+                actionsHtml += `
+                    <form action="${cfg.rejectUrl}" method="POST" class="w-full sm:w-auto flex items-center space-x-1.5">
+                        <input type="hidden" name="_token" value="${csrfToken}">
+                        <input type="text" name="${inputName}" placeholder="Alasan penolakan..." required class="h-9 px-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-rose-500 w-full sm:w-44">
+                        <button type="submit" class="h-9 px-3 border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-1 shrink-0 cursor-pointer">
+                            <i data-lucide="x" class="w-4 h-4"></i>
+                            <span>Tolak</span>
+                        </button>
+                    </form>
+                `;
+            }
+
+            actionsHtml += `
+                <button type="button" onclick="closeDetailApprovalModal()" class="w-full sm:w-auto h-9 px-4 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-xl text-xs font-semibold transition-all cursor-pointer">
+                    Tutup
+                </button>
+            `;
+
+            footer.innerHTML = actionsHtml;
+
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+
+            document.getElementById('modalPreviewDetailApproval').classList.remove('hidden');
+        }
+
+        function closeDetailApprovalModal() {
+            document.getElementById('modalPreviewDetailApproval').classList.add('hidden');
+        }
     </script>
+
+    <!-- GLOBAL MODAL PREVIEW DETAIL APPROVAL HTML -->
+    <div id="modalPreviewDetailApproval" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white dark:bg-[#151B26] border border-slate-200 dark:border-slate-800 rounded-2xl max-w-lg w-full shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <!-- Header -->
+            <div class="px-5 py-3.5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between shrink-0 bg-slate-50/80 dark:bg-slate-800/50">
+                <div class="flex items-center space-x-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-[#1E2538] dark:bg-slate-700 text-white flex items-center justify-center">
+                        <i data-lucide="file-search" class="w-4 h-4"></i>
+                    </div>
+                    <div>
+                        <h3 id="previewModalTitle" class="font-bold text-sm text-slate-900 dark:text-white leading-tight">Detail Pengajuan & Bukti Surat</h3>
+                        <p id="previewModalSubtitle" class="text-[11px] text-slate-500 dark:text-slate-400">Verifikasi rincian permohonan</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeDetailApprovalModal()" class="w-7 h-7 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 flex items-center justify-center transition-colors cursor-pointer">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+
+            <!-- Body Scrollable -->
+            <div class="p-5 overflow-y-auto space-y-3.5 flex-1 text-xs">
+                <!-- Pemohon Card -->
+                <div class="bg-slate-50 dark:bg-slate-800/60 p-3 rounded-xl border border-slate-200/80 dark:border-slate-700/60 space-y-0.5">
+                    <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block">Subjek Pemohon</span>
+                    <h4 id="previewApplicantName" class="font-bold text-sm text-slate-900 dark:text-white">-</h4>
+                    <p id="previewApplicantMeta" class="text-xs text-slate-600 dark:text-slate-300 font-mono">-</p>
+                </div>
+
+                <!-- Detail Grid -->
+                <div class="grid grid-cols-2 gap-2.5">
+                    <div class="bg-slate-50 dark:bg-slate-800/60 p-2.5 rounded-xl border border-slate-200/80 dark:border-slate-700/60">
+                        <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase block">Kategori</span>
+                        <span id="previewCategory" class="font-bold text-xs text-slate-800 dark:text-slate-200 mt-0.5 block">-</span>
+                    </div>
+                    <div class="bg-slate-50 dark:bg-slate-800/60 p-2.5 rounded-xl border border-slate-200/80 dark:border-slate-700/60">
+                        <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase block">Periode / Waktu</span>
+                        <span id="previewPeriod" class="font-bold text-xs text-slate-800 dark:text-slate-200 mt-0.5 block">-</span>
+                    </div>
+                </div>
+
+                <!-- Alasan Card -->
+                <div class="bg-slate-50 dark:bg-slate-800/60 p-3 rounded-xl border border-slate-200/80 dark:border-slate-700/60 space-y-1">
+                    <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase block">Alasan / Keperluan</span>
+                    <p id="previewReason" class="text-xs text-slate-800 dark:text-slate-200 font-medium leading-relaxed">-</p>
+                    <p id="previewExtra" class="text-[11px] text-slate-500 dark:text-slate-400 italic pt-1.5 border-t border-slate-200 dark:border-slate-700 mt-2 hidden"></p>
+                </div>
+
+                <!-- Bukti Surat Image Container -->
+                <div class="space-y-1.5">
+                    <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block">Foto Bukti Surat / Dokter / Lampiran</span>
+                    <div id="previewProofContainer" class="bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 flex flex-col items-center justify-center min-h-[140px] text-center">
+                        <!-- Image content injected dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Actions -->
+            <div id="previewModalFooter" class="px-5 py-3 border-t border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/50 flex flex-col sm:flex-row items-center justify-end gap-2 shrink-0">
+                <!-- Action Buttons injected dynamically -->
+            </div>
+        </div>
+    </div>
     @stack('scripts')
 </body>
 </html>

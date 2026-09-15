@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Kelas;
 use App\Models\Guru;
 
-class AdminWaliKelasController extends Controller
+class AdminWaliKelasController
 {
     /**
      * Menampilkan Halaman Kelola Plotting Wali Kelas.

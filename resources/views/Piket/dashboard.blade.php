@@ -123,10 +123,21 @@
                             </td>
                             <td class="py-2 px-3 text-center">
                                 @if($is->bukti_foto)
-                                    <a href="{{ asset($is->bukti_foto) }}" target="_blank" class="inline-flex items-center space-x-1 px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded border border-slate-200 text-[11px] font-semibold transition-colors">
-                                        <i data-lucide="image" class="w-3 h-3 text-slate-500"></i>
-                                        <span>Lihat Foto</span>
-                                    </a>
+                                    <button type="button" onclick="openDetailApprovalModal({
+                                        title: 'Detail Permohonan Izin Siswa',
+                                        applicantName: '{{ addslashes($is->siswa ? $is->siswa->nama_siswa : $is->nis) }}',
+                                        applicantMeta: 'NIS: {{ $is->nis }} • Kelas: {{ addslashes($is->siswa && $is->siswa->kelas ? $is->siswa->kelas->nama_kelas : "-") }}',
+                                        category: '{{ $is->kategori }}',
+                                        period: '{{ \Carbon\Carbon::parse($is->tanggal_mulai)->translatedFormat("d M Y") }} s/d {{ \Carbon\Carbon::parse($is->tanggal_selesai)->translatedFormat("d M Y") }}',
+                                        reason: '{{ addslashes($is->alasan) }}',
+                                        proofUrl: '{{ $is->bukti_foto ? (\Illuminate\Support\Str::startsWith($is->bukti_foto, ["http", "uploads/", "storage/"]) ? asset($is->bukti_foto) : asset("storage/" . $is->bukti_foto)) : "" }}',
+                                        approveUrl: '{{ route("piket.izin-siswa.approve", $is->id) }}',
+                                        rejectUrl: '{{ route("piket.izin-siswa.reject", $is->id) }}',
+                                        rejectInputName: 'catatan_penolakan'
+                                    })" class="inline-flex items-center space-x-1 px-2.5 py-1 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg border border-blue-200 text-[11px] font-bold transition-colors cursor-pointer">
+                                        <i data-lucide="eye" class="w-3 h-3 text-blue-600"></i>
+                                        <span>Lihat Detail & Foto</span>
+                                    </button>
                                 @else
                                     <span class="text-slate-400 italic text-[11px]">Tanpa Foto</span>
                                 @endif
@@ -488,14 +499,22 @@
                                 @endif
                             </td>
                             <td class="py-2 px-3.5 text-center">
-                                @if($ig->bukti_foto)
-                                    <a href="{{ asset('storage/' . $ig->bukti_foto) }}" target="_blank" class="inline-flex items-center space-x-1 text-[11px] text-slate-700 hover:text-slate-900 font-bold bg-slate-100 hover:bg-slate-200 border border-slate-200 px-2 py-0.5 rounded-md transition-colors">
-                                        <i data-lucide="image" class="w-3 h-3 text-slate-500"></i>
-                                        <span>Bukti</span>
-                                    </a>
-                                @else
-                                    <span class="text-[10px] text-rose-500 font-bold">Tanpa Foto</span>
-                                @endif
+                                <button type="button" onclick="openDetailApprovalModal({
+                                    title: 'Detail Permohonan Izin Guru',
+                                    applicantName: '{{ addslashes($ig->guru ? $ig->guru->nama_guru : "-") }}',
+                                    applicantMeta: 'NIP: {{ $ig->guru ? $ig->guru->nip : "-" }}',
+                                    category: '{{ $ig->alasan }}',
+                                    period: '{{ $ig->tanggal_mulai }} s/d {{ $ig->tanggal_selesai }}',
+                                    reason: '{{ addslashes($ig->keterangan ?? "-") }}',
+                                    extra: '{{ $ig->kelas_terdampak ? "Kelas Terdampak: " . addslashes($ig->kelas_terdampak) : "" }}',
+                                    proofUrl: '{{ $ig->bukti_foto ? (\Illuminate\Support\Str::startsWith($ig->bukti_foto, ["http", "uploads/", "storage/"]) ? asset($ig->bukti_foto) : asset("storage/" . $ig->bukti_foto)) : "" }}',
+                                    approveUrl: '{{ route("piket.izin-guru.approve", $ig->id) }}',
+                                    rejectUrl: '{{ route("piket.izin-guru.reject", $ig->id) }}',
+                                    rejectInputName: 'catatan'
+                                })" class="inline-flex items-center space-x-1 px-2.5 py-1 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg border border-blue-200 text-[11px] font-bold transition-colors cursor-pointer">
+                                    <i data-lucide="eye" class="w-3 h-3 text-blue-600"></i>
+                                    <span>Lihat Detail & Foto</span>
+                                </button>
                             </td>
                             <td class="py-2 px-3.5 text-center">
                                 <div class="flex items-center justify-center space-x-1.5">

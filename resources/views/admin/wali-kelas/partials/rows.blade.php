@@ -34,7 +34,7 @@
             <form action="{{ route('admin.wali-kelas.update', $k->id_kelas) }}" method="POST" class="flex items-center justify-end space-x-1.5">
                 @csrf
                 @method('PUT')
-                <select name="id_guru" class="h-8 px-2.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 font-medium focus:outline-none focus:border-slate-800 transition-colors max-w-[220px]">
+                <select name="id_guru" placeholder="-- Cari / Pilih Wali Kelas --" class="select-wali-kelas h-8 px-2.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 font-medium focus:outline-none focus:border-slate-800 transition-colors w-60">
                     <option value="">-- Pilih Wali Kelas --</option>
                     @foreach($guruList as $g)
                         <option value="{{ $g->id_guru }}" {{ ($waliGuru && $waliGuru->id_guru == $g->id_guru) ? 'selected' : '' }}>

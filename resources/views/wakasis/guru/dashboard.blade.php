@@ -52,15 +52,24 @@
                             @if($mw->kelas_terdampak)
                                 <p><span class="font-semibold text-slate-500">Kelas Terdampak:</span> {{ $mw->kelas_terdampak }}</p>
                             @endif
-                            <div class="pt-0.5">
-                                @if($mw->bukti_foto)
-                                    <a href="{{ asset('storage/' . $mw->bukti_foto) }}" target="_blank" class="inline-flex items-center space-x-1 text-[11px] text-slate-700 hover:text-slate-900 font-bold bg-slate-100 hover:bg-slate-200 border border-slate-200 px-2 py-0.5 rounded-md transition-colors">
-                                        <i data-lucide="image" class="w-3 h-3 text-slate-500"></i>
-                                        <span>Lihat Bukti Surat</span>
-                                    </a>
-                                @else
-                                    <span class="text-[10px] text-rose-500 font-bold">Tanpa Bukti Foto</span>
-                                @endif
+                            <div class="pt-1 flex items-center space-x-2">
+                                <button type="button" onclick="openDetailApprovalModal({
+                                    title: 'Verifikasi Izin Guru (Waka Kurikulum)',
+                                    applicantName: '{{ addslashes($mw->guru ? $mw->guru->nama_guru : "-") }}',
+                                    applicantMeta: 'NIP: {{ $mw->guru ? $mw->guru->nip : "-" }}',
+                                    category: '{{ $mw->alasan }}',
+                                    period: '{{ \Carbon\Carbon::parse($mw->tanggal_mulai)->locale("id")->isoFormat("D MMM") }} s/d {{ \Carbon\Carbon::parse($mw->tanggal_selesai)->locale("id")->isoFormat("D MMM Y") }}',
+                                    reason: '{{ addslashes($mw->keterangan ?? "-") }}',
+                                    extra: '{{ $mw->kelas_terdampak ? "Kelas Terdampak: " . addslashes($mw->kelas_terdampak) : "" }}',
+                                    proofUrl: '{{ $mw->bukti_foto ? (\Illuminate\Support\Str::startsWith($mw->bukti_foto, ["http", "uploads/", "storage/"]) ? asset($mw->bukti_foto) : asset("storage/" . $mw->bukti_foto)) : "" }}',
+                                    approveUrl: '{{ route("wakasis.guru.approve.waka", $mw->id) }}',
+                                    approveText: 'Setujui (ke SDM)',
+                                    rejectUrl: '{{ route("wakasis.guru.reject.waka", $mw->id) }}',
+                                    rejectInputName: 'catatan_penolakan'
+                                })" class="w-full h-7 bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-700 rounded-lg text-xs font-bold transition-colors cursor-pointer flex items-center justify-center space-x-1">
+                                    <i data-lucide="eye" class="w-3.5 h-3.5 text-blue-600"></i>
+                                    <span>Lihat Detail & Bukti Surat</span>
+                                </button>
                             </div>
                         </div>
 
@@ -69,7 +78,7 @@
                                 @csrf
                                 <button type="submit" class="w-full h-7 bg-[#1E2538] hover:bg-[#161c2c] text-white rounded-lg text-xs font-semibold transition-colors shadow-2xs flex items-center justify-center space-x-1 cursor-pointer">
                                     <i data-lucide="check" class="w-3 h-3"></i>
-                                    <span>Setujui (ke SDM)</span>
+                                    <span>Setujui</span>
                                 </button>
                             </form>
 
@@ -77,7 +86,7 @@
                                 @csrf
                                 <button type="submit" class="w-full h-7 border border-rose-200 bg-white hover:bg-rose-50 text-rose-600 rounded-lg text-xs font-semibold transition-colors flex items-center justify-center space-x-1 cursor-pointer">
                                     <i data-lucide="x" class="w-3 h-3"></i>
-                                    <span>Tolak Izin</span>
+                                    <span>Tolak</span>
                                 </button>
                             </form>
                         </div>
@@ -116,6 +125,25 @@
                         <div class="bg-slate-50 border border-slate-200 p-2.5 rounded-lg text-xs space-y-0.5">
                             <p><span class="font-semibold text-slate-500">Periode:</span> {{ \Carbon\Carbon::parse($ms->tanggal_mulai)->locale('id')->isoFormat('D MMM') }} s/d {{ \Carbon\Carbon::parse($ms->tanggal_selesai)->locale('id')->isoFormat('D MMM Y') }}</p>
                             <p><span class="font-semibold text-slate-500">Alasan:</span> <span class="font-bold text-slate-800">{{ $ms->alasan }}</span></p>
+                            <div class="pt-1 flex items-center space-x-2">
+                                <button type="button" onclick="openDetailApprovalModal({
+                                    title: 'Verifikasi Izin Guru (Bagian SDM)',
+                                    applicantName: '{{ addslashes($ms->guru ? $ms->guru->nama_guru : "-") }}',
+                                    applicantMeta: 'NIP: {{ $ms->guru ? $ms->guru->nip : "-" }}',
+                                    category: '{{ $ms->alasan }}',
+                                    period: '{{ \Carbon\Carbon::parse($ms->tanggal_mulai)->locale("id")->isoFormat("D MMM") }} s/d {{ \Carbon\Carbon::parse($ms->tanggal_selesai)->locale("id")->isoFormat("D MMM Y") }}',
+                                    reason: '{{ addslashes($ms->keterangan ?? "-") }}',
+                                    extra: '{{ $ms->kelas_terdampak ? "Kelas Terdampak: " . addslashes($ms->kelas_terdampak) : "" }}',
+                                    proofUrl: '{{ $ms->bukti_foto ? (\Illuminate\Support\Str::startsWith($ms->bukti_foto, ["http", "uploads/", "storage/"]) ? asset($ms->bukti_foto) : asset("storage/" . $ms->bukti_foto)) : "" }}',
+                                    approveUrl: '{{ route("wakasis.guru.approve.sdm", $ms->id) }}',
+                                    approveText: 'Setujui (ke Kepsek)',
+                                    rejectUrl: '{{ route("wakasis.guru.reject.sdm", $ms->id) }}',
+                                    rejectInputName: 'catatan_penolakan'
+                                })" class="w-full h-7 bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-700 rounded-lg text-xs font-bold transition-colors cursor-pointer flex items-center justify-center space-x-1">
+                                    <i data-lucide="eye" class="w-3.5 h-3.5 text-blue-600"></i>
+                                    <span>Lihat Detail & Bukti Surat</span>
+                                </button>
+                            </div>
                         </div>
 
                         <div class="flex items-center space-x-2 pt-0.5">

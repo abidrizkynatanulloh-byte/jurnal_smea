@@ -56,7 +56,22 @@
                             </td>
                             <td class="py-2 px-3.5 text-slate-700 font-medium leading-relaxed">{{ $d->keperluan }}</td>
                             <td class="py-2 px-3.5 text-center">
-                                <div class="flex items-center justify-center space-x-2">
+                                <div class="flex items-center justify-center space-x-1.5">
+                                    <button type="button" onclick="openDetailApprovalModal({
+                                        title: 'Detail Pengajuan Dispensasi Siswa',
+                                        applicantName: '{{ addslashes($d->siswa ? $d->siswa->nama_siswa : $d->nis) }}',
+                                        applicantMeta: 'NIS: {{ $d->nis }} • Kelas: {{ addslashes($d->siswa && $d->siswa->kelas ? $d->siswa->kelas->nama_kelas : "-") }}',
+                                        category: 'Dispensasi Siswa',
+                                        period: '{{ $d->jam_ke ? $d->jam_ke . " (" . substr($d->jam_keluar_rencana, 0, 5) . " s/d " . ($d->jam_kembali_rencana ? substr($d->jam_kembali_rencana, 0, 5) : "Selesai KBM") . ")" : "Tanggal " . $d->tanggal }}',
+                                        reason: '{{ addslashes($d->keperluan) }}',
+                                        approveUrl: '{{ route("wakasis.siswa.dispen.approve", $d->id) }}',
+                                        rejectUrl: '{{ route("wakasis.siswa.dispen.reject", $d->id) }}',
+                                        rejectInputName: 'catatan_wakasis'
+                                    })" class="h-7 px-2.5 bg-blue-50 border border-blue-200 text-blue-700 hover:bg-blue-100 rounded-lg text-xs font-bold transition-colors cursor-pointer inline-flex items-center space-x-1 shadow-2xs">
+                                        <i data-lucide="eye" class="w-3.5 h-3.5 text-blue-600"></i>
+                                        <span>Detail & Bukti</span>
+                                    </button>
+
                                     <!-- Approve Form -->
                                     <form action="{{ route('wakasis.siswa.dispen.approve', $d->id) }}" method="POST">
                                         @csrf
