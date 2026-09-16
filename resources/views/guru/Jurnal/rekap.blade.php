@@ -58,7 +58,8 @@
             </h3>
         </div>
 
-        <div class="overflow-x-auto">
+        <!-- DESKTOP TABLE VIEW (TETAP PERSIS SEPERTI SEBELUMNYA) -->
+        <div class="hidden md:block overflow-x-auto">
             <table class="w-full text-left border-collapse text-xs">
                 <thead>
                     <tr class="bg-white text-slate-500 text-[11px] font-bold uppercase tracking-wider border-b border-slate-200">
@@ -113,6 +114,61 @@
                     @endforelse
                 </tbody>
             </table>
+        </div>
+
+        <!-- MOBILE ADAPTIVE CARD VIEW (KHUSUS MOBILE) -->
+        <div class="block md:hidden divide-y divide-slate-100 dark:divide-slate-800">
+            @forelse ($rekapList as $r)
+                <div class="p-3.5 space-y-2.5 bg-white dark:bg-[#1E2538]">
+                    <div class="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
+                        <span class="text-xs font-bold text-slate-900 dark:text-white flex items-center space-x-1.5">
+                            <i data-lucide="calendar" class="w-3.5 h-3.5 text-indigo-500"></i>
+                            <span>{{ \Carbon\Carbon::parse($r->tanggal)->locale('id')->isoFormat('D MMM Y') }}</span>
+                        </span>
+                        <div>
+                            @if ($r->status_kehadiran_guru == 'Hadir')
+                                <span class="inline-flex items-center px-2 py-0.5 bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 text-[10px] font-bold rounded-lg space-x-1">
+                                    <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
+                                    <span>Hadir</span>
+                                </span>
+                            @else
+                                <span class="inline-flex items-center px-2 py-0.5 bg-rose-50 text-rose-700 dark:bg-rose-950/50 dark:text-rose-300 border border-rose-200 dark:border-rose-800 text-[10px] font-bold rounded-lg space-x-1">
+                                    <span class="w-1.5 h-1.5 bg-rose-500 rounded-full"></span>
+                                    <span>{{ $r->status_kehadiran_guru }}</span>
+                                </span>
+                            @endif
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 class="font-bold text-sm text-slate-900 dark:text-white leading-snug">
+                            {{ $r->jadwal && $r->jadwal->mapel ? $r->jadwal->mapel->nama_mapel : '-' }}
+                        </h4>
+                        <div class="flex items-center space-x-2 mt-1 text-xs text-slate-500 dark:text-slate-400">
+                            <span class="inline-flex items-center px-2 py-0.5 bg-slate-100 dark:bg-slate-800 font-bold text-slate-700 dark:text-slate-200 rounded-md border border-slate-200 dark:border-slate-700 text-[11px]">
+                                {{ $r->jadwal && $r->jadwal->kelas ? $r->jadwal->kelas->nama_kelas : '-' }}
+                            </span>
+                            <span class="text-[11px]">Jam {{ $r->jadwal->jam_mulai ?? '-' }}–{{ $r->jadwal->jam_selesai ?? '-' }}</span>
+                        </div>
+                    </div>
+
+                    <div class="p-2.5 bg-slate-50 dark:bg-slate-800/60 rounded-lg text-xs text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-800 line-clamp-2">
+                        {{ $r->materi }}
+                    </div>
+
+                    <div class="pt-1">
+                        <a href="{{ route('guru.jurnal.show', $r->id_jurnal) }}" class="w-full min-h-[42px] px-4 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-2 border border-slate-200 dark:border-slate-700">
+                            <i data-lucide="eye" class="w-4 h-4"></i>
+                            <span>Lihat Rincian Jurnal</span>
+                        </a>
+                    </div>
+                </div>
+            @empty
+                <div class="p-6 text-center text-slate-400 italic text-xs">
+                    <i data-lucide="inbox" class="w-6 h-6 mx-auto mb-1 text-slate-300"></i>
+                    Belum ada jurnal yang tersimpan pada rentang tanggal ini.
+                </div>
+            @endforelse
         </div>
 
         <!-- PAGINATION FOOTER -->
