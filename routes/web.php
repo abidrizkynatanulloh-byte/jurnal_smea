@@ -111,15 +111,11 @@ Route::middleware('auth')->group(function () {
         Route::post('/admin/jadwal/import',          [JadwalController::class, 'importCsv'])->name('admin.jadwal.import');
         Route::get('/admin/jadwal/template',         [JadwalController::class, 'downloadTemplate'])->name('admin.jadwal.template');
         Route::delete('/admin/jadwal/{id}',          [JadwalController::class, 'destroy'])->name('admin.jadwal.destroy');
-        Route::get('/admin/rekap-jurnal',            [RekapJurnalController::class, 'index'])->name('admin.rekap.index');
-        Route::get('/admin/kepatuhan-jurnal',        [RekapJurnalController::class, 'kepatuhan'])->name('admin.rekap.kepatuhan');
-        Route::get('/admin/rekap-jurnal/{id}',       [RekapJurnalController::class, 'show'] )->name('admin.rekap.show');
         Route::get('/admin/users',                   [UserController::class, 'index']  )->name('admin.users.index');
         Route::post('/admin/users',                  [UserController::class, 'store']  )->name('admin.users.store');
         Route::get('/admin/users/{id}/edit',         [UserController::class, 'edit']   )->name('admin.users.edit');
         Route::put('/admin/users/{id}',              [UserController::class, 'update'] )->name('admin.users.update');
         Route::delete('/admin/users/{id}',           [UserController::class, 'destroy'])->name('admin.users.destroy');
-        Route::get('/admin/guru-piket',              [AdminGuruPiketController::class, 'index']  )->name('admin.guru-piket.index');
         Route::post('/admin/guru-piket',             [AdminGuruPiketController::class, 'store']  )->name('admin.guru-piket.store');
         Route::delete('/admin/guru-piket/{id}',      [AdminGuruPiketController::class, 'destroy'])->name('admin.guru-piket.destroy');
         Route::get('/admin/wali-kelas',              [AdminWaliKelasController::class, 'index']  )->name('admin.wali-kelas.index');
@@ -130,6 +126,16 @@ Route::middleware('auth')->group(function () {
         Route::post('/admin/kelas',                 [AdminKelasController::class, 'store']  )->name('admin.kelas.store');
         Route::put('/admin/kelas/{id}',             [AdminKelasController::class, 'update'] )->name('admin.kelas.update');
         Route::delete('/admin/kelas/{id}',          [AdminKelasController::class, 'destroy'])->name('admin.kelas.destroy');
+    });
+
+    // ---------------------------------------------------------------------
+    // 1B. REKAP & MONITORING (Bisa diakses Staf TU, Kepala Sekolah, & Waka)
+    // ---------------------------------------------------------------------
+    Route::middleware('role:staf_tu,kepala_sekolah,wakasis_guru,waka_kurikulum,waka_sdm,wakasis_siswa')->group(function () {
+        Route::get('/admin/rekap-jurnal',            [RekapJurnalController::class, 'index'])->name('admin.rekap.index');
+        Route::get('/admin/kepatuhan-jurnal',        [RekapJurnalController::class, 'kepatuhan'])->name('admin.rekap.kepatuhan');
+        Route::get('/admin/rekap-jurnal/{id}',       [RekapJurnalController::class, 'show'] )->name('admin.rekap.show');
+        Route::get('/admin/guru-piket',              [AdminGuruPiketController::class, 'index'])->name('admin.guru-piket.index');
     });
 
     // ---------------------------------------------------------------------
@@ -173,6 +179,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/guru/dashboard',                [GuruDashboardController::class, 'index'])->name('guru.dashboard');
         Route::get('/guru/wali-kelas',               [GuruDashboardController::class, 'waliKelas'])->name('guru.wali-kelas');
         Route::get('/guru/jurnal/rekap',             [JurnalController::class, 'rekap'] )->name('guru.jurnal.rekap');
+        Route::get('/guru/jurnal/history',           [JurnalController::class, 'rekap'] )->name('guru.jurnal.history');
         Route::get('/guru/jurnal/tertunggak',        [JurnalController::class, 'tertunggak'])->name('guru.jurnal.tertunggak');
         Route::get('/guru/jurnal/input/{id_jadwal}', [JurnalController::class, 'create'])->name('guru.jurnal.create');
         Route::post('/guru/jurnal',                  [JurnalController::class, 'store'] )->name('guru.jurnal.store');

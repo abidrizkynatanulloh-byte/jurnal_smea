@@ -179,7 +179,7 @@
                             <i data-lucide="chevron-right" class="w-3 h-3"></i>
                         </span>
                     </div>
-                    <p class="text-xs text-[#7F1D1D] dark:text-[#FEE2E2] mt-0.5"><span class="font-bold text-[#450A0A] dark:text-white">{{ $guruAlpaHariIni }} guru / {{ count($listGuruAlpaHariIni) }} sesi</span> terdeteksi Alpa (jam lewat).</p>
+                    <p class="text-xs text-[#7F1D1D] dark:text-[#FEE2E2] mt-0.5"><span class="font-bold text-[#450A0A] dark:text-white">{{count ( $listGuruAlpaHariIni ) }} sesi ({{ $guruAlpaHariIni }} guru)</span> terdeteksi Alpa (tidak mengisi jurnal).</p>
                 </div>
             </div>
         </div>
@@ -224,7 +224,7 @@
                     @forelse ($jadwalHariIni as $index => $j)
                         <tr class="jadwal-row hover:bg-slate-50/80 transition-colors {{ $j->status_jurnal === 'Alpa' ? 'bg-rose-50/20' : '' }}" data-index="{{ $index }}" style="{{ $index >= 10 ? 'display: none;' : '' }}">
                             <td class="py-2.5 px-3.5 text-center font-medium text-slate-400 text-xs tabular-nums">{{ $index + 1 }}</td>
-                            <td class="py-2.5 px-3.5 font-semibold text-slate-900">Jam {{ $j->jam_mulai }}–{{ $j->jam_selesai }}</td>
+                            <td class="py-2.5 px-3.5 font-semibold text-slate-900">Jam {{ $j->jam_mulai }}{{ $j->jam_mulai != $j->jam_selesai ? '–' . $j->jam_selesai : '' }}</td>
                             <td class="py-2.5 px-3.5"><span class="px-2 py-0.5 bg-slate-100 border border-slate-200 rounded text-[11px] font-bold text-slate-700">{{ $j->kelas ? $j->kelas->nama_kelas : '-' }}</span></td>
                             <td class="py-2.5 px-3.5 font-medium text-slate-900 leading-tight">{{ $j->guru ? $j->guru->nama_guru : '-' }}</td>
                             <td class="py-2.5 px-3.5 font-medium text-slate-700">{{ $j->mapel ? $j->mapel->nama_mapel : '-' }}</td>
@@ -298,7 +298,7 @@
                                     <div class="font-semibold text-slate-800">{{ $g->kelas ? $g->kelas->nama_kelas : '-' }}</div>
                                     <div class="text-[10px] text-slate-400">{{ $g->mapel ? $g->mapel->nama_mapel : '-' }}</div>
                                 </td>
-                                <td class="py-2 px-3 text-center font-semibold text-rose-700">Jam {{ $g->jam_mulai }} - {{ $j->jam_selesai ?? $g->jam_selesai }}</td>
+                                <td class="py-2 px-3 text-center font-semibold text-rose-700">Jam {{ $g->jam_mulai }}{{ $g->jam_mulai != $g->jam_selesai ? ' - ' . $g->jam_selesai : '' }}</td>
                                 <td class="py-2 px-3 text-slate-600">{{ $g->ruangan ? $g->ruangan->nama_ruangan : '-' }}</td>
                                 <td class="py-2 px-3 text-center">
                                     <span class="px-2 py-0.5 bg-rose-50 text-rose-700 border border-rose-200 font-bold rounded text-[10px]">ALPA</span>
@@ -357,7 +357,7 @@
                                     <div class="font-semibold text-slate-800">{{ $g->kelas ? $g->kelas->nama_kelas : '-' }}</div>
                                     <div class="text-[10px] text-slate-400">{{ $g->mapel ? $g->mapel->nama_mapel : '-' }}</div>
                                 </td>
-                                <td class="py-2 px-3 text-center font-semibold text-amber-700">Jam {{ $g->jam_mulai }} - {{ $g->jam_selesai }}</td>
+                                <td class="py-2 px-3 text-center font-semibold text-amber-700">Jam {{ $g->jam_mulai }}{{ $g->jam_mulai != $g->jam_selesai ? ' - ' . $g->jam_selesai : '' }}</td>
                                 <td class="py-2 px-3 text-slate-600">{{ $g->ruangan ? $g->ruangan->nama_ruangan : '-' }}</td>
                             </tr>
                         @empty

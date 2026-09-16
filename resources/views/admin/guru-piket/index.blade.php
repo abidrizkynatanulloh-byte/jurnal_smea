@@ -14,20 +14,7 @@
         </div>
     </div>
 
-    <!-- Alert Success / Error -->
-    @if(session('success'))
-        <div class="p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-lg text-xs font-semibold flex items-center space-x-2 shadow-2xs">
-            <i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i>
-            <span>{{ session('success') }}</span>
-        </div>
-    @endif
 
-    @if(session('error'))
-        <div class="p-3 bg-rose-50 border border-rose-200 text-rose-800 rounded-lg text-xs font-semibold flex items-center space-x-2 shadow-2xs">
-            <i data-lucide="alert-circle" class="w-4 h-4 text-rose-600"></i>
-            <span>{{ session('error') }}</span>
-        </div>
-    @endif
 
     <!-- GRID 5 HARI (SENIN - JUMAT) -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-2.5 items-start">
@@ -285,10 +272,7 @@
 
     function openModalTambah(hari = '', shift = 'Pagi', peran = 'Petugas') {
         const modal = document.getElementById('modalTambah');
-
-        if (typeof initSearchableSelects === 'function') {
-            initSearchableSelects();
-        }
+        modal.classList.remove('hidden');
 
         if (hari) setSelectValue('hariSelect', hari);
         if (shift) setSelectValue('shiftSelect', shift);
@@ -296,17 +280,34 @@
 
         const guruSelect = document.getElementById('guruSelect');
         if (guruSelect) {
+            if (guruSelect.tomselect) {
+                guruSelect.tomselect.destroy();
+            }
             guruSelect.value = '';
-            if (guruSelect.tomselect) guruSelect.tomselect.setValue('', true);
+            if (typeof TomSelect !== 'undefined') {
+                new TomSelect(guruSelect, {
+                    create: false,
+                    maxOptions: 250,
+                    placeholder: 'Cari / pilih guru...',
+                    allowEmptyOption: true,
+                    dropdownParent: 'body',
+                    onDropdownOpen: function() {
+                        this.position();
+                    },
+                    onItemAdd: function() {
+                        this.blur();
+                    }
+                });
+            }
         }
 
         const ketInput = document.getElementById('keterangan');
         if (ketInput) ketInput.value = '';
-
-        modal.classList.remove('hidden');
     }
 
     function closeModalTambah() {
+        const guruSelect = document.getElementById('guruSelect');
+        if (guruSelect && guruSelect.tomselect) guruSelect.tomselect.close();
         document.getElementById('modalTambah').classList.add('hidden');
     }
 </script>

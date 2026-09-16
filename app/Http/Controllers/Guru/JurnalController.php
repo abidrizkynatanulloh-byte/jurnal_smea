@@ -41,7 +41,10 @@ class JurnalController
                 ->withErrors(['error' => 'Belum waktunya mengajar. Jurnal baru bisa diisi saat jam pelajaran dimulai.']);
         }
 
-        $isTerlambat = ($statusWaktu === 'telat');
+        if ($statusWaktu === 'telat') {
+            return redirect()->route('guru.dashboard')
+                ->withErrors(['error' => 'Waktu pengisian jurnal telah habis! Sesi mengajar ini sudah tercatat Terlambat (Alpa) dan tidak dapat diisi lagi.']);
+        }
 
         $tanggalHariIni = Carbon::today()->toDateString();
 
@@ -131,6 +134,11 @@ class JurnalController
         $jadwal = Jadwal::where('id_jadwal', $request->id_jadwal)
             ->where('id_guru', $guru->id_guru)
             ->firstOrFail();
+
+        $statusWaktu = $jadwal->statusWaktuMengajar();
+        if ($statusWaktu === 'telat') {
+            return back()->withErrors(['error' => 'Waktu pengisian jurnal telah habis! Sesi mengajar ini sudah tercatat Terlambat (Alpa) dan tidak dapat disimpan.']);
+        }
 
         $sudahAda = JurnalMengajar::where('id_jadwal', $request->id_jadwal)
             ->whereDate('tanggal', $request->tanggal)
@@ -297,6 +305,9 @@ class JurnalController
                         ->whereDate('tanggal_selesai', '>=', $tanggalJadwal)
                         ->first();
 
+                    $isToday = ($tanggalJadwal === $today->toDateString());
+                    $statusWaktu = $isToday ? $j->statusWaktuMengajar() : 'telat';
+
                     $daftarTertunggak[] = [
                         'id_jadwal'      => $j->id_jadwal,
                         'tanggal'        => $tanggalJadwal,
@@ -306,7 +317,8 @@ class JurnalController
                         'mapel'          => $j->mapel ? $j->mapel->nama_mapel : '-',
                         'ruangan'        => $j->ruangan ? $j->ruangan->nama_ruangan : '-',
                         'keterangan'     => $izin ? "Izin Sah ({$izin->alasan})" : 'Alpa (Belum Diisi)',
-                        'is_today'       => ($tanggalJadwal === $today->toDateString()),
+                        'is_today'       => $isToday,
+                        'status_waktu'   => $statusWaktu,
                     ];
                 }
             }

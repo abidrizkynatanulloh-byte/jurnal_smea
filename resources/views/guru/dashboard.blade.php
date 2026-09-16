@@ -142,6 +142,11 @@
                                         <span class="w-1.5 h-1.5 bg-amber-500 rounded-full"></span>
                                         <span>Saatnya Diisi</span>
                                     </span>
+                                @elseif ($statusWaktu === 'belum_diisi')
+                                    <span class="inline-flex items-center px-2 py-0.5 bg-amber-50 text-amber-700 border border-amber-200 text-[10px] font-bold rounded space-x-1">
+                                        <span class="w-1.5 h-1.5 bg-amber-500 rounded-full"></span>
+                                        <span>Belum Diisi</span>
+                                    </span>
                                 @elseif ($statusWaktu === 'belum')
                                     <span class="inline-flex items-center px-2 py-0.5 bg-slate-100 text-slate-500 border border-slate-200 text-[10px] font-medium rounded space-x-1">
                                         <span class="w-1.5 h-1.5 bg-slate-400 rounded-full"></span>
@@ -150,7 +155,7 @@
                                 @else
                                     <span class="inline-flex items-center px-2 py-0.5 bg-rose-50 text-rose-700 border border-rose-200 text-[10px] font-bold rounded space-x-1">
                                         <span class="w-1.5 h-1.5 bg-rose-500 rounded-full"></span>
-                                        <span>Terlambat (Belum Diisi)</span>
+                                        <span>Terlambat (Alpa)</span>
                                     </span>
                                 @endif
                             </td>
@@ -160,7 +165,7 @@
                                         <i data-lucide="eye" class="w-3 h-3"></i>
                                         <span>Lihat Jurnal</span>
                                     </a>
-                                @elseif ($statusWaktu === 'sekarang')
+                                @elseif ($statusWaktu === 'sekarang' || $statusWaktu === 'belum_diisi')
                                     <a href="{{ route('guru.jurnal.create', $j->id_jadwal) }}" class="inline-flex items-center space-x-1 h-7 px-2.5 bg-[#1E2538] hover:bg-[#161c2c] text-white rounded-md text-xs font-semibold transition-colors shadow-2xs">
                                         <i data-lucide="edit-3" class="w-3 h-3"></i>
                                         <span>Isi Jurnal</span>
@@ -170,10 +175,9 @@
                                         Menunggu Jam
                                     </span>
                                 @else
-                                    <a href="{{ route('guru.jurnal.create', $j->id_jadwal) }}" class="inline-flex items-center space-x-1 h-7 px-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-md text-xs font-semibold transition-colors shadow-2xs">
-                                        <i data-lucide="edit-3" class="w-3 h-3"></i>
-                                        <span>Isi Jurnal (Terlambat)</span>
-                                    </a>
+                                    <span class="inline-block px-2.5 py-1 bg-rose-50 border border-rose-200 text-rose-600 rounded-md text-[11px] font-bold cursor-not-allowed">
+                                        Alpha
+                                    </span>
                                 @endif
                             </td>
                         </tr>

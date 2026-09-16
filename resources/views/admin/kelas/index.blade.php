@@ -24,21 +24,6 @@
         </div>
     </div>
 
-    <!-- Alert Messages -->
-    @if(session('success'))
-        <div class="p-3.5 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 rounded-xl text-xs font-semibold flex items-center space-x-2">
-            <i data-lucide="check-circle" class="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0"></i>
-            <span>{{ session('success') }}</span>
-        </div>
-    @endif
-
-    @if(session('error'))
-        <div class="p-3.5 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-300 rounded-xl text-xs font-semibold flex items-center space-x-2">
-            <i data-lucide="alert-circle" class="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0"></i>
-            <span>{{ session('error') }}</span>
-        </div>
-    @endif
-
     <!-- Ringkasan Statistik -->
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div class="bg-white dark:bg-[#242A35] p-4 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between shadow-2xs">
@@ -196,8 +181,8 @@
 
 <!-- MODAL TAMBAH KELAS -->
 <div id="modalAddKelas" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-white dark:bg-[#242A35] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
-        <div class="px-5 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+    <div class="bg-white dark:bg-[#242A35] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl w-full max-w-md">
+        <div class="px-5 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between rounded-t-2xl">
             <h3 class="font-bold text-slate-900 dark:text-slate-100 text-sm flex items-center space-x-2">
                 <i data-lucide="plus-circle" class="w-4 h-4 text-blue-600 dark:text-blue-400"></i>
                 <span>Tambah Kelas Baru</span>
@@ -218,7 +203,7 @@
 
             <div>
                 <label for="add_id_guru" class="block text-[11px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">Pilih Wali Kelas (Opsional)</label>
-                <select name="id_guru" id="add_id_guru" class="searchable-select w-full">
+                <select name="id_guru" id="add_id_guru" class="searchable-select w-full" placeholder="Cari / pilih wali kelas...">
                     <option value="">-- Belum Ditentukan --</option>
                     @foreach($daftarGuru as $g)
                         <option value="{{ $g->id_guru }}">{{ $g->nama_guru }} (NIP: {{ $g->nip ?? '-' }})</option>
@@ -240,8 +225,8 @@
 
 <!-- MODAL EDIT KELAS -->
 <div id="modalEditKelas" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-white dark:bg-[#242A35] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
-        <div class="px-5 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+    <div class="bg-white dark:bg-[#242A35] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl w-full max-w-md">
+        <div class="px-5 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between rounded-t-2xl">
             <h3 class="font-bold text-slate-900 dark:text-slate-100 text-sm flex items-center space-x-2">
                 <i data-lucide="edit-3" class="w-4 h-4 text-blue-600 dark:text-blue-400"></i>
                 <span>Edit Data Kelas & Wali Kelas</span>
@@ -263,7 +248,7 @@
 
             <div>
                 <label for="edit_id_guru" class="block text-[11px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">Pilih Wali Kelas</label>
-                <select name="id_guru" id="edit_id_guru" class="searchable-select w-full">
+                <select name="id_guru" id="edit_id_guru" class="searchable-select w-full" placeholder="Cari / pilih wali kelas...">
                     <option value="">-- Belum Ditentukan --</option>
                     @foreach($daftarGuru as $g)
                         <option value="{{ $g->id_guru }}">{{ $g->nama_guru }} (NIP: {{ $g->nip ?? '-' }})</option>
@@ -330,28 +315,63 @@
 <script>
     function openAddModal() {
         document.getElementById('modalAddKelas').classList.remove('hidden');
+        const selectGuru = document.getElementById('add_id_guru');
+        if (selectGuru) {
+            if (selectGuru.tomselect) {
+                selectGuru.tomselect.destroy();
+            }
+            selectGuru.value = '';
+            if (typeof TomSelect !== 'undefined') {
+                new TomSelect(selectGuru, {
+                    create: false,
+                    maxOptions: 250,
+                    placeholder: 'Cari / pilih wali kelas...',
+                    allowEmptyOption: true,
+                    onItemAdd: function() {
+                        this.blur();
+                    }
+                });
+            }
+        }
     }
 
     function closeAddModal() {
+        const selectGuru = document.getElementById('add_id_guru');
+        if (selectGuru && selectGuru.tomselect) selectGuru.tomselect.close();
         document.getElementById('modalAddKelas').classList.add('hidden');
     }
 
     function openEditModal(id, nama, idGuru) {
         document.getElementById('edit_nama_kelas').value = nama;
         document.getElementById('formEditKelas').action = '/admin/kelas/' + id;
+        document.getElementById('modalEditKelas').classList.remove('hidden');
         
         const selectGuru = document.getElementById('edit_id_guru');
         if (selectGuru) {
-            selectGuru.value = idGuru || '';
             if (selectGuru.tomselect) {
-                selectGuru.tomselect.setValue(idGuru || '');
+                selectGuru.tomselect.destroy();
+            }
+            selectGuru.value = idGuru || '';
+            if (typeof TomSelect !== 'undefined') {
+                const ts = new TomSelect(selectGuru, {
+                    create: false,
+                    maxOptions: 250,
+                    placeholder: 'Cari / pilih wali kelas...',
+                    allowEmptyOption: true,
+                    onItemAdd: function() {
+                        this.blur();
+                    }
+                });
+                if (idGuru) {
+                    ts.setValue(idGuru, true);
+                }
             }
         }
-
-        document.getElementById('modalEditKelas').classList.remove('hidden');
     }
 
     function closeEditModal() {
+        const selectGuru = document.getElementById('edit_id_guru');
+        if (selectGuru && selectGuru.tomselect) selectGuru.tomselect.close();
         document.getElementById('modalEditKelas').classList.add('hidden');
     }
 

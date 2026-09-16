@@ -91,20 +91,38 @@
                                     <span class="inline-flex items-center px-2 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 text-[10px] font-bold rounded">
                                         {{ $item['keterangan'] }}
                                     </span>
-                                @else
+                                @elseif($item['status_waktu'] === 'telat' || !$item['is_today'])
                                     <span class="inline-flex items-center px-2 py-0.5 bg-rose-50 text-rose-700 border border-rose-200 text-[10px] font-bold rounded space-x-1">
-                                        <span class="w-1.5 h-1.5 bg-rose-500 rounded-full animate-ping"></span>
-                                        <span>Belum Diisi</span>
+                                        <span class="w-1.5 h-1.5 bg-rose-500 rounded-full"></span>
+                                        <span>Terlambat (Alpa)</span>
+                                    </span>
+                                @elseif($item['status_waktu'] === 'sekarang')
+                                    <span class="inline-flex items-center px-2 py-0.5 bg-amber-50 text-amber-700 border border-amber-200 text-[10px] font-bold rounded space-x-1 animate-pulse">
+                                        <span class="w-1.5 h-1.5 bg-amber-500 rounded-full"></span>
+                                        <span>Saatnya Diisi</span>
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center px-2 py-0.5 bg-slate-100 text-slate-500 border border-slate-200 text-[10px] font-medium rounded space-x-1">
+                                        <span class="w-1.5 h-1.5 bg-slate-400 rounded-full"></span>
+                                        <span>Belum Mulai</span>
                                     </span>
                                 @endif
                             </td>
                             <td class="py-2 px-3 text-center">
-                                @if($item['is_today'])
+                                @if($item['is_today'] && $item['status_waktu'] === 'sekarang')
                                     <a href="{{ route('guru.jurnal.create', $item['id_jadwal']) }}"
                                         class="h-6.5 px-2.5 bg-[#1E2538] hover:bg-[#161c2c] text-white rounded-md text-xs font-semibold transition-colors shadow-2xs inline-flex items-center space-x-1">
                                         <i data-lucide="edit-3" class="w-3 h-3"></i>
                                         <span>Isi Sekarang</span>
                                     </a>
+                                @elseif($item['is_today'] && $item['status_waktu'] === 'belum')
+                                    <span class="inline-block px-2.5 py-1 bg-slate-100 border border-slate-200 text-slate-400 rounded-md text-[11px] font-medium cursor-not-allowed">
+                                        Menunggu Jam
+                                    </span>
+                                @elseif($item['is_today'])
+                                    <span class="inline-block px-2.5 py-1 bg-rose-50 border border-rose-200 text-rose-600 rounded-md text-[11px] font-bold cursor-not-allowed">
+                                        Alpha
+                                    </span>
                                 @else
                                     <span class="text-[10px] text-slate-400 italic">Lewat Hari</span>
                                 @endif

@@ -219,17 +219,65 @@ class GuruDashboardController extends Controller
                     ];
                 }
 
+                // 1. Ambil daftar tanggal (unik) di mana siswa dicatat 'Alpa'
+                $tanggalAlpaList = JurnalDetailKetidakhadiran::where('id_siswa', $s->nis)
+                    ->where('keterangan', 'Alpa')
+                    ->whereHas('jurnal')
+                    ->get()
+                    ->map(function ($kh) {
+                        return $kh->jurnal->tanggal;
+                    })
+                    ->unique()
+                    ->sort()
+                    ->values();
+
+                $maxBerturut = 0;
+                $currentBerturut = 0;
+                $prevDate = null;
+
+                foreach ($tanggalAlpaList as $tgl) {
+                    $currDate = \Carbon\Carbon::parse($tgl);
+
+                    if ($prevDate === null) {
+                        $currentBerturut = 1;
+                    } else {
+                        $diff = $prevDate->diffInDays($currDate);
+
+                        // Selisih 1 hari (atau 3 hari jika melewati weekend Jumat -> Senin)
+                        if ($diff == 1 || ($prevDate->isFriday() && $diff == 3)) {
+                            $currentBerturut++;
+                        } else {
+                            $currentBerturut = 1;
+                        }
+                    }
+
+                    if ($currentBerturut > $maxBerturut) {
+                        $maxBerturut = $currentBerturut;
+                    }
+
+                    $prevDate = $currDate;
+                }
+
+                // 2. Kriteria 3 Status Peringatan:
+                $perluPengawasan = $maxBerturut >= 5; // 5 Hari Berturut-turut -> TERAWASI
+                $perluTindak     = $alpaCount > 5;     // Total Alpa > 5 Hari (Acak) -> PERLU DITINDAK
+                $perluAtensi     = $alpaCount >= 3;    // Total Alpa >= 3 Hari -> PERLU ATENSI
+
+                // 3. Simpan ke array rekapSiswa
                 $rekapSiswa->push([
-                    'nis'            => $s->nis,
-                    'nama_siswa'     => $s->nama_siswa,
-                    'alpa'           => $alpaCount,
-                    'sakit'          => $sakitCount,
-                    'izin'           => $izinCount,
-                    'dispen'         => $dispenCount,
-                    'total_absen'    => $alpaCount + $sakitCount + $izinCount,
-                    'perlu_atensi'   => $alpaCount >= 3,
-                    'riwayat_absen'  => $riwayatAbsen,
-                    'riwayat_dispen' => $riwayatDispen,
+                    'nis'               => $s->nis,
+                    'nama_siswa'        => $s->nama_siswa,
+                    'alpa'              => $alpaCount,
+                    'sakit'             => $sakitCount,
+                    'izin'              => $izinCount,
+                    'dispen'            => $dispenCount,
+                    'total_absen'       => $alpaCount + $sakitCount + $izinCount,
+                    'perlu_atensi'      => $perluAtensi,
+                    'perlu_pengawasan'  => $perluPengawasan,
+                    'perlu_tindak'      => $perluTindak,
+                    'max_berturut_alpa' => $maxBerturut,
+                    'riwayat_absen'     => $riwayatAbsen,
+                    'riwayat_dispen'    => $riwayatDispen,
                 ]);
             }
             $rekapSiswa = $rekapSiswa->sortByDesc('total_absen')->values();

@@ -286,7 +286,7 @@
             box-shadow: none !important;
         }
 
-        /* Complete Reset for TomSelect Backgrounds & Colors (Light & Dark Mode) */
+        /* Complete Reset for TomSelect Focus & Shadows (Light & Dark Mode) */
         .ts-wrapper,
         .ts-wrapper *,
         .ts-control,
@@ -295,10 +295,7 @@
         .ts-control input:focus,
         .ts-control.focus,
         .ts-wrapper.focus,
-        .ts-wrapper.input-active,
-        .ts-wrapper.input-active *,
-        .ts-wrapper.input-active .ts-control,
-        .ts-wrapper.input-active .ts-control input {
+        .ts-wrapper.input-active {
             box-shadow: none !important;
             outline: none !important;
         }
@@ -312,11 +309,12 @@
             border-radius: 0.625rem !important; /* 10px rounded-lg */
             border: 1px solid #CBD5E1 !important;
             background-color: #FFFFFF !important;
-            color: inherit !important;
+            color: #1E293B !important;
             overflow: hidden !important;
             box-sizing: border-box !important;
             margin: 0 !important;
         }
+
         .ts-control > .item {
             display: inline-flex !important;
             align-items: center !important;
@@ -330,6 +328,7 @@
             color: inherit !important;
             background: transparent !important;
         }
+
         .ts-control input {
             display: inline-flex !important;
             align-items: center !important;
@@ -351,13 +350,17 @@
             border-color: #64748B transparent transparent transparent !important;
         }
 
-        /* Sembunyikan item pilihan lama saat user mengklik/mengetik pencarian agar bersih seperti aplikasi profesional */
+        /* Sembunyikan item pilihan lama saat user mengklik/mengetik pencarian agar bersih & tidak perlu hapus dulu */
         .ts-wrapper.input-active .ts-control .item {
             display: none !important;
         }
 
         /* Light Mode Dropdown */
         .ts-dropdown {
+            position: absolute !important;
+            top: 100% !important;
+            left: 0 !important;
+            width: 100% !important;
             border-radius: 0.625rem !important;
             border: 1px solid #CBD5E1 !important;
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15) !important;
@@ -365,7 +368,8 @@
             background: #FFFFFF !important;
             z-index: 99999 !important;
             margin-top: 4px !important;
-            overflow: hidden !important;
+            max-height: 220px !important;
+            overflow-y: auto !important;
         }
         .ts-dropdown .option {
             padding: 0.5rem 0.75rem !important;
@@ -379,27 +383,24 @@
             font-weight: 600 !important;
         }
 
-        /* Dark Mode TomSelect Overrides */
-        html.dark .ts-control {
+        /* Dark Mode TomSelect & Native Select Overrides */
+        html.dark .ts-wrapper .ts-control,
+        html.dark .ts-control,
+        html.dark select,
+        html.dark select option {
             border-color: #2D394C !important;
             background-color: #1A212D !important;
+            background: #1A212D !important;
+            color: #F1F5F9 !important;
+        }
+        html.dark .ts-control > .item {
+            color: #F1F5F9 !important;
+        }
+        html.dark .ts-control input {
+            color: #F1F5F9 !important;
         }
         html.dark .ts-wrapper.single .ts-control::after {
             border-color: #94A3B8 transparent transparent transparent !important;
-        }
-        html.dark .ts-wrapper,
-        html.dark .ts-wrapper *,
-        html.dark .ts-control,
-        html.dark .ts-control *,
-        html.dark .ts-control input,
-        html.dark .ts-control input:focus,
-        html.dark .ts-wrapper.input-active,
-        html.dark .ts-wrapper.input-active *,
-        html.dark .ts-wrapper.input-active .ts-control,
-        html.dark .ts-wrapper.input-active .ts-control input {
-            background: transparent !important;
-            background-color: transparent !important;
-            color: #F1F5F9 !important;
         }
         html.dark .ts-wrapper .ts-control input::placeholder {
             color: #94A3B8 !important;
@@ -522,8 +523,8 @@
                     <i data-lucide="calendar" class="w-3.5 h-3.5 {{ Route::is('guru.dashboard') ? 'text-[#0F4E5A] dark:text-white' : 'text-[#A2D2D6] dark:text-[#9CA3AF]' }}"></i>
                     <span>Jadwal Mengajar Saya</span>
                 </a>
-                <a href="{{ route('guru.jurnal.history') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg text-xs transition-all {{ Route::is('guru.jurnal.history') ? 'bg-[#84C4C9] text-[#0F4E5A] font-bold shadow-xs dark:bg-[#2C2C2C] dark:text-white' : 'text-[#C7E8EA] hover:bg-white/10 hover:text-white dark:text-[#9CA3AF] dark:hover:bg-white/5 dark:hover:text-white font-medium' }}">
-                    <i data-lucide="history" class="w-3.5 h-3.5 {{ Route::is('guru.jurnal.history') ? 'text-[#0F4E5A] dark:text-white' : 'text-[#A2D2D6] dark:text-[#9CA3AF]' }}"></i>
+                <a href="{{ route('guru.jurnal.rekap') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg text-xs transition-all {{ Route::is('guru.jurnal.rekap') ? 'bg-[#84C4C9] text-[#0F4E5A] font-bold shadow-xs dark:bg-[#2C2C2C] dark:text-white' : 'text-[#C7E8EA] hover:bg-white/10 hover:text-white dark:text-[#9CA3AF] dark:hover:bg-white/5 dark:hover:text-white font-medium' }}">
+                    <i data-lucide="history" class="w-3.5 h-3.5 {{ Route::is('guru.jurnal.rekap') ? 'text-[#0F4E5A] dark:text-white' : 'text-[#A2D2D6] dark:text-[#9CA3AF]' }}"></i>
                     <span>Riwayat Jurnal Mengajar</span>
                 </a>
                 <a href="{{ route('guru.izin.index') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg text-xs transition-all {{ Route::is('guru.izin.*') ? 'bg-[#84C4C9] text-[#0F4E5A] font-bold shadow-xs dark:bg-[#2C2C2C] dark:text-white' : 'text-[#C7E8EA] hover:bg-white/10 hover:text-white dark:text-[#9CA3AF] dark:hover:bg-white/5 dark:hover:text-white font-medium' }}">
@@ -1097,7 +1098,6 @@
                             maxOptions: 250,
                             placeholder: el.getAttribute('placeholder') || 'Cari / pilih...',
                             allowEmptyOption: true,
-                            dropdownParent: 'body',
                             onChange: function(value) {
                                 // Trigger native change event so onchange/auto-submit works
                                 el.dispatchEvent(new Event('change', { bubbles: true }));

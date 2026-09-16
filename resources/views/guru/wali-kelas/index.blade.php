@@ -43,21 +43,59 @@
     </div>
 
     @php
-        $siswaBermasalah = $rekapSiswa->where('perlu_atensi', true);
+        $siswaPengawasan = $rekapSiswa->where('perlu_pengawasan', true);
+        $siswaTindak     = $rekapSiswa->where('perlu_tindak', true)->where('perlu_pengawasan', false);
+        $siswaAtensi     = $rekapSiswa->where('perlu_atensi', true)->where('perlu_tindak', false)->where('perlu_pengawasan', false);
     @endphp
 
-    <!-- PERINGATAN SISWA PERLU ATENSI KHUSUS -->
-    @if($siswaBermasalah->isNotEmpty())
-        <div class="p-3.5 bg-rose-50/80 border border-rose-200 rounded-xl text-rose-900 shadow-2xs space-y-1.5">
+    {{-- Banner 1: SISWA TERAWASI (Alpa 5 Hari Berturut-turut) --}}
+    @if($siswaPengawasan->isNotEmpty())
+        <div class="p-3.5 bg-red-100 border border-red-300 rounded-xl text-red-900 shadow-2xs space-y-1.5 mb-3">
+            <div class="flex items-center space-x-2">
+                <i data-lucide="shield-alert" class="w-4 h-4 text-red-600"></i>
+                <h3 class="font-bold text-xs text-red-800">PERINGATAN DARURAT: {{ $siswaPengawasan->count() }} Siswa Terawasi (Alpa 5 Hari Berturut-turut)</h3>
+            </div>
+            <p class="text-[11px] text-red-700">Siswa di bawah ini Alpa 5 hari berturut-turut. Segera hubungi Orang Tua & Guru BK:</p>
+            <div class="flex flex-wrap gap-1.5 pt-0.5">
+                @foreach($siswaPengawasan as $sp)
+                    <span class="px-2 py-0.5 bg-red-600 text-white rounded-md text-[11px] font-bold">
+                        {{ $sp['nama_siswa'] }} ({{ $sp['max_berturut_alpa'] }} Hari Berturut-turut)
+                    </span>
+                @endforeach
+            </div>
+        </div>
+    @endif
+
+    {{-- Banner 2: PERLU DITINDAK (Total Alpa > 5 Hari Acak Tanggal) --}}
+    @if($siswaTindak->isNotEmpty())
+        <div class="p-3.5 bg-purple-100 border border-purple-300 rounded-xl text-purple-900 shadow-2xs space-y-1.5 mb-3">
+            <div class="flex items-center space-x-2">
+                <i data-lucide="alert-octagon" class="w-4 h-4 text-purple-600"></i>
+                <h3 class="font-bold text-xs text-purple-800">PERINGATAN DITINDAK: {{ $siswaTindak->count() }} Siswa Total Alpa > 5 Hari (Acak Tanggal)</h3>
+            </div>
+            <p class="text-[11px] text-purple-700">Siswa di bawah ini memiliki akumulasi Alpa lebih dari 5 hari dalam semester ini:</p>
+            <div class="flex flex-wrap gap-1.5 pt-0.5">
+                @foreach($siswaTindak as $st)
+                    <span class="px-2 py-0.5 bg-purple-600 text-white rounded-md text-[11px] font-bold">
+                        {{ $st['nama_siswa'] }} (Total {{ $st['alpa'] }}x Alpa)
+                    </span>
+                @endforeach
+            </div>
+        </div>
+    @endif
+
+    {{-- Banner 3: PERLU ATENSI (Total Alpa >= 3 Hari) --}}
+    @if($siswaAtensi->isNotEmpty())
+        <div class="p-3.5 bg-rose-50/80 border border-rose-200 rounded-xl text-rose-900 shadow-2xs space-y-1.5 mb-3">
             <div class="flex items-center space-x-2">
                 <i data-lucide="alert-triangle" class="w-4 h-4 text-rose-600"></i>
-                <h3 class="font-bold text-xs">Peringatan Wali Kelas: {{ $siswaBermasalah->count() }} Siswa Perlu Atensi (Alpa ≥ 3 Kali)</h3>
+                <h3 class="font-bold text-xs">Peringatan Wali Kelas: {{ $siswaAtensi->count() }} Siswa Perlu Atensi (Alpa ≥ 3 Kali)</h3>
             </div>
             <p class="text-[11px] text-rose-700">Siswa di bawah ini memiliki riwayat alpa tinggi. Disarankan berkoordinasi dengan Guru BK atau Orang Tua.</p>
             <div class="flex flex-wrap gap-1.5 pt-0.5">
-                @foreach($siswaBermasalah as $sb)
+                @foreach($siswaAtensi as $sa)
                     <span class="px-2 py-0.5 bg-white border border-rose-200 rounded-md text-[11px] font-bold text-rose-800 shadow-2xs">
-                        {{ $sb['nama_siswa'] }} ({{ $sb['alpa'] }}x Alpa)
+                        {{ $sa['nama_siswa'] }} ({{ $sa['alpa'] }}x Alpa)
                     </span>
                 @endforeach
             </div>
@@ -92,7 +130,7 @@
                 </thead>
                 <tbody class="divide-y divide-slate-100 text-slate-700">
                     @forelse($rekapSiswa as $idx => $s)
-                        <tr class="hover:bg-slate-50/80 transition-colors {{ $s['perlu_atensi'] ? 'bg-rose-50/20' : '' }}">
+                        <tr class="hover:bg-slate-50/80 transition-colors {{ $s['perlu_pengawasan'] ? 'bg-red-50/30' : ($s['perlu_tindak'] ? 'bg-purple-50/30' : ($s['perlu_atensi'] ? 'bg-rose-50/20' : '')) }}">
                             <td class="py-2 px-3.5 text-center text-slate-400 text-xs">{{ $idx + 1 }}</td>
                             <td class="py-2 px-3.5 font-semibold text-slate-600 text-xs">{{ $s['nis'] }}</td>
                             <td class="py-2 px-3.5 font-bold text-slate-800 text-xs">{{ $s['nama_siswa'] }}</td>
@@ -102,9 +140,17 @@
                             <td class="py-2 px-3.5 text-center font-semibold text-slate-600 text-xs">{{ $s['dispen'] }}</td>
                             <td class="py-2 px-3.5 text-center" x-data="{ modalTerbuka: false }">
                                 <div class="flex items-center justify-center space-x-1.5">
-                                    @if($s['perlu_atensi'])
+                                    @if($s['perlu_pengawasan'])
+                                        <span class="inline-flex items-center px-2 py-0.5 bg-red-100 text-red-800 text-[10px] font-bold rounded-md border border-red-300 animate-pulse">
+                                            Terawasi (5x Berturut)
+                                        </span>
+                                    @elseif($s['perlu_tindak'])
+                                        <span class="inline-flex items-center px-2 py-0.5 bg-purple-100 text-purple-800 text-[10px] font-bold rounded-md border border-purple-300">
+                                            Perlu Ditindak (>5x Alpa)
+                                        </span>
+                                    @elseif($s['perlu_atensi'])
                                         <span class="inline-flex items-center px-2 py-0.5 bg-rose-50 text-rose-700 text-[10px] font-bold rounded-md border border-rose-200/60">
-                                            Perlu Atensi
+                                            Perlu Atensi (≥3x Alpa)
                                         </span>
                                     @elseif($s['total_absen'] == 0)
                                         <span class="inline-flex items-center px-2 py-0.5 bg-emerald-50 text-emerald-700 text-[10px] font-bold rounded-md border border-emerald-200/60">

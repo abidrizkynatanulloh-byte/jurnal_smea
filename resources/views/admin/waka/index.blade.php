@@ -16,19 +16,7 @@
         </div>
     </div>
 
-    <!-- Alert / Notifikasi -->
-    @if(session('success'))
-        <div class="p-3 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 rounded-xl text-xs font-semibold flex items-center space-x-2 shadow-2xs">
-            <i data-lucide="check-circle" class="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0"></i>
-            <span>{{ session('success') }}</span>
-        </div>
-    @endif
-    @if(session('error'))
-        <div class="p-3 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-300 rounded-xl text-xs font-semibold flex items-center space-x-2 shadow-2xs">
-            <i data-lucide="alert-circle" class="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0"></i>
-            <span>{{ session('error') }}</span>
-        </div>
-    @endif
+
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 items-start">
         
