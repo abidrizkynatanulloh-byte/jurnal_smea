@@ -27,6 +27,16 @@ class Kelas extends Model
         return $this->belongsTo(Guru::class, 'wali_kelas', 'nip');
     }
 
+    public function siswa()
+    {
+        return $this->hasMany(Siswa::class, 'id_kelas', 'id_kelas');
+    }
+
+    public function jadwal()
+    {
+        return $this->hasMany(Jadwal::class, 'id_kelas', 'id_kelas');
+    }
+
     public function getWaliKelasGuruDataAttribute()
     {
         if (empty($this->wali_kelas)) return null;

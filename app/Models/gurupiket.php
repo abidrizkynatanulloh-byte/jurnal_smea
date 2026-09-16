@@ -19,6 +19,8 @@ class GuruPiket extends Model
         'hari',
         'tanggal_khusus',
         'shift',
+        'peran_piket',
+        'keterangan',
     ];
 
     /**

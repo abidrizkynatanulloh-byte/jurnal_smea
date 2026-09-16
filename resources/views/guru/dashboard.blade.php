@@ -4,6 +4,28 @@
 
 @section('content')
 <div class="space-y-4">
+    <!-- PERINGATAN 5 MENIT SEBELUM WAKTU MENGAJAR HABIS -->
+    @if(isset($peringatanJurnal) && $peringatanJurnal)
+        <div class="p-4 bg-gradient-to-r from-amber-500 to-amber-600 text-white rounded-xl shadow-lg border border-amber-600/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 animate-pulse">
+            <div class="flex items-start space-x-3">
+                <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center shrink-0 mt-0.5 sm:mt-0">
+                    <i data-lucide="alarm-clock" class="w-6 h-6 text-white"></i>
+                </div>
+                <div>
+                    <h4 class="font-extrabold text-sm uppercase tracking-wide flex items-center space-x-1.5">
+                        <span>⚠️ Peringatan Waktu Mengajar!</span>
+                    </h4>
+                    <p class="text-xs text-amber-100 font-medium mt-0.5">
+                        Sesi mengajar kelas <span class="font-bold text-white underline">{{ $peringatanJurnal['jadwal']->kelas->nama_kelas ?? '' }}</span> ({{ $peringatanJurnal['jadwal']->mapel->nama_mapel ?? '' }}) tersisa <span class="font-bold text-white text-sm tabular-nums">{{ $peringatanJurnal['sisa_menit'] }} menit lagi</span>. Mohon segera isi jurnal. Peringatan telah dikirim ke WA Guru.
+                    </p>
+                </div>
+            </div>
+            <a href="{{ route('guru.jurnal.create', $peringatanJurnal['jadwal']->id_jadwal) }}" class="h-9 px-4 bg-white text-amber-900 hover:bg-amber-100 rounded-lg text-xs font-bold transition-all shadow-sm flex items-center space-x-1.5 shrink-0 cursor-pointer">
+                <i data-lucide="edit-3" class="w-4 h-4"></i>
+                <span>Isi Jurnal Sekarang</span>
+            </a>
+        </div>
+    @endif
     <!-- Page Header -->
     <div class="flex flex-col md:flex-row md:items-center md:justify-between space-y-3 md:space-y-0">
         <div>
@@ -125,13 +147,11 @@
                                         <span class="w-1.5 h-1.5 bg-slate-400 rounded-full"></span>
                                         <span>Belum Mulai</span>
                                     </span>
-                                @elseif ($statusWaktu === 'telat')
+                                @else
                                     <span class="inline-flex items-center px-2 py-0.5 bg-rose-50 text-rose-700 border border-rose-200 text-[10px] font-bold rounded space-x-1">
                                         <span class="w-1.5 h-1.5 bg-rose-500 rounded-full"></span>
-                                        <span>Terlewat (Alpa)</span>
+                                        <span>Terlambat (Belum Diisi)</span>
                                     </span>
-                                @else
-                                    <span class="text-slate-400 text-xs">-</span>
                                 @endif
                             </td>
                             <td class="py-2 px-3.5 text-center">
@@ -149,12 +169,11 @@
                                     <span class="inline-block px-2.5 py-1 bg-slate-100 border border-slate-200 text-slate-400 rounded-md text-[11px] font-medium cursor-not-allowed">
                                         Menunggu Jam
                                     </span>
-                                @elseif ($statusWaktu === 'telat')
-                                    <span class="inline-block px-2.5 py-1 bg-rose-50 border border-rose-200 text-rose-600 rounded-md text-[11px] font-medium">
-                                        Waktu Habis
-                                    </span>
                                 @else
-                                    <span class="text-slate-400">-</span>
+                                    <a href="{{ route('guru.jurnal.create', $j->id_jadwal) }}" class="inline-flex items-center space-x-1 h-7 px-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-md text-xs font-semibold transition-colors shadow-2xs">
+                                        <i data-lucide="edit-3" class="w-3 h-3"></i>
+                                        <span>Isi Jurnal (Terlambat)</span>
+                                    </a>
                                 @endif
                             </td>
                         </tr>

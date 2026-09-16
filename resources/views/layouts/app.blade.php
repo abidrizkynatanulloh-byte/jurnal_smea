@@ -88,12 +88,22 @@
     <script src="https://cdn.jsdelivr.net/npm/lucide/dist/umd/lucide.min.js"></script>
 
     <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        html {
+            zoom: 90%;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             background-color: #EEF1F6;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
             text-rendering: optimizeLegibility;
+            overflow: hidden;
         }
 
         /* Light Mode Global Styles (Matching Image 2) */
@@ -204,7 +214,7 @@
 
         html.dark .text-slate-400,
         html.dark .text-gray-400 {
-            color: #64748B !important;
+            color: #94A3B8 !important;
         }
 
         html.dark input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not(.ts-control input),
@@ -217,7 +227,7 @@
 
         html.dark input::placeholder,
         html.dark textarea::placeholder {
-            color: #64748B !important;
+            color: #94A3B8 !important;
         }
 
         html.dark .hover\:bg-slate-50:hover,
@@ -392,7 +402,7 @@
             color: #F1F5F9 !important;
         }
         html.dark .ts-wrapper .ts-control input::placeholder {
-            color: #64748B !important;
+            color: #94A3B8 !important;
         }
         html.dark .ts-wrapper .ts-dropdown,
         html.dark .ts-dropdown {
@@ -414,14 +424,14 @@
         }
     </style>
 </head>
-<body class="min-h-screen md:h-screen md:overflow-hidden font-sans antialiased text-slate-900 dark:text-slate-100 bg-[#EEF1F6] dark:bg-[#1C1F26] flex flex-col md:flex-row relative">
+<body class="h-full overflow-hidden font-sans antialiased text-slate-900 dark:text-slate-100 bg-[#EEF1F6] dark:bg-[#1C1F26] flex flex-col md:flex-row relative">
 
     @auth
     <!-- ============================================================== -->
     <!-- SIDEBAR NAVIGATION (Deep Teal #166876 / Dark Charcoal #181818) -->
     <!-- Sesuai Desain Gambar 2 (Light) & Gambar 3 (Dark)               -->
     <!-- ============================================================== -->
-    <aside class="w-full md:w-56 bg-[#166876] dark:bg-[#181818] text-white flex-shrink-0 flex flex-col border-r border-[#104F5A] dark:border-[#252525] shadow-xl md:h-screen md:overflow-y-auto z-40 md:rounded-r-2xl overflow-hidden transition-colors">
+    <aside class="w-full md:w-56 bg-[#166876] dark:bg-[#181818] text-white flex-shrink-0 flex flex-col border-r border-[#104F5A] dark:border-[#252525] shadow-xl h-full z-40 md:rounded-r-2xl overflow-hidden transition-colors">
         <!-- Brand Header -->
         <div class="h-12 flex items-center px-4 border-b border-[#104F5A] dark:border-[#252525] justify-between shrink-0">
             <div class="flex items-center space-x-2.5">
@@ -431,7 +441,7 @@
                 </div>
                 <div>
                     <span class="font-bold text-xs tracking-tight text-[#E4CC67] dark:text-[#E0C47B] block leading-none">JURNAL SMEA</span>
-                    <span class="block text-[9px] font-medium text-[#D1FAF4] dark:text-slate-400 leading-none mt-1">SMK Negeri 1</span>
+                    <span class="block text-[9px] font-medium text-[#D1FAF4] dark:text-slate-400 leading-none mt-1">SMK Negeri 1 Boyolangu</span>
                 </div>
             </div>
             <!-- Mobile Menu Toggle Button -->
@@ -464,8 +474,12 @@
                     <i data-lucide="graduation-cap" class="w-3.5 h-3.5 {{ Route::is('admin.siswa.*') ? 'text-[#0F4E5A] dark:text-white' : 'text-[#A2D2D6] dark:text-[#9CA3AF]' }}"></i>
                     <span>Data Siswa</span>
                 </a>
+                <a href="{{ route('admin.kelas.index') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg transition-all {{ Route::is('admin.kelas.*') ? 'bg-[#84C4C9] text-[#0F4E5A] font-bold shadow-xs dark:bg-[#2C2C2C] dark:text-white' : 'text-[#C7E8EA] hover:bg-white/10 hover:text-white dark:text-[#9CA3AF] dark:hover:bg-white/5 dark:hover:text-white font-medium' }}">
+                    <i data-lucide="building-2" class="w-3.5 h-3.5 {{ Route::is('admin.kelas.*') ? 'text-[#0F4E5A] dark:text-white' : 'text-[#A2D2D6] dark:text-[#9CA3AF]' }}"></i>
+                    <span>Data Per Kelas</span>
+                </a>
                 <a href="{{ route('admin.mapel.index') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg transition-all {{ Route::is('admin.mapel.*') ? 'bg-[#84C4C9] text-[#0F4E5A] font-bold shadow-xs dark:bg-[#2C2C2C] dark:text-white' : 'text-[#C7E8EA] hover:bg-white/10 hover:text-white dark:text-[#9CA3AF] dark:hover:bg-white/5 dark:hover:text-white font-medium' }}">
-                    <i data-lucide="book-marked" class="w-3.5 h-3.5 {{ Route::is('admin.mapel.*') ? 'text-[#0F4E5A] dark:text-white' : 'text-[#A2D2D6] dark:text-[#9CA3AF]' }}"></i>
+                    <i data-lucide="book-open" class="w-3.5 h-3.5 {{ Route::is('admin.mapel.*') ? 'text-[#0F4E5A] dark:text-white' : 'text-[#A2D2D6] dark:text-[#9CA3AF]' }}"></i>
                     <span>Mata Pelajaran</span>
                 </a>
                 <a href="{{ route('admin.jam.index') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg transition-all {{ Route::is('admin.jam.*') ? 'bg-[#84C4C9] text-[#0F4E5A] font-bold shadow-xs dark:bg-[#2C2C2C] dark:text-white' : 'text-[#C7E8EA] hover:bg-white/10 hover:text-white dark:text-[#9CA3AF] dark:hover:bg-white/5 dark:hover:text-white font-medium' }}">
@@ -484,10 +498,6 @@
                     <i data-lucide="shield" class="w-3.5 h-3.5 {{ Route::is('admin.waka.*') ? 'text-[#0F4E5A] dark:text-white' : 'text-[#A2D2D6] dark:text-[#9CA3AF]' }}"></i>
                     <span>Kelola Waka</span>
                 </a>
-                <a href="{{ route('admin.wali-kelas.index') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg transition-all {{ Route::is('admin.wali-kelas.*') ? 'bg-[#84C4C9] text-[#0F4E5A] font-bold shadow-xs dark:bg-[#2C2C2C] dark:text-white' : 'text-[#C7E8EA] hover:bg-white/10 hover:text-white dark:text-[#9CA3AF] dark:hover:bg-white/5 dark:hover:text-white font-medium' }}">
-                    <i data-lucide="user-cog" class="w-3.5 h-3.5 {{ Route::is('admin.wali-kelas.*') ? 'text-[#0F4E5A] dark:text-white' : 'text-[#A2D2D6] dark:text-[#9CA3AF]' }}"></i>
-                    <span>Kelola Wali Kelas</span>
-                </a>
 
                 <div class="pt-3 pb-1">
                     <span class="px-2 text-[9.5px] font-bold text-[#87B8BE] dark:text-[#71717A] uppercase tracking-widest">Laporan & Pengguna</span>
@@ -503,43 +513,49 @@
 
             @endif
 
-            {{-- ROLE 2: GURU MATA PELAJARAN (Juga untuk Wakasis karena mereka tetap mengajar) --}}
-            @if(in_array(Auth::user()->role, ['guru', 'wakasis_siswa', 'wakasis_guru']))
-                <div class="pb-1 pt-3">
-                    <span class="px-2 text-[9.5px] font-bold text-[#87B8BE] dark:text-[#71717A] uppercase tracking-widest">Pembelajaran</span>
+            {{-- ROLE 2: GURU BISA MONITOR KELAS & INPUT JURNAL --}}
+            @if(in_array(Auth::user()->role, ['guru', 'guru_piket', 'wakasis_guru', 'waka_kurikulum', 'waka_sdm']))
+                <div class="pt-3 pb-1">
+                    <span class="px-2 text-[9.5px] font-bold text-[#87B8BE] dark:text-[#71717A] uppercase tracking-widest">KBM & Pengajaran</span>
                 </div>
                 <a href="{{ route('guru.dashboard') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg text-xs transition-all {{ Route::is('guru.dashboard') ? 'bg-[#84C4C9] text-[#0F4E5A] font-bold shadow-xs dark:bg-[#2C2C2C] dark:text-white' : 'text-[#C7E8EA] hover:bg-white/10 hover:text-white dark:text-[#9CA3AF] dark:hover:bg-white/5 dark:hover:text-white font-medium' }}">
-                    <i data-lucide="layout-dashboard" class="w-3.5 h-3.5 {{ Route::is('guru.dashboard') ? 'text-[#0F4E5A] dark:text-white' : 'text-[#A2D2D6] dark:text-[#9CA3AF]' }}"></i>
-                    <span>Jadwal & Jurnal Hari Ini</span>
+                    <i data-lucide="calendar" class="w-3.5 h-3.5 {{ Route::is('guru.dashboard') ? 'text-[#0F4E5A] dark:text-white' : 'text-[#A2D2D6] dark:text-[#9CA3AF]' }}"></i>
+                    <span>Jadwal Mengajar Saya</span>
                 </a>
-                <a href="{{ route('guru.jurnal.rekap') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg text-xs transition-all {{ Route::is('guru.jurnal.rekap') ? 'bg-[#84C4C9] text-[#0F4E5A] font-bold shadow-xs dark:bg-[#2C2C2C] dark:text-white' : 'text-[#C7E8EA] hover:bg-white/10 hover:text-white dark:text-[#9CA3AF] dark:hover:bg-white/5 dark:hover:text-white font-medium' }}">
-                    <i data-lucide="history" class="w-3.5 h-3.5 {{ Route::is('guru.jurnal.rekap') ? 'text-[#0F4E5A] dark:text-white' : 'text-[#A2D2D6] dark:text-[#9CA3AF]' }}"></i>
-                    <span>Riwayat Jurnal Saya</span>
+                <a href="{{ route('guru.jurnal.history') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg text-xs transition-all {{ Route::is('guru.jurnal.history') ? 'bg-[#84C4C9] text-[#0F4E5A] font-bold shadow-xs dark:bg-[#2C2C2C] dark:text-white' : 'text-[#C7E8EA] hover:bg-white/10 hover:text-white dark:text-[#9CA3AF] dark:hover:bg-white/5 dark:hover:text-white font-medium' }}">
+                    <i data-lucide="history" class="w-3.5 h-3.5 {{ Route::is('guru.jurnal.history') ? 'text-[#0F4E5A] dark:text-white' : 'text-[#A2D2D6] dark:text-[#9CA3AF]' }}"></i>
+                    <span>Riwayat Jurnal Mengajar</span>
                 </a>
-                @if(Auth::user()->guru && Auth::user()->guru->isWaliKelas())
-                    <a href="{{ route('guru.wali-kelas') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg text-xs transition-all {{ Route::is('guru.wali-kelas') ? 'bg-[#84C4C9] text-[#0F4E5A] font-bold shadow-xs dark:bg-[#2C2C2C] dark:text-white' : 'text-[#C7E8EA] hover:bg-white/10 hover:text-white dark:text-[#9CA3AF] dark:hover:bg-white/5 dark:hover:text-white font-medium' }}">
-                        <i data-lucide="users" class="w-3.5 h-3.5 {{ Route::is('guru.wali-kelas') ? 'text-[#0F4E5A] dark:text-white' : 'text-[#A2D2D6] dark:text-[#9CA3AF]' }}"></i>
-                        <span>Rekap Wali Kelas</span>
-                    </a>
-                @endif
                 <a href="{{ route('guru.izin.index') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg text-xs transition-all {{ Route::is('guru.izin.*') ? 'bg-[#84C4C9] text-[#0F4E5A] font-bold shadow-xs dark:bg-[#2C2C2C] dark:text-white' : 'text-[#C7E8EA] hover:bg-white/10 hover:text-white dark:text-[#9CA3AF] dark:hover:bg-white/5 dark:hover:text-white font-medium' }}">
-                    <i data-lucide="calendar-off" class="w-3.5 h-3.5 {{ Route::is('guru.izin.*') ? 'text-[#0F4E5A] dark:text-white' : 'text-[#A2D2D6] dark:text-[#9CA3AF]' }}"></i>
+                    <i data-lucide="file-text" class="w-3.5 h-3.5 {{ Route::is('guru.izin.*') ? 'text-[#0F4E5A] dark:text-white' : 'text-[#A2D2D6] dark:text-[#9CA3AF]' }}"></i>
                     <span>Pengajuan Izin Mengajar</span>
                 </a>
+            @endif
 
-                @if(Auth::user()->guru && Auth::user()->guru->isPiketHariIni())
-                    <div class="pt-3 pb-1">
-                        <span class="px-2 text-[9.5px] font-bold text-[#87B8BE] dark:text-[#71717A] uppercase tracking-widest">Guru Piket Hari Ini</span>
-                    </div>
-                    <a href="{{ route('piket.dashboard') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg text-xs transition-all {{ Route::is('piket.dashboard') ? 'bg-[#84C4C9] text-[#0F4E5A] font-bold shadow-xs dark:bg-[#2C2C2C] dark:text-white' : 'text-[#C7E8EA] hover:bg-white/10 hover:text-white dark:text-[#9CA3AF] dark:hover:bg-white/5 dark:hover:text-white font-medium' }}">
-                        <i data-lucide="clipboard-list" class="w-3.5 h-3.5 {{ Route::is('piket.dashboard') ? 'text-[#0F4E5A] dark:text-white' : 'text-[#A2D2D6] dark:text-[#9CA3AF]' }}"></i>
-                        <span>Input Dispen & Siswa Telat</span>
-                    </a>
-                    <a href="{{ route('piket.monitoring-kelas') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg text-xs transition-all {{ Route::is('piket.monitoring-kelas') ? 'bg-[#84C4C9] text-[#0F4E5A] font-bold shadow-xs dark:bg-[#2C2C2C] dark:text-white' : 'text-[#C7E8EA] hover:bg-white/10 hover:text-white dark:text-[#9CA3AF] dark:hover:bg-white/5 dark:hover:text-white font-medium' }}">
-                        <i data-lucide="monitor" class="w-3.5 h-3.5 {{ Route::is('piket.monitoring-kelas') ? 'text-[#0F4E5A] dark:text-white' : 'text-[#A2D2D6] dark:text-[#9CA3AF]' }}"></i>
-                        <span>Monitoring Kondisi Kelas</span>
-                    </a>
-                @endif
+            {{-- MENU KHUSUS WALI KELAS --}}
+            @if(Auth::user()->guru && Auth::user()->guru->isWaliKelas())
+                <div class="pt-3 pb-1">
+                    <span class="px-2 text-[9.5px] font-bold text-[#87B8BE] dark:text-[#71717A] uppercase tracking-widest">Wali Kelas</span>
+                </div>
+                <a href="{{ route('guru.wali-kelas') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg text-xs transition-all {{ Route::is('guru.wali-kelas') ? 'bg-[#84C4C9] text-[#0F4E5A] font-bold shadow-xs dark:bg-[#2C2C2C] dark:text-white' : 'text-[#C7E8EA] hover:bg-white/10 hover:text-white dark:text-[#9CA3AF] dark:hover:bg-white/5 dark:hover:text-white font-medium' }}">
+                    <i data-lucide="users" class="w-3.5 h-3.5 {{ Route::is('guru.wali-kelas') ? 'text-[#0F4E5A] dark:text-white' : 'text-[#A2D2D6] dark:text-[#9CA3AF]' }}"></i>
+                    <span>Rekap Presensi Kelas Saya</span>
+                </a>
+            @endif
+
+            {{-- MENU KHUSUS GURU PIKET --}}
+            @if(Auth::user()->guru && Auth::user()->guru->isPiketHariIni())
+                <div class="pt-3 pb-1">
+                    <span class="px-2 text-[9.5px] font-bold text-[#87B8BE] dark:text-[#71717A] uppercase tracking-widest">Tugas Piket</span>
+                </div>
+                <a href="{{ route('piket.dashboard') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg text-xs transition-all {{ Route::is('piket.dashboard') ? 'bg-[#84C4C9] text-[#0F4E5A] font-bold shadow-xs dark:bg-[#2C2C2C] dark:text-white' : 'text-[#C7E8EA] hover:bg-white/10 hover:text-white dark:text-[#9CA3AF] dark:hover:bg-white/5 dark:hover:text-white font-medium' }}">
+                    <i data-lucide="user-check" class="w-3.5 h-3.5 {{ Route::is('piket.dashboard') ? 'text-[#0F4E5A] dark:text-white' : 'text-[#A2D2D6] dark:text-[#9CA3AF]' }}"></i>
+                    <span>Dashboard Guru Piket</span>
+                </a>
+                <a href="{{ route('piket.monitoring-kelas') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg text-xs transition-all {{ Route::is('piket.monitoring-kelas') ? 'bg-[#84C4C9] text-[#0F4E5A] font-bold shadow-xs dark:bg-[#2C2C2C] dark:text-white' : 'text-[#C7E8EA] hover:bg-white/10 hover:text-white dark:text-[#9CA3AF] dark:hover:bg-white/5 dark:hover:text-white font-medium' }}">
+                    <i data-lucide="monitor" class="w-3.5 h-3.5 {{ Route::is('piket.monitoring-kelas') ? 'text-[#0F4E5A] dark:text-white' : 'text-[#A2D2D6] dark:text-[#9CA3AF]' }}"></i>
+                    <span>Monitoring Kondisi Kelas</span>
+                </a>
             @endif
 
             {{-- ROLE 3: GURU PIKET (Eksklusif) --}}
@@ -580,8 +596,8 @@
                 </a>
             @endif
 
-            {{-- ROLE 5: WAKIL KESISWAAN (WAKASIS) --}}
-            @if(in_array(Auth::user()->role, ['wakasis_siswa', 'wakasis_guru']))
+            {{-- ROLE 5: WAKIL KEPALA SEKOLAH (WAKA) --}}
+            @if(in_array(Auth::user()->role, ['wakasis_siswa', 'wakasis_guru', 'waka_kurikulum', 'waka_sdm']))
                 <div class="pb-1 pt-3">
                     <span class="px-2 text-[9.5px] font-bold text-[#87B8BE] dark:text-[#71717A] uppercase tracking-widest">Kesiswaan & SDM</span>
                 </div>
@@ -643,7 +659,7 @@
     </aside>
     @endauth
 
-    <main class="flex-1 flex flex-col min-w-0 md:h-screen md:overflow-hidden bg-[#EEF1F6] dark:bg-[#1C1F26] transition-colors">
+    <main class="flex-1 flex flex-col min-w-0 h-full overflow-hidden bg-[#EEF1F6] dark:bg-[#1C1F26] transition-colors">
         @auth
         <!-- Top Navigation Header -->
         <header class="h-12 bg-white dark:bg-[#141412] border-b border-slate-200 dark:border-[#252525] shrink-0 flex items-center justify-between px-4 sm:px-5 shadow-2xs z-30 transition-colors">
@@ -711,7 +727,7 @@
         @endauth
 
         <!-- Body Page Contents: Full Height SaaS Application Canvas -->
-        <div class="flex-1 p-3.5 md:p-4 max-w-[1600px] w-full mx-auto flex flex-col min-h-0 overflow-y-auto">
+        <div class="flex-1 p-2.5 sm:p-3 max-w-[1700px] w-full mx-auto flex flex-col min-h-0 overflow-y-auto">
             <!-- Compact Flash Notification -->
             @if (session('success'))
                 <div class="shrink-0 mb-3 p-2.5 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 rounded-lg text-emerald-800 dark:text-emerald-300 text-xs font-semibold flex items-center space-x-2 shadow-2xs">

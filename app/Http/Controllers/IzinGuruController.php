@@ -13,13 +13,22 @@ use Carbon\Carbon;
 
 class IzinGuruController extends Controller
 {
+    private function getIdGuru()
+    {
+        $user = Auth::user();
+        $idGuru = $user->id_guru ?? ($user->guru ? $user->guru->id_guru : null);
+        if (!$idGuru) {
+            abort(403, 'Akun anda tidak terhubung dengan data guru.');
+        }
+        return $idGuru;
+    }
+
     /**
      * Riwayat pengajuan izin guru login.
      */
     public function index()
     {
-        $user = Auth::user();
-        $idGuru = $user->id_guru ?? 1;
+        $idGuru = $this->getIdGuru();
 
         $daftarIzin = IzinGuru::where('id_guru', $idGuru)
             ->orderBy('id', 'desc')
@@ -33,8 +42,7 @@ class IzinGuruController extends Controller
      */
     public function create()
     {
-        $user = Auth::user();
-        $idGuru = $user->id_guru ?? 1;
+        $idGuru = $this->getIdGuru();
 
         $jadwalGuru = Jadwal::with(['kelas', 'mapel', 'ruangan'])
             ->where('id_guru', $idGuru)
@@ -67,8 +75,7 @@ class IzinGuruController extends Controller
             $buktiPath = $request->file('bukti_foto')->store('izin_guru', 'public');
         }
 
-        $user = Auth::user();
-        $idGuru = $user->id_guru ?? 1;
+        $idGuru = $this->getIdGuru();
 
         $izin = IzinGuru::create([
             'id_guru'         => $idGuru,

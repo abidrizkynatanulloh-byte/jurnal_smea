@@ -1,4 +1,17 @@
 @forelse ($guruList as $idx => $g)
+    @php
+        $role = $g->user ? $g->user->role : null;
+        $jabatanText = match ($role) {
+            'kepala_sekolah' => 'Kepala Sekolah',
+            'wakasis_siswa'  => 'Waka Kesiswaan',
+            'waka_kurikulum', 'wakasis_guru' => 'Waka Kurikulum',
+            'waka_sdm'       => 'Waka SDM',
+            'guru_piket'     => 'Guru Piket',
+            'staf_tu'        => 'Staf TU',
+            'satpam'         => 'Satpam',
+            default          => ($g->jabatan && $g->jabatan !== 'Guru' ? $g->jabatan : 'Guru'),
+        };
+    @endphp
     <tr class="hover:bg-slate-50/80 transition-colors guru-row">
         <td class="py-2 px-3.5 text-center font-medium text-slate-400 text-xs tabular-nums">
             {{ $guruList->firstItem() + $idx }}
@@ -9,11 +22,14 @@
         </td>
         <td class="py-2 px-3.5">
             <span class="inline-block px-2 py-0.5 rounded text-[11px] font-medium border
-                @if($g->jabatan === 'Kepala Sekolah') bg-emerald-50 text-emerald-800 border-emerald-200
-                @elseif(str_contains($g->jabatan, 'Wakasis')) bg-indigo-50 text-indigo-800 border-indigo-200
-                @elseif($g->jabatan === 'Guru Piket') bg-amber-50 text-amber-800 border-amber-200
+                @if($jabatanText === 'Kepala Sekolah') bg-emerald-50 text-emerald-800 border-emerald-200
+                @elseif($jabatanText === 'Waka Kurikulum') bg-indigo-50 text-indigo-800 border-indigo-200
+                @elseif($jabatanText === 'Waka SDM') bg-purple-50 text-purple-800 border-purple-200
+                @elseif($jabatanText === 'Waka Kesiswaan') bg-blue-50 text-blue-800 border-blue-200
+                @elseif(str_contains($jabatanText, 'Waka')) bg-indigo-50 text-indigo-800 border-indigo-200
+                @elseif($jabatanText === 'Guru Piket') bg-amber-50 text-amber-800 border-amber-200
                 @else bg-slate-100 text-slate-700 border-slate-200 @endif">
-                {{ $g->jabatan ?? 'Guru' }}
+                {{ $jabatanText }}
             </span>
         </td>
         <td class="py-2 px-3.5 text-xs text-slate-600 font-mono tabular-nums">

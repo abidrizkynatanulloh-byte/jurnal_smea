@@ -39,10 +39,9 @@ class JurnalController
         if ($statusWaktu === 'belum') {
             return redirect()->route('guru.dashboard')
                 ->withErrors(['error' => 'Belum waktunya mengajar. Jurnal baru bisa diisi saat jam pelajaran dimulai.']);
-        } elseif ($statusWaktu === 'telat') {
-            return redirect()->route('guru.dashboard')
-                ->withErrors(['error' => 'Batas waktu pengisian jurnal (termasuk toleransi 10 menit) sudah habis. Kamu tercatat tidak hadir (Alpa) pada sesi ini.']);
         }
+
+        $isTerlambat = ($statusWaktu === 'telat');
 
         $tanggalHariIni = Carbon::today()->toDateString();
 

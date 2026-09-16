@@ -10,7 +10,6 @@ use App\Models\DispenSiswa;
 use App\Models\SiswaTelat;
 use App\Models\Jadwal;
 use App\Models\JurnalMengajar;
-use App\Models\TugasKelasKosong;
 use App\Models\IzinGuru;
 use App\Models\AuditLog;
 use App\Models\Notifikasi;
@@ -146,17 +145,11 @@ class PiketController extends Controller
             ->pluck('id_guru')
             ->toArray();
 
-        // Ambil tugas kelas kosong yang telah tercatat
-        $tugasList = TugasKelasKosong::with(['guru', 'kelas'])
-            ->where('tanggal', $hariIni)
-            ->get();
-
         return view('piket.monitoring-kelas', compact(
             'jadwalHariIni',
             'hariIni',
             'namaHari',
-            'guruIzinHariIni',
-            'tugasList'
+            'guruIzinHariIni'
         ));
     }
 
@@ -171,14 +164,6 @@ class PiketController extends Controller
             'deskripsi_tugas' => 'required|string',
         ]);
 
-        TugasKelasKosong::create([
-            'id_jadwal'       => $request->id_jadwal,
-            'tanggal'         => Carbon::today()->toDateString(),
-            'id_guru'         => $request->id_guru,
-            'id_kelas'        => $request->id_kelas,
-            'deskripsi_tugas' => $request->deskripsi_tugas,
-            'status'          => 'Diberikan',
-        ]);
 
         AuditLog::log(
             'Pencatatan Tugas Kelas Kosong',

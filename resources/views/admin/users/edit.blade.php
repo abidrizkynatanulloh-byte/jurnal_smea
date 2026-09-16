@@ -27,7 +27,7 @@
             </div>
         </div>
 
-        <form action="{{ route('admin.users.update', $user->id) }}" method="POST" class="space-y-2.5">
+        <form action="{{ route('admin.users.update', $user->id) }}" method="POST" class="space-y-2.5" data-confirm="Apakah Anda yakin ingin memperbarui data akun ini?">
             @csrf
             @method('PUT')
 

@@ -523,4 +523,50 @@ class WhatsAppService
             Log::error("WhatsAppService Error (sendAlphaSiswaNotification): " . $e->getMessage());
         }
     }
+
+    /**
+     * Kirim notifikasi peringatan WA ke Guru 5 menit sebelum waktu mengajar habis (jika jurnal belum diisi).
+     *
+     * @param \App\Models\Jadwal $jadwal
+     * @param int $sisaMenit
+     * @return void
+     */
+    public static function sendReminderPengisianJurnal(\App\Models\Jadwal $jadwal, int $sisaMenit = 5): void
+    {
+        try {
+            $jadwal->loadMissing(['guru', 'kelas', 'mapel', 'ruangan']);
+            $guru = $jadwal->guru;
+
+            if (!$guru || empty($guru->no_hp)) {
+                return;
+            }
+
+            $formattedPhone = self::formatPhoneNumber($guru->no_hp);
+            if (!$formattedPhone) return;
+
+            $namaGuru = $guru->nama_guru;
+            $namaKelas = $jadwal->kelas->nama_kelas ?? '-';
+            $namaMapel = $jadwal->mapel->nama_mapel ?? '-';
+            $namaRuangan = $jadwal->ruangan->nama_ruangan ?? '-';
+            $jamInfo = "Jam ke-{$jadwal->jam_mulai} s/d {$jadwal->jam_selesai}";
+            $appUrl = self::getBaseUrl();
+            $linkIsiJurnal = rtrim($appUrl, '/') . '/guru/jurnal/create/' . $jadwal->id_jadwal;
+
+            $message = "[⚠️ PERINGATAN PENGISIAN JURNAL MENGAJAR]\n\n" .
+                "Yth. Bapak/Ibu *{$namaGuru}*,\n\n" .
+                "Waktu sesi mengajar Anda akan segera berakhir dalam *{$sisaMenit} menit lagi* dan jurnal belum terisi:\n\n" .
+                "🏫 *Kelas*          : {$namaKelas}\n" .
+                "📚 *Mata Pelajaran*: {$namaMapel}\n" .
+                "🚪 *Ruangan*       : {$namaRuangan}\n" .
+                "⏰ *Jam Mengajar*  : {$jamInfo}\n\n" .
+                "Mohon segera melakukan pengisian Jurnal Mengajar & Absensi Siswa.\n\n" .
+                "🔗 *Klik untuk isi jurnal sekarang*:\n" .
+                "{$linkIsiJurnal}\n\n" .
+                "Terima Kasih.\nSMK Negeri 1";
+
+            self::sendBulkMessage([$formattedPhone], $message);
+        } catch (\Throwable $e) {
+            Log::error("WhatsAppService Error (sendReminderPengisianJurnal ID {$jadwal->id_jadwal}): " . $e->getMessage());
+        }
+    }
 }

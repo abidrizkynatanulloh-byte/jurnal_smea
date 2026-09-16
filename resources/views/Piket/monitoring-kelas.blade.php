@@ -40,7 +40,6 @@
                         <th class="py-2 px-3.5">Guru Pengajar</th>
                         <th class="py-2 px-3.5 w-24">Ruangan</th>
                         <th class="py-2 px-3.5 text-center w-32">Kondisi Kelas</th>
-                        <th class="py-2 px-3.5 text-center w-28">Tindakan Piket</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 text-slate-700">
@@ -88,17 +87,6 @@
                                     <span class="inline-flex items-center px-2 py-0.5 bg-slate-100 text-slate-500 text-[10px] font-semibold rounded-md border border-slate-200">
                                         <span>Belum Mulai</span>
                                     </span>
-                                @endif
-                            </td>
-                            <td class="py-2 px-3.5 text-center">
-                                @if(!$j->sudah_diisi && ($statusWaktu === 'sekarang' || $statusWaktu === 'telat' || $isGuruIzin))
-                                    <button type="button" onclick="bukaModalTugas({{ $j->id_jadwal }}, '{{ $j->id_guru }}', '{{ $j->id_kelas }}', '{{ $j->kelas ? $j->kelas->nama_kelas : '' }}', '{{ $j->guru ? $j->guru->nama_guru : '' }}')"
-                                        class="h-6.5 px-2 bg-[#1E2538] hover:bg-[#161c2c] text-white rounded-md text-xs font-semibold transition-colors shadow-2xs flex items-center justify-center space-x-1 mx-auto cursor-pointer">
-                                        <i data-lucide="clipboard-list" class="w-3 h-3"></i>
-                                        <span>Beri Tugas</span>
-                                    </button>
-                                @else
-                                    <span class="text-slate-300 text-xs">-</span>
                                 @endif
                             </td>
                         </tr>
@@ -149,58 +137,4 @@
         </div>
     </div>
 </div>
-
-<!-- MODAL FORM PENCATATAN TUGAS KELAS KOSONG -->
-<div id="modalTugas" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs hidden p-4">
-    <div class="bg-white rounded-xl border border-slate-200 shadow-2xl max-w-md w-full p-4 space-y-3">
-        <div class="flex items-center justify-between pb-2 border-b border-slate-100">
-            <h3 class="font-bold text-sm text-slate-900">Catat Tugas Siswa (Guru Tidak Hadir)</h3>
-            <button type="button" onclick="tutupModalTugas()" class="text-slate-400 hover:text-slate-600">
-                <i data-lucide="x" class="w-4 h-4"></i>
-            </button>
-        </div>
-
-        <form action="{{ route('piket.tugas-kelas.store') }}" method="POST" class="space-y-3">
-            @csrf
-            <input type="hidden" name="id_jadwal" id="modal_id_jadwal">
-            <input type="hidden" name="id_guru" id="modal_id_guru">
-            <input type="hidden" name="id_kelas" id="modal_id_kelas">
-
-            <div class="text-xs text-slate-500 space-y-0.5 bg-slate-50 p-2.5 rounded-lg border border-slate-200">
-                <p>Kelas: <b id="modal_nama_kelas" class="text-slate-800"></b></p>
-                <p>Guru Berhalangan: <b id="modal_nama_guru" class="text-slate-800"></b></p>
-            </div>
-
-            <div>
-                <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Instruksi Tugas Siswa *</label>
-                <textarea name="deskripsi_tugas" rows="3" required placeholder="Tuliskan tugas yang harus dikerjakan siswa di kelas (misal: Kerjakan LKS Hal 25-30 No 1-10)..."
-                    class="block w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#1E2538]"></textarea>
-            </div>
-
-            <div class="flex items-center space-x-3 pt-3 border-t border-slate-100 dark:border-slate-800">
-                <button type="submit" class="flex-1 min-h-[48px] py-3.5 px-6 bg-[#1E2538] hover:bg-[#121724] text-white rounded-xl text-sm font-bold tracking-wide transition-all shadow-xs hover:shadow-md cursor-pointer flex items-center justify-center space-x-2">
-                    <span>Simpan & Publikasikan Tugas</span>
-                </button>
-                <button type="button" onclick="tutupModalTugas()" class="h-11 px-6 min-w-[100px] border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-xl text-sm font-semibold transition-colors flex items-center justify-center cursor-pointer shadow-2xs">
-                    Batal
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<script>
-    function bukaModalTugas(idJadwal, idGuru, idKelas, namaKelas, namaGuru) {
-        document.getElementById('modal_id_jadwal').value = idJadwal;
-        document.getElementById('modal_id_guru').value = idGuru;
-        document.getElementById('modal_id_kelas').value = idKelas;
-        document.getElementById('modal_nama_kelas').innerText = namaKelas;
-        document.getElementById('modal_nama_guru').innerText = namaGuru;
-        document.getElementById('modalTugas').classList.remove('hidden');
-    }
-
-    function tutupModalTugas() {
-        document.getElementById('modalTugas').classList.add('hidden');
-    }
-</script>
 @endsection

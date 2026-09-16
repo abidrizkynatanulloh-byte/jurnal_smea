@@ -77,7 +77,7 @@ class UserController
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'role'     => 'required|in:staf_tu,satpam,guru,guru_piket,kepala_sekolah,wakasis_siswa,wakasis_guru,wali_murid',
+            'role'     => 'required|in:staf_tu,satpam,guru,guru_piket,kepala_sekolah,wakasis_siswa,wakasis_guru,waka_kurikulum,waka_sdm,wali_murid',
             'nama'     => 'required|string|max:150',
             'username' => 'required|string|max:50|unique:users,username',
             'password' => 'required|string|min:4',
@@ -125,7 +125,7 @@ class UserController
                 ]);
                 $idSatpam = $satpam->id_satpam;
 
-            } elseif (in_array($validated['role'], ['guru', 'guru_piket', 'kepala_sekolah', 'wakasis_siswa', 'wakasis_guru'])) {
+            } elseif (in_array($validated['role'], ['guru', 'guru_piket', 'kepala_sekolah', 'wakasis_siswa', 'wakasis_guru', 'waka_kurikulum', 'waka_sdm'])) {
                 $guru = Guru::firstOrCreate(
                     ['nip' => $validated['username']],
                     [
@@ -193,7 +193,7 @@ class UserController
         // 1. Validasi Input Edit
         $validated = $request->validate([
             'username'  => 'required|string|max:50|unique:users,username,' . $user->id, // Username unik kecuali untuk user ini sendiri
-            'role'      => 'required|in:staf_tu,satpam,guru,guru_piket,kepala_sekolah,wakasis_siswa,wakasis_guru,wali_murid',
+            'role'      => 'required|in:staf_tu,satpam,guru,guru_piket,kepala_sekolah,wakasis_siswa,wakasis_guru,waka_kurikulum,waka_sdm,wali_murid',
             'password'  => 'nullable|string|min:4', // Password opsional (hanya diisi jika mau ganti password)
             'is_active' => 'required|boolean',
         ], [

@@ -119,7 +119,7 @@
             </button>
         </div>
 
-        <form id="formEditMapel" method="POST" class="space-y-3.5">
+        <form id="formEditMapel" method="POST" class="space-y-3.5" data-confirm="Apakah Anda yakin ingin memperbarui mata pelajaran ini?">
             @csrf
             @method('PUT')
 

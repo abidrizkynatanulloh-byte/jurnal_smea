@@ -73,9 +73,9 @@ class Guru extends Model
     }
 
     /**
-     * Cek apakah guru ini bertugas sebagai guru piket hari ini.
+     * Cek apakah guru ini bertugas sebagai guru piket hari ini & pada shift jam saat ini.
      */
-    public function isPiketHariIni()
+    public function isPiketHariIni($checkShift = true)
     {
         $hariMap = [
             'Monday'    => 'Senin',
@@ -88,13 +88,33 @@ class Guru extends Model
         ];
         $namaHariIni = $hariMap[\Carbon\Carbon::now()->format('l')] ?? 'Senin';
         $tanggalHari = \Carbon\Carbon::today()->toDateString();
+        $jamSekarang  = \Carbon\Carbon::now()->format('H:i:s');
 
-        return \App\Models\GuruPiket::where('id_guru', $this->id_guru)
+        $query = \App\Models\GuruPiket::where('id_guru', $this->id_guru)
             ->where(function ($q) use ($namaHariIni, $tanggalHari) {
                 $q->where('hari', $namaHariIni)
                   ->orWhere('tanggal_khusus', $tanggalHari);
             })
-            ->whereNull('deleted_at')
-            ->exists();
+            ->whereNull('deleted_at');
+
+        if ($checkShift) {
+            // Sebelum 11:00 WIB -> Shift Pagi (07.00 - 11.00)
+            if ($jamSekarang < '11:00:00') {
+                $query->where(function ($q) {
+                    $q->where('shift', 'Pagi')
+                      ->orWhere('peran_piket', 'Piket Waka')
+                      ->orWhereNull('shift');
+                });
+            } else {
+                // Jam 11:00 WIB ke atas -> Shift Siang (11.00 - 15.00)
+                $query->where(function ($q) {
+                    $q->where('shift', 'Siang')
+                      ->orWhere('peran_piket', 'Piket Waka')
+                      ->orWhereNull('shift');
+                });
+            }
+        }
+
+        return $query->exists();
     }
 }

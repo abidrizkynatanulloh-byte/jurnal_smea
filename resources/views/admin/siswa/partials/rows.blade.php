@@ -8,9 +8,9 @@
         <td class="py-2 px-3 font-medium text-slate-900 text-xs leading-tight">{{ $s->nama_siswa }}</td>
         <td class="py-2 px-2 text-center">
             @if($s->jenis_kelamin === 'P')
-                <span class="inline-flex items-center justify-center w-5.5 h-5.5 rounded-md text-[11px] font-bold bg-pink-50 text-pink-700 border border-pink-200" title="Perempuan">P</span>
+                <span class="inline-flex items-center justify-center px-3 py-1 rounded-md text-[11px] font-bold bg-pink-50 text-pink-700 border border-pink-200" title="Perempuan">P</span>
             @else
-                <span class="inline-flex items-center justify-center w-5.5 h-5.5 rounded-md text-[11px] font-bold bg-blue-50 text-blue-700 border border-blue-200" title="Laki-laki">L</span>
+                <span class="inline-flex items-center justify-center px-3 py-1 rounded-md text-[11px] font-bold bg-blue-50 text-blue-700 border border-blue-200" title="Laki-laki">L</span>
             @endif
         </td>
         <td class="py-2 px-3">
@@ -18,13 +18,20 @@
                 {{ $s->kelas ? $s->kelas->nama_kelas : '-' }}
             </span>
         </td>
+        <td class="py-2 px-3 text-xs text-slate-600">
+            @if($s->kota_lahir || $s->tanggal_lahir)
+                {{ $s->kota_lahir ? $s->kota_lahir . ', ' : '' }}{{ $s->tanggal_lahir ? \Carbon\Carbon::parse($s->tanggal_lahir)->format('d/m/Y') : '' }}
+            @else
+                -
+            @endif
+        </td>
         <td class="py-2 px-3 text-xs text-slate-500 font-mono tabular-nums">
             {{ $s->no_hp_wali ?: '-' }}
         </td>
         <td class="py-2 px-3 text-center">
             <div class="flex items-center justify-center space-x-1">
                 <button type="button" 
-                    onclick="openEditModal('{{ $s->nisn }}', '{{ addslashes($s->nama_siswa) }}', '{{ $s->nisn }}', '{{ $s->id_kelas }}', '{{ $s->jenis_kelamin ?? 'L' }}', '{{ $s->no_hp_wali ?? '' }}', '{{ $s->nis ?? '' }}')"
+                    onclick="openEditModal('{{ $s->nisn }}', '{{ addslashes($s->nama_siswa) }}', '{{ $s->nisn }}', '{{ $s->id_kelas }}', '{{ $s->jenis_kelamin ?? 'L' }}', '{{ $s->no_hp_wali ?? '' }}', '{{ $s->nis ?? '' }}', '{{ addslashes($s->kota_lahir ?? '') }}', '{{ $s->tanggal_lahir ?? '' }}')"
                     class="w-6.5 h-6.5 rounded-md border border-slate-200 hover:border-slate-300 hover:bg-slate-100 text-slate-600 flex items-center justify-center transition-colors shadow-2xs cursor-pointer" title="Edit Siswa">
                     <i data-lucide="edit-2" class="w-3 h-3"></i>
                 </button>
@@ -38,7 +45,7 @@
     </tr>
 @empty
     <tr>
-        <td colspan="8" class="py-12 text-center text-slate-400 italic text-xs">
+        <td colspan="9" class="py-12 text-center text-slate-400 italic text-xs">
             <i data-lucide="inbox" class="w-7 h-7 mx-auto mb-1.5 text-slate-300"></i>
             Tidak ada data siswa yang sesuai.
         </td>

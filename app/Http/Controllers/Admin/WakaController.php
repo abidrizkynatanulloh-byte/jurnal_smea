@@ -10,19 +10,20 @@ class WakaController
 {
     public function index()
     {
-        $wakaSiswa = User::where('role', 'wakasis_siswa')->whereNotNull('id_guru')->with('guru')->get();
-        $wakaGuru  = User::where('role', 'wakasis_guru')->whereNotNull('id_guru')->with('guru')->get();
+        $wakaSiswa     = User::where('role', 'wakasis_siswa')->whereNotNull('id_guru')->with('guru')->get();
+        $wakaKurikulum = User::whereIn('role', ['waka_kurikulum', 'wakasis_guru'])->whereNotNull('id_guru')->with('guru')->get();
+        $wakaSdm       = User::where('role', 'waka_sdm')->whereNotNull('id_guru')->with('guru')->get();
         
         $semuaGuru = Guru::orderBy('nama_guru')->get();
 
-        return view('admin.waka.index', compact('wakaSiswa', 'wakaGuru', 'semuaGuru'));
+        return view('admin.waka.index', compact('wakaSiswa', 'wakaKurikulum', 'wakaSdm', 'semuaGuru'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
             'id_guru' => 'required|exists:guru,id_guru',
-            'tipe_waka' => 'required|in:wakasis_siswa,wakasis_guru',
+            'tipe_waka' => 'required|in:wakasis_siswa,waka_kurikulum,wakasis_guru,waka_sdm',
         ]);
 
         $user = User::where('id_guru', $request->id_guru)->first();
@@ -32,12 +33,18 @@ class WakaController
 
         $user->update(['role' => $request->tipe_waka]);
 
-        // Opsional: Update jabatan text di tabel guru
         $guru = Guru::find($request->id_guru);
-        $jabatanBaru = $request->tipe_waka == 'wakasis_siswa' ? 'Wakasis Siswa' : 'Wakasis Guru';
-        $guru->update(['jabatan' => $jabatanBaru]);
+        $jabatanBaru = match ($request->tipe_waka) {
+            'wakasis_siswa'  => 'Waka Kesiswaan',
+            'waka_kurikulum', 'wakasis_guru' => 'Waka Kurikulum',
+            'waka_sdm'       => 'Waka SDM',
+            default          => 'Waka',
+        };
+        if ($guru) {
+            $guru->update(['jabatan' => $jabatanBaru]);
+        }
 
-        return redirect()->route('admin.waka.index')->with('success', 'Waka berhasil ditambahkan!');
+        return redirect()->route('admin.waka.index')->with('success', "Jabatan {$jabatanBaru} berhasil diterapkan!");
     }
 
     public function destroy($id)

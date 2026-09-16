@@ -37,54 +37,54 @@
         </div>
     </div>
 
-    <!-- Layout Grid Utama (Full Viewport Height - Proporsi Gambar 1) -->
-    <div class="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-3 gap-3.5 items-stretch" id="masterDataGrid">
+    <!-- Layout Flex Utama (Full Viewport Height - Kompak & Proporsional 100% Zoom) -->
+    <div class="flex-1 min-h-0 flex flex-col lg:flex-row gap-3 items-stretch" id="masterDataGrid">
         
-        <!-- BAGIAN 1: FORM TAMBAH SISWA (UKURAN KOMPAK SESUAI GAMBAR 1) -->
-        <div id="formCol" class="bg-white border border-slate-200/90 rounded-xl p-3.5 shadow-2xs space-y-2.5 overflow-y-auto h-full max-h-full">
-            <div class="flex items-center space-x-2 pb-2 border-b border-slate-100 shrink-0">
+        <!-- BAGIAN 1: FORM TAMBAH SISWA (UKURAN KOMPAK 320px) -->
+        <div id="formCol" class="w-full lg:w-[320px] shrink-0 bg-white dark:bg-[#242A35] border border-slate-200/90 dark:border-slate-800 rounded-xl p-3.5 shadow-2xs space-y-2.5 overflow-y-auto h-full max-h-full">
+            <div class="flex items-center space-x-2 pb-2 border-b border-slate-100 dark:border-slate-800 shrink-0">
                 <div class="w-5 h-5 rounded-md bg-[#1E2538] text-white flex items-center justify-center">
                     <i data-lucide="user-plus" class="w-3 h-3"></i>
                 </div>
-                <span class="font-bold text-xs text-slate-900 tracking-tight uppercase">TAMBAH SISWA BARU</span>
+                <span class="font-bold text-xs text-slate-900 dark:text-slate-100 tracking-tight uppercase">TAMBAH SISWA BARU</span>
             </div>
 
-            <form action="{{ route('admin.siswa.store') }}" method="POST" class="space-y-2">
+            <form action="{{ route('admin.siswa.store') }}" method="POST" class="space-y-2.5">
                 @csrf
 
                 <div>
-                    <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Nomor Induk Siswa (NIS) <span class="text-slate-400 font-normal">(Opsional)</span></label>
+                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">NIS <span class="text-slate-400 font-normal">(Opsional)</span></label>
                     <input type="text" name="nis" value="{{ old('nis') }}" placeholder="Boleh dikosongkan..."
-                        class="w-full h-8 px-2.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-800 font-mono transition-colors">
+                        class="w-full h-9 px-3 bg-white dark:bg-[#1A2230] border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-slate-800 font-mono transition-colors">
                 </div>
 
                 <div>
-                    <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Nomor Induk Siswa Nasional (NISN) *</label>
-                    <input type="text" name="nisn" value="{{ old('nisn') }}" placeholder="10 Digit NISN (Akun Login Ortu Siswa)" required
-                        class="w-full h-8 px-2.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-800 font-mono transition-colors">
+                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">NISN (Akun Ortu) *</label>
+                    <input type="text" name="nisn" value="{{ old('nisn') }}" placeholder="10 Digit NISN" required
+                        class="w-full h-9 px-3 bg-white dark:bg-[#1A2230] border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-slate-800 font-mono transition-colors">
                 </div>
 
                 <div>
-                    <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Nama Lengkap Siswa *</label>
-                    <input type="text" name="nama_siswa" value="{{ old('nama_siswa') }}" placeholder="Contoh: Ahmad Rizki Pratama" required
-                        class="w-full h-8 px-2.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-800 transition-colors">
+                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Nama Lengkap Siswa *</label>
+                    <input type="text" name="nama_siswa" value="{{ old('nama_siswa') }}" placeholder="Nama Siswa..." required
+                        class="w-full h-9 px-3 bg-white dark:bg-[#1A2230] border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-slate-800 transition-colors">
                 </div>
 
                 <div class="grid grid-cols-2 gap-2">
                     <div>
-                        <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Jenis Kelamin *</label>
+                        <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Jenis Kelamin *</label>
                         <select name="jenis_kelamin" required
-                            class="w-full h-8 px-2 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 font-medium focus:outline-none focus:border-slate-800 cursor-pointer">
+                            class="w-full h-9 px-2.5 bg-white dark:bg-[#1A2230] border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-900 dark:text-slate-100 font-medium focus:outline-none focus:border-slate-800 cursor-pointer">
                             <option value="L" {{ old('jenis_kelamin') == 'L' ? 'selected' : '' }}>Laki-laki (L)</option>
                             <option value="P" {{ old('jenis_kelamin') == 'P' ? 'selected' : '' }}>Perempuan (P)</option>
                         </select>
                     </div>
 
                     <div>
-                        <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Rombel / Kelas *</label>
+                        <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Rombel / Kelas *</label>
                         <select name="id_kelas" required
-                            class="w-full h-8 px-2 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 font-medium focus:outline-none focus:border-slate-800 cursor-pointer">
-                            <option value="">-- Pilih Kelas --</option>
+                            class="w-full h-9 px-2 bg-white dark:bg-[#1A2230] border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-900 dark:text-slate-100 font-medium focus:outline-none focus:border-slate-800 cursor-pointer">
+                            <option value="">-- Pilih --</option>
                             @foreach ($kelasList as $k)
                                 <option value="{{ $k->id_kelas }}" {{ old('id_kelas') == $k->id_kelas ? 'selected' : '' }}>
                                     {{ $k->nama_kelas }}
@@ -94,37 +94,51 @@
                     </div>
                 </div>
 
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Tempat Lahir</label>
+                        <input type="text" name="kota_lahir" value="{{ old('kota_lahir') }}" placeholder="Boyolali"
+                            class="w-full h-9 px-2.5 bg-white dark:bg-[#1A2230] border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-slate-800 transition-colors">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Tanggal Lahir</label>
+                        <input type="date" name="tanggal_lahir" value="{{ old('tanggal_lahir') }}"
+                            class="w-full h-9 px-2 bg-white dark:bg-[#1A2230] border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:border-slate-800 transition-colors">
+                    </div>
+                </div>
+
                 <div>
-                    <label class="block text-[11px] font-semibold text-slate-700 mb-0.5">Nomor WhatsApp Wali Siswa</label>
-                    <input type="text" name="no_hp_wali" value="{{ old('no_hp_wali') }}" placeholder="08xxxxxxxxxx (Notifikasi WA)"
-                        class="w-full h-8 px-2.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-800 font-mono transition-colors">
+                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">No. WA Wali Siswa</label>
+                    <input type="text" name="no_hp_wali" value="{{ old('no_hp_wali') }}" placeholder="08xxxxxxxxxx"
+                        class="w-full h-9 px-3 bg-white dark:bg-[#1A2230] border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-slate-800 font-mono transition-colors">
                 </div>
 
                 <div class="pt-2">
-                    <button type="submit" class="w-full min-h-[48px] py-3.5 px-6 bg-[#1E2538] hover:bg-[#121724] text-white rounded-xl text-sm font-bold tracking-wide transition-all flex items-center justify-center space-x-2.5 shadow-sm hover:shadow-md cursor-pointer shrink-0">
-                        <i data-lucide="plus" class="w-4 h-4"></i>
+                    <button type="submit" class="w-full h-10 bg-[#1E2538] hover:bg-[#121724] text-white rounded-lg text-xs font-bold tracking-wide transition-all flex items-center justify-center space-x-1.5 shadow-2xs hover:shadow-md cursor-pointer shrink-0">
+                        <i data-lucide="plus" class="w-3.5 h-3.5"></i>
                         <span>Simpan Data Siswa</span>
                     </button>
                 </div>
             </form>
         </div>
 
-        <!-- BAGIAN 2: DATA TABLE CARD (SESUAI GAMBAR 1 & GAMBAR 2) -->
-        <div id="tableCol" class="lg:col-span-2 flex flex-col h-full min-h-0">
+        <!-- BAGIAN 2: DATA TABLE CARD (LUAS & FIT 100% ZOOM) -->
+        <div id="tableCol" class="flex-1 min-w-0 flex flex-col h-full min-h-0">
             <div class="bg-white border border-slate-200/90 rounded-xl shadow-2xs overflow-hidden flex flex-col h-full min-h-0">
                 <!-- Top Control Bar (Search + Filter Kelas + Filter Kelamin) -->
-                <div class="shrink-0 px-3.5 py-2 border-b border-slate-200 bg-white flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <div class="shrink-0 px-3 py-1.5 border-b border-slate-200 bg-white flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                     <form action="{{ route('admin.siswa.index') }}" method="GET" class="flex flex-1 flex-col sm:flex-row items-center gap-2 w-full">
                         <div class="relative flex-1 w-full">
                             <div class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-slate-400">
                                 <i data-lucide="search" class="w-3.5 h-3.5"></i>
                             </div>
                             <input type="text" name="search" id="liveSearchInput" value="{{ request('search') }}" placeholder="Cari Nama Siswa, NIS, atau NISN..." 
-                                class="w-full h-9 pl-8 pr-3 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-800 transition-colors">
+                                class="w-full h-8 pl-8 pr-3 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-800 transition-colors">
                         </div>
 
-                        <div class="w-full sm:w-44 shrink-0">
-                            <select name="id_kelas" onchange="this.form.submit()" class="w-full h-9 pl-3 pr-8 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 font-medium focus:outline-none focus:border-slate-800 cursor-pointer">
+                        <div class="w-full sm:w-36 shrink-0">
+                            <select name="id_kelas" onchange="this.form.submit()" class="w-full h-8 pl-2.5 pr-7 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 font-medium focus:outline-none focus:border-slate-800 cursor-pointer">
                                 <option value="">Semua Kelas</option>
                                 @foreach ($kelasList as $k)
                                     <option value="{{ $k->id_kelas }}" {{ request('id_kelas') == $k->id_kelas ? 'selected' : '' }}>{{ $k->nama_kelas }}</option>
@@ -132,8 +146,8 @@
                             </select>
                         </div>
 
-                        <div class="w-full sm:w-44 shrink-0">
-                            <select name="jenis_kelamin" onchange="this.form.submit()" class="w-full h-9 pl-3 pr-8 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 font-medium focus:outline-none focus:border-slate-800 cursor-pointer">
+                        <div class="w-full sm:w-36 shrink-0">
+                            <select name="jenis_kelamin" onchange="this.form.submit()" class="w-full h-8 pl-2.5 pr-7 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 font-medium focus:outline-none focus:border-slate-800 cursor-pointer">
                                 <option value="">Semua Kelamin</option>
                                 <option value="L" {{ request('jenis_kelamin') == 'L' ? 'selected' : '' }}>Laki-laki (L)</option>
                                 <option value="P" {{ request('jenis_kelamin') == 'P' ? 'selected' : '' }}>Perempuan (P)</option>
@@ -141,26 +155,27 @@
                         </div>
 
                         @if (request('search') || request('id_kelas') || request('jenis_kelamin'))
-                            <a href="{{ route('admin.siswa.index') }}" class="h-9 px-3.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-xs font-semibold flex items-center transition-colors shrink-0">
+                            <a href="{{ route('admin.siswa.index') }}" class="h-8 px-3 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-xs font-semibold flex items-center transition-colors shrink-0">
                                 Reset
                             </a>
                         @endif
                     </form>
                 </div>
 
-                <!-- Table Body (INTERNAL SCROLL SESUAI GAMBAR 1) -->
+                <!-- Table Body -->
                 <div class="flex-1 overflow-y-auto overflow-x-auto min-h-0">
                     <table class="w-full text-left border-collapse text-xs" id="tableSiswa">
-                        <thead class="sticky top-0 bg-white border-b border-slate-200 z-10 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                        <thead class="sticky top-0 bg-white border-b border-slate-200 z-10 text-[10.5px] font-bold text-slate-500 uppercase tracking-wider">
                             <tr>
-                                <th class="py-2.5 px-3 text-center w-12 bg-white">NO</th>
-                                <th class="py-2.5 px-3 w-24 bg-white">NIS</th>
-                                <th class="py-2.5 px-3 w-28 bg-white">NISN</th>
-                                <th class="py-2.5 px-3 bg-white">NAMA LENGKAP SISWA</th>
-                                <th class="py-2.5 px-2 text-center w-12 bg-white">L/P</th>
-                                <th class="py-2.5 px-3 w-28 bg-white">KELAS</th>
-                                <th class="py-2.5 px-3 w-32 bg-white">NO. HP WALI</th>
-                                <th class="py-2.5 px-3 text-center w-20 bg-white">AKSI</th>
+                                <th class="py-2 px-2.5 text-center w-10 bg-white">NO</th>
+                                <th class="py-2 px-2.5 w-20 bg-white">NIS</th>
+                                <th class="py-2 px-2.5 w-24 bg-white">NISN</th>
+                                <th class="py-2 px-2.5 bg-white">NAMA LENGKAP SISWA</th>
+                                <th class="py-2 px-2 text-center w-12 bg-white">L/P</th>
+                                <th class="py-2 px-2.5 w-24 bg-white">KELAS</th>
+                                <th class="py-2 px-2.5 w-36 bg-white">TEMPAT, TGL LAHIR</th>
+                                <th class="py-2 px-2.5 w-28 bg-white">NO. HP WALI</th>
+                                <th class="py-2 px-2.5 text-center w-16 bg-white">AKSI</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100 text-slate-700" id="siswaTbody">
@@ -193,7 +208,7 @@
             </button>
         </div>
 
-        <form id="formEditSiswa" method="POST" class="space-y-3.5">
+        <form id="formEditSiswa" method="POST" class="space-y-3.5" data-confirm="Apakah Anda yakin ingin memperbarui data siswa ini?">
             @csrf
             @method('PUT')
 
@@ -233,6 +248,20 @@
                             <option value="{{ $k->id_kelas }}">{{ $k->nama_kelas }}</option>
                         @endforeach
                     </select>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Tempat Lahir</label>
+                    <input type="text" name="kota_lahir" id="edit_kota_lahir" placeholder="Misal: Boyolali"
+                        class="w-full h-10 px-3 bg-white dark:bg-[#1A2230] border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:border-slate-800 transition-colors">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Tanggal Lahir</label>
+                    <input type="date" name="tanggal_lahir" id="edit_tanggal_lahir"
+                        class="w-full h-10 px-3 bg-white dark:bg-[#1A2230] border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:border-slate-800 transition-colors">
                 </div>
             </div>
 
@@ -375,29 +404,28 @@
     let isFormFolded = false;
     function toggleFormPanel() {
         const formCol = document.getElementById('formCol');
-        const tableCol = document.getElementById('tableCol');
         const btnText = document.getElementById('btnToggleFormText');
 
         if (!isFormFolded) {
-            formCol.style.display = 'none';
-            tableCol.className = 'lg:col-span-3 flex flex-col h-full min-h-0';
+            formCol.classList.add('hidden');
             btnText.innerText = 'Buka Form Tambah';
             isFormFolded = true;
         } else {
-            formCol.style.display = 'block';
-            tableCol.className = 'lg:col-span-2 flex flex-col h-full min-h-0';
+            formCol.classList.remove('hidden');
             btnText.innerText = 'Sembunyikan Form Tambah';
             isFormFolded = false;
         }
     }
 
-    function openEditModal(targetKey, nama, nisn, idKelas, jk, noHpWali, nis) {
+    function openEditModal(targetKey, nama, nisn, idKelas, jk, noHpWali, nis, kotaLahir = '', tglLahir = '') {
         document.getElementById('edit_nis').value = nis || '';
         document.getElementById('edit_nama').value = nama;
         document.getElementById('edit_nisn').value = nisn;
         document.getElementById('edit_kelas').value = idKelas;
         document.getElementById('edit_jk').value = jk;
         document.getElementById('edit_no_hp_wali').value = noHpWali;
+        document.getElementById('edit_kota_lahir').value = kotaLahir || '';
+        document.getElementById('edit_tanggal_lahir').value = tglLahir || '';
 
         document.getElementById('formEditSiswa').action = `/admin/siswa/${targetKey}`;
         document.getElementById('modalEditSiswa').classList.remove('hidden');

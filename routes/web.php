@@ -21,6 +21,7 @@ use App\Http\Controllers\Admin\JadwalController;
 use App\Http\Controllers\Admin\RekapJurnalController;
 use App\Http\Controllers\Admin\AdminGuruPiketController;
 use App\Http\Controllers\Admin\AdminWaliKelasController;
+use App\Http\Controllers\Admin\AdminKelasController;
 use App\Http\Controllers\Guru\GuruDashboardController;
 use App\Http\Controllers\Guru\JurnalController;
 
@@ -124,6 +125,11 @@ Route::middleware('auth')->group(function () {
         Route::get('/admin/wali-kelas',              [AdminWaliKelasController::class, 'index']  )->name('admin.wali-kelas.index');
         Route::put('/admin/wali-kelas/{id}',         [AdminWaliKelasController::class, 'update'] )->name('admin.wali-kelas.update');
         Route::delete('/admin/wali-kelas/{id}',      [AdminWaliKelasController::class, 'destroy'])->name('admin.wali-kelas.destroy');
+        Route::get('/admin/kelas',                  [AdminKelasController::class, 'index']  )->name('admin.kelas.index');
+        Route::get('/admin/kelas/{id}/siswa',        [AdminKelasController::class, 'getSiswa'])->name('admin.kelas.siswa');
+        Route::post('/admin/kelas',                 [AdminKelasController::class, 'store']  )->name('admin.kelas.store');
+        Route::put('/admin/kelas/{id}',             [AdminKelasController::class, 'update'] )->name('admin.kelas.update');
+        Route::delete('/admin/kelas/{id}',          [AdminKelasController::class, 'destroy'])->name('admin.kelas.destroy');
     });
 
     // ---------------------------------------------------------------------
@@ -134,7 +140,6 @@ Route::middleware('auth')->group(function () {
         Route::post('/piket/dispen',                 [PiketController::class, 'storeDispen']    )->name('piket.dispen.store');
         Route::post('/piket/siswa-telat',            [PiketController::class, 'storeSiswaTelat'])->name('piket.siswa-telat.store');
         Route::get('/piket/monitoring-kelas',        [PiketController::class, 'monitoringKelas'])->name('piket.monitoring-kelas');
-        Route::post('/piket/tugas-kelas',            [PiketController::class, 'storeTugasKelas'])->name('piket.tugas-kelas.store');
         Route::post('/piket/izin-guru/{id}/approve', [PiketController::class, 'approveIzinGuru'])->name('piket.izin-guru.approve');
         Route::post('/piket/izin-guru/{id}/reject',  [PiketController::class, 'rejectIzinGuru'] )->name('piket.izin-guru.reject');
         Route::post('/piket/izin-siswa/{id}/approve', [PiketController::class, 'approveIzinSiswa'])->name('piket.izin-siswa.approve');
@@ -153,7 +158,7 @@ Route::middleware('auth')->group(function () {
     // ---------------------------------------------------------------------
     // 11. WAKA KURIKULUM & SDM (IZIN GURU)
     // ---------------------------------------------------------------------
-    Route::middleware('role:wakasis_guru')->group(function () {
+    Route::middleware('role:wakasis_guru,waka_kurikulum,waka_sdm,staf_tu')->group(function () {
         Route::get('/wakasis-guru/dashboard',                 [WakasisGuruController::class, 'index']       )->name('wakasis.guru.dashboard');
         Route::post('/wakasis-guru/izin/{id}/approve-waka',   [WakasisGuruController::class, 'approveWaka'] )->name('wakasis.guru.approve.waka');
         Route::post('/wakasis-guru/izin/{id}/reject-waka',    [WakasisGuruController::class, 'rejectWaka']  )->name('wakasis.guru.reject.waka');
@@ -164,7 +169,7 @@ Route::middleware('auth')->group(function () {
     // ---------------------------------------------------------------------
     // 12. DASHBOARD & FITUR GURU
     // ---------------------------------------------------------------------
-    Route::middleware('role:guru,guru_piket,wakasis_guru,wakasis_siswa,kepala_sekolah,staf_tu')->group(function () {
+    Route::middleware('role:guru,guru_piket,wakasis_guru,waka_kurikulum,waka_sdm,wakasis_siswa,kepala_sekolah,staf_tu')->group(function () {
         Route::get('/guru/dashboard',                [GuruDashboardController::class, 'index'])->name('guru.dashboard');
         Route::get('/guru/wali-kelas',               [GuruDashboardController::class, 'waliKelas'])->name('guru.wali-kelas');
         Route::get('/guru/jurnal/rekap',             [JurnalController::class, 'rekap'] )->name('guru.jurnal.rekap');

@@ -185,8 +185,8 @@ class AuthController extends Controller
             'wali_murid'     => route('wali.dashboard'),
             'satpam'         => route('satpam.dashboard'),
             'kepala_sekolah' => route('kepsek.dashboard'),
-            'wakasis_siswa'  => route('wakasis.siswa.dashboard'),
-            'wakasis_guru'   => route('wakasis.guru.dashboard'),
+            'wakasis_siswa'                             => route('wakasis.siswa.dashboard'),
+            'wakasis_guru', 'waka_kurikulum', 'waka_sdm' => route('wakasis.guru.dashboard'),
             default          => route('admin.dashboard'),
         };
     }

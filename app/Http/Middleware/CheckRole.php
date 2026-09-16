@@ -37,14 +37,16 @@ class CheckRole
             'satpam'         => 'satpam.dashboard',
             'kepala_sekolah' => 'kepsek.dashboard',
             'wakasis_siswa'  => 'wakasis.siswa.dashboard',
-            'wakasis_guru'   => 'wakasis.guru.dashboard',
+            'wakasis_guru', 'waka_kurikulum', 'waka_sdm' => 'wakasis.guru.dashboard',
             default          => 'login',
         };
 
         $roleLabels = [
             'staf_tu'        => 'STAF TU (Admin)',
             'kepala_sekolah' => 'Kepala Sekolah',
-            'wakasis_guru'   => 'Waka Kurikulum & SDM',
+            'waka_kurikulum' => 'Waka Kurikulum',
+            'waka_sdm'       => 'Waka SDM / Kepegawaian',
+            'wakasis_guru'   => 'Waka Kurikulum',
             'wakasis_siswa'  => 'Waka Kesiswaan',
             'guru_piket'     => 'Guru Piket',
             'guru'           => 'Guru',

@@ -58,7 +58,7 @@ class User extends Authenticatable
      */
     public function getNamaDisplayAttribute(): string
     {
-        if ($this->role === 'guru' || $this->role === 'guru_piket' || $this->role === 'kepala_sekolah' || $this->role === 'wakasis_siswa' || $this->role === 'wakasis_guru') {
+        if (in_array($this->role, ['guru', 'guru_piket', 'kepala_sekolah', 'wakasis_siswa', 'wakasis_guru', 'waka_kurikulum', 'waka_sdm'])) {
             if ($this->guru && $this->guru->nama_guru) {
                 return $this->guru->nama_guru;
             }

@@ -84,7 +84,7 @@ class GuruController
             'nip'        => 'required|string|max:18|unique:guru,nip|unique:users,username',
             'nama_guru'  => 'required|string|max:150',
             'no_hp'      => 'nullable|string|max:15',
-            'role'       => 'required|in:guru,guru_piket,staf_tu,satpam,kepala_sekolah,wakasis_siswa,wakasis_guru',
+            'role'       => 'required|in:guru,guru_piket,staf_tu,satpam,kepala_sekolah,wakasis_siswa,wakasis_guru,waka_kurikulum,waka_sdm',
             'password'   => 'required|string|min:4',
         ], [
             'nip.required'       => 'NIP / Kode Pegawai wajib diisi.',
@@ -112,8 +112,9 @@ class GuruController
                 'kode_mapel' => null, // Mapel tidak diisi di sini (mengikuti penugasan jadwal KBM)
                 'jabatan'    => match ($validated['role']) {
                     'kepala_sekolah' => 'Kepala Sekolah',
-                    'wakasis_siswa'  => 'Wakasis Siswa',
-                    'wakasis_guru'   => 'Wakasis Guru',
+                    'wakasis_siswa'  => 'Waka Kesiswaan',
+                    'waka_kurikulum', 'wakasis_guru' => 'Waka Kurikulum',
+                    'waka_sdm'       => 'Waka SDM',
                     'guru_piket'     => 'Guru Piket',
                     default          => 'Guru',
                 },
@@ -147,7 +148,7 @@ class GuruController
             'nip'       => 'required|string|max:18|unique:guru,nip,' . $guru->id_guru . ',id_guru',
             'nama_guru' => 'required|string|max:150',
             'no_hp'     => 'nullable|string|max:15',
-            'role'      => 'nullable|in:guru,guru_piket,staf_tu,satpam,kepala_sekolah,wakasis_siswa,wakasis_guru',
+            'role'      => 'nullable|in:guru,guru_piket,staf_tu,satpam,kepala_sekolah,wakasis_siswa,wakasis_guru,waka_kurikulum,waka_sdm',
             'password'  => 'nullable|string|min:4',
         ], [
             'nip.required'       => 'NIP / Kode Pegawai wajib diisi.',
@@ -175,8 +176,9 @@ class GuruController
                 'no_hp'     => $validated['no_hp'],
                 'jabatan'   => isset($validated['role']) ? match ($validated['role']) {
                     'kepala_sekolah' => 'Kepala Sekolah',
-                    'wakasis_siswa'  => 'Wakasis Siswa',
-                    'wakasis_guru'   => 'Wakasis Guru',
+                    'wakasis_siswa'  => 'Waka Kesiswaan',
+                    'waka_kurikulum', 'wakasis_guru' => 'Waka Kurikulum',
+                    'waka_sdm'       => 'Waka SDM',
                     'guru_piket'     => 'Guru Piket',
                     default          => 'Guru',
                 } : $guru->jabatan,

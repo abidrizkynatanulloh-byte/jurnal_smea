@@ -345,7 +345,7 @@
             </button>
         </div>
 
-        <form id="formEditJam" method="POST" class="space-y-3.5">
+        <form id="formEditJam" method="POST" class="space-y-3.5" data-confirm="Apakah Anda yakin ingin memperbarui jam pelajaran ini?">
             @csrf
             @method('PUT')
 

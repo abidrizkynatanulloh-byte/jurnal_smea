@@ -71,6 +71,8 @@ class SiswaController
             'nama_siswa'    => 'required|string|max:100',
             'id_kelas'      => 'required|exists:kelas,id_kelas',
             'jenis_kelamin' => 'nullable|in:L,P',
+            'kota_lahir'    => 'nullable|string|max:100',
+            'tanggal_lahir' => 'nullable|date',
             'no_hp_wali'    => 'nullable|string|max:25',
         ], [
             'nisn.required'       => 'Nomor Induk Siswa Nasional (NISN) wajib diisi.',
@@ -87,6 +89,8 @@ class SiswaController
                 'nama_siswa'    => $validated['nama_siswa'],
                 'id_kelas'      => $validated['id_kelas'],
                 'jenis_kelamin' => $validated['jenis_kelamin'] ?? 'L',
+                'kota_lahir'    => $validated['kota_lahir'] ?? null,
+                'tanggal_lahir' => $validated['tanggal_lahir'] ?? null,
                 'no_hp_wali'    => $validated['no_hp_wali'] ?? null,
             ];
 
@@ -128,14 +132,18 @@ class SiswaController
             'nis'           => 'nullable|string|max:20',
             'id_kelas'      => 'required|exists:kelas,id_kelas',
             'jenis_kelamin' => 'nullable|in:L,P',
+            'kota_lahir'    => 'nullable|string|max:100',
+            'tanggal_lahir' => 'nullable|date',
             'no_hp_wali'    => 'nullable|string|max:25',
         ]);
 
         $updateData = [
-            'nama_siswa' => $validated['nama_siswa'],
-            'nisn'       => $validated['nisn'],
-            'nis'        => $validated['nis'] ?: null,
-            'id_kelas'   => $validated['id_kelas'],
+            'nama_siswa'    => $validated['nama_siswa'],
+            'nisn'          => $validated['nisn'],
+            'nis'           => $validated['nis'] ?: null,
+            'id_kelas'      => $validated['id_kelas'],
+            'kota_lahir'    => $validated['kota_lahir'] ?? null,
+            'tanggal_lahir' => $validated['tanggal_lahir'] ?? null,
         ];
 
         if (Schema::hasColumn('siswa', 'jenis_kelamin') && isset($validated['jenis_kelamin'])) {

@@ -13,6 +13,9 @@ use App\Models\JurnalDetailKetidakhadiran;
 use App\Models\DispenSiswa;
 use Carbon\Carbon;
 
+use App\Services\WhatsAppService;
+use Illuminate\Support\Facades\Cache;
+
 class GuruDashboardController extends Controller
 {
     public function index()
@@ -48,6 +51,28 @@ class GuruDashboardController extends Controller
                 return $j;
             });
 
+        // Deteksi Peringatan 5 Menit Sebelum Waktu Mengajar Habis & Kirim WA
+        $peringatanJurnal = null;
+        foreach ($jadwalHariIni as $j) {
+            if (!$j->sudah_diisi && $j->statusWaktuMengajar() === 'sekarang') {
+                $sisaMenit = $j->getSisaMenitSesi();
+                if ($sisaMenit !== null && $sisaMenit <= 5 && $sisaMenit >= 0) {
+                    $peringatanJurnal = [
+                        'jadwal'     => $j,
+                        'sisa_menit' => max(1, $sisaMenit),
+                    ];
+
+                    // Kirim pesan WhatsApp ke Guru (Hanya sekali per sesi hari ini via Cache)
+                    $cacheKey = "wa_reminder_{$j->id_jadwal}_{$tanggalHariIni}";
+                    if (!Cache::has($cacheKey)) {
+                        WhatsAppService::sendReminderPengisianJurnal($j, max(1, $sisaMenit));
+                        Cache::put($cacheKey, true, now()->addHours(6));
+                    }
+                    break;
+                }
+            }
+        }
+
         // Total sesi & sudah diisi hari ini
         $totalSesiHariIni  = $jadwalHariIni->count();
         $sudahDiisiHariIni = $jadwalHariIni->where('sudah_diisi', true)->count();
@@ -80,7 +105,8 @@ class GuruDashboardController extends Controller
             'totalSesiHariIni',
             'sudahDiisiHariIni',
             'totalJadwalSemua',
-            'belumIsiMingguIni'
+            'belumIsiMingguIni',
+            'peringatanJurnal'
         ));
     }
 
