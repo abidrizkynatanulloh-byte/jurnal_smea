@@ -107,7 +107,8 @@
             </div>
         </div>
 
-        <div class="overflow-x-auto">
+        <!-- DESKTOP TABLE VIEW (TETAP PERSIS SEPERTI SEBELUMNYA) -->
+        <div class="hidden md:block overflow-x-auto">
             <table class="w-full text-left border-collapse text-xs">
                 <thead>
                     <tr class="bg-white text-slate-500 text-[11px] font-bold uppercase tracking-wider border-b border-slate-200">
@@ -187,6 +188,93 @@
                     @endforelse
                 </tbody>
             </table>
+        </div>
+
+        <!-- MOBILE ADAPTIVE CARD VIEW (KHUSUS MOBILE ONLY) -->
+        <div class="block md:hidden p-3 space-y-3">
+            @forelse ($jadwalHariIni as $j)
+                @php $statusWaktu = $j->statusWaktuMengajar(); @endphp
+                <div class="bg-white dark:bg-[#1E2538] border border-slate-200/90 dark:border-slate-800 rounded-2xl p-3.5 shadow-xs space-y-2.5 transition-all">
+                    <!-- Top Bar: Jam & Status Badge -->
+                    <div class="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
+                        <span class="text-xs font-bold text-slate-800 dark:text-slate-100 flex items-center space-x-1.5">
+                            <i data-lucide="clock" class="w-3.5 h-3.5 text-indigo-500"></i>
+                            <span>Jam {{ $j->jam_mulai }}–{{ $j->jam_selesai }}</span>
+                        </span>
+                        <div>
+                            @if ($j->sudah_diisi)
+                                <span class="inline-flex items-center px-2 py-0.5 bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 text-[10px] font-bold rounded-lg space-x-1">
+                                    <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
+                                    <span>Sudah Diisi</span>
+                                </span>
+                            @elseif ($statusWaktu === 'sekarang')
+                                <span class="inline-flex items-center px-2 py-0.5 bg-amber-50 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300 border border-amber-200 dark:border-amber-800 text-[10px] font-bold rounded-lg space-x-1 animate-pulse">
+                                    <span class="w-1.5 h-1.5 bg-amber-500 rounded-full"></span>
+                                    <span>Saatnya Diisi</span>
+                                </span>
+                            @elseif ($statusWaktu === 'belum')
+                                <span class="inline-flex items-center px-2 py-0.5 bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400 border border-slate-200 dark:border-slate-700 text-[10px] font-medium rounded-lg space-x-1">
+                                    <span class="w-1.5 h-1.5 bg-slate-400 rounded-full"></span>
+                                    <span>Belum Mulai</span>
+                                </span>
+                            @else
+                                <span class="inline-flex items-center px-2 py-0.5 bg-rose-50 text-rose-700 dark:bg-rose-950/50 dark:text-rose-300 border border-rose-200 dark:border-rose-800 text-[10px] font-bold rounded-lg space-x-1">
+                                    <span class="w-1.5 h-1.5 bg-rose-500 rounded-full"></span>
+                                    <span>Terlambat</span>
+                                </span>
+                            @endif
+                        </div>
+                    </div>
+
+                    <!-- Mapel & Kelas Info -->
+                    <div>
+                        <h4 class="font-bold text-sm text-slate-900 dark:text-white leading-snug">
+                            {{ $j->mapel ? $j->mapel->nama_mapel : 'Mata Pelajaran' }}
+                        </h4>
+                        <div class="flex items-center space-x-2.5 mt-1.5 text-xs text-slate-500 dark:text-slate-400">
+                            <span class="inline-flex items-center px-2 py-0.5 bg-slate-100 dark:bg-slate-800 font-bold text-slate-700 dark:text-slate-200 rounded-md border border-slate-200 dark:border-slate-700 text-[11px]">
+                                {{ $j->kelas ? $j->kelas->nama_kelas : '-' }}
+                            </span>
+                            <span class="inline-flex items-center space-x-1 text-[11px]">
+                                <i data-lucide="map-pin" class="w-3 h-3 text-slate-400"></i>
+                                <span>{{ $j->ruangan ? $j->ruangan->nama_ruangan : 'Kelas' }}</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Action Button: 44px Thumb-Friendly Button -->
+                    <div class="pt-1">
+                        @if ($j->sudah_diisi)
+                            <a href="{{ route('guru.jurnal.show', $j->jurnal->id_jurnal) }}" class="w-full min-h-[42px] px-4 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-2 border border-slate-200 dark:border-slate-700">
+                                <i data-lucide="eye" class="w-4 h-4"></i>
+                                <span>Lihat Jurnal Pembelajaran</span>
+                            </a>
+                        @elseif ($statusWaktu === 'sekarang')
+                            <a href="{{ route('guru.jurnal.create', $j->id_jadwal) }}" class="w-full min-h-[44px] px-4 bg-[#1E2538] dark:bg-sky-600 hover:bg-[#121724] dark:hover:bg-sky-500 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-2 shadow-sm">
+                                <i data-lucide="edit-3" class="w-4 h-4"></i>
+                                <span>Isi Jurnal Sekarang</span>
+                                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                            </a>
+                        @elseif ($statusWaktu === 'belum')
+                            <div class="w-full min-h-[38px] px-4 bg-slate-50 dark:bg-slate-800/40 text-slate-400 dark:text-slate-500 rounded-xl text-xs font-medium flex items-center justify-center space-x-1.5 border border-slate-200/80 dark:border-slate-800 cursor-not-allowed">
+                                <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+                                <span>Menunggu Jam Pelajaran</span>
+                            </div>
+                        @else
+                            <a href="{{ route('guru.jurnal.create', $j->id_jadwal) }}" class="w-full min-h-[44px] px-4 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-2 shadow-sm">
+                                <i data-lucide="alert-triangle" class="w-4 h-4"></i>
+                                <span>Isi Jurnal (Terlambat)</span>
+                                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                            </a>
+                        @endif
+                    </div>
+                </div>
+            @empty
+                <div class="py-8 text-center text-slate-400 italic text-xs">
+                    <i data-lucide="inbox" class="w-8 h-8 mx-auto mb-2 text-slate-300"></i>
+                    Tidak ada jadwal mengajar pada hari ini. Selamat beristirahat!
+                </div>
+            @endforelse
         </div>
     </div>
 </div>

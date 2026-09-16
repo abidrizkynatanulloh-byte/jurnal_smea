@@ -93,8 +93,10 @@
             margin: 0;
             padding: 0;
         }
-        html {
-            zoom: 90%;
+        @media (min-width: 1024px) {
+            html {
+                zoom: 90%;
+            }
         }
 
         body {
@@ -428,10 +430,14 @@
 
     @auth
     <!-- ============================================================== -->
-    <!-- SIDEBAR NAVIGATION (Deep Teal #166876 / Dark Charcoal #181818) -->
-    <!-- Sesuai Desain Gambar 2 (Light) & Gambar 3 (Dark)               -->
+    <!-- OFF-CANVAS BACKDROP OVERLAY (KHUSUS MOBILE)                     -->
     <!-- ============================================================== -->
-    <aside class="w-full md:w-56 bg-[#166876] dark:bg-[#181818] text-white flex-shrink-0 flex flex-col border-r border-[#104F5A] dark:border-[#252525] shadow-xl h-full z-40 md:rounded-r-2xl overflow-hidden transition-colors">
+    <div id="sidebar-backdrop" onclick="closeSidebarDrawer()" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-40 transition-opacity duration-300 opacity-0 pointer-events-none md:hidden"></div>
+
+    <!-- ============================================================== -->
+    <!-- SIDEBAR NAVIGATION (DRAWER DI MOBILE, STATIS DI DESKTOP)       -->
+    <!-- ============================================================== -->
+    <aside id="sidebar-drawer" class="fixed inset-y-0 left-0 w-72 max-w-[85vw] h-full z-50 transform -translate-x-full transition-transform duration-300 ease-in-out md:translate-x-0 md:static md:w-56 md:h-full md:z-40 bg-[#166876] dark:bg-[#181818] text-white flex-shrink-0 flex flex-col border-r border-[#104F5A] dark:border-[#252525] shadow-2xl md:shadow-xl md:rounded-r-2xl overflow-hidden transition-colors">
         <!-- Brand Header -->
         <div class="h-12 flex items-center px-4 border-b border-[#104F5A] dark:border-[#252525] justify-between shrink-0">
             <div class="flex items-center space-x-2.5">
@@ -444,14 +450,14 @@
                     <span class="block text-[9px] font-medium text-[#D1FAF4] dark:text-slate-400 leading-none mt-1">SMK Negeri 1 Boyolangu</span>
                 </div>
             </div>
-            <!-- Mobile Menu Toggle Button -->
-            <button id="mobile-menu-toggle" class="md:hidden p-1 text-[#C7E8EA] hover:text-white rounded hover:bg-white/10 focus:outline-none">
-                <i data-lucide="menu" class="w-4 h-4"></i>
+            <!-- Tombol Tutup Drawer di Mobile -->
+            <button type="button" onclick="closeSidebarDrawer()" class="md:hidden p-1.5 text-[#C7E8EA] hover:text-white rounded-lg hover:bg-white/10 focus:outline-none cursor-pointer" title="Tutup Menu">
+                <i data-lucide="x" class="w-4 h-4"></i>
             </button>
         </div>
 
-        <!-- Navigation Links -->
-        <nav id="sidebar-nav" class="flex-1 px-2.5 py-3 space-y-0.5 hidden md:block overflow-y-auto custom-sidebar-scroll text-xs">
+        <!-- Navigation Links (Selalu tampil di dalam drawer pada mobile, dan statis di desktop) -->
+        <nav id="sidebar-nav" class="flex-1 px-2.5 py-3 space-y-0.5 overflow-y-auto custom-sidebar-scroll text-xs block">
             
             {{-- ROLE 1: STAF TU / ADMIN --}}
             @if(Auth::user()->role === 'staf_tu')
@@ -659,16 +665,20 @@
     </aside>
     @endauth
 
-    <main class="flex-1 flex flex-col min-w-0 h-full overflow-hidden bg-[#EEF1F6] dark:bg-[#1C1F26] transition-colors">
+    <main class="flex-1 flex flex-col min-w-0 h-full overflow-hidden bg-[#EEF1F6] dark:bg-[#1C1F26] transition-colors pb-14 md:pb-0">
         @auth
         <!-- Top Navigation Header -->
-        <header class="h-12 bg-white dark:bg-[#141412] border-b border-slate-200 dark:border-[#252525] shrink-0 flex items-center justify-between px-4 sm:px-5 shadow-2xs z-30 transition-colors">
-            <div class="flex items-center space-x-2">
-                <span class="inline-flex items-center px-2 py-0.5 bg-slate-100 dark:bg-[#222220] text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded text-[10.5px] font-semibold uppercase tracking-wider">
+        <header class="h-12 bg-white dark:bg-[#141412] border-b border-slate-200 dark:border-[#252525] shrink-0 flex items-center justify-between px-3 sm:px-5 shadow-2xs z-30 transition-colors">
+            <div class="flex items-center space-x-1.5 sm:space-x-2">
+                <!-- Hamburger Button to open Drawer on Mobile -->
+                <button type="button" onclick="openSidebarDrawer()" class="md:hidden p-1.5 -ml-1 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer" title="Buka Menu">
+                    <i data-lucide="menu" class="w-5 h-5"></i>
+                </button>
+                <span class="inline-flex items-center px-2 py-0.5 bg-slate-100 dark:bg-[#222220] text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded text-[10px] sm:text-[10.5px] font-semibold uppercase tracking-wider truncate max-w-[120px] sm:max-w-none">
                     {{ str_replace('_', ' ', Auth::user()->role) }}
                 </span>
-                <span class="text-xs text-slate-300 dark:text-slate-600">/</span>
-                <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">SMK Negeri 1 (SMEA)</span>
+                <span class="hidden sm:inline text-xs text-slate-300 dark:text-slate-600">/</span>
+                <span class="hidden sm:inline text-xs text-slate-500 dark:text-slate-400 font-medium">SMK Negeri 1 (SMEA)</span>
             </div>
             
             <div class="flex items-center space-x-2.5 sm:space-x-3">
@@ -1142,14 +1152,36 @@
             // Start Real-Time Live Clock
             startRealtimeClock();
 
-            // Mobile Menu Toggle logic
-            const menuToggle = document.getElementById('mobile-menu-toggle');
-            const sidebarNav = document.getElementById('sidebar-nav');
-            if (menuToggle && sidebarNav) {
-                menuToggle.addEventListener('click', () => {
-                    sidebarNav.classList.toggle('hidden');
-                });
-            }
+            // Mobile Menu Drawer Functions
+            window.openSidebarDrawer = function() {
+                const drawer = document.getElementById('sidebar-drawer');
+                const backdrop = document.getElementById('sidebar-backdrop');
+                if (drawer) drawer.classList.remove('-translate-x-full');
+                if (backdrop) {
+                    backdrop.classList.remove('opacity-0', 'pointer-events-none');
+                    backdrop.classList.add('opacity-100', 'pointer-events-auto');
+                }
+                if (typeof lucide !== 'undefined') {
+                    lucide.createIcons();
+                }
+            };
+
+            window.closeSidebarDrawer = function() {
+                const drawer = document.getElementById('sidebar-drawer');
+                const backdrop = document.getElementById('sidebar-backdrop');
+                if (drawer) drawer.classList.add('-translate-x-full');
+                if (backdrop) {
+                    backdrop.classList.add('opacity-0', 'pointer-events-none');
+                    backdrop.classList.remove('opacity-100', 'pointer-events-auto');
+                }
+            };
+
+            // Close drawer on Escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    window.closeSidebarDrawer();
+                }
+            });
 
             // Init Searchable Dropdowns
             initSearchableSelects();
@@ -1436,6 +1468,73 @@
             </div>
         </div>
     </div>
+
+    @auth
+    <!-- ============================================================== -->
+    <!-- THUMB-FRIENDLY BOTTOM NAVIGATION BAR (KHUSUS MOBILE ONLY)      -->
+    <!-- ============================================================== -->
+    <nav class="fixed bottom-0 inset-x-0 z-40 bg-white/95 dark:bg-[#181818]/95 backdrop-blur-lg border-t border-slate-200/90 dark:border-slate-800 flex items-center justify-around h-14 md:hidden px-2 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] select-none">
+        @if(Auth::user()->role === 'staf_tu')
+            <a href="{{ route('admin.dashboard') }}" class="flex flex-col items-center justify-center flex-1 py-1 text-[10px] font-semibold {{ Route::is('admin.dashboard') ? 'text-[#166876] dark:text-sky-400 font-bold' : 'text-slate-500 dark:text-slate-400' }}">
+                <i data-lucide="layout-dashboard" class="w-4 h-4 mb-0.5"></i>
+                <span>Beranda</span>
+            </a>
+            <a href="{{ route('admin.guru.index') }}" class="flex flex-col items-center justify-center flex-1 py-1 text-[10px] font-semibold {{ Route::is('admin.guru.*') ? 'text-[#166876] dark:text-sky-400 font-bold' : 'text-slate-500 dark:text-slate-400' }}">
+                <i data-lucide="users" class="w-4 h-4 mb-0.5"></i>
+                <span>Guru</span>
+            </a>
+            <a href="{{ route('admin.siswa.index') }}" class="flex flex-col items-center justify-center flex-1 py-1 text-[10px] font-semibold {{ Route::is('admin.siswa.*') ? 'text-[#166876] dark:text-sky-400 font-bold' : 'text-slate-500 dark:text-slate-400' }}">
+                <i data-lucide="graduation-cap" class="w-4 h-4 mb-0.5"></i>
+                <span>Siswa</span>
+            </a>
+            <a href="{{ route('admin.rekap.index') }}" class="flex flex-col items-center justify-center flex-1 py-1 text-[10px] font-semibold {{ Route::is('admin.rekap.*') ? 'text-[#166876] dark:text-sky-400 font-bold' : 'text-slate-500 dark:text-slate-400' }}">
+                <i data-lucide="clipboard-list" class="w-4 h-4 mb-0.5"></i>
+                <span>Rekap</span>
+            </a>
+        @elseif(in_array(Auth::user()->role, ['guru', 'guru_piket', 'wakasis_guru', 'waka_kurikulum', 'waka_sdm']))
+            <a href="{{ route('guru.dashboard') }}" class="flex flex-col items-center justify-center flex-1 py-1 text-[10px] font-semibold {{ Route::is('guru.dashboard') ? 'text-[#166876] dark:text-sky-400 font-bold' : 'text-slate-500 dark:text-slate-400' }}">
+                <i data-lucide="calendar" class="w-4 h-4 mb-0.5"></i>
+                <span>Jadwal</span>
+            </a>
+            <a href="{{ route('guru.jurnal.history') }}" class="flex flex-col items-center justify-center flex-1 py-1 text-[10px] font-semibold {{ Route::is('guru.jurnal.history') ? 'text-[#166876] dark:text-sky-400 font-bold' : 'text-slate-500 dark:text-slate-400' }}">
+                <i data-lucide="history" class="w-4 h-4 mb-0.5"></i>
+                <span>Riwayat</span>
+            </a>
+            <a href="{{ route('guru.izin.index') }}" class="flex flex-col items-center justify-center flex-1 py-1 text-[10px] font-semibold {{ Route::is('guru.izin.*') ? 'text-[#166876] dark:text-sky-400 font-bold' : 'text-slate-500 dark:text-slate-400' }}">
+                <i data-lucide="file-text" class="w-4 h-4 mb-0.5"></i>
+                <span>Izin</span>
+            </a>
+            @if(Auth::user()->guru && Auth::user()->guru->isWaliKelas())
+                <a href="{{ route('guru.wali-kelas') }}" class="flex flex-col items-center justify-center flex-1 py-1 text-[10px] font-semibold {{ Route::is('guru.wali-kelas') ? 'text-[#166876] dark:text-sky-400 font-bold' : 'text-slate-500 dark:text-slate-400' }}">
+                    <i data-lucide="users" class="w-4 h-4 mb-0.5"></i>
+                    <span>Kelas</span>
+                </a>
+            @endif
+        @elseif(Auth::user()->role === 'satpam')
+            <a href="{{ route('satpam.dashboard') }}" class="flex flex-col items-center justify-center flex-1 py-1 text-[10px] font-semibold {{ Route::is('satpam.dashboard') ? 'text-[#166876] dark:text-sky-400 font-bold' : 'text-slate-500 dark:text-slate-400' }}">
+                <i data-lucide="scan-face" class="w-4 h-4 mb-0.5"></i>
+                <span>Gerbang</span>
+            </a>
+        @elseif(Auth::user()->role === 'kepala_sekolah')
+            <a href="{{ route('kepsek.dashboard') }}" class="flex flex-col items-center justify-center flex-1 py-1 text-[10px] font-semibold {{ Route::is('kepsek.dashboard') ? 'text-[#166876] dark:text-sky-400 font-bold' : 'text-slate-500 dark:text-slate-400' }}">
+                <i data-lucide="layout-dashboard" class="w-4 h-4 mb-0.5"></i>
+                <span>Dashboard</span>
+            </a>
+        @else
+            <a href="{{ url('/') }}" class="flex flex-col items-center justify-center flex-1 py-1 text-[10px] font-semibold text-slate-500 dark:text-slate-400">
+                <i data-lucide="home" class="w-4 h-4 mb-0.5"></i>
+                <span>Beranda</span>
+            </a>
+        @endif
+
+        <!-- Menu Drawer Opener Button (Always on right on bottom nav) -->
+        <button type="button" onclick="openSidebarDrawer()" class="flex flex-col items-center justify-center flex-1 py-1 text-[10px] font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer">
+            <i data-lucide="menu" class="w-4 h-4 mb-0.5 text-slate-600 dark:text-slate-300"></i>
+            <span>Semua Menu</span>
+        </button>
+    </nav>
+    @endauth
+
     @stack('scripts')
 </body>
 </html>
