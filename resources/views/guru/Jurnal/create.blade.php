@@ -3,7 +3,7 @@
 @section('title', 'Input Jurnal Mengajar - Jurnal Esemkita')
 
 @section('content')
-<div class="space-y-4 max-w-5xl mx-auto">
+<div class="space-y-4 max-w-5xl mx-auto pb-24 md:pb-6">
     <!-- Header -->
     <div class="flex items-center justify-between">
         <div>
@@ -297,8 +297,8 @@
             </div>
         </div>
 
-        <!-- Tombol Simpan & Batal -->
-        <div class="flex items-center space-x-3 pt-3">
+        <!-- Tombol Simpan & Batal (Desktop: Standard inline, Mobile: Sticky Bottom Bar di atas Bottom Nav) -->
+        <div class="hidden md:flex items-center space-x-3 pt-3">
             <button type="submit" class="min-h-[48px] py-3.5 px-7 bg-[#1E2538] hover:bg-[#121724] text-white rounded-xl font-bold text-sm tracking-wide transition-all shadow-sm hover:shadow-md flex items-center space-x-2.5 cursor-pointer">
                 <i data-lucide="save" class="w-4 h-4"></i>
                 <span>Simpan Jurnal & Presensi</span>
@@ -306,6 +306,19 @@
             <a href="{{ route('guru.dashboard') }}" class="min-h-[48px] px-6 py-3.5 min-w-[100px] border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-xl text-sm font-semibold transition-colors flex items-center justify-center cursor-pointer shadow-2xs">
                 Batal
             </a>
+        </div>
+
+        <!-- Sticky Bottom Bar Khusus Mobile -->
+        <div class="block md:hidden fixed bottom-14 inset-x-0 bg-white/95 dark:bg-[#1C1F26]/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 p-2.5 z-30 shadow-lg">
+            <div class="flex items-center space-x-2 max-w-lg mx-auto">
+                <button type="submit" class="flex-1 min-h-[44px] py-2.5 px-4 bg-[#1E2538] active:bg-[#121724] text-white rounded-xl font-bold text-xs tracking-wide transition-all shadow-md flex items-center justify-center space-x-2 cursor-pointer">
+                    <i data-lucide="save" class="w-4 h-4"></i>
+                    <span>Simpan Jurnal & Presensi</span>
+                </button>
+                <a href="{{ route('guru.dashboard') }}" class="min-h-[44px] px-4 py-2.5 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 rounded-xl text-xs font-semibold flex items-center justify-center cursor-pointer shadow-2xs">
+                    Batal
+                </a>
+            </div>
         </div>
     </form>
 </div>

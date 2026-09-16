@@ -53,7 +53,8 @@
             <span class="text-[11px] font-semibold text-slate-400">Minggu Berjalan</span>
         </div>
 
-        <div class="overflow-x-auto">
+        <!-- DESKTOP TABLE VIEW (TETAP PERSIS SEPERTI SEBELUMNYA) -->
+        <div class="hidden md:block overflow-x-auto">
             <table class="w-full text-left border-collapse text-xs">
                 <thead>
                     <tr class="bg-white text-slate-500 text-[11px] font-bold uppercase tracking-wider border-b border-slate-200">
@@ -120,6 +121,63 @@
                     @endforelse
                 </tbody>
             </table>
+        </div>
+
+        <!-- MOBILE ADAPTIVE CARD VIEW (KHUSUS MOBILE) -->
+        <div class="block md:hidden divide-y divide-slate-100 dark:divide-slate-800">
+            @forelse($daftarTertunggak as $idx => $item)
+                <div class="p-3.5 space-y-2.5 bg-white dark:bg-[#1E2538]">
+                    <div class="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
+                        <div>
+                            <span class="font-bold text-slate-900 dark:text-white text-xs block leading-tight">{{ $item['hari'] }}</span>
+                            <span class="text-[10px] text-slate-400 font-mono">{{ \Carbon\Carbon::parse($item['tanggal'])->locale('id')->isoFormat('D MMM Y') }}</span>
+                        </div>
+                        <div>
+                            @if(str_contains($item['keterangan'], 'Sah'))
+                                <span class="inline-flex items-center px-2 py-0.5 bg-blue-50 text-blue-700 dark:bg-blue-950/50 dark:text-blue-300 border border-blue-200 dark:border-blue-800 text-[10px] font-bold rounded-lg">
+                                    {{ $item['keterangan'] }}
+                                </span>
+                            @else
+                                <span class="inline-flex items-center px-2 py-0.5 bg-rose-50 text-rose-700 dark:bg-rose-950/50 dark:text-rose-300 border border-rose-200 dark:border-rose-800 text-[10px] font-bold rounded-lg space-x-1">
+                                    <span class="w-1.5 h-1.5 bg-rose-500 rounded-full animate-ping"></span>
+                                    <span>Belum Diisi</span>
+                                </span>
+                            @endif
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 class="font-bold text-sm text-slate-900 dark:text-white leading-snug">{{ $item['mapel'] }}</h4>
+                        <div class="flex items-center space-x-2 mt-1 text-xs text-slate-500 dark:text-slate-400">
+                            <span class="inline-flex items-center px-2 py-0.5 bg-slate-100 dark:bg-slate-800 font-bold text-slate-700 dark:text-slate-200 rounded-md border border-slate-200 dark:border-slate-700 text-[11px]">
+                                {{ $item['kelas'] }}
+                            </span>
+                            <span class="text-[11px] font-mono">{{ $item['jam_ke'] }}</span>
+                            <span class="text-[11px]">({{ $item['ruangan'] }})</span>
+                        </div>
+                    </div>
+
+                    <div class="pt-1">
+                        @if($item['is_today'])
+                            <a href="{{ route('guru.jurnal.create', $item['id_jadwal']) }}"
+                                class="w-full min-h-[42px] px-4 bg-[#1E2538] hover:bg-[#161c2c] text-white rounded-xl text-xs font-bold transition-all shadow-md flex items-center justify-center space-x-2 cursor-pointer">
+                                <i data-lucide="edit-3" class="w-4 h-4"></i>
+                                <span>Isi Jurnal Sekarang</span>
+                            </a>
+                        @else
+                            <div class="w-full min-h-[38px] px-4 bg-slate-100 dark:bg-slate-800 text-slate-400 rounded-xl text-xs font-medium flex items-center justify-center space-x-1.5 border border-slate-200 dark:border-slate-700">
+                                <i data-lucide="lock" class="w-3.5 h-3.5"></i>
+                                <span>Lewat Hari (Terkunci)</span>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            @empty
+                <div class="p-6 text-center text-slate-400 italic text-xs">
+                    <i data-lucide="check-circle" class="w-6 h-6 mx-auto mb-1 text-emerald-500"></i>
+                    Tidak ada jurnal yang tertunggak. Semua sesi KBM telah dilengkapi.
+                </div>
+            @endforelse
         </div>
     </div>
 </div>
