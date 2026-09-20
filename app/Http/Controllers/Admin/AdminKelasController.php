@@ -25,7 +25,11 @@ class AdminKelasController
         }
 
         if (!empty($tingkat)) {
-            $query->where('nama_kelas', 'like', $tingkat . ' %');
+            $query->where(function($q) use ($tingkat) {
+                $q->where('nama_kelas', 'like', $tingkat . ' %')
+                  ->orWhere('nama_kelas', 'like', $tingkat . '-%')
+                  ->orWhere('nama_kelas', 'like', $tingkat . '.%');
+            });
         }
 
         $daftarKelas = $query->orderBy('nama_kelas', 'asc')->get();

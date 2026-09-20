@@ -13,24 +13,62 @@ class JadwalController
 {
     public function index(Request $request)
     {
-        $kelasList = Kelas::orderBy('nama_kelas')->get();
+        $kelasListQuery = Kelas::orderBy('nama_kelas');
+        
+        $tingkat = $request->input('tingkat');
+        if ($request->filled('tingkat') && in_array($request->tingkat, ['X', 'XI', 'XII'])) {
+            $kelasListQuery->where(function ($k) use ($tingkat) {
+                $k->where('nama_kelas', 'like', $tingkat . ' %')
+                  ->orWhere('nama_kelas', 'like', $tingkat . '-%')
+                  ->orWhere('nama_kelas', 'like', $tingkat . '.%');
+            });
+        }
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $kelasListQuery->where('nama_kelas', 'like', "%{$search}%");
+        }
+
+        $kelasList = $kelasListQuery->get();
+        $allKelasList = Kelas::orderBy('nama_kelas')->get();
         $guruList = Guru::orderBy('nama_guru')->get();
         $mapelList = Mapel::orderBy('nama_mapel')->get();
         $ruanganList = Ruangan::orderBy('nama_ruangan')->get();
 
-        $query = Jadwal::with(['kelas', 'guru', 'mapel', 'ruangan']);
+        // Determinasikan Hari Ini
+        $hariMap = [
+            'Monday' => 'Senin', 'Tuesday' => 'Selasa', 'Wednesday' => 'Rabu',
+            'Thursday' => 'Kamis', 'Friday' => 'Jumat', 'Saturday' => 'Sabtu', 'Sunday' => 'Minggu'
+        ];
+        $namaHariIni = $hariMap[date('l')] ?? 'Senin';
+        $validHari = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'];
+        $defaultHari = in_array($namaHariIni, $validHari) ? $namaHariIni : 'Senin';
 
-        // Filter berdasarkan Hari
-        if ($request->filled('hari')) {
-            $query->where('hari', $request->hari);
+        // Tentukan filter hari (default hari ini jika tidak diset di query string)
+        if (!$request->has('hari')) {
+            $hariFilter = $defaultHari;
+        } else {
+            $hariFilter = $request->input('hari') === 'all' ? '' : $request->input('hari');
         }
 
-        // Filter berdasarkan ID Kelas
+        $query = Jadwal::with(['kelas', 'guru', 'mapel', 'ruangan']);
+
+        if (!empty($hariFilter)) {
+            $query->where('hari', $hariFilter);
+        }
+
         if ($request->filled('id_kelas')) {
             $query->where('id_kelas', $request->id_kelas);
         }
 
-        // Pencarian Teks (Nama Kelas / Guru / Mapel)
+        if (!empty($tingkat)) {
+            $query->whereHas('kelas', function ($k) use ($tingkat) {
+                $k->where('nama_kelas', 'like', $tingkat . ' %')
+                  ->orWhere('nama_kelas', 'like', $tingkat . '-%')
+                  ->orWhere('nama_kelas', 'like', $tingkat . '.%');
+            });
+        }
+
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
@@ -40,12 +78,38 @@ class JadwalController
             });
         }
 
-        $perPage = (int) $request->input('per_page', 30);
-        if ($perPage <= 0) $perPage = 30;
+        $perPage = (int) $request->input('per_page', 50);
+        if ($perPage <= 0) $perPage = 50;
 
         $jadwalList = $query->orderBy('hari')->orderBy('jam_mulai')->paginate($perPage)->withQueryString();
 
-        return view('admin.jadwal.index', compact('jadwalList', 'kelasList', 'guruList', 'mapelList', 'ruanganList'));
+        // Pre-fetch all schedules for grid view to group by kelas
+        $gridQuery = Jadwal::with(['kelas', 'guru', 'mapel', 'ruangan']);
+        if (!empty($hariFilter)) {
+            $gridQuery->where('hari', $hariFilter);
+        }
+        if (!empty($tingkat)) {
+            $gridQuery->whereHas('kelas', function ($k) use ($tingkat) {
+                $k->where('nama_kelas', 'like', $tingkat . ' %')
+                  ->orWhere('nama_kelas', 'like', $tingkat . '-%')
+                  ->orWhere('nama_kelas', 'like', $tingkat . '.%');
+            });
+        }
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $gridQuery->where(function ($q) use ($search) {
+                $q->whereHas('kelas', fn($k) => $k->where('nama_kelas', 'like', "%{$search}%"))
+                  ->orWhereHas('guru', fn($g) => $g->where('nama_guru', 'like', "%{$search}%"))
+                  ->orWhereHas('mapel', fn($m) => $m->where('nama_mapel', 'like', "%{$search}%"));
+            });
+        }
+        $allGridJadwal = $gridQuery->orderBy('jam_mulai')->get();
+        $jadwalGroupedByKelas = $allGridJadwal->groupBy('id_kelas');
+
+        return view('admin.jadwal.index', compact(
+            'jadwalList', 'kelasList', 'allKelasList', 'guruList', 'mapelList', 'ruanganList', 
+            'tingkat', 'namaHariIni', 'defaultHari', 'hariFilter', 'jadwalGroupedByKelas'
+        ));
     }
 
     public function store(Request $request)

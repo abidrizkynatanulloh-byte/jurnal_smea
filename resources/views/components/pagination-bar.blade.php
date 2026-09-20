@@ -5,7 +5,7 @@
         <div class="flex items-center justify-between gap-4 flex-wrap w-full">
             <!-- Left Side: Results per page: [ 30 v ] 1 – 30 of 1504 (PERSIS GAMBAR 2) -->
             <div class="flex items-center space-x-2.5 text-xs text-slate-700 dark:text-slate-300 whitespace-nowrap shrink-0">
-                <span class="font-normal text-slate-600 dark:text-slate-400 whitespace-nowrap">Results per page:</span>
+                <span class="font-normal text-slate-600 dark:text-slate-400 whitespace-nowrap" id="paginationPerPageLabel">Results per page:</span>
                 
                 <!-- Native Select with Custom Styling (Anti-Clipped by Container Overflows) -->
                 <div class="relative inline-block text-left">
@@ -24,7 +24,7 @@
 
                 <!-- Counter: 1 – 30 of 1504 -->
                 <span class="font-normal text-slate-700 dark:text-slate-300 whitespace-nowrap pl-1">
-                    {{ $paginator->firstItem() ?? 0 }} – {{ $paginator->lastItem() ?? 0 }} of {{ number_format($paginator->total(), 0, ',', '.') }}
+                    {{ $paginator->firstItem() ?? 0 }} – {{ $paginator->lastItem() ?? 0 }} <span>of</span> {{ number_format($paginator->total(), 0, ',', '.') }}
                 </span>
             </div>
 

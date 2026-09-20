@@ -163,8 +163,10 @@ class AuthController extends Controller
             // Ada jadwal piket hari ini? (berdasarkan nama hari ATAU tanggal khusus)
             $jadwalPiket = GuruPiket::where('id_guru', $user->id_guru)
                 ->where(function ($q) use ($namaHariId, $tanggalHari) {
-                    $q->where('hari', $namaHariId)
-                      ->orWhere('tanggal_khusus', $tanggalHari);
+                    $q->where('tanggal_khusus', $tanggalHari)
+                      ->orWhere(function ($sub) use ($namaHariId) {
+                          $sub->whereNull('tanggal_khusus')->where('hari', $namaHariId);
+                      });
                 })
                 ->whereNull('deleted_at')
                 ->first();

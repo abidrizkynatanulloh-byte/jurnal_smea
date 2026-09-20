@@ -12,53 +12,19 @@
                 {{ $mapelList->total() }} Mapel
             </span>
         </div>
-        <div>
-            <button type="button" onclick="toggleFormPanel()" id="btnToggleForm"
-                class="h-8 px-3 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-lg text-xs font-semibold transition-colors flex items-center space-x-1.5 shadow-2xs cursor-pointer">
-                <i data-lucide="panel-left-close" class="w-3.5 h-3.5 text-slate-500"></i>
-                <span id="foldText">Sembunyikan Form Tambah</span>
+        <div class="flex items-center space-x-2 shrink-0 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
+            <button type="button" onclick="openTambahMapelModal()"
+                class="h-10 px-4 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white rounded-xl text-xs font-bold transition-all flex items-center space-x-2 shadow-2xs cursor-pointer whitespace-nowrap shrink-0">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+                <span>+ Tambah Mapel</span>
             </button>
         </div>
     </div>
 
-    <!-- Layout Grid Utama (Full Viewport Height - Sesuai Gambar 1) -->
-    <div class="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-3 gap-3.5 items-stretch" id="masterDataGrid">
-        
-        <!-- BAGIAN 1: FORM TAMBAH MAPEL (UKURAN & PROPORSI SESUAI GAMBAR 1) -->
-        <div id="formPanel" class="bg-white border border-slate-200/90 rounded-xl p-3.5 shadow-2xs space-y-2.5 overflow-y-auto h-full max-h-full">
-            <div class="flex items-center space-x-2 pb-2 border-b border-slate-100 shrink-0">
-                <div class="w-5 h-5 rounded-md bg-[#1E2538] text-white flex items-center justify-center">
-                    <i data-lucide="plus" class="w-3 h-3"></i>
-                </div>
-                <span class="font-bold text-xs text-slate-900 tracking-tight uppercase">TAMBAH MAPEL BARU</span>
-            </div>
-            
-            <form action="{{ route('admin.mapel.store') }}" method="POST" class="space-y-2">
-                @csrf
-
-                <div>
-                    <label for="kode_mapel" class="block text-[11px] font-semibold text-slate-700 mb-0.5">Kode Mapel *</label>
-                    <input type="text" name="kode_mapel" id="kode_mapel" value="{{ old('kode_mapel') }}" placeholder="Contoh: MP-MAT" required 
-                        class="w-full h-8 px-2.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 font-mono placeholder-slate-400 focus:outline-none focus:border-slate-800 transition-colors">
-                </div>
-
-                <div>
-                    <label for="nama_mapel" class="block text-[11px] font-semibold text-slate-700 mb-0.5">Nama Mata Pelajaran *</label>
-                    <input type="text" name="nama_mapel" id="nama_mapel" value="{{ old('nama_mapel') }}" placeholder="Masukkan Nama Mapel" required
-                        class="w-full h-8 px-2.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-800 transition-colors">
-                </div>
-
-                <div class="pt-2">
-                    <button type="submit" class="w-full min-h-[48px] py-3.5 px-6 bg-[#1E2538] hover:bg-[#121724] text-white rounded-xl text-sm font-bold tracking-wide transition-all flex items-center justify-center space-x-2.5 shadow-sm hover:shadow-md cursor-pointer shrink-0">
-                        <i data-lucide="plus" class="w-4 h-4"></i>
-                        <span>Simpan Mapel</span>
-                    </button>
-                </div>
-            </form>
-        </div>
-
-        <!-- BAGIAN 2: DATA TABLE CARD (SESUAI GAMBAR 1 & GAMBAR 2) -->
-        <div id="tableCol" class="lg:col-span-2 flex flex-col h-full min-h-0">
+    <!-- Layout Flex Utama (Full Viewport Height) -->
+    <div class="flex-1 min-h-0 flex flex-col" id="masterDataGrid">
+        <!-- DATA TABLE CARD -->
+        <div id="tableCol" class="flex-1 flex flex-col h-full min-h-0">
             <div class="bg-white border border-slate-200/90 rounded-xl shadow-2xs overflow-hidden flex flex-col h-full min-h-0">
                 <!-- Top Control Bar (Search) -->
                 <div class="shrink-0 px-3.5 py-2 border-b border-slate-200 bg-white flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
@@ -147,24 +113,58 @@
     </div>
 </div>
 
-<script>
-    let isFolded = false;
-    function toggleFormPanel() {
-        const formPanel = document.getElementById('formPanel');
-        const tableCol = document.getElementById('tableCol');
-        const foldText = document.getElementById('foldText');
+<!-- Modal Tambah Mapel (Pop-up Default Hidden) -->
+<div id="modalTambahMapel" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-slate-900/50 backdrop-blur-xs p-4 overflow-y-auto">
+    <div class="bg-white dark:bg-[#1C2433] rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4 my-auto">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+            <div class="flex items-center space-x-2.5">
+                <div class="w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold">
+                    <i data-lucide="book-open" class="w-4 h-4"></i>
+                </div>
+                <div>
+                    <h3 class="font-extrabold text-slate-900 dark:text-slate-100 text-base">Tambah Mapel Baru</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Isi kode dan nama mata pelajaran</p>
+                </div>
+            </div>
+            <button type="button" onclick="closeTambahMapelModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
+                <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+        </div>
 
-        if (!isFolded) {
-            formPanel.style.display = 'none';
-            tableCol.className = 'lg:col-span-3 flex flex-col h-full min-h-0';
-            foldText.innerText = 'Buka Form Tambah';
-            isFolded = true;
-        } else {
-            formPanel.style.display = 'block';
-            tableCol.className = 'lg:col-span-2 flex flex-col h-full min-h-0';
-            foldText.innerText = 'Sembunyikan Form Tambah';
-            isFolded = false;
-        }
+        <form action="{{ route('admin.mapel.store') }}" method="POST" class="space-y-3.5">
+            @csrf
+            <div>
+                <label for="kode_mapel" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Kode Mapel *</label>
+                <input type="text" name="kode_mapel" id="kode_mapel" value="{{ old('kode_mapel') }}" placeholder="Contoh: MP-MAT" required 
+                    class="w-full h-10 px-3 bg-white dark:bg-[#1A2230] border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-slate-100 font-mono placeholder-slate-400 focus:outline-none focus:border-blue-600 transition-colors">
+            </div>
+
+            <div>
+                <label for="nama_mapel" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Nama Mata Pelajaran *</label>
+                <input type="text" name="nama_mapel" id="nama_mapel" value="{{ old('nama_mapel') }}" placeholder="Masukkan Nama Mapel" required
+                    class="w-full h-10 px-3 bg-white dark:bg-[#1A2230] border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-600 transition-colors">
+            </div>
+
+            <div class="flex items-center justify-end space-x-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+                <button type="button" onclick="closeTambahMapelModal()" class="h-10 px-4 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 transition-colors cursor-pointer">
+                    Batal
+                </button>
+                <button type="submit" class="h-10 px-5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition-colors shadow-xs flex items-center space-x-1.5 cursor-pointer">
+                    <i data-lucide="plus" class="w-4 h-4"></i>
+                    <span>Simpan Mapel</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openTambahMapelModal() {
+        document.getElementById('modalTambahMapel').classList.remove('hidden');
+    }
+
+    function closeTambahMapelModal() {
+        document.getElementById('modalTambahMapel').classList.add('hidden');
     }
 
     function openEditMapelModal(kode, nama) {

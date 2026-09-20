@@ -5,21 +5,23 @@
 @section('content')
 <div class="space-y-5">
     <!-- Header Page & Title -->
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 bg-white dark:bg-[#242A35] p-4.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs">
-        <div>
-            <h1 class="text-xl font-bold text-slate-900 dark:text-slate-100 tracking-tight flex items-center space-x-2">
-                <i data-lucide="school" class="w-5 h-5 text-blue-600 dark:text-blue-400"></i>
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 sm:gap-6 bg-white dark:bg-[#242A35] p-5 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs">
+        <div class="space-y-1">
+            <h1 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100 tracking-tight flex items-center space-x-2.5">
+                <div class="p-2 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 shrink-0">
+                    <i data-lucide="school" class="w-5.5 h-5.5"></i>
+                </div>
                 <span>Data Per Kelas</span>
             </h1>
-            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed pt-0.5">
                 Kelola data kelas, alokasi wali kelas, dan lihat rincian siswa per kelas di SMK Negeri 1 Tulungagung.
             </p>
         </div>
 
-        <div class="flex items-center space-x-2">
-            <button type="button" onclick="openAddModal()" class="h-9 px-3.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition-all flex items-center space-x-1.5 shadow-2xs cursor-pointer">
+        <div class="flex items-center space-x-2 shrink-0 pt-1 md:pt-0 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
+            <button type="button" onclick="openAddModal()" class="h-10 px-4 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white rounded-xl text-xs font-bold transition-all flex items-center space-x-2 shadow-2xs cursor-pointer whitespace-nowrap shrink-0">
                 <i data-lucide="plus" class="w-4 h-4"></i>
-                <span>Tambah Kelas Baru</span>
+                <span>+ Tambah Kelas Baru</span>
             </button>
         </div>
     </div>
@@ -60,35 +62,154 @@
         </div>
     </div>
 
-    <!-- Filter & Pencarian -->
-    <div class="bg-white dark:bg-[#242A35] p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs flex flex-col sm:flex-row items-center justify-between gap-3">
-        <div class="flex items-center space-x-1.5 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0">
-            <a href="{{ route('admin.kelas.index') }}" class="px-3 py-1.5 text-xs font-bold rounded-lg transition-all {{ empty($tingkat) ? 'bg-blue-600 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200' }}">
-                Semua Kelas
+    <!-- Filter Bar & Search (Matches Reference 1:1) -->
+    <div class="bg-white dark:bg-[#1C2433] p-3.5 sm:p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xs flex flex-col md:flex-row items-center justify-between gap-3.5">
+        <!-- Left: Pill Filter Tabs (Semua Kelas, Kelas X, XI, XII) -->
+        <div class="flex items-center space-x-2 overflow-x-auto w-full md:w-auto pb-1 md:pb-0 shrink-0">
+            <a href="{{ route('admin.kelas.index', array_filter(['search' => $search])) }}" 
+                class="px-4 py-2 text-xs font-bold rounded-xl transition-all shrink-0 flex items-center space-x-1.5 {{ empty($tingkat) ? 'bg-blue-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-[#232D3F] text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-[#2C384E]' }}">
+                <span>Semua Kelas</span>
             </a>
-            <a href="{{ route('admin.kelas.index', ['tingkat' => 'X']) }}" class="px-3 py-1.5 text-xs font-bold rounded-lg transition-all {{ $tingkat === 'X' ? 'bg-blue-600 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200' }}">
-                Kelas X
+            <a href="{{ route('admin.kelas.index', array_filter(['tingkat' => 'X', 'search' => $search])) }}" 
+                class="px-4 py-2 text-xs font-bold rounded-xl transition-all shrink-0 flex items-center space-x-1.5 {{ $tingkat === 'X' ? 'bg-blue-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-[#232D3F] text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-[#2C384E]' }}">
+                <span>Kelas X</span>
             </a>
-            <a href="{{ route('admin.kelas.index', ['tingkat' => 'XI']) }}" class="px-3 py-1.5 text-xs font-bold rounded-lg transition-all {{ $tingkat === 'XI' ? 'bg-blue-600 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200' }}">
-                Kelas XI
+            <a href="{{ route('admin.kelas.index', array_filter(['tingkat' => 'XI', 'search' => $search])) }}" 
+                class="px-4 py-2 text-xs font-bold rounded-xl transition-all shrink-0 flex items-center space-x-1.5 {{ $tingkat === 'XI' ? 'bg-blue-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-[#232D3F] text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-[#2C384E]' }}">
+                <span>Kelas XI</span>
             </a>
-            <a href="{{ route('admin.kelas.index', ['tingkat' => 'XII']) }}" class="px-3 py-1.5 text-xs font-bold rounded-lg transition-all {{ $tingkat === 'XII' ? 'bg-blue-600 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200' }}">
-                Kelas XII
+            <a href="{{ route('admin.kelas.index', array_filter(['tingkat' => 'XII', 'search' => $search])) }}" 
+                class="px-4 py-2 text-xs font-bold rounded-xl transition-all shrink-0 flex items-center space-x-1.5 {{ $tingkat === 'XII' ? 'bg-blue-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-[#232D3F] text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-[#2C384E]' }}">
+                <span>Kelas XII</span>
             </a>
         </div>
 
-        <form action="{{ route('admin.kelas.index') }}" method="GET" class="w-full sm:w-64 relative flex items-center">
-            @if(!empty($tingkat))
-                <input type="hidden" name="tingkat" value="{{ $tingkat }}">
-            @endif
-            <i data-lucide="search" class="w-4 h-4 text-slate-400 dark:text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
-            <input type="text" name="search" value="{{ $search }}" placeholder="Cari nama kelas..." 
-                class="w-full h-9 pl-9 pr-3 bg-white dark:bg-[#1A212D] border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-blue-600 transition-all">
-        </form>
+        <!-- Right: Search Form & View Mode Switcher -->
+        <div class="flex items-center space-x-2.5 w-full md:w-auto justify-end">
+            <!-- Search Form -->
+            <form action="{{ route('admin.kelas.index') }}" method="GET" class="w-full md:w-64 relative flex items-center">
+                @if(!empty($tingkat))
+                    <input type="hidden" name="tingkat" value="{{ $tingkat }}">
+                @endif
+                <i data-lucide="search" class="w-4 h-4 text-slate-400 dark:text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                <input type="text" name="search" value="{{ $search }}" placeholder="Cari nama kelas..." 
+                    class="w-full h-8 pl-8 pr-2.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-800 transition-colors">
+                        </form>
+
+            <!-- View Toggle Buttons -->
+            <div class="flex items-center space-x-1 bg-slate-100 dark:bg-[#141C29] p-1 rounded-xl border border-slate-200 dark:border-slate-800 shrink-0">
+                    <button type="button" onclick="setViewMode('grid')" id="btnViewGrid" class="h-8 px-3 rounded-lg text-xs font-bold transition-all bg-blue-600 text-white shadow-2xs flex items-center space-x-1.5 cursor-pointer">
+                        <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
+                        <span class="hidden sm:inline">Grid Kelas</span>
+                    </button>
+                    <button type="button" onclick="setViewMode('table')" id="btnViewTable" class="h-8 px-3 rounded-lg text-xs font-semibold transition-all text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 flex items-center space-x-1.5 cursor-pointer">
+                        <i data-lucide="table" class="w-3.5 h-3.5"></i>
+                        <span class="hidden sm:inline">Tabel Sesi</span>
+                    </button>
+            </div>
+        </div>
     </div>
 
-    <!-- TABEL / GRID DATA KELAS -->
-    <div class="bg-white dark:bg-[#242A35] border border-slate-200 dark:border-slate-800 rounded-xl shadow-xs overflow-hidden">
+    <!-- 1. GRID CARD VIEW (DESAIN TAMPILAN KELAS SEPERTI HARIAN PIKET) -->
+    <div id="kelasGridView" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6">
+        @forelse ($daftarKelas as $idx => $k)
+            @php
+                $waliGuru = null;
+                if ($k->wali_kelas) {
+                    $waliGuru = $daftarGuru->first(function($g) use ($k) {
+                        return $g->nip == $k->wali_kelas || $g->id_guru == $k->wali_kelas;
+                    });
+                }
+            @endphp
+            <div class="bg-white dark:bg-[#242A35] border-2 border-slate-200 dark:border-slate-700/80 rounded-2xl p-5 shadow-2xs hover:border-blue-500 dark:hover:border-blue-500 hover:shadow-md transition-all flex flex-col justify-between space-y-4 group">
+                <div>
+                    <!-- Header Kartu -->
+                    <div class="flex items-start justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold text-xs shrink-0 border border-blue-200/50 dark:border-blue-900/50 group-hover:scale-105 transition-transform">
+                                <i data-lucide="school" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-extrabold text-slate-900 dark:text-white text-base group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                                    {{ $k->nama_kelas }}
+                                </h3>
+                                <span class="text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider block -mt-0.5">
+                                    SMK Negeri 1 SMEA
+                                </span>
+                            </div>
+                        </div>
+                        <span class="px-3 py-1 rounded-xl text-xs font-extrabold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200/60 dark:border-slate-700">
+                            @if(Str::startsWith($k->nama_kelas, 'XII')) Kelas XII @elseif(Str::startsWith($k->nama_kelas, 'XI')) Kelas XI @else Kelas X @endif
+                        </span>
+                    </div>
+
+                    <!-- Wali Kelas Box -->
+                    <div class="mt-4 p-3.5 rounded-xl bg-slate-50 dark:bg-[#1A212D] border border-slate-200/80 dark:border-slate-700/70">
+                        <div class="text-[10px] font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider mb-1 flex items-center justify-between">
+                            <span>Wali Kelas</span>
+                            <i data-lucide="user-cog" class="w-3.5 h-3.5 text-slate-400"></i>
+                        </div>
+                        @if($waliGuru)
+                            <div class="font-bold text-xs sm:text-sm text-slate-800 dark:text-slate-200 flex items-center space-x-1.5 truncate">
+                                <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-500 shrink-0"></i>
+                                <span class="truncate" title="{{ $waliGuru->nama_guru }}">{{ $waliGuru->nama_guru }}</span>
+                            </div>
+                            <div class="text-[10.5px] text-slate-400 mt-0.5 font-mono">NIP: {{ $waliGuru->nip ?? '-' }}</div>
+                        @else
+                            <div class="text-xs font-semibold text-amber-600 dark:text-amber-400 flex items-center space-x-1.5">
+                                <i data-lucide="alert-circle" class="w-4 h-4 text-amber-500 shrink-0"></i>
+                                <span>Belum Ditentukan</span>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+
+                <!-- Stats Grid (Jumlah Siswa & Sesi KBM) -->
+                <div class="grid grid-cols-2 gap-2.5 pt-2 border-t border-slate-100 dark:border-slate-800/80">
+                    <div class="p-2.5 rounded-xl bg-blue-50/70 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900/40 text-center">
+                        <span class="block text-[10px] font-bold text-blue-600/80 dark:text-blue-400/80 uppercase tracking-wider">Siswa</span>
+                        <span class="text-xs sm:text-sm font-extrabold text-blue-700 dark:text-blue-300">{{ $k->siswa_count }} Siswa</span>
+                    </div>
+                    <div class="p-2.5 rounded-xl bg-indigo-50/70 dark:bg-indigo-950/30 border border-indigo-100 dark:border-indigo-900/40 text-center">
+                        <span class="block text-[10px] font-bold text-indigo-600/80 dark:text-indigo-400/80 uppercase tracking-wider">Jadwal KBM</span>
+                        <span class="text-xs sm:text-sm font-extrabold text-indigo-700 dark:text-indigo-300">{{ $k->jadwal_count }} Sesi</span>
+                    </div>
+                </div>
+
+                <!-- Action Buttons Footer (Button Lihat Siswa Lebih Tinggi & Sturdy) -->
+                <div class="flex items-center space-x-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+                    <button type="button" onclick="showSiswaModal({{ $k->id_kelas }}, '{{ addslashes($k->nama_kelas) }}')"
+                        class="flex-1 h-10.5 px-4 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white rounded-xl text-xs sm:text-sm font-extrabold transition-all flex items-center justify-center space-x-2 shadow-xs cursor-pointer">
+                        <i data-lucide="users" class="w-4 h-4"></i>
+                        <span>Lihat Siswa</span>
+                    </button>
+
+                    <button type="button" onclick="openEditModal({{ $k->id_kelas }}, '{{ addslashes($k->nama_kelas) }}', '{{ $waliGuru ? $waliGuru->id_guru : "" }}')"
+                        class="h-10.5 w-10.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold transition-all flex items-center justify-center shrink-0 cursor-pointer" title="Edit Kelas / Wali Kelas">
+                        <i data-lucide="edit-2" class="w-4 h-4"></i>
+                    </button>
+
+                    @if($k->siswa_count == 0)
+                        <form action="{{ route('admin.kelas.destroy', $k->id_kelas) }}" method="POST" data-confirm="Hapus kelas {{ $k->nama_kelas }}?" class="inline-block">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="h-10.5 w-10.5 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 text-rose-600 dark:text-rose-300 rounded-xl border border-rose-200 dark:border-rose-900 text-xs font-semibold transition-all flex items-center justify-center shrink-0 cursor-pointer" title="Hapus Kelas">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </form>
+                    @endif
+                </div>
+            </div>
+        @empty
+            <div class="col-span-full bg-white dark:bg-[#242A35] p-10 rounded-2xl border border-slate-200 dark:border-slate-800 text-center">
+                <i data-lucide="inbox" class="w-10 h-10 mx-auto text-slate-300 dark:text-slate-600 mb-2"></i>
+                <p class="text-slate-500 dark:text-slate-400 font-semibold text-xs">Tidak ada data kelas yang ditemukan.</p>
+            </div>
+        @endforelse
+    </div>
+
+    <!-- 2. TABLE VIEW (OPSIONAL VIA TOGGLE) -->
+    <div id="kelasTableView" class="hidden bg-white dark:bg-[#242A35] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xs overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse text-xs">
                 <thead>
@@ -417,5 +538,35 @@
     function closeSiswaModal() {
         document.getElementById('modalSiswaKelas').classList.add('hidden');
     }
+
+    function setViewMode(mode) {
+        const gridView = document.getElementById('kelasGridView');
+        const tableView = document.getElementById('kelasTableView');
+        const btnGrid = document.getElementById('btnViewGrid');
+        const btnTable = document.getElementById('btnViewTable');
+
+        if (!gridView || !tableView) return;
+
+        if (mode === 'grid') {
+            gridView.classList.remove('hidden');
+            tableView.classList.add('hidden');
+            if (btnGrid) btnGrid.className = 'h-7.5 px-2.5 rounded-lg text-xs font-bold transition-all bg-blue-600 text-white shadow-2xs flex items-center space-x-1 cursor-pointer';
+            if (btnTable) btnTable.className = 'h-7.5 px-2.5 rounded-lg text-xs font-semibold transition-all text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 flex items-center space-x-1 cursor-pointer';
+            localStorage.setItem('kelasViewMode', 'grid');
+        } else {
+            gridView.classList.add('hidden');
+            tableView.classList.remove('hidden');
+            if (btnTable) btnTable.className = 'h-7.5 px-2.5 rounded-lg text-xs font-bold transition-all bg-blue-600 text-white shadow-2xs flex items-center space-x-1 cursor-pointer';
+            if (btnGrid) btnGrid.className = 'h-7.5 px-2.5 rounded-lg text-xs font-semibold transition-all text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 flex items-center space-x-1 cursor-pointer';
+            localStorage.setItem('kelasViewMode', 'table');
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const savedView = localStorage.getItem('kelasViewMode');
+        if (savedView === 'table') {
+            setViewMode('table');
+        }
+    });
 </script>
 @endsection

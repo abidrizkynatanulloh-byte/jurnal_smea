@@ -559,10 +559,6 @@
                     <i data-lucide="user-check" class="w-3.5 h-3.5 {{ Route::is('piket.dashboard') ? 'text-[#0F4E5A] dark:text-white' : 'text-[#A2D2D6] dark:text-[#9CA3AF]' }}"></i>
                     <span>Dashboard Guru Piket</span>
                 </a>
-                <a href="{{ route('piket.monitoring-kelas') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg text-xs transition-all {{ Route::is('piket.monitoring-kelas') ? 'bg-[#84C4C9] text-[#0F4E5A] font-bold shadow-xs dark:bg-[#2C2C2C] dark:text-white' : 'text-[#C7E8EA] hover:bg-white/10 hover:text-white dark:text-[#9CA3AF] dark:hover:bg-white/5 dark:hover:text-white font-medium' }}">
-                    <i data-lucide="monitor" class="w-3.5 h-3.5 {{ Route::is('piket.monitoring-kelas') ? 'text-[#0F4E5A] dark:text-white' : 'text-[#A2D2D6] dark:text-[#9CA3AF]' }}"></i>
-                    <span>Monitoring Kondisi Kelas</span>
-                </a>
             @endif
 
             {{-- ROLE 3: GURU PIKET (Eksklusif) --}}
@@ -573,10 +569,6 @@
                 <a href="{{ route('piket.dashboard') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg text-xs transition-all {{ Route::is('piket.dashboard') ? 'bg-[#84C4C9] text-[#0F4E5A] font-bold shadow-xs dark:bg-[#2C2C2C] dark:text-white' : 'text-[#C7E8EA] hover:bg-white/10 hover:text-white dark:text-[#9CA3AF] dark:hover:bg-white/5 dark:hover:text-white font-medium' }}">
                     <i data-lucide="clipboard-list" class="w-3.5 h-3.5 {{ Route::is('piket.dashboard') ? 'text-[#0F4E5A] dark:text-white' : 'text-[#A2D2D6] dark:text-[#9CA3AF]' }}"></i>
                     <span>Input Dispen & Siswa Telat</span>
-                </a>
-                <a href="{{ route('piket.monitoring-kelas') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg text-xs transition-all {{ Route::is('piket.monitoring-kelas') ? 'bg-[#84C4C9] text-[#0F4E5A] font-bold shadow-xs dark:bg-[#2C2C2C] dark:text-white' : 'text-[#C7E8EA] hover:bg-white/10 hover:text-white dark:text-[#9CA3AF] dark:hover:bg-white/5 dark:hover:text-white font-medium' }}">
-                    <i data-lucide="monitor" class="w-3.5 h-3.5 {{ Route::is('piket.monitoring-kelas') ? 'text-[#0F4E5A] dark:text-white' : 'text-[#A2D2D6] dark:text-[#9CA3AF]' }}"></i>
-                    <span>Monitoring Kondisi Kelas</span>
                 </a>
             @endif
 
@@ -955,22 +947,38 @@
         }
 
         const i18nDict = {
+            // Sidebar Navigation & Sections
             'Dashboard Admin': { id: 'Dashboard Admin', en: 'Admin Dashboard' },
             'Dashboard Tata Usaha': { id: 'Dashboard Tata Usaha', en: 'Administration Dashboard' },
             'Data Guru & Pegawai': { id: 'Data Guru & Pegawai', en: 'Teachers & Staff Data' },
+            'Teachers & Staff Data': { id: 'Data Guru & Pegawai', en: 'Teachers & Staff Data' },
             'Data Siswa': { id: 'Data Siswa', en: 'Students Data' },
+            'Students Data': { id: 'Data Siswa', en: 'Students Data' },
+            'Data Per Kelas': { id: 'Data Per Kelas', en: 'Class Data' },
+            'Class Data': { id: 'Data Per Kelas', en: 'Class Data' },
             'Mata Pelajaran': { id: 'Mata Pelajaran', en: 'Subjects' },
+            'Subjects': { id: 'Mata Pelajaran', en: 'Subjects' },
             'Master Jam Pelajaran': { id: 'Master Jam Pelajaran', en: 'Lesson Hours Master' },
+            'Lesson Hours Master': { id: 'Master Jam Pelajaran', en: 'Lesson Hours Master' },
             'Jadwal Mengajar': { id: 'Jadwal Mengajar', en: 'Teaching Schedule' },
+            'Teaching Schedule': { id: 'Jadwal Mengajar', en: 'Teaching Schedule' },
             'Kelola Guru Piket': { id: 'Kelola Guru Piket', en: 'Duty Teachers Mgmt' },
+            'Duty Teachers Mgmt': { id: 'Kelola Guru Piket', en: 'Duty Teachers Mgmt' },
             'Kelola Waka': { id: 'Kelola Waka', en: 'Vice Principal Mgmt' },
+            'Vice Principal Mgmt': { id: 'Kelola Waka', en: 'Vice Principal Mgmt' },
             'Rekap Jurnal & Absensi': { id: 'Rekap Jurnal & Absensi', en: 'Journal & Attendance' },
+            'Journal & Attendance': { id: 'Rekap Jurnal & Absensi', en: 'Journal & Attendance' },
             'Kelola Pengguna': { id: 'Kelola Pengguna', en: 'User Management' },
+            'User Management': { id: 'Kelola Pengguna', en: 'User Management' },
             'Jadwal & Jurnal Hari Ini': { id: 'Jadwal & Jurnal Hari Ini', en: "Today's Schedule & Journal" },
+            'Jadwal Mengajar Saya': { id: 'Jadwal Mengajar Saya', en: 'My Teaching Schedule' },
             'Riwayat Jurnal Saya': { id: 'Riwayat Jurnal Saya', en: 'My Journal History' },
+            'Riwayat Jurnal Mengajar': { id: 'Riwayat Jurnal Mengajar', en: 'Teaching Journal History' },
             'Rekap Wali Kelas': { id: 'Rekap Wali Kelas', en: 'Homeroom Recap' },
+            'Rekap Presensi Kelas Saya': { id: 'Rekap Presensi Kelas Saya', en: 'My Class Attendance Recap' },
             'Pengajuan Izin Mengajar': { id: 'Pengajuan Izin Mengajar', en: 'Teaching Leave Request' },
             'Input Dispen & Siswa Telat': { id: 'Input Dispen & Siswa Telat', en: 'Input Dispen & Late Students' },
+            'Dashboard Guru Piket': { id: 'Dashboard Guru Piket', en: 'Duty Teacher Dashboard' },
             'Monitoring Kondisi Kelas': { id: 'Monitoring Kondisi Kelas', en: 'Class Condition Monitoring' },
             'Executive Summary': { id: 'Executive Summary', en: 'Executive Summary' },
             'Rekap Jurnal & Mengajar': { id: 'Rekap Jurnal & Mengajar', en: 'Teaching & Journal Recap' },
@@ -981,17 +989,70 @@
             'Monitoring Kelas': { id: 'Monitoring Kelas', en: 'Class Monitoring' },
             'Pencatatan Gerbang & Dispen': { id: 'Pencatatan Gerbang & Dispen', en: 'Gate & Dispen Log' },
             'Bantuan & Layanan': { id: 'Bantuan & Layanan', en: 'Help & Services' },
+            'Help & Services': { id: 'Bantuan & Layanan', en: 'Help & Services' },
             'Bantuan': { id: 'Bantuan', en: 'Help' },
             'Tema': { id: 'Tema', en: 'Theme' },
             'Keluar (Logout)': { id: 'Keluar (Logout)', en: 'Logout' },
+            'Logout': { id: 'Keluar (Logout)', en: 'Logout' },
             'Pusat Bantuan': { id: 'Pusat Bantuan', en: 'Help Center' },
+            'Help Center': { id: 'Pusat Bantuan', en: 'Help Center' },
+            'Utama': { id: 'Utama', en: 'Main' },
             'Master Data': { id: 'Master Data', en: 'Master Data' },
             'Laporan & Pengguna': { id: 'Laporan & Pengguna', en: 'Reports & Users' },
+            'Reports & Users': { id: 'Laporan & Pengguna', en: 'Reports & Users' },
             'Pembelajaran': { id: 'Pembelajaran', en: 'Learning' },
+            'KBM & Pengajaran': { id: 'KBM & Pengajaran', en: 'Teaching & Learning' },
+            'Wali Kelas': { id: 'Wali Kelas', en: 'Homeroom Teacher' },
+            'Tugas Piket': { id: 'Tugas Piket', en: 'Duty Task' },
             'Piket Monitoring': { id: 'Piket Monitoring', en: 'Duty Monitoring' },
             'Eksekutif': { id: 'Eksekutif', en: 'Executive' },
             'Kesiswaan & SDM': { id: 'Kesiswaan & SDM', en: 'Students & HR' },
             'Keamanan Gerbang': { id: 'Keamanan Gerbang', en: 'Gate Security' },
+
+            // User Management Page & Form Labels
+            'TAMBAH AKUN PENGGUNA': { id: 'TAMBAH AKUN PENGGUNA', en: 'ADD USER ACCOUNT' },
+            'Sembunyikan Form Tambah': { id: 'Sembunyikan Form Tambah', en: 'Hide Add Form' },
+            'Tampilkan Form Tambah': { id: 'Tampilkan Form Tambah', en: 'Show Add Form' },
+            'Peran (Role)': { id: 'Peran (Role)', en: 'Role' },
+            'Peran (Role) *': { id: 'Peran (Role) *', en: 'Role *' },
+            'Nama Lengkap': { id: 'Nama Lengkap', en: 'Full Name' },
+            'Nama Lengkap *': { id: 'Nama Lengkap *', en: 'Full Name *' },
+            'Username Login (NIP / NISN)': { id: 'Username Login (NIP / NISN)', en: 'Login Username (NIP / NISN)' },
+            'Username Login (NIP / NISN) *': { id: 'Username Login (NIP / NISN) *', en: 'Login Username (NIP / NISN) *' },
+            'Password *': { id: 'Password *', en: 'Password *' },
+            'Nomor HP (Opsional)': { id: 'Nomor HP (Opsional)', en: 'Phone Number (Optional)' },
+            'Simpan Pengguna': { id: 'Simpan Pengguna', en: 'Save User' },
+            'Simpan Data': { id: 'Simpan Data', en: 'Save Data' },
+            'Update Pengguna': { id: 'Update Pengguna', en: 'Update User' },
+            'Cari Username, Nama, atau Peran...': { id: 'Cari Username, Nama, atau Peran...', en: 'Search Username, Name, or Role...' },
+            'Contoh: Budi Santoso, S.Pd': { id: 'Contoh: Budi Santoso, S.Pd', en: 'Example: Budi Santoso, S.Pd' },
+            'Masukkan NIP / NISN': { id: 'Masukkan NIP / NISN', en: 'Enter NIP / NISN' },
+            'Minimal 4 karakter': { id: 'Minimal 4 karakter', en: 'Min. 4 characters' },
+
+            // Table Headers & Badges
+            'NAMA LENGKAP & USERNAME': { id: 'NAMA LENGKAP & USERNAME', en: 'FULL NAME & USERNAME' },
+            'PERAN (ROLE)': { id: 'PERAN (ROLE)', en: 'ROLE' },
+            'STATUS': { id: 'STATUS', en: 'STATUS' },
+            'AKSI': { id: 'AKSI', en: 'ACTION' },
+            'Aktif': { id: 'Aktif', en: 'Active' },
+            'Nonaktif': { id: 'Nonaktif', en: 'Inactive' },
+            'Terhapus': { id: 'Terhapus', en: 'Deleted' },
+            'Akun': { id: 'Akun', en: 'Accounts' },
+            'Results per page:': { id: 'Results per page:', en: 'Results per page:' },
+            'Hasil per halaman:': { id: 'Hasil per halaman:', en: 'Results per page:' },
+            'of': { id: 'dari', en: 'of' },
+            'dari': { id: 'dari', en: 'of' },
+
+            // Roles
+            'staf tu': { id: 'staf tu', en: 'staff / admin' },
+            'guru': { id: 'guru', en: 'teacher' },
+            'guru_piket': { id: 'guru_piket', en: 'duty teacher' },
+            'wakasis_siswa': { id: 'wakasis_siswa', en: 'vice principal' },
+            'wakasis_guru': { id: 'wakasis_guru', en: 'vice principal' },
+            'satpam': { id: 'satpam', en: 'security' },
+            'kepala_sekolah': { id: 'kepala_sekolah', en: 'principal' },
+
+            // General Dashboard & Common Buttons
             'TOTAL SISWA': { id: 'TOTAL SISWA', en: 'TOTAL STUDENTS' },
             'Data siswa & rombel': { id: 'Data siswa & rombel', en: 'Student & class data' },
             'KEPATUHAN JURNAL': { id: 'KEPATUHAN JURNAL', en: 'JOURNAL COMPLIANCE' },
@@ -1001,6 +1062,11 @@
             'ALPA': { id: 'ALPA', en: 'ABSENT' },
             'IZIN': { id: 'IZIN', en: 'PERMISSION' },
             'SAKIT': { id: 'SAKIT', en: 'SICK' },
+            'Hadir': { id: 'Hadir', en: 'Present' },
+            'Alpa': { id: 'Alpa', en: 'Absent' },
+            'Izin': { id: 'Izin', en: 'Permission' },
+            'Sakit': { id: 'Sakit', en: 'Sick' },
+            'Dispen': { id: 'Dispen', en: 'Dispensation' },
             'Lihat Rekapitulasi Jurnal': { id: 'Lihat Rekapitulasi Jurnal', en: 'View Journal Recap' },
             'JADWAL MENGAJAR HARI INI': { id: 'JADWAL MENGAJAR HARI INI', en: "TODAY'S TEACHING SCHEDULE" },
             'Pusat Bantuan & Informasi': { id: 'Pusat Bantuan & Informasi', en: 'Help Center & Information' },
@@ -1011,6 +1077,13 @@
             'TikTok Resmi': { id: 'TikTok Resmi', en: 'Official TikTok' },
             'Bahasa / Language': { id: 'Bahasa / Language', en: 'Language / Bahasa' },
             'Tutup': { id: 'Tutup', en: 'Close' },
+            'Batal': { id: 'Batal', en: 'Cancel' },
+            'Edit': { id: 'Edit', en: 'Edit' },
+            'Hapus': { id: 'Hapus', en: 'Delete' },
+            'Kembali': { id: 'Kembali', en: 'Back' },
+            'Cari': { id: 'Cari', en: 'Search' },
+            'Filter': { id: 'Filter', en: 'Filter' },
+            'Reset': { id: 'Reset', en: 'Reset' },
             'JUMLAH JADWAL': { id: 'JUMLAH JADWAL', en: 'TOTAL SCHEDULES' },
             'KBM mengajar': { id: 'KBM mengajar', en: 'Teaching activity' },
             'PERHATIAN OPERASIONAL': { id: 'PERHATIAN OPERASIONAL', en: 'OPERATIONAL ATTENTION' },
@@ -1020,7 +1093,10 @@
             'JAM KE-': { id: 'JAM KE-', en: 'HOUR NO.' },
             'KELAS': { id: 'KELAS', en: 'CLASS' },
             'RUANGAN': { id: 'RUANGAN', en: 'ROOM' },
-            'STATUS JURNAL': { id: 'STATUS JURNAL', en: 'JOURNAL STATUS' }
+            'STATUS JURNAL': { id: 'STATUS JURNAL', en: 'JOURNAL STATUS' },
+            '-- Pilih Role --': { id: '-- Pilih Role --', en: '-- Select Role --' },
+            '-- Pilih Kelas --': { id: '-- Pilih Kelas --', en: '-- Select Class --' },
+            '-- Pilih Guru --': { id: '-- Pilih Guru --', en: '-- Select Teacher --' }
         };
 
         function applyLanguage(lang) {
@@ -1043,8 +1119,8 @@
                 }
             }
 
-            // Translate matching text elements across DOM
-            const elements = document.querySelectorAll('span, p, h1, h2, h3, h4, h5, button, a, th, td, label, div');
+            // Translate text nodes & placeholders across DOM
+            const elements = document.querySelectorAll('span, p, h1, h2, h3, h4, h5, button, a, th, td, label, div, option');
             elements.forEach(el => {
                 el.childNodes.forEach(node => {
                     if (node.nodeType === Node.TEXT_NODE) {
@@ -1061,6 +1137,23 @@
                         }
                     }
                 });
+            });
+
+            // Translate input & textarea placeholders
+            document.querySelectorAll('input, textarea').forEach(input => {
+                const placeholder = input.getAttribute('placeholder');
+                if (placeholder) {
+                    const trimmed = placeholder.trim();
+                    for (const [key, val] of Object.entries(i18nDict)) {
+                        if (targetLang === 'en' && trimmed === val.id) {
+                            input.setAttribute('placeholder', val.en);
+                            break;
+                        } else if (targetLang === 'id' && trimmed === val.en) {
+                            input.setAttribute('placeholder', val.id);
+                            break;
+                        }
+                    }
+                }
             });
         }
 

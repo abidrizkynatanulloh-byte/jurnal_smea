@@ -114,174 +114,6 @@
             color: var(--text-title);
             transition: background-color 0.3s ease, color 0.3s ease;
         }
-
-        /* Moving Background Drift */
-        @keyframes bgMotion {
-            0% {
-                transform: scale(1.02) translate(0%, 0%);
-            }
-            50% {
-                transform: scale(1.08) translate(-1.5%, 1%);
-            }
-            100% {
-                transform: scale(1.02) translate(0%, 0%);
-            }
-        }
-        .animate-bg-drift {
-            animation: bgMotion 32s ease-in-out infinite alternate;
-        }
-
-        /* Slow, Calm, Subtle Glass Sheen Sweep ("samar & ga kecepeten") */
-        @keyframes sheenSweepSlow {
-            0% {
-                transform: translateX(-180%) translateY(-180%) rotate(38deg);
-                opacity: 0;
-            }
-            3% {
-                opacity: 0.85;
-            }
-            20% {
-                transform: translateX(180%) translateY(180%) rotate(38deg);
-                opacity: 0.85;
-            }
-            24% {
-                opacity: 0;
-            }
-            100% {
-                transform: translateX(180%) translateY(180%) rotate(38deg);
-                opacity: 0;
-            }
-        }
-        .sheen-sweep-slow {
-            position: absolute;
-            top: -150%;
-            left: -150%;
-            width: 400%;
-            height: 400%;
-            background: linear-gradient(
-                90deg,
-                transparent 0%,
-                transparent 38%,
-                rgba(255, 255, 255, 0.02) 42%,
-                rgba(255, 255, 255, 0.08) 46%,
-                rgba(255, 255, 255, 0.14) 49%,
-                rgba(255, 255, 255, 0.04) 51%,
-                rgba(255, 255, 255, 0.09) 53%,
-                rgba(255, 255, 255, 0.02) 56%,
-                transparent 62%,
-                transparent 100%
-            );
-            animation: sheenSweepSlow 16s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-            pointer-events: none;
-        }
-
-        /* Subtle Shimmer for Input Boxes */
-        @keyframes inputSheenSlow {
-            0% {
-                transform: translateX(-180%) rotate(35deg);
-                opacity: 0;
-            }
-            15% {
-                opacity: 0.5;
-            }
-            45% {
-                transform: translateX(180%) rotate(35deg);
-                opacity: 0.5;
-            }
-            52% {
-                opacity: 0;
-            }
-            100% {
-                transform: translateX(180%) rotate(35deg);
-                opacity: 0;
-            }
-        }
-        .input-sheen {
-            position: absolute;
-            top: -150%;
-            left: -50%;
-            width: 200%;
-            height: 400%;
-            background: linear-gradient(
-                90deg,
-                transparent 0%,
-                transparent 40%,
-                rgba(255, 255, 255, 0.05) 48%,
-                rgba(165, 243, 252, 0.12) 50%,
-                rgba(255, 255, 255, 0.05) 52%,
-                transparent 60%,
-                transparent 100%
-            );
-            animation: inputSheenSlow 12s ease-in-out infinite;
-            pointer-events: none;
-        }
-
-        /* Sequential Rotating Border Beam on Input Fields */
-        .beam-wrapper {
-            position: relative;
-            padding: 1.5px;
-            border-radius: 12px;
-            overflow: hidden;
-            background-color: var(--input-border-wrap);
-            transition: all 0.3s ease;
-        }
-        .beam-wrapper:hover, .beam-wrapper:focus-within {
-            background-color: #38BDF8;
-        }
-
-        .beam-rotator {
-            position: absolute;
-            top: -150%;
-            left: -150%;
-            width: 400%;
-            height: 400%;
-            pointer-events: none;
-            background: conic-gradient(
-                from 0deg,
-                transparent 0deg,
-                transparent 280deg,
-                rgba(56, 189, 248, 0.15) 310deg,
-                rgba(56, 189, 248, 0.75) 338deg,
-                rgba(165, 243, 252, 0.95) 352deg,
-                #FFFFFF 360deg
-            );
-        }
-
-        /* Cycle 1: Username input beam rotates during 0s - 3.5s */
-        @keyframes rotateBeamUser {
-            0% { transform: rotate(0deg); opacity: 0; }
-            5% { opacity: 1; }
-            44% { opacity: 1; }
-            49% { transform: rotate(360deg); opacity: 0; }
-            100% { transform: rotate(360deg); opacity: 0; }
-        }
-
-        /* Cycle 2: Password input beam rotates during 3.5s - 7s */
-        @keyframes rotateBeamPass {
-            0% { transform: rotate(0deg); opacity: 0; }
-            49% { transform: rotate(0deg); opacity: 0; }
-            54% { opacity: 1; }
-            93% { opacity: 1; }
-            98% { transform: rotate(360deg); opacity: 0; }
-            100% { transform: rotate(360deg); opacity: 0; }
-        }
-
-        .beam-username {
-            animation: rotateBeamUser 7s linear infinite;
-        }
-        .beam-password {
-            animation: rotateBeamPass 7s linear infinite;
-        }
-
-        /* Continuous rotation on active focus */
-        @keyframes rotateBeamActive {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        .beam-wrapper:focus-within .beam-rotator {
-            opacity: 1 !important;
-            animation: rotateBeamActive 2.8s linear infinite !important;
-        }
     </style>
 </head>
 <body class="h-full antialiased overflow-x-hidden selection:bg-cyan-500/30 selection:text-cyan-200">
@@ -290,11 +122,11 @@
     <div id="mainViewport" class="relative min-h-screen w-full lg:h-screen lg:overflow-hidden flex flex-col lg:flex-row">
 
         <!-- ========================================================== -->
-        <!-- BACKGROUND LAYER: PHOTO WITH MOTION DRIFT & AMBIENT GLOW   -->
+        <!-- BACKGROUND LAYER: PHOTO & AMBIENT GLOW                      -->
         <!-- ========================================================== -->
         <div class="absolute inset-0 w-full h-full pointer-events-none overflow-hidden z-0">
-            <!-- Drift Architectural Photo -->
-            <div class="w-full h-full bg-cover bg-center animate-bg-drift filter brightness-[0.92] dark:brightness-[0.70] contrast-[1.05]"
+            <!-- Architectural Photo -->
+            <div class="w-full h-full bg-cover bg-center filter brightness-[0.92] dark:brightness-[0.70] contrast-[1.05]"
                  style="background-image: url('https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=2000&q=80');">
             </div>
 
@@ -303,77 +135,106 @@
                  style="background: linear-gradient(105deg, var(--bg-overlay-start) 0%, var(--bg-overlay-end) 100%);"></div>
             
             <!-- Soft Ambient Glow Orbs -->
-            <div class="absolute top-1/4 right-1/4 w-96 h-96 bg-cyan-500/10 dark:bg-cyan-500/15 rounded-full blur-3xl pointer-events-none animate-pulse" style="animation-duration: 8s;"></div>
-            <div class="absolute bottom-1/4 right-1/3 w-80 h-80 bg-indigo-500/10 dark:bg-indigo-500/15 rounded-full blur-3xl pointer-events-none animate-pulse" style="animation-duration: 11s;"></div>
+            <div class="absolute top-1/4 right-1/4 w-96 h-96 bg-cyan-500/10 dark:bg-cyan-500/15 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute bottom-1/4 right-1/3 w-80 h-80 bg-indigo-500/10 dark:bg-indigo-500/15 rounded-full blur-3xl pointer-events-none"></div>
         </div>
 
         <!-- ========================================================== -->
-        <!-- MOBILE VIEWPORT (LAYOUT DIBALIK: INFORMASI ATAS, LOGIN BAWAH) -->
+        <!-- MOBILE VIEWPORT (MATCHING REFERENCE UI 1:1)               -->
         <!-- ========================================================== -->
-        <div id="mobileLayout" class="flex lg:hidden relative z-30 w-full min-h-screen flex-col justify-between overflow-x-hidden">
+        <!-- ========================================================== -->
+        <!-- MOBILE VIEWPORT (100% DEVICE FIT - ZERO SCROLLING)        -->
+        <!-- ========================================================== -->
+        <div id="mobileLayout" class="flex lg:hidden relative z-30 w-full h-[100dvh] flex-col justify-between overflow-hidden">
             
-            <!-- 1. TOP SECTION: INFORMASI & BRANDING -->
-            <div class="px-5 pt-6 pb-2 relative z-20">
+            <!-- 1. TOP SECTION: INFORMASI & BRANDING (EXPOSING ~42% OF VIEWPORT HEIGHT) -->
+            <div class="px-5 pt-7 sm:pt-8 pb-3 relative z-20 transition-colors duration-300 shrink-0" style="background-color: var(--bg-left);">
                 <!-- Branding Header & Theme Toggle -->
                 <div class="flex items-center justify-between">
                     <div class="flex items-center space-x-3">
-                        <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-[#141C2A] border border-cyan-500/40 dark:border-[#22364E] flex items-center justify-center text-cyan-500 shadow-[0_0_15px_rgba(56,189,248,0.25)] relative">
-                            <i data-lucide="compass" class="w-5 h-5 text-cyan-500 dark:text-cyan-300"></i>
-                            <span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-500 rounded-full ring-2 ring-[var(--bg-page)]"></span>
+                        <div class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-[#141C2A] border border-cyan-500/30 flex items-center justify-center text-cyan-600 dark:text-cyan-400 shadow-xs relative">
+                            <i data-lucide="compass" class="w-4.5 h-4.5 text-cyan-600 dark:text-cyan-400"></i>
+                            <span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-500 rounded-full ring-2 ring-[var(--bg-left)]"></span>
                         </div>
                         <div>
-                            <span class="font-extrabold text-[13px] tracking-wider text-slate-800 dark:text-[#D1DBE8] uppercase block">JURNAL ESEMKITA</span>
-                            <span class="text-[9px] font-semibold text-slate-500 dark:text-[#5A6D87] uppercase tracking-widest block -mt-0.5">MONITORING TERPADU</span>
+                            <span class="font-extrabold text-xs tracking-wider text-slate-900 dark:text-white uppercase block">JURNAL ESEMKITA</span>
+                            <span class="text-[9px] font-semibold text-cyan-600 dark:text-cyan-400 uppercase tracking-widest block -mt-0.5">MONITORING TERPADU</span>
                         </div>
                     </div>
 
                     <!-- Theme Toggle Button -->
-                    <button type="button" onclick="toggleTheme()" class="theme-toggle-btn h-9 w-9 rounded-xl border border-slate-300 dark:border-[#233144] bg-white/80 dark:bg-[#141C29]/80 backdrop-blur-md text-slate-700 dark:text-slate-300 hover:text-cyan-500 dark:hover:text-cyan-300 transition-all flex items-center justify-center cursor-pointer shadow-xs" title="Ganti Mode Siang / Malam">
+                    <button type="button" onclick="toggleTheme()" class="theme-toggle-btn h-8.5 w-8.5 rounded-xl border border-slate-300 dark:border-slate-700/60 bg-white/80 dark:bg-[#141C29]/80 backdrop-blur-md text-slate-700 dark:text-slate-300 hover:text-cyan-600 dark:hover:text-cyan-300 transition-all flex items-center justify-center cursor-pointer shadow-xs" title="Ganti Mode Siang / Malam">
                         <span class="theme-toggle-icon-wrap flex items-center justify-center">
-                            <i data-lucide="sun" class="w-4 h-4 text-amber-500 hidden dark:inline-block"></i>
-                            <i data-lucide="moon" class="w-4 h-4 text-slate-700 dark:hidden inline-block"></i>
+                            <i data-lucide="sun" class="w-4.5 h-4.5 text-amber-500 hidden dark:inline-block"></i>
+                            <i data-lucide="moon" class="w-4.5 h-4.5 text-slate-700 dark:hidden inline-block"></i>
                         </span>
                     </button>
                 </div>
 
-                <!-- Headline -->
-                <div class="mt-4">
-                    <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight leading-snug text-slate-900 dark:text-white">
+                <!-- Headline & Subtitle -->
+                <div class="mt-3">
+                    <h1 class="text-lg sm:text-xl font-extrabold tracking-tight leading-tight text-slate-900 dark:text-white">
                         Pusat Monitoring dan Pembelajaran Sekolah Real-Time
                     </h1>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
+                        Sistem terintegrasi untuk pencatatan jurnal, absensi, monitoring kegiatan kelas, dan perizinan sekolah.
+                    </p>
                 </div>
 
-                <!-- Badges / Feature Chips Sesuai Desain Pilihan -->
-                <div class="flex flex-wrap gap-1.5 mt-3">
-                    <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-[10.5px] font-semibold bg-slate-900/60 dark:bg-[#152033]/80 border border-cyan-500/30 text-cyan-300 backdrop-blur-sm shadow-xs">
-                        <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 mr-1.5 animate-pulse"></span>
-                        Real-Time Stats
-                    </span>
-                    <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-[10.5px] font-semibold bg-slate-900/60 dark:bg-[#152033]/80 border border-cyan-500/30 text-cyan-300 backdrop-blur-sm shadow-xs">
-                        <i data-lucide="clipboard-check" class="w-3 h-3 mr-1.5 text-cyan-400"></i>
-                        Class Journals
-                    </span>
-                    <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-[10.5px] font-semibold bg-slate-900/60 dark:bg-[#152033]/80 border border-cyan-500/30 text-cyan-300 backdrop-blur-sm shadow-xs">
-                        <i data-lucide="user-check" class="w-3 h-3 mr-1.5 text-cyan-400"></i>
-                        Attendance
-                    </span>
-                    <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-[10.5px] font-semibold bg-slate-900/60 dark:bg-[#152033]/80 border border-cyan-500/30 text-cyan-300 backdrop-blur-sm shadow-xs">
-                        <i data-lucide="clock" class="w-3 h-3 mr-1.5 text-cyan-400"></i>
-                        Monitoring Guru
-                    </span>
-                    <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-[10.5px] font-semibold bg-slate-900/60 dark:bg-[#152033]/80 border border-cyan-500/30 text-cyan-300 backdrop-blur-sm shadow-xs">
-                        <i data-lucide="key" class="w-3 h-3 mr-1.5 text-cyan-400"></i>
-                        Validasi Satpam
-                    </span>
-                    <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-[10.5px] font-semibold bg-slate-900/60 dark:bg-[#152033]/80 border border-cyan-500/30 text-cyan-300 backdrop-blur-sm shadow-xs">
-                        <i data-lucide="database" class="w-3 h-3 mr-1.5 text-cyan-400"></i>
-                        Audit Log
-                    </span>
+                <!-- Structured Feature List Cards (6 Features in 2 Columns) -->
+                <div class="grid grid-cols-2 gap-2 mt-3">
+                    <!-- Feature 1 -->
+                    <div class="flex items-center space-x-2 p-2 rounded-xl bg-slate-100/90 dark:bg-slate-900/80 border border-slate-200 dark:border-cyan-500/25 text-slate-800 dark:text-slate-200 text-xs font-semibold shadow-2xs">
+                        <div class="w-6 h-6 rounded-lg bg-cyan-500/10 dark:bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 flex items-center justify-center shrink-0">
+                            <i data-lucide="clipboard-check" class="w-3.5 h-3.5"></i>
+                        </div>
+                        <span class="truncate text-[11px]">Jurnal & Absensi</span>
+                    </div>
+
+                    <!-- Feature 2 -->
+                    <div class="flex items-center space-x-2 p-2 rounded-xl bg-slate-100/90 dark:bg-slate-900/80 border border-slate-200 dark:border-cyan-500/25 text-slate-800 dark:text-slate-200 text-xs font-semibold shadow-2xs">
+                        <div class="w-6 h-6 rounded-lg bg-cyan-500/10 dark:bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 flex items-center justify-center shrink-0">
+                            <i data-lucide="key" class="w-3.5 h-3.5"></i>
+                        </div>
+                        <span class="truncate text-[11px]">Validasi Satpam</span>
+                    </div>
+
+                    <!-- Feature 3 -->
+                    <div class="flex items-center space-x-2 p-2 rounded-xl bg-slate-100/90 dark:bg-slate-900/80 border border-slate-200 dark:border-cyan-500/25 text-slate-800 dark:text-slate-200 text-xs font-semibold shadow-2xs">
+                        <div class="w-6 h-6 rounded-lg bg-cyan-500/10 dark:bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 flex items-center justify-center shrink-0">
+                            <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+                        </div>
+                        <span class="truncate text-[11px]">Monitoring Guru</span>
+                    </div>
+
+                    <!-- Feature 4 -->
+                    <div class="flex items-center space-x-2 p-2 rounded-xl bg-slate-100/90 dark:bg-slate-900/80 border border-slate-200 dark:border-cyan-500/25 text-slate-800 dark:text-slate-200 text-xs font-semibold shadow-2xs">
+                        <div class="w-6 h-6 rounded-lg bg-cyan-500/10 dark:bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 flex items-center justify-center shrink-0">
+                            <i data-lucide="users" class="w-3.5 h-3.5"></i>
+                        </div>
+                        <span class="truncate text-[11px]">Alokasi Kelas</span>
+                    </div>
+
+                    <!-- Feature 5 -->
+                    <div class="flex items-center space-x-2 p-2 rounded-xl bg-slate-100/90 dark:bg-slate-900/80 border border-slate-200 dark:border-cyan-500/25 text-slate-800 dark:text-slate-200 text-xs font-semibold shadow-2xs">
+                        <div class="w-6 h-6 rounded-lg bg-cyan-500/10 dark:bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 flex items-center justify-center shrink-0">
+                            <i data-lucide="activity" class="w-3.5 h-3.5"></i>
+                        </div>
+                        <span class="truncate text-[11px]">Real-Time Stats</span>
+                    </div>
+
+                    <!-- Feature 6 -->
+                    <div class="flex items-center space-x-2 p-2 rounded-xl bg-slate-100/90 dark:bg-slate-900/80 border border-slate-200 dark:border-cyan-500/25 text-slate-800 dark:text-slate-200 text-xs font-semibold shadow-2xs">
+                        <div class="w-6 h-6 rounded-lg bg-cyan-500/10 dark:bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 flex items-center justify-center shrink-0">
+                            <i data-lucide="database" class="w-3.5 h-3.5"></i>
+                        </div>
+                        <span class="truncate text-[11px]">Audit Log & Rekap</span>
+                    </div>
                 </div>
             </div>
 
-            <!-- 2. MIDDLE LAYER: DYNAMIC FLOWING WAVE (PERSIS DESAIN PERTAMA) -->
-            <div class="relative w-full h-24 -my-2 flex items-center pointer-events-none z-20 overflow-visible">
+            <!-- 2. MIDDLE LAYER: DYNAMIC FLOWING WAVE -->
+            <div class="relative w-full h-12 -mt-0.5 flex items-center pointer-events-none z-20 overflow-visible shrink-0">
                 <svg id="mobileWaveSvg" class="w-full h-full overflow-visible pointer-events-none" preserveAspectRatio="none">
                     <defs>
                         <linearGradient id="mWaveGradCyan" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -398,8 +259,10 @@
                         </filter>
                     </defs>
 
+                    <!-- Solid Fill from Top Section Down to Wave Curve -->
+                    <path id="mWaveFillPath" style="fill: var(--bg-left); transition: fill 0.3s ease;" d="" />
                     <!-- Shadow Base -->
-                    <path id="mWavePathShadow" fill="none" stroke="rgba(0,0,0,0.5)" stroke-width="12" stroke-linecap="round" d="" />
+                    <path id="mWavePathShadow" fill="none" stroke="var(--wave-shadow)" stroke-width="12" stroke-linecap="round" d="" />
                     <!-- Metallic Silver Ribbon -->
                     <path id="mWavePathSilver" fill="none" stroke="url(#mWaveGradSilver)" stroke-width="6" stroke-linecap="round" d="" />
                     <!-- Cyan Fluid Wave Ribbon -->
@@ -407,32 +270,41 @@
                     <!-- Bright Light Beam Highlight -->
                     <path id="mWavePathHighlight" fill="none" stroke="url(#mWaveGradHighlight)" stroke-width="2" stroke-linecap="round" d="" />
                     <!-- Secondary Cyan Echo Wave -->
-                    <path id="mWavePathCyan2" fill="none" stroke="rgba(56, 189, 248, 0.5)" stroke-width="2.5" stroke-linecap="round" d="" />
+                    <path id="mWavePathCyan2" fill="none" stroke="rgba(56, 189, 248, 0.4)" stroke-width="2.5" stroke-linecap="round" d="" />
                 </svg>
             </div>
 
-            <!-- 3. BOTTOM SECTION: LOGIN CARD (SOLID FROSTED GLASS) -->
-            <div class="relative z-30 w-full mt-auto px-4 pb-6">
-                <div class="relative rounded-[28px] p-6 pt-5 bg-[#0C1424]/92 dark:bg-[#0C1220]/92 border border-sky-400/30 shadow-[0_-10px_35px_rgba(0,0,0,0.6)] backdrop-blur-2xl overflow-hidden">
-                    <!-- Subtle Glass Sheen Sweep -->
-                    <div class="sheen-sweep-slow"></div>
+            <!-- 3. BOTTOM SECTION: FROSTED GLASS LOGIN CARD -->
+            <div class="relative z-30 w-full px-4 py-2 flex-1 flex flex-col justify-between overflow-hidden">
+                <div class="relative rounded-2xl p-4 sm:p-5 bg-white/90 dark:bg-[#0C1220]/95 border border-slate-200 dark:border-sky-400/30 shadow-xl dark:shadow-[0_-10px_35px_rgba(0,0,0,0.6)] backdrop-blur-2xl my-auto">
+
+                    <!-- Mobile Card Header -->
+                    <div class="mb-3 pb-2 border-b border-slate-200/60 dark:border-slate-800/80 flex items-center justify-between">
+                        <div>
+                            <h2 class="text-xs font-bold text-slate-900 dark:text-white flex items-center space-x-1.5">
+                                <i data-lucide="log-in" class="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400"></i>
+                                <span>Form Login Pengguna</span>
+                            </h2>
+                        </div>
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 ring-4 ring-emerald-500/20"></span>
+                    </div>
 
                     <!-- Flash Message: Success -->
                     @if (session('success'))
-                        <div class="mb-4 px-3.5 py-2.5 bg-emerald-50 dark:bg-[#122D28]/90 border border-emerald-300 dark:border-[#1E5C4E]/70 rounded-xl text-emerald-800 dark:text-emerald-300 flex items-center space-x-2 shadow-sm text-xs">
-                            <i data-lucide="check-circle" class="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0"></i>
-                            <span class="font-medium">{{ session('success') }}</span>
+                        <div class="mb-3 px-3 py-2 bg-emerald-50 dark:bg-[#122D28]/90 border border-emerald-300 dark:border-[#1E5C4E]/70 rounded-xl text-emerald-800 dark:text-emerald-300 flex items-center space-x-2 shadow-sm text-xs">
+                            <i data-lucide="check-circle" class="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0"></i>
+                            <span class="font-medium text-[11px]">{{ session('success') }}</span>
                         </div>
                     @endif
 
                     <!-- Flash Message: Errors -->
                     @if ($errors->any())
-                        <div class="mb-4 px-3.5 py-2.5 bg-rose-50 dark:bg-[#38151B]/90 border border-rose-300 dark:border-[#69232F]/80 rounded-xl text-rose-800 dark:text-rose-300 text-xs shadow-sm">
+                        <div class="mb-3 px-3 py-2 bg-rose-50 dark:bg-[#38151B]/90 border border-rose-300 dark:border-[#69232F]/80 rounded-xl text-rose-800 dark:text-rose-300 text-xs shadow-sm">
                             <div class="flex items-start space-x-2">
-                                <i data-lucide="alert-circle" class="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0 mt-0.5"></i>
+                                <i data-lucide="alert-circle" class="w-3.5 h-3.5 text-rose-600 dark:text-rose-400 shrink-0 mt-0.5"></i>
                                 <div>
-                                    <p class="font-bold">Gagal Masuk:</p>
-                                    <ul class="list-disc list-inside mt-0.5 space-y-0.5 text-[11px]">
+                                    <p class="font-bold text-[11px]">Gagal Masuk:</p>
+                                    <ul class="list-disc list-inside mt-0.5 space-y-0.5 text-[10.5px]">
                                         @foreach ($errors->all() as $error)
                                             <li>{{ $error }}</li>
                                         @endforeach
@@ -442,97 +314,84 @@
                         </div>
                     @endif
 
-                    <form action="{{ route('login.post') }}" method="POST" class="space-y-3.5">
+                    <form action="{{ route('login.post') }}" method="POST" class="space-y-3">
                         @csrf
 
                         <!-- Username Input -->
                         <div>
-                            <label for="username_mobile" class="block text-[11px] font-semibold mb-1" style="color: var(--text-label);">Username</label>
-                            <div class="beam-wrapper group">
-                                <div class="beam-rotator beam-username"></div>
-                                <div class="relative rounded-[10.5px] flex items-center overflow-hidden" style="background-color: var(--input-bg-inner);">
-                                    <div class="input-sheen"></div>
-                                    <div class="pl-3.5 pr-1 text-slate-400 shrink-0 relative z-10">
-                                        <i data-lucide="user" class="w-4 h-4"></i>
-                                    </div>
-                                    <input 
-                                        type="text" 
-                                        name="username" 
-                                        id="username_mobile" 
-                                        value="{{ old('username') }}" 
-                                        placeholder="your-nip@esemkita / username" 
-                                        required
-                                        autocomplete="username"
-                                        class="w-full px-2.5 py-2.5 bg-transparent text-xs sm:text-sm focus:outline-none transition-colors relative z-10"
-                                        style="color: var(--input-text);"
-                                    >
+                            <label for="username_mobile" class="block text-[11px] font-semibold mb-1 text-slate-700 dark:text-slate-200">Username</label>
+                            <div class="relative rounded-xl flex items-center border border-slate-300 dark:border-sky-500/40 bg-slate-50 dark:bg-[#141C29] focus-within:border-cyan-500 dark:focus-within:border-cyan-400 focus-within:ring-2 focus-within:ring-cyan-500/20 transition-all shadow-xs">
+                                <div class="pl-3 pr-1 text-slate-400 shrink-0">
+                                    <i data-lucide="user" class="w-3.5 h-3.5"></i>
                                 </div>
+                                <input 
+                                    type="text" 
+                                    name="username" 
+                                    id="username_mobile" 
+                                    value="{{ old('username') }}" 
+                                    placeholder="your-nip@esemkita / username" 
+                                    required
+                                    autocomplete="username"
+                                    class="w-full px-2 py-2 bg-transparent text-xs text-slate-900 dark:text-white focus:outline-none transition-colors"
+                                >
                             </div>
                         </div>
 
                         <!-- Password Input -->
                         <div>
-                            <label for="password_mobile" class="block text-[11px] font-semibold mb-1" style="color: var(--text-label);">Password</label>
-                            <div class="beam-wrapper group">
-                                <div class="beam-rotator beam-password"></div>
-                                <div class="relative rounded-[10.5px] flex items-center overflow-hidden" style="background-color: var(--input-bg-inner);">
-                                    <div class="input-sheen"></div>
-                                    <div class="pl-3.5 pr-1 text-slate-400 shrink-0 relative z-10">
-                                        <i data-lucide="lock" class="w-4 h-4"></i>
-                                    </div>
-                                    <input 
-                                        type="password" 
-                                        name="password" 
-                                        id="password_mobile" 
-                                        placeholder="Your Password" 
-                                        required
-                                        autocomplete="current-password"
-                                        class="w-full px-2.5 py-2.5 bg-transparent text-xs sm:text-sm focus:outline-none transition-colors pr-10 relative z-10"
-                                        style="color: var(--input-text);"
-                                    >
-                                    <button type="button" onclick="togglePasswordVisibility('password_mobile', 'passwordToggleIcon_mobile')" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-cyan-400 transition-colors z-20 cursor-pointer" title="Lihat/Sembunyikan Password">
-                                        <i id="passwordToggleIcon_mobile" data-lucide="eye" class="w-4 h-4"></i>
-                                    </button>
+                            <label for="password_mobile" class="block text-[11px] font-semibold mb-1 text-slate-700 dark:text-slate-200">Password</label>
+                            <div class="relative rounded-xl flex items-center border border-slate-300 dark:border-sky-500/40 bg-slate-50 dark:bg-[#141C29] focus-within:border-cyan-500 dark:focus-within:border-cyan-400 focus-within:ring-2 focus-within:ring-cyan-500/20 transition-all shadow-xs">
+                                <div class="pl-3 pr-1 text-slate-400 shrink-0">
+                                    <i data-lucide="lock" class="w-3.5 h-3.5"></i>
                                 </div>
+                                <input 
+                                    type="password" 
+                                    name="password" 
+                                    id="password_mobile" 
+                                    placeholder="Your Password" 
+                                    required
+                                    autocomplete="current-password"
+                                    class="w-full px-2 py-2 bg-transparent text-xs text-slate-900 dark:text-white focus:outline-none transition-colors pr-9"
+                                >
+                                <button type="button" onclick="togglePasswordVisibility('password_mobile', 'passwordToggleIcon_mobile')" class="absolute inset-y-0 right-0 pr-2.5 flex items-center text-slate-400 hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors z-20 cursor-pointer" title="Lihat/Sembunyikan Password">
+                                    <i id="passwordToggleIcon_mobile" data-lucide="eye" class="w-3.5 h-3.5"></i>
+                                </button>
                             </div>
                         </div>
 
                         <!-- Remember Me & Forgot Password -->
-                        <div class="flex items-center justify-between pt-0.5 text-xs">
-                            <label class="flex items-center space-x-2 cursor-pointer select-none">
+                        <div class="flex items-center justify-between pt-0.5 text-[11px]">
+                            <label class="flex items-center space-x-1.5 cursor-pointer select-none">
                                 <input 
                                     type="checkbox" 
                                     name="remember" 
                                     value="1" 
-                                    class="w-3.5 h-3.5 rounded border-slate-300 dark:border-[#2E3D52] text-cyan-600 focus:ring-cyan-500/20 accent-cyan-500 cursor-pointer"
+                                    class="w-3.5 h-3.5 rounded border-slate-300 dark:border-slate-600 bg-white dark:bg-[#141C29] text-cyan-600 focus:ring-cyan-500/20 accent-cyan-500 cursor-pointer"
                                 >
-                                <span class="text-[11px] font-medium" style="color: var(--text-subtitle);">Remember me</span>
+                                <span class="font-medium text-slate-600 dark:text-slate-300">Remember me</span>
                             </label>
-                            <a href="javascript:void(0)" onclick="showForgotPasswordAlert()" class="hover:text-cyan-500 dark:hover:text-cyan-400 text-[11px] font-medium transition-colors" style="color: var(--text-subtitle);">
+                            <a href="javascript:void(0)" onclick="showForgotPasswordAlert()" class="hover:text-cyan-600 dark:hover:text-cyan-400 font-medium text-cyan-600 dark:text-cyan-300 transition-colors">
                                 Forgot Password?
                             </a>
                         </div>
 
                         <!-- Log In Button -->
-                        <div class="pt-1.5">
+                        <div class="pt-1">
                             <button 
                                 type="submit" 
-                                class="w-full py-3 px-5 rounded-xl font-bold text-xs sm:text-sm text-white tracking-wide bg-gradient-to-r from-[#0284C7] to-[#0369A1] hover:from-[#0369A1] hover:to-[#075985] border border-sky-400/40 shadow-lg shadow-sky-500/25 transition-all duration-200 flex items-center justify-center space-x-2 cursor-pointer"
+                                class="w-full py-2.5 px-4 rounded-xl font-bold text-xs text-white tracking-wide bg-gradient-to-r from-[#0284C7] to-[#0369A1] hover:from-[#0369A1] hover:to-[#075985] border border-sky-400/50 shadow-md shadow-sky-500/20 transition-all duration-200 flex items-center justify-center space-x-2 cursor-pointer"
                             >
                                 <span>Log In</span>
-                                <i data-lucide="arrow-right" class="w-4 h-4 text-cyan-200"></i>
+                                <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-cyan-200"></i>
                             </button>
                         </div>
                     </form>
 
-                    <!-- Footer Status -->
-                    <div class="mt-4 pt-3 border-t border-slate-700/50 flex items-center justify-between text-[10px] text-slate-400">
-                        <span class="flex items-center space-x-1.5">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                            <span>Server Online • v2.0 Enterprise</span>
-                        </span>
-                        <span>Support TU: ext. 102</span>
-                    </div>
+                </div>
+
+                <!-- Footer Status Below Card -->
+                <div class="text-center text-[10.5px] text-slate-500 dark:text-slate-400 font-medium py-1 shrink-0">
+                    Esemkita SMEA • Server Online v2.0 Enterprise
                 </div>
             </div>
 
@@ -608,59 +467,47 @@
                 <form action="{{ route('login.post') }}" method="POST" class="space-y-4">
                     @csrf
 
-                    <!-- 1. Input Username (Rotating Border Beam 1) -->
+                    <!-- 1. Input Username -->
                     <div>
                         <label for="username" class="block text-[11.5px] font-semibold mb-1.5" style="color: var(--text-label);">Username</label>
-                        <div class="beam-wrapper group">
-                            <!-- Rotating Border Beam Element -->
-                            <div class="beam-rotator beam-username"></div>
-                            
-                            <!-- Inner Input Box -->
-                            <div class="relative rounded-[10.5px] flex items-center overflow-hidden" style="background-color: var(--input-bg-inner);">
-                                <!-- Subtle Sheen Sweep -->
-                                <div class="input-sheen"></div>
-                                
-                                <input 
-                                    type="text" 
-                                    name="username" 
-                                    id="username" 
-                                    value="{{ old('username') }}" 
-                                    placeholder="your-nip@esemkita / username" 
-                                    required
-                                    autocomplete="username"
-                                    class="w-full px-4 py-3 bg-transparent text-xs sm:text-sm focus:outline-none transition-colors relative z-10"
-                                    style="color: var(--input-text);"
-                                >
+                        <div class="relative rounded-xl flex items-center border border-slate-300 dark:border-[#233144] bg-white dark:bg-[#141C29] focus-within:border-cyan-500 dark:focus-within:border-cyan-400 focus-within:ring-2 focus-within:ring-cyan-500/20 transition-all">
+                            <div class="pl-3.5 pr-1 text-slate-400 shrink-0">
+                                <i data-lucide="user" class="w-4 h-4"></i>
                             </div>
+                            <input 
+                                type="text" 
+                                name="username" 
+                                id="username" 
+                                value="{{ old('username') }}" 
+                                placeholder="your-nip@esemkita / username" 
+                                required
+                                autocomplete="username"
+                                class="w-full px-3.5 py-3 bg-transparent text-xs sm:text-sm focus:outline-none transition-colors"
+                                style="color: var(--input-text);"
+                            >
                         </div>
                     </div>
 
-                    <!-- 2. Input Password (Rotating Border Beam 2) -->
+                    <!-- 2. Input Password -->
                     <div>
                         <label for="password" class="block text-[11.5px] font-semibold mb-1.5" style="color: var(--text-label);">Password</label>
-                        <div class="beam-wrapper group">
-                            <!-- Rotating Border Beam Element (Delayed in sequence) -->
-                            <div class="beam-rotator beam-password"></div>
-                            
-                            <!-- Inner Input Box -->
-                            <div class="relative rounded-[10.5px] flex items-center overflow-hidden" style="background-color: var(--input-bg-inner);">
-                                <!-- Subtle Sheen Sweep -->
-                                <div class="input-sheen"></div>
-
-                                <input 
-                                    type="password" 
-                                    name="password" 
-                                    id="password" 
-                                    placeholder="Your Password" 
-                                    required
-                                    autocomplete="current-password"
-                                    class="w-full px-4 py-3 bg-transparent text-xs sm:text-sm focus:outline-none transition-colors pr-11 relative z-10"
-                                    style="color: var(--input-text);"
-                                >
-                                <button type="button" onclick="togglePasswordVisibility()" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-cyan-500 dark:hover:text-cyan-400 transition-colors z-20 cursor-pointer" title="Lihat/Sembunyikan Password">
-                                    <i id="passwordToggleIcon" data-lucide="eye" class="w-4 h-4"></i>
-                                </button>
+                        <div class="relative rounded-xl flex items-center border border-slate-300 dark:border-[#233144] bg-white dark:bg-[#141C29] focus-within:border-cyan-500 dark:focus-within:border-cyan-400 focus-within:ring-2 focus-within:ring-cyan-500/20 transition-all">
+                            <div class="pl-3.5 pr-1 text-slate-400 shrink-0">
+                                <i data-lucide="lock" class="w-4 h-4"></i>
                             </div>
+                            <input 
+                                type="password" 
+                                name="password" 
+                                id="password" 
+                                placeholder="Your Password" 
+                                required
+                                autocomplete="current-password"
+                                class="w-full px-3.5 py-3 bg-transparent text-xs sm:text-sm focus:outline-none transition-colors pr-11"
+                                style="color: var(--input-text);"
+                            >
+                            <button type="button" onclick="togglePasswordVisibility()" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-cyan-500 dark:hover:text-cyan-400 transition-colors z-20 cursor-pointer" title="Lihat/Sembunyikan Password">
+                                <i id="passwordToggleIcon" data-lucide="eye" class="w-4 h-4"></i>
+                            </button>
                         </div>
                     </div>
 
@@ -759,13 +606,11 @@
         </svg>
 
         <!-- ========================================================== -->
-        <!-- FROSTED GLASS BLUR & CALM SHEEN LAYER                      -->
+        <!-- FROSTED GLASS BLUR LAYER                                  -->
         <!-- Coordinates match 1:1 with the full-screen SVG ClipPath   -->
         <!-- ========================================================== -->
         <div id="glassBlurLayer" class="hidden lg:block absolute inset-0 pointer-events-none z-[22] overflow-hidden"
              style="clip-path: url(#glassCardClip); -webkit-clip-path: url(#glassCardClip); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);">
-            <!-- Slow, Calm, Subtle Diagonal Glass Sheen Sweep ("samar & ga kecepeten") -->
-            <div class="sheen-sweep-slow"></div>
         </div>
 
         <!-- ========================================================== -->
@@ -918,9 +763,10 @@
             applyTheme();
         }
 
-        // Dynamic Multi-Ribbon Mobile Wave (Desain Pertama)
+        // Dynamic Multi-Ribbon Mobile Wave (Smooth Wave Motion & Top Fill)
         let mobileWaveRunning = false;
         function initMobileWave() {
+            const fillPath = document.getElementById('mWaveFillPath');
             const shadowPath = document.getElementById('mWavePathShadow');
             const silverPath = document.getElementById('mWavePathSilver');
             const cyanPath1 = document.getElementById('mWavePathCyan1');
@@ -944,8 +790,8 @@
                 const elapsed = (time - startTime) * 0.001;
 
                 const W = svg.clientWidth || window.innerWidth;
-                const H = svg.clientHeight || 96;
-                const midY = H * 0.5;
+                const H = svg.clientHeight || 80;
+                const midY = H * 0.45;
 
                 const steps = 36;
                 const dx = W / steps;
@@ -957,13 +803,11 @@
                     const x = i * dx;
                     const u = x / W;
 
-                    // Multi-harmonic fluid wave matching Desain Pertama
-                    const w1 = Math.sin((u * 2.6 - 0.2) * Math.PI + elapsed * 1.6) * 13;
-                    const w2 = Math.cos((u * 4.2) * Math.PI - elapsed * 1.9) * 6;
+                    const w1 = Math.sin((u * 2.6 - 0.2) * Math.PI + elapsed * 1.6) * 11;
+                    const w2 = Math.cos((u * 4.2) * Math.PI - elapsed * 1.9) * 5;
                     const y1 = midY + w1 + w2;
 
-                    // Secondary echo wave with phase shift
-                    const w3 = Math.sin((u * 3.0) * Math.PI + elapsed * 1.3 + 0.8) * 9;
+                    const w3 = Math.sin((u * 3.0) * Math.PI + elapsed * 1.3 + 0.8) * 7;
                     const y2 = midY + w3;
 
                     pts1.push({ x, y: y1 });
@@ -980,10 +824,19 @@
                     d2 += ` L ${pts2[i].x.toFixed(1)},${pts2[i].y.toFixed(1)}`;
                 }
 
+                if (fillPath) {
+                    let fillD = `M 0,0 L ${pts1[0].x.toFixed(1)},${pts1[0].y.toFixed(1)}`;
+                    for (let i = 1; i < pts1.length; i++) {
+                        fillD += ` L ${pts1[i].x.toFixed(1)},${pts1[i].y.toFixed(1)}`;
+                    }
+                    fillD += ` L ${W.toFixed(1)},0 Z`;
+                    fillPath.setAttribute('d', fillD);
+                }
+
                 shadowPath.setAttribute('d', d1);
-                silverPath.setAttribute('d', d1);
+                if (silverPath) silverPath.setAttribute('d', d1);
                 cyanPath1.setAttribute('d', d1);
-                highlightPath.setAttribute('d', d1);
+                if (highlightPath) highlightPath.setAttribute('d', d1);
                 if (cyanPath2) cyanPath2.setAttribute('d', d2);
 
                 requestAnimationFrame(animateMobile);
@@ -992,7 +845,7 @@
             requestAnimationFrame(animateMobile);
         }
 
-        // Synchronized Dynamic Wave & Right Card Wave (Desktop)
+        // Synchronized Dynamic Wave & Right Card Wave (Desktop Smooth Motion)
         let desktopWaveRunning = false;
         function initSynchronizedWaveAndCard() {
             const fullWaveSvg = document.getElementById('fullWaveSvg');

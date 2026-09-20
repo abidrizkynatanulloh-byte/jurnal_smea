@@ -427,7 +427,7 @@ class WhatsAppService
             $waliKelasMap = []; // [ id_guru => [ 'guru' => Guru, 'kelas' => Kelas, 'siswa_list' => [] ] ]
 
             foreach ($nisList as $nis) {
-                $siswa = Siswa::with('kelas')->find($nis);
+                $siswa = Siswa::with('kelas')->where('nis', $nis)->orWhere('nisn', $nis)->first();
                 if (!$siswa) continue;
 
                 $namaSiswa = $siswa->nama_siswa;
@@ -568,5 +568,193 @@ class WhatsAppService
         } catch (\Throwable $e) {
             Log::error("WhatsAppService Error (sendReminderPengisianJurnal ID {$jadwal->id_jadwal}): " . $e->getMessage());
         }
+    }
+
+    /**
+     * Kirim rekapitulasi notifikasi WA siswa Alpa setelah jam sekolah selesai.
+     * Mengelompokkan apakah siswa Alpa FULL SEHARIAN atau Alpa di JAM TERTENTU.
+     *
+     * @param string|null $tanggal Y-m-d format (defaults to today)
+     * @return array Status pengiriman
+     */
+    public static function sendDailyAlphaSummaryToParents(?string $tanggal = null): array
+    {
+        $targetDate = $tanggal ?? \Carbon\Carbon::today()->toDateString();
+        $dateFormatted = date('d-m-Y', strtotime($targetDate));
+        
+        $results = [
+            'total_siswa_alpa' => 0,
+            'full_alpa'        => 0,
+            'partial_alpa'     => 0,
+            'ortu_sent'        => 0,
+            'wali_sent'        => 0,
+        ];
+
+        try {
+            // 1. Ambil semua catatan ketidakhadiran dengan keterangan 'Alpa' pada tanggal tersebut
+            $records = \App\Models\JurnalDetailKetidakhadiran::with([
+                    'siswa.kelas',
+                    'jurnal.jadwal.mapel',
+                    'jurnal.jadwal.guru',
+                ])
+                ->whereHas('jurnal', function ($q) use ($targetDate) {
+                    $q->whereDate('tanggal', $targetDate);
+                })
+                ->where('keterangan', 'Alpa')
+                ->get();
+
+            if ($records->isEmpty()) {
+                Log::info("WhatsAppService: Tidak ada data siswa Alpa pada tanggal {$targetDate}.");
+                return $results;
+            }
+
+            // Group records by student NIS
+            $groupedBySiswa = $records->groupBy('id_siswa');
+            $results['total_siswa_alpa'] = $groupedBySiswa->count();
+
+            // Map untuk rekap ke Wali Kelas: [ id_guru => [ 'guru' => Guru, 'kelas' => Kelas, 'siswa_details' => [] ] ]
+            $waliKelasSummary = [];
+
+            foreach ($groupedBySiswa as $nis => $siswaRecords) {
+                $firstRecord = $siswaRecords->first();
+                $siswa = $firstRecord->siswa;
+
+                if (!$siswa) continue;
+
+                $namaSiswa = $siswa->nama_siswa;
+                $kelasObj = $siswa->kelas;
+                $namaKelas = $kelasObj->nama_kelas ?? '-';
+
+                // Hitung total jurnal yang sudah diisi untuk kelas siswa hari ini
+                $totalJurnalKelasHariIni = \App\Models\JurnalMengajar::whereDate('tanggal', $targetDate)
+                    ->whereHas('jadwal', function ($q) use ($siswa) {
+                        $q->where('id_kelas', $siswa->id_kelas);
+                    })
+                    ->count();
+
+                // Hitung total jam/sesi di mana siswa ini Alpa
+                $totalAlpaSiswa = $siswaRecords->count();
+
+                // Tentukan apakah Alpa Full (Alpa di semua jurnal yang terisi untuk kelas tersebut)
+                $isFullDay = ($totalAlpaSiswa >= $totalJurnalKelasHariIni && $totalJurnalKelasHariIni > 0);
+
+                if ($isFullDay) {
+                    $results['full_alpa']++;
+                    $statusHeader = "⚠️ *Status*: *ALPA FULL SEHARIAN (Jam ke-1 s/d Selesai)*";
+                    $detailPesan = "Siswa tidak tercatat hadir pada seluruh mata pelajaran yang terisi hari ini. Mohon konfirmasi ke Wali Kelas jika terdapat kekeliruan.";
+                } else {
+                    $results['partial_alpa']++;
+                    $statusHeader = "⚠️ *Status*: *ALPA PADA JAM TERTENTU*";
+                    
+                    $rincianJam = "";
+                    foreach ($siswaRecords as $rec) {
+                        $jurnal = $rec->jurnal;
+                        $jadwal = $jurnal->jadwal ?? null;
+                        $mapel = $jadwal->mapel->nama_mapel ?? 'Mata Pelajaran';
+                        $guru = $jadwal->guru->nama_guru ?? 'Guru Pengajar';
+                        $jamMulai = $jadwal->jam_mulai ?? '?';
+                        $jamSelesai = $jadwal->jam_selesai ?? '?';
+
+                        $rincianJam .= "  • Jam ke-{$jamMulai}-{$jamSelesai} ({$mapel} - Bpk/Ibu {$guru})\n";
+                    }
+
+                    $detailPesan = "📌 *Rincian Ketidakhadiran*:\n" . $rincianJam . "\nMohon perhatian dan pembinaan dari Orang Tua/Wali kepada siswa yang bersangkutan.";
+                }
+
+                // Kirim Pesan WA ke Orang Tua / Wali
+                if (!empty($siswa->no_hp_wali)) {
+                    $formattedOrtu = self::formatPhoneNumber($siswa->no_hp_wali);
+                    if ($formattedOrtu) {
+                        $msgOrtu = "[Pemberitahuan Rekap Presensi Siswa]\n\n" .
+                            "Yth. Orang Tua / Wali dari *{$namaSiswa}*,\n\n" .
+                            "Informasi ketidakhadiran siswa di sekolah pada hari ini ({$dateFormatted}):\n\n" .
+                            "🎓 *Nama Siswa* : {$namaSiswa}\n" .
+                            "🏫 *Kelas*      : {$namaKelas}\n" .
+                            "📅 *Tanggal*    : {$dateFormatted}\n" .
+                            "{$statusHeader}\n\n" .
+                            "{$detailPesan}\n\n" .
+                            "Terima Kasih.\nSMK Negeri 1";
+
+                        if (self::sendBulkMessage([$formattedOrtu], $msgOrtu)) {
+                            $results['ortu_sent']++;
+                        }
+                    }
+                }
+
+                // Data rekap untuk Wali Kelas
+                if ($kelasObj && !empty($kelasObj->wali_kelas)) {
+                    $waliVal = $kelasObj->wali_kelas;
+                    $waliGuru = \App\Models\Guru::where('nip', $waliVal)
+                        ->orWhere('id_guru', $waliVal)
+                        ->orWhere('nama_guru', $waliVal)
+                        ->first();
+
+                    if ($waliGuru) {
+                        $wKey = $waliGuru->id_guru;
+                        if (!isset($waliKelasSummary[$wKey])) {
+                            $waliKelasSummary[$wKey] = [
+                                'guru' => $waliGuru,
+                                'kelas' => $kelasObj,
+                                'siswa_list' => [],
+                            ];
+                        }
+                        $waliKelasSummary[$wKey]['siswa_list'][] = [
+                            'nama' => $namaSiswa,
+                            'is_full' => $isFullDay,
+                            'alpa_count' => $totalAlpaSiswa,
+                        ];
+
+                        // Simpan In-App Notification jika ada user account
+                        if ($waliGuru->user) {
+                            $typeText = $isFullDay ? "Alpa Full Seharian" : "Alpa {$totalAlpaSiswa} Jam";
+                            \App\Models\Notifikasi::create([
+                                'untuk_user_id' => $waliGuru->user->id,
+                                'judul'         => "Rekap Alpa: {$namaSiswa} ({$typeText})",
+                                'pesan'         => "Siswa {$namaSiswa} ({$namaKelas}) tercatat {$typeText} pada tanggal {$dateFormatted}.",
+                                'jenis'         => 'siswa_alpha',
+                                'ref_id'        => 0,
+                                'sudah_dibaca'  => 0,
+                                'created_at'    => now(),
+                            ]);
+                        }
+                    }
+                }
+            }
+
+            // Kirim Rekap ke masing-masing Wali Kelas
+            foreach ($waliKelasSummary as $wData) {
+                $wGuru = $wData['guru'];
+                $wKelas = $wData['kelas'];
+                $sList = $wData['siswa_list'];
+
+                if (empty($wGuru->no_hp)) continue;
+                $formattedWali = self::formatPhoneNumber($wGuru->no_hp);
+                if (!$formattedWali) continue;
+
+                $listText = "";
+                foreach ($sList as $idx => $sItem) {
+                    $num = $idx + 1;
+                    $statusStr = $sItem['is_full'] ? "*FULL ALPA*" : "Alpa {$sItem['alpa_count']} jam";
+                    $listText .= "  {$num}. *{$sItem['nama']}* ({$statusStr})\n";
+                }
+
+                $msgWali = "[Rekap Presensi Siswa Alpa - Wali Kelas]\n\n" .
+                    "Yth. Bpk/Ibu Wali Kelas *{$wKelas->nama_kelas}*,\n\n" .
+                    "Berikut rekapitulasi siswa yang tercatat *ALPA* pada hari ini ({$dateFormatted}):\n\n" .
+                    "📌 *Daftar Siswa Alpa* (" . count($sList) . " siswa):\n" .
+                    $listText . "\n" .
+                    "Notifikasi rekap otomatis ini telah dikirimkan ke WhatsApp Orang Tua / Wali murid yang bersangkutan.\n\n" .
+                    "Terima Kasih.";
+
+                if (self::sendBulkMessage([$formattedWali], $msgWali)) {
+                    $results['wali_sent']++;
+                }
+            }
+
+        } catch (\Throwable $e) {
+            Log::error("WhatsAppService Error (sendDailyAlphaSummaryToParents): " . $e->getMessage());
+        }
+
+        return $results;
     }
 }

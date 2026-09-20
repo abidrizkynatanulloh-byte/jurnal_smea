@@ -5,27 +5,26 @@
 @section('content')
 <div class="space-y-5">
     <!-- Page Header & Mode Switcher -->
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 bg-white dark:bg-[#242A35] p-4.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs">
-        <div>
-            <h1 class="text-xl font-bold text-slate-900 dark:text-slate-100 tracking-tight flex items-center space-x-2">
-                <i data-lucide="shield-alert" class="w-5 h-5 text-blue-600 dark:text-blue-400"></i>
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 sm:gap-6 bg-white dark:bg-[#242A35] p-5 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs">
+        <div class="space-y-1">
+            <h1 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100 tracking-tight flex items-center space-x-2.5">
+                <div class="p-2 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 shrink-0">
+                    <i data-lucide="shield-alert" class="w-5.5 h-5.5"></i>
+                </div>
                 <span>Dashboard Guru Piket</span>
             </h1>
-            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                Selamat datang kembali, <span class="font-semibold text-slate-800 dark:text-slate-200">{{ Auth::user()->username }}</span> • Kelola pengajuan dispensasi, pendataan siswa terlambat, & izin siswa.
+            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed pt-0.5">
+                Selamat datang kembali, <span class="font-bold text-slate-900 dark:text-slate-100">{{ Auth::user()->nama_display }}</span> • Kelola pengajuan dispensasi, pendataan siswa terlambat, & izin siswa.
             </p>
         </div>
 
         @if(Auth::user()->role === 'guru' || Auth::user()->id_guru !== null)
-            <div class="flex items-center space-x-2 shrink-0">
-                <a href="{{ route('guru.dashboard') }}" class="h-9 px-3.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-xs font-semibold transition-all flex items-center space-x-1.5 shadow-2xs">
+            <div class="flex items-center space-x-2.5 shrink-0 pt-1 md:pt-0">
+                <a href="{{ route('guru.dashboard') }}" class="h-10 px-4 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold transition-all flex items-center space-x-2 shadow-2xs cursor-pointer">
                     <i data-lucide="layout-dashboard" class="w-4 h-4 text-slate-500 dark:text-slate-400"></i>
                     <span>Mode Mengajar</span>
                 </a>
-                <a href="{{ route('piket.monitoring-kelas') }}" class="h-9 px-3.5 bg-[#1E2538] hover:bg-[#161c2c] dark:bg-blue-600 dark:hover:bg-blue-700 text-white rounded-lg text-xs font-semibold shadow-2xs flex items-center space-x-1.5 transition-all">
-                    <i data-lucide="monitor" class="w-4 h-4"></i>
-                    <span>Monitoring Kelas</span>
-                </a>
+                
             </div>
         @endif
     </div>

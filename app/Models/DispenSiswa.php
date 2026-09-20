@@ -38,7 +38,7 @@ class DispenSiswa extends Model
      */
     public function siswa()
     {
-        return $this->belongsTo(Siswa::class, 'nis', 'nisn');
+        return $this->belongsTo(Siswa::class, 'nis', 'nis');
     }
 
     /**

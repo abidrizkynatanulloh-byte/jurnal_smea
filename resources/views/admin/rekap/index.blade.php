@@ -15,24 +15,22 @@
     </div>
 
     <!-- FILTER TANGGAL + KELAS (SESUAI GAMBAR 1 - FIXED) -->
-    <div class="shrink-0 bg-white border border-slate-200/90 rounded-xl shadow-2xs p-3">
-        <form action="{{ route('admin.rekap.index') }}" method="GET" class="flex flex-col sm:flex-row gap-2.5 items-end">
-            <div class="flex-1 w-full">
-                <label for="tanggal" class="block text-[11px] font-semibold text-slate-700 mb-0.5">Pilih Tanggal</label>
+    <div class="shrink-0 bg-white dark:bg-[#1E2538] border border-slate-200 dark:border-slate-800 rounded-xl p-2.5 shadow-2xs">
+        <form action="{{ route('admin.rekap.index') }}" method="GET" class="flex flex-row items-center gap-2 w-full overflow-x-auto no-scrollbar">
+            <div class="flex-1 min-w-[120px]">
                 <div class="relative">
                     <div class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-slate-400">
                         <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
                     </div>
                     <input type="date" name="tanggal" id="tanggal" value="{{ $tanggal }}" onchange="this.form.submit()"
-                        class="w-full h-8 pl-8 pr-2.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 font-mono focus:outline-none focus:border-slate-800 cursor-pointer">
+                        class="w-full h-8 pl-8 pr-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-900 dark:text-slate-100 font-mono focus:outline-none focus:border-slate-800 cursor-pointer">
                 </div>
             </div>
 
-            <div class="flex-1 w-full relative z-20">
-                <label for="kelas" class="block text-[11px] font-semibold text-slate-700 mb-0.5">Filter Kelas</label>
+            <div class="flex-1 min-w-[120px] relative z-20">
                 <div class="relative">
                     <select name="kelas" id="kelas" onchange="this.form.submit()"
-                        class="searchable-select w-full h-8 pl-2.5 pr-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-900 dark:text-slate-200 font-medium focus:outline-none focus:border-slate-800 cursor-pointer appearance-none">
+                        class="searchable-select w-full h-8 pl-2.5 pr-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-900 dark:text-slate-100 font-medium focus:outline-none focus:border-slate-800 cursor-pointer appearance-none">
                         <option value="">Semua Kelas</option>
                         @foreach($daftarKelas as $kls)
                             <option value="{{ $kls->id_kelas }}" {{ $filterKelas == $kls->id_kelas ? 'selected' : '' }}>{{ $kls->nama_kelas }}</option>
@@ -41,8 +39,8 @@
                 </div>
             </div>
 
-            <div class="flex space-x-1.5 w-full sm:w-auto">
-                <a href="{{ route('admin.rekap.index') }}" class="h-8 px-3 border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 rounded-lg text-xs font-semibold transition-colors flex items-center justify-center space-x-1">
+            <div class="shrink-0">
+                <a href="{{ route('admin.rekap.index') }}" class="h-8 px-3 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-lg text-xs font-semibold transition-colors flex items-center justify-center space-x-1">
                     <i data-lucide="rotate-ccw" class="w-3 h-3"></i>
                     <span>Reset</span>
                 </a>

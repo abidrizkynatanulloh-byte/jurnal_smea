@@ -17,13 +17,17 @@ class GuruController
     {
         $query = Guru::with('user');
 
-        // Filter Pencarian Nama / NIP
+        // Filter Pencarian Nama / NIP / Jabatan / No HP / Username
         if ($request->filled('search')) {
             $keyword = trim($request->search);
             $query->where(function ($q) use ($keyword) {
                 $q->where('nama_guru', 'LIKE', "%{$keyword}%")
                   ->orWhere('nip', 'LIKE', "%{$keyword}%")
-                  ->orWhere('jabatan', 'LIKE', "%{$keyword}%");
+                  ->orWhere('jabatan', 'LIKE', "%{$keyword}%")
+                  ->orWhere('no_hp', 'LIKE', "%{$keyword}%")
+                  ->orWhereHas('user', function ($u) use ($keyword) {
+                      $u->where('username', 'LIKE', "%{$keyword}%");
+                  });
             });
         }
 

@@ -75,12 +75,12 @@ class JurnalController
                     ->whereIn('status', ['Disetujui', 'Sedang di Luar'])
                     ->first();
 
-                // 3. Cek apakah ada status Sakit / Izin dari jurnal jam sebelumnya hari ini
+                // 3. Cek apakah ada status Sakit / Izin / Alpa dari jurnal jam sebelumnya hari ini (Berantai dari Guru Pertama)
                 $presensiSebelumnya = JurnalDetailKetidakhadiran::where('id_siswa', $s->nis)
                     ->whereHas('jurnal', function ($q) use ($tanggalHariIni) {
                         $q->whereDate('tanggal', $tanggalHariIni);
                     })
-                    ->whereIn('keterangan', ['Sakit', 'Izin'])
+                    ->whereIn('keterangan', ['Sakit', 'Izin', 'Alpa'])
                     ->latest('id_detail')
                     ->first();
 
@@ -95,7 +95,7 @@ class JurnalController
                     $infoStatus = "Dispensasi: {$dispen->keperluan}";
                 } elseif ($presensiSebelumnya) {
                     $autoStatus = $presensiSebelumnya->keterangan;
-                    $infoStatus = "Otomatis: Tercatat {$presensiSebelumnya->keterangan} pada sesi sebelumnya";
+                    $infoStatus = "Otomatis: Tercatat {$presensiSebelumnya->keterangan} pada sesi guru sebelumnya";
                 }
 
                 $s->auto_status = $autoStatus;
@@ -177,8 +177,8 @@ class JurnalController
         }
 
         // 3. Simpan ketidakhadiran siswa (Sakit, Izin, Alpa, Dispen)
+        // Note: Notifikasi WA Alpa akan dikonsolidasi & dikirim setelah jam sekolah selesai
         if ($request->filled('ketidakhadiran')) {
-            $alphaStudents = [];
             foreach ($request->ketidakhadiran as $nis => $keterangan) {
                 if (in_array($keterangan, ['Sakit', 'Izin', 'Alpa', 'Dispen'])) {
                     $refIzin = PengajuanIzinSiswa::where('nis', $nis)
@@ -193,15 +193,7 @@ class JurnalController
                         'ref_izin_id'  => $refIzin ? $refIzin->id : null,
                         'dicatat_oleh' => $user->id,
                     ]);
-
-                    if ($keterangan === 'Alpa') {
-                        $alphaStudents[] = $nis;
-                    }
                 }
-            }
-
-            if (!empty($alphaStudents)) {
-                \App\Services\WhatsAppService::sendAlphaSiswaNotification($alphaStudents, $jurnal);
             }
         }
 

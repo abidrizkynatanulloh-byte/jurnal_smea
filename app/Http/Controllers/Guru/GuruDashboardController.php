@@ -30,7 +30,8 @@ class GuruDashboardController extends Controller
         $hariMap = [
             'Monday'    => 'Senin',    'Tuesday' => 'Selasa',
             'Wednesday' => 'Rabu',     'Thursday' => 'Kamis',
-            'Friday'    => 'Jumat',
+            'Friday'    => 'Jumat',    'Saturday' => 'Sabtu',
+            'Sunday'    => 'Minggu',
         ];
         $namaHariIni  = $hariMap[Carbon::now()->format('l')] ?? 'Senin';
         $tanggalHariIni = Carbon::today()->toDateString();

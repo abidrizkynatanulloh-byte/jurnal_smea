@@ -92,8 +92,10 @@ class Guru extends Model
 
         $query = \App\Models\GuruPiket::where('id_guru', $this->id_guru)
             ->where(function ($q) use ($namaHariIni, $tanggalHari) {
-                $q->where('hari', $namaHariIni)
-                  ->orWhere('tanggal_khusus', $tanggalHari);
+                $q->where('tanggal_khusus', $tanggalHari)
+                  ->orWhere(function ($sub) use ($namaHariIni) {
+                      $sub->whereNull('tanggal_khusus')->where('hari', $namaHariIni);
+                  });
             })
             ->whereNull('deleted_at');
 
