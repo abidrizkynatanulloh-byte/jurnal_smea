@@ -11,6 +11,7 @@ use App\Models\JurnalMengajar;
 use App\Models\JurnalDetailKetidakhadiran;
 use App\Models\DispenSiswa;
 use App\Models\IzinSiswa;
+use App\Models\SiswaTelat;
 use App\Services\WhatsAppService;
 use Carbon\Carbon;
 
@@ -54,6 +55,7 @@ class OrtuController extends Controller
             'sakit' => 0,
             'izin'  => 0,
             'alpa'  => 0,
+            'telat' => 0,
         ];
 
         if ($siswa && $siswa->id_kelas) {
@@ -86,12 +88,17 @@ class OrtuController extends Controller
                         ->first();
 
                     if ($tidakHadir) {
-                        $statusKehadiran = $tidakHadir->keterangan; // Sakit, Izin, atau Alpa
-                        $badgeClass = match ($tidakHadir->keterangan) {
-                            'Sakit' => 'bg-blue-50 text-blue-700 border border-blue-200',
-                            'Izin'  => 'bg-amber-50 text-amber-700 border border-amber-200',
-                            default => 'bg-rose-50 text-rose-700 border border-rose-200',
-                        };
+                        if ($tidakHadir->keterangan === 'Terlambat') {
+                            $statusKehadiran = 'Hadir (Terlambat)';
+                            $badgeClass = 'bg-amber-50 text-amber-700 border border-amber-200';
+                        } else {
+                            $statusKehadiran = $tidakHadir->keterangan; // Sakit, Izin, atau Alpa
+                            $badgeClass = match ($tidakHadir->keterangan) {
+                                'Sakit' => 'bg-blue-50 text-blue-700 border border-blue-200',
+                                'Izin'  => 'bg-purple-50 text-purple-700 border border-purple-200',
+                                default => 'bg-rose-50 text-rose-700 border border-rose-200',
+                            };
+                        }
                     } else {
                         $statusKehadiran = 'Hadir';
                         $badgeClass = 'bg-emerald-50 text-emerald-700 border border-emerald-200';
@@ -128,12 +135,22 @@ class OrtuController extends Controller
             $rekapBulanIni['sakit'] = $ketidakhadiranList->where('keterangan', 'Sakit')->count();
             $rekapBulanIni['izin']  = $ketidakhadiranList->where('keterangan', 'Izin')->count();
             $rekapBulanIni['alpa']  = $ketidakhadiranList->where('keterangan', 'Alpa')->count();
+            $rekapBulanIni['telat'] = $ketidakhadiranList->where('keterangan', 'Terlambat')->count();
+
+            // Ambil juga catatan telat dari piket bulan ini
+            $piketTelatBulanIni = SiswaTelat::where('nis', $siswa->nis)
+                ->whereBetween('tanggal', [$awalBulan, $akhirBulan])
+                ->count();
+            if ($piketTelatBulanIni > $rekapBulanIni['telat']) {
+                $rekapBulanIni['telat'] = $piketTelatBulanIni;
+            }
 
             // Total jurnal mengajar di kelas anak bulan ini
             $totalJurnalKelas = JurnalMengajar::whereHas('jadwal', function($q) use ($siswa) {
                 $q->where('id_kelas', $siswa->id_kelas);
             })->whereBetween('tanggal', [$awalBulan, $akhirBulan])->count();
 
+            // Siswa terlambat tetap terhitung HADIR
             $totalTidakHadir = $rekapBulanIni['sakit'] + $rekapBulanIni['izin'] + $rekapBulanIni['alpa'];
             $rekapBulanIni['hadir'] = max(0, $totalJurnalKelas - $totalTidakHadir);
         }
@@ -146,8 +163,9 @@ class OrtuController extends Controller
                 ->get();
         }
 
-        // 6. Riwayat Ketidakhadiran (Semua Waktu) dikelompokkan per tanggal
+        // 6. Riwayat Ketidakhadiran & Keterlambatan (Semua Waktu) dikelompokkan per tanggal
         $riwayatAbsen = [];
+        $riwayatTelat = [];
         if ($siswa) {
             $semuaKetidakhadiran = JurnalDetailKetidakhadiran::with(['jurnal.jadwal.jamMulaiData', 'jurnal.jadwal.jamSelesaiData'])
                 ->where('id_siswa', $siswa->nis)
@@ -188,6 +206,12 @@ class OrtuController extends Controller
                     ];
                 }
             }
+
+            // Ambil catatan riwayat telat dari pos piket
+            $riwayatTelat = SiswaTelat::where('nis', $siswa->nis)
+                ->orderBy('tanggal', 'desc')
+                ->get();
+
             usort($riwayatAbsen, function($a, $b) {
                 return strtotime($b['tanggal']) - strtotime($a['tanggal']);
             });
@@ -201,7 +225,8 @@ class OrtuController extends Controller
             'dispenHariIni',
             'rekapBulanIni',
             'riwayatIzin',
-            'riwayatAbsen'
+            'riwayatAbsen',
+            'riwayatTelat'
         ));
     }
 

@@ -80,7 +80,7 @@
         </div>
 
         <!-- STATISTIK BULANAN (KLIK UNTUK POP-UP DETAIL) -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <!-- SAKIT -->
             <div onclick="openDetailModalAbsen('Sakit')" class="bg-white border border-slate-200 hover:border-blue-400 rounded-xl p-3.5 shadow-xs hover:shadow-md flex items-center justify-between cursor-pointer transition-all group">
                 <div class="flex items-center space-x-3">
@@ -89,7 +89,7 @@
                     </div>
                     <div>
                         <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Sakit Bulan Ini</p>
-                        <h3 class="text-lg font-bold text-slate-900 mt-0.5">{{ $rekapBulanIni['sakit'] }} Sesi</h3>
+                        <h3 class="text-base sm:text-lg font-bold text-slate-900 mt-0.5">{{ $rekapBulanIni['sakit'] }} Sesi</h3>
                     </div>
                 </div>
                 <div class="text-slate-300 group-hover:text-blue-500 transition-colors">
@@ -98,14 +98,30 @@
             </div>
 
             <!-- IZIN -->
-            <div onclick="openDetailModalAbsen('Izin')" class="bg-white border border-slate-200 hover:border-amber-400 rounded-xl p-3.5 shadow-xs hover:shadow-md flex items-center justify-between cursor-pointer transition-all group">
+            <div onclick="openDetailModalAbsen('Izin')" class="bg-white border border-slate-200 hover:border-purple-400 rounded-xl p-3.5 shadow-xs hover:shadow-md flex items-center justify-between cursor-pointer transition-all group">
                 <div class="flex items-center space-x-3">
-                    <div class="p-2.5 bg-amber-50 text-amber-600 rounded-lg group-hover:bg-amber-600 group-hover:text-white transition-colors">
+                    <div class="p-2.5 bg-purple-50 text-purple-600 rounded-lg group-hover:bg-purple-600 group-hover:text-white transition-colors">
                         <i data-lucide="file-text" class="w-5 h-5"></i>
                     </div>
                     <div>
                         <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Izin Bulan Ini</p>
-                        <h3 class="text-lg font-bold text-slate-900 mt-0.5">{{ $rekapBulanIni['izin'] }} Sesi</h3>
+                        <h3 class="text-base sm:text-lg font-bold text-slate-900 mt-0.5">{{ $rekapBulanIni['izin'] }} Sesi</h3>
+                    </div>
+                </div>
+                <div class="text-slate-300 group-hover:text-purple-500 transition-colors">
+                    <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                </div>
+            </div>
+
+            <!-- TERLAMBAT -->
+            <div onclick="openDetailModalAbsen('Terlambat')" class="bg-white border border-slate-200 hover:border-amber-400 rounded-xl p-3.5 shadow-xs hover:shadow-md flex items-center justify-between cursor-pointer transition-all group">
+                <div class="flex items-center space-x-3">
+                    <div class="p-2.5 bg-amber-50 text-amber-600 rounded-lg group-hover:bg-amber-600 group-hover:text-white transition-colors">
+                        <i data-lucide="clock" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Terlambat</p>
+                        <h3 class="text-base sm:text-lg font-bold text-amber-600 mt-0.5">{{ $rekapBulanIni['telat'] }} Kali</h3>
                     </div>
                 </div>
                 <div class="text-slate-300 group-hover:text-amber-500 transition-colors">
@@ -121,7 +137,7 @@
                     </div>
                     <div>
                         <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Alpa / Tanpa Ket.</p>
-                        <h3 class="text-lg font-bold text-rose-600 mt-0.5">{{ $rekapBulanIni['alpa'] }} Sesi</h3>
+                        <h3 class="text-base sm:text-lg font-bold text-rose-600 mt-0.5">{{ $rekapBulanIni['alpa'] }} Sesi</h3>
                     </div>
                 </div>
                 <div class="text-slate-300 group-hover:text-rose-500 transition-colors">
@@ -258,9 +274,10 @@
                             <div>
                                 @php
                                     $badge = match ($riwayat['keterangan']) {
-                                        'Sakit' => 'bg-blue-50 text-blue-700 border border-blue-200/60',
-                                        'Izin'  => 'bg-amber-50 text-amber-700 border border-amber-200/60',
-                                        default => 'bg-rose-50 text-rose-700 border border-rose-200/60',
+                                        'Sakit'     => 'bg-blue-50 text-blue-700 border border-blue-200/60',
+                                        'Izin'      => 'bg-purple-50 text-purple-700 border border-purple-200/60',
+                                        'Terlambat' => 'bg-amber-50 text-amber-700 border border-amber-200/60',
+                                        default     => 'bg-rose-50 text-rose-700 border border-rose-200/60',
                                     };
                                 @endphp
                                 <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold {{ $badge }}">
@@ -381,6 +398,7 @@
 <script>
     const riwayatAbsenData = @json($riwayatAbsen ?? []);
     const riwayatIzinData = @json($riwayatIzin ?? []);
+    const riwayatTelatData = @json($riwayatTelat ?? []);
 
     function openModalAjukanIzin() {
         document.getElementById('modalAjukanIzin').classList.remove('hidden');
@@ -397,6 +415,26 @@
         const filteredIzin = riwayatIzinData.filter(item => item.kategori === kategori);
 
         let html = '';
+
+        if (kategori === 'Terlambat' && riwayatTelatData.length > 0) {
+            html += `<div class="mb-4"><span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-2">Catatan Keterlambatan dari Pos Piket:</span>`;
+            riwayatTelatData.forEach(telat => {
+                const jam = telat.jam_terlambat ? telat.jam_terlambat.substring(0, 5) : '-';
+                const alasan = telat.alasan ? telat.alasan : 'Tidak ada catatan alasan khusus';
+                const tindakan = telat.tindakan ? `<p class="text-amber-800 dark:text-amber-300 text-[11px] font-semibold mt-1">Pembinaan: ${telat.tindakan}</p>` : '';
+                html += `
+                    <div class="p-3 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 rounded-xl space-y-1 text-xs mb-2">
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-slate-900 dark:text-slate-100 font-mono">${telat.tanggal}</span>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-200 border border-amber-300 dark:border-amber-700">Tiba pk. ${jam} WIB</span>
+                        </div>
+                        <p class="text-slate-700 dark:text-slate-300 font-medium">Alasan: ${alasan}</p>
+                        ${tindakan}
+                    </div>
+                `;
+            });
+            html += `</div>`;
+        }
 
         if (filteredIzin.length > 0) {
             html += `<div class="mb-4"><span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-2">Permohonan Izin / Surat Dokter (Orang Tua):</span>`;
@@ -431,22 +469,32 @@
         }
 
         if (filteredAbsen.length > 0) {
-            html += `<div><span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-2">Catatan Ketidakhadiran di Kelas:</span><div class="divide-y divide-slate-100 border border-slate-200 rounded-xl overflow-hidden">`;
+            const sectionTitle = (kategori === 'Terlambat') ? 'Catatan Terlambat di Sesi Kelas:' : 'Catatan Ketidakhadiran di Kelas:';
+            html += `<div><span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-2">${sectionTitle}</span><div class="divide-y divide-slate-100 border border-slate-200 rounded-xl overflow-hidden">`;
             filteredAbsen.forEach(ab => {
+                let badgeClass = 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700';
+                if (ab.keterangan === 'Terlambat') badgeClass = 'bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800';
+                else if (ab.keterangan === 'Sakit') badgeClass = 'bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800';
+                else if (ab.keterangan === 'Izin') badgeClass = 'bg-purple-50 dark:bg-purple-950/50 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800';
+                else if (ab.keterangan === 'Alpa') badgeClass = 'bg-rose-50 dark:bg-rose-950/50 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800';
+
                 html += `
                     <div class="p-3 bg-white dark:bg-[#1A2230] hover:bg-slate-50 transition-colors flex justify-between items-center text-xs">
                         <div>
                             <p class="font-bold text-slate-900 dark:text-slate-100">${ab.tanggal}</p>
                             <p class="text-slate-500 text-[11px]">${ab.detail_jam}</p>
                         </div>
-                        <span class="px-2.5 py-0.5 rounded-full text-[10.5px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">${ab.keterangan}</span>
+                        <span class="px-2.5 py-0.5 rounded-full text-[10.5px] font-bold border ${badgeClass}">${ab.keterangan}</span>
                     </div>
                 `;
             });
             html += `</div></div>`;
         }
 
-        if (filteredAbsen.length === 0 && filteredIzin.length === 0) {
+        const isTerlambatEmpty = (kategori === 'Terlambat' && filteredAbsen.length === 0 && riwayatTelatData.length === 0);
+        const isOtherEmpty = (kategori !== 'Terlambat' && filteredAbsen.length === 0 && filteredIzin.length === 0);
+
+        if (isTerlambatEmpty || isOtherEmpty) {
             html = `
                 <div class="py-8 text-center text-slate-400 italic text-xs">
                     <i data-lucide="check-circle" class="w-7 h-7 mx-auto mb-1.5 text-emerald-500"></i>

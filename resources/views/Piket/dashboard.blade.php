@@ -73,25 +73,25 @@
                 @csrf
 
                 <div>
-                    <label for="nis" class="block text-[11px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">Pilih Siswa (Bisa Pilih >1 Siswa)</label>
+                    <label for="nis" class="block text-[11px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">Pilih Siswa (Bisa Pilih Lebih Dari 1 Siswa)</label>
                     <select name="nis[]" id="nis" multiple required 
-                        placeholder="Cari / pilih satu atau beberapa siswa..."
+                        placeholder="Ketik / pilih beberapa nama siswa..."
                         class="block w-full bg-white dark:bg-[#1A212D] border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:border-blue-600 transition-all cursor-pointer">
                         @foreach ($daftarSiswa as $s)
                             <option value="{{ $s->nis }}">
-                                [NISN: {{ $s->nisn ?? '-' }}] {{ $s->nis }} - {{ $s->nama_siswa }} ({{ $s->kelas ? $s->kelas->nama_kelas : '-' }})
+                                {{ $s->nama_siswa }} ({{ $s->kelas ? $s->kelas->nama_kelas : '-' }})
                             </option>
                         @endforeach
                     </select>
-                    <p class="text-[10px] text-slate-400 dark:text-slate-400 mt-1">Pilih beberapa siswa sekaligus jika memiliki keperluan dispen yang sama.</p>
+                    <p class="text-[10px] text-slate-400 dark:text-slate-400 mt-1">Ketik nama siswa untuk mencari, lalu klik untuk memilih beberapa siswa sekaligus.</p>
                 </div>
 
                 <div>
                     <label for="jenis_dispen" class="block text-[11px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">Kategori Dispensasi</label>
                     <select name="jenis_dispen" id="jenis_dispen" 
                         class="block w-full h-8 px-2.5 bg-white dark:bg-[#1A212D] border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-semibold text-slate-800 dark:text-slate-100 focus:outline-none focus:border-blue-600 transition-all cursor-pointer">
-                        <option value="sekolah" selected>🏆 Keperluan Sekolah / Lomba (Otomatis Disetujui)</option>
-                        <option value="pribadi">👤 Keperluan Pribadi / Lainnya (Memerlukan ACC Waka)</option>
+                        <option value="sekolah" selected> Keperluan Sekolah / Lomba </option>
+                        <option value="pribadi"> Keperluan Pribadi / Lainnya </option>
                     </select>
                 </div>
 
@@ -217,11 +217,12 @@
                 <div>
                     <label for="nis_telat" class="block text-[11px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">Pilih Siswa Terlambat</label>
                     <select name="nis" id="nis_telat" required 
+                        placeholder="Cari / pilih nama siswa..."
                         class="block w-full h-8 px-2.5 bg-white dark:bg-[#1A212D] border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:border-amber-600 transition-all cursor-pointer">
                         <option value="">-- Pilih Siswa --</option>
                         @foreach ($daftarSiswa as $s)
                             <option value="{{ $s->nis }}" {{ old('nis') == $s->nis ? 'selected' : '' }}>
-                                [NISN: {{ $s->nisn ?? '-' }}] {{ $s->nis }} - {{ $s->nama_siswa }} ({{ $s->kelas ? $s->kelas->nama_kelas : '-' }})
+                                {{ $s->nama_siswa }} ({{ $s->kelas ? $s->kelas->nama_kelas : '-' }})
                             </option>
                         @endforeach
                     </select>
@@ -306,110 +307,225 @@
         </div>
     </div>
 
-    <!-- TAB 3: PERSETUJUAN IZIN SISWA DARI ORANG TUA -->
-    <div id="tabIzinSiswa" class="hidden bg-white dark:bg-[#242A35] border border-slate-200 dark:border-slate-800 rounded-xl shadow-xs overflow-hidden">
-        <div class="px-4 py-3 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
-            <div class="flex items-center space-x-2">
-                <i data-lucide="shield-check" class="w-4 h-4 text-emerald-600 dark:text-emerald-400"></i>
-                <h3 class="font-bold text-slate-900 dark:text-slate-100 text-xs">Persetujuan Permohonan Izin Siswa dari Orang Tua / Wali Murid</h3>
+    <!-- TAB 3: PERSETUJUAN & RIWAYAT IZIN SISWA DARI ORANG TUA -->
+    <div id="tabIzinSiswa" class="hidden space-y-4">
+        <!-- SUB-TAB 1: PERMOHONAN MENUNGGU ACC -->
+        <div class="bg-white dark:bg-[#242A35] border border-slate-200 dark:border-slate-800 rounded-xl shadow-xs overflow-hidden">
+            <div class="px-4 py-3 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-amber-50/40 dark:bg-amber-950/20">
+                <div class="flex items-center space-x-2">
+                    <i data-lucide="clock" class="w-4 h-4 text-amber-600 dark:text-amber-400"></i>
+                    <h3 class="font-bold text-slate-900 dark:text-slate-100 text-xs">Menunggu Persetujuan (Izin / Sakit dari Orang Tua)</h3>
+                </div>
+                <span class="px-2 py-0.5 bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300 font-mono text-[11px] font-bold rounded-full">
+                    {{ count($izinSiswaPending) }} Menunggu ACC
+                </span>
             </div>
-            <span class="text-[11px] text-slate-500 dark:text-slate-400 font-mono">{{ count($izinSiswaPending) }} Menunggu ACC</span>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse text-xs">
+                    <thead>
+                        <tr class="bg-slate-50 dark:bg-[#1A2836] border-b border-slate-200 dark:border-slate-800 text-slate-600 dark:text-emerald-300 font-bold uppercase tracking-wider text-[11px]">
+                            <th class="py-2.5 px-3 text-center w-10">NO</th>
+                            <th class="py-2.5 px-3">SISWA & KELAS</th>
+                            <th class="py-2.5 px-3 w-36">KATEGORI & TANGGAL</th>
+                            <th class="py-2.5 px-3">ALASAN DETAIL</th>
+                            <th class="py-2.5 px-3 text-center w-28">BUKTI FOTO</th>
+                            <th class="py-2.5 px-3 text-center w-48">AKSI PERSETUJUAN</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 dark:divide-slate-800 text-slate-700 dark:text-slate-300">
+                        @forelse ($izinSiswaPending as $idx => $is)
+                            <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
+                                <td class="py-2 px-3 text-center font-mono text-slate-400 dark:text-slate-400 text-[11px]">{{ $idx + 1 }}</td>
+                                <td class="py-2 px-3">
+                                    <p class="font-bold text-slate-900 dark:text-slate-100 leading-tight">{{ $is->siswa ? $is->siswa->nama_siswa : $is->nis }}</p>
+                                    <div class="flex items-center space-x-2 mt-0.5">
+                                        <span class="text-[10.5px] text-slate-500 dark:text-slate-400 font-mono">NIS: {{ $is->nis }}</span>
+                                        <span class="px-1.5 py-0.2 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 rounded text-[10px] font-semibold">
+                                            {{ $is->siswa && $is->siswa->kelas ? $is->siswa->kelas->nama_kelas : '-' }}
+                                        </span>
+                                    </div>
+                                </td>
+                                <td class="py-2 px-3">
+                                    <span class="inline-block px-2 py-0.5 rounded text-[10.5px] font-bold 
+                                        @if($is->kategori === 'Sakit') bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800
+                                        @elseif($is->kategori === 'Izin') bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800
+                                        @else bg-purple-50 dark:bg-purple-950/50 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800 @endif mb-1">
+                                        {{ $is->kategori }}
+                                    </span>
+                                    <p class="text-[11px] text-slate-600 dark:text-slate-400 font-mono">
+                                        {{ \Carbon\Carbon::parse($is->tanggal_mulai)->translatedFormat('d M Y') }}
+                                        @if($is->tanggal_mulai !== $is->tanggal_selesai)
+                                            s/d {{ \Carbon\Carbon::parse($is->tanggal_selesai)->translatedFormat('d M Y') }}
+                                        @endif
+                                    </p>
+                                </td>
+                                <td class="py-2 px-3">
+                                    <p class="text-xs text-slate-800 dark:text-slate-200 leading-relaxed font-medium">{{ $is->alasan }}</p>
+                                </td>
+                                <td class="py-2 px-3 text-center">
+                                    @if($is->bukti_foto)
+                                        <button type="button" onclick="openDetailApprovalModal({
+                                            title: 'Detail Permohonan Izin Siswa',
+                                            applicantName: '{{ addslashes($is->siswa ? $is->siswa->nama_siswa : $is->nis) }}',
+                                            applicantMeta: 'NIS: {{ $is->nis }} • Kelas: {{ addslashes($is->siswa && $is->siswa->kelas ? $is->siswa->kelas->nama_kelas : "-") }}',
+                                            category: '{{ $is->kategori }}',
+                                            period: '{{ \Carbon\Carbon::parse($is->tanggal_mulai)->translatedFormat("d M Y") }} s/d {{ \Carbon\Carbon::parse($is->tanggal_selesai)->translatedFormat("d M Y") }}',
+                                            reason: '{{ addslashes($is->alasan) }}',
+                                            proofUrl: '{{ $is->bukti_foto ? (\Illuminate\Support\Str::startsWith($is->bukti_foto, ["http", "uploads/", "storage/"]) ? asset($is->bukti_foto) : asset("storage/" . $is->bukti_foto)) : "" }}',
+                                            approveUrl: '{{ route("piket.izin-siswa.approve", $is->id) }}',
+                                            rejectUrl: '{{ route("piket.izin-siswa.reject", $is->id) }}',
+                                            rejectInputName: 'catatan_penolakan'
+                                        })" class="inline-flex items-center space-x-1 px-2.5 py-1 bg-blue-50 dark:bg-blue-950/50 hover:bg-blue-100 dark:hover:bg-blue-900/60 text-blue-700 dark:text-blue-300 rounded-lg border border-blue-200 dark:border-blue-800 text-[11px] font-bold transition-colors cursor-pointer">
+                                            <i data-lucide="eye" class="w-3.5 h-3.5 text-blue-600 dark:text-blue-400"></i>
+                                            <span>Lihat Detail & Foto</span>
+                                        </button>
+                                    @else
+                                        <span class="text-slate-400 dark:text-slate-500 italic text-[11px]">Tanpa Foto</span>
+                                    @endif
+                                </td>
+                                <td class="py-2 px-3 text-center">
+                                    <div class="flex items-center justify-center space-x-1.5">
+                                        <form action="{{ route('piket.izin-siswa.approve', $is->id) }}" method="POST" data-confirm="ACC / Setujui izin siswa ini?">
+                                            @csrf
+                                            <button type="submit" class="h-7 px-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition-colors cursor-pointer inline-flex items-center space-x-1 shadow-2xs">
+                                                <i data-lucide="check" class="w-3 h-3"></i>
+                                                <span>ACC</span>
+                                            </button>
+                                        </form>
+
+                                        <form action="{{ route('piket.izin-siswa.reject', $is->id) }}" method="POST" class="flex items-center space-x-1">
+                                            @csrf
+                                            <input type="text" name="catatan_penolakan" placeholder="Catatan tolak..." required
+                                                class="h-7 px-2 bg-white dark:bg-[#1A212D] border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-800 dark:text-slate-100 w-24 focus:outline-none focus:border-rose-500">
+                                            <button type="submit" class="h-7 px-2 border border-rose-200 dark:border-rose-900 bg-white dark:bg-rose-950/40 hover:bg-rose-50 dark:hover:bg-rose-900/60 text-rose-600 dark:text-rose-300 rounded-lg text-xs font-semibold transition-colors cursor-pointer">
+                                                Tolak
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="6" class="py-6 text-center text-slate-400 dark:text-slate-400 italic text-xs">
+                                    <i data-lucide="check-circle" class="w-5 h-5 mx-auto mb-1 text-emerald-500 dark:text-emerald-400"></i>
+                                    Tidak ada permohonan izin siswa dari orang tua yang menunggu persetujuan.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
         </div>
 
-        <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse text-xs">
-                <thead>
-                    <tr class="bg-slate-50 dark:bg-[#1A2836] border-b border-slate-200 dark:border-slate-800 text-slate-600 dark:text-emerald-300 font-bold uppercase tracking-wider text-[11px]">
-                        <th class="py-2.5 px-3 text-center w-10">NO</th>
-                        <th class="py-2.5 px-3">SISWA & KELAS</th>
-                        <th class="py-2.5 px-3 w-36">KATEGORI & TANGGAL</th>
-                        <th class="py-2.5 px-3">ALASAN DETAIL</th>
-                        <th class="py-2.5 px-3 text-center w-28">BUKTI FOTO</th>
-                        <th class="py-2.5 px-3 text-center w-48">AKSI PERSETUJUAN</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-100 dark:divide-slate-800 text-slate-700 dark:text-slate-300">
-                    @forelse ($izinSiswaPending as $idx => $is)
-                        <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
-                            <td class="py-2 px-3 text-center font-mono text-slate-400 dark:text-slate-400 text-[11px]">{{ $idx + 1 }}</td>
-                            <td class="py-2 px-3">
-                                <p class="font-bold text-slate-900 dark:text-slate-100 leading-tight">{{ $is->siswa ? $is->siswa->nama_siswa : $is->nis }}</p>
-                                <div class="flex items-center space-x-2 mt-0.5">
-                                    <span class="text-[10.5px] text-slate-500 dark:text-slate-400 font-mono">NIS: {{ $is->nis }}</span>
-                                    <span class="px-1.5 py-0.2 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 rounded text-[10px] font-semibold">
-                                        {{ $is->siswa && $is->siswa->kelas ? $is->siswa->kelas->nama_kelas : '-' }}
-                                    </span>
-                                </div>
-                            </td>
-                            <td class="py-2 px-3">
-                                <span class="inline-block px-2 py-0.5 rounded text-[10.5px] font-bold 
-                                    @if($is->kategori === 'Sakit') bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800
-                                    @elseif($is->kategori === 'Izin') bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800
-                                    @else bg-purple-50 dark:bg-purple-950/50 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800 @endif mb-1">
-                                    {{ $is->kategori }}
-                                </span>
-                                <p class="text-[11px] text-slate-600 dark:text-slate-400 font-mono">
-                                    {{ \Carbon\Carbon::parse($is->tanggal_mulai)->translatedFormat('d M Y') }}
-                                    @if($is->tanggal_mulai !== $is->tanggal_selesai)
-                                        s/d {{ \Carbon\Carbon::parse($is->tanggal_selesai)->translatedFormat('d M Y') }}
-                                    @endif
-                                </p>
-                            </td>
-                            <td class="py-2 px-3">
-                                <p class="text-xs text-slate-800 dark:text-slate-200 leading-relaxed font-medium">{{ $is->alasan }}</p>
-                            </td>
-                            <td class="py-2 px-3 text-center">
-                                @if($is->bukti_foto)
-                                    <button type="button" onclick="openDetailApprovalModal({
-                                        title: 'Detail Permohonan Izin Siswa',
-                                        applicantName: '{{ addslashes($is->siswa ? $is->siswa->nama_siswa : $is->nis) }}',
-                                        applicantMeta: 'NIS: {{ $is->nis }} • Kelas: {{ addslashes($is->siswa && $is->siswa->kelas ? $is->siswa->kelas->nama_kelas : "-") }}',
-                                        category: '{{ $is->kategori }}',
-                                        period: '{{ \Carbon\Carbon::parse($is->tanggal_mulai)->translatedFormat("d M Y") }} s/d {{ \Carbon\Carbon::parse($is->tanggal_selesai)->translatedFormat("d M Y") }}',
-                                        reason: '{{ addslashes($is->alasan) }}',
-                                        proofUrl: '{{ $is->bukti_foto ? (\Illuminate\Support\Str::startsWith($is->bukti_foto, ["http", "uploads/", "storage/"]) ? asset($is->bukti_foto) : asset("storage/" . $is->bukti_foto)) : "" }}',
-                                        approveUrl: '{{ route("piket.izin-siswa.approve", $is->id) }}',
-                                        rejectUrl: '{{ route("piket.izin-siswa.reject", $is->id) }}',
-                                        rejectInputName: 'catatan_penolakan'
-                                    })" class="inline-flex items-center space-x-1 px-2.5 py-1 bg-blue-50 dark:bg-blue-950/50 hover:bg-blue-100 dark:hover:bg-blue-900/60 text-blue-700 dark:text-blue-300 rounded-lg border border-blue-200 dark:border-blue-800 text-[11px] font-bold transition-colors cursor-pointer">
-                                        <i data-lucide="eye" class="w-3.5 h-3.5 text-blue-600 dark:text-blue-400"></i>
-                                        <span>Lihat Detail & Foto</span>
-                                    </button>
-                                @else
-                                    <span class="text-slate-400 dark:text-slate-500 italic text-[11px]">Tanpa Foto</span>
-                                @endif
-                            </td>
-                            <td class="py-2 px-3 text-center">
-                                <div class="flex items-center justify-center space-x-1.5">
-                                    <form action="{{ route('piket.izin-siswa.approve', $is->id) }}" method="POST" data-confirm="ACC / Setujui izin siswa ini?">
-                                        @csrf
-                                        <button type="submit" class="h-7 px-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition-colors cursor-pointer inline-flex items-center space-x-1 shadow-2xs">
-                                            <i data-lucide="check" class="w-3 h-3"></i>
-                                            <span>ACC</span>
-                                        </button>
-                                    </form>
+        <!-- SUB-TAB 2: RIWAYAT SUDAH DIPROSES (DISETUJUI / DITOLAK) -->
+        <div class="bg-white dark:bg-[#242A35] border border-slate-200 dark:border-slate-800 rounded-xl shadow-xs overflow-hidden">
+            <div class="px-4 py-3 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50/70 dark:bg-[#1E293B]/40">
+                <div class="flex items-center space-x-2">
+                    <i data-lucide="history" class="w-4 h-4 text-emerald-600 dark:text-emerald-400"></i>
+                    <h3 class="font-bold text-slate-900 dark:text-slate-100 text-xs">Riwayat Izin Siswa yang Telah Diproses (Disetujui / Ditolak)</h3>
+                </div>
+                <span class="text-[11px] text-slate-500 dark:text-slate-400 font-mono">{{ count($riwayatIzinSiswa ?? []) }} Riwayat</span>
+            </div>
 
-                                    <form action="{{ route('piket.izin-siswa.reject', $is->id) }}" method="POST" class="flex items-center space-x-1">
-                                        @csrf
-                                        <input type="text" name="catatan_penolakan" placeholder="Catatan tolak..." required
-                                            class="h-7 px-2 bg-white dark:bg-[#1A212D] border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-800 dark:text-slate-100 w-24 focus:outline-none focus:border-rose-500">
-                                        <button type="submit" class="h-7 px-2 border border-rose-200 dark:border-rose-900 bg-white dark:bg-rose-950/40 hover:bg-rose-50 dark:hover:bg-rose-900/60 text-rose-600 dark:text-rose-300 rounded-lg text-xs font-semibold transition-colors cursor-pointer">
-                                            Tolak
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse text-xs">
+                    <thead>
+                        <tr class="bg-slate-50 dark:bg-[#1A2836] border-b border-slate-200 dark:border-slate-800 text-slate-600 dark:text-emerald-300 font-bold uppercase tracking-wider text-[11px]">
+                            <th class="py-2.5 px-3 text-center w-10">NO</th>
+                            <th class="py-2.5 px-3">SISWA & KELAS</th>
+                            <th class="py-2.5 px-3 w-36">KATEGORI & TANGGAL</th>
+                            <th class="py-2.5 px-3">ALASAN / CATATAN</th>
+                            <th class="py-2.5 px-3 text-center w-28">STATUS</th>
+                            <th class="py-2.5 px-3 text-center w-28">BUKTI FOTO</th>
+                            <th class="py-2.5 px-3 text-right w-44">DIPROSES OLEH</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 dark:divide-slate-800 text-slate-700 dark:text-slate-300">
+                        @forelse ($riwayatIzinSiswa ?? [] as $rIdx => $ri)
+                            <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
+                                <td class="py-2 px-3 text-center font-mono text-slate-400 dark:text-slate-400 text-[11px]">{{ $rIdx + 1 }}</td>
+                                <td class="py-2 px-3">
+                                    <p class="font-bold text-slate-900 dark:text-slate-100 leading-tight">{{ $ri->siswa ? $ri->siswa->nama_siswa : $ri->nis }}</p>
+                                    <div class="flex items-center space-x-2 mt-0.5">
+                                        <span class="text-[10.5px] text-slate-500 dark:text-slate-400 font-mono">NIS: {{ $ri->nis }}</span>
+                                        <span class="px-1.5 py-0.2 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 rounded text-[10px] font-semibold">
+                                            {{ $ri->siswa && $ri->siswa->kelas ? $ri->siswa->kelas->nama_kelas : '-' }}
+                                        </span>
+                                    </div>
+                                </td>
+                                <td class="py-2 px-3">
+                                    <span class="inline-block px-2 py-0.5 rounded text-[10.5px] font-bold 
+                                        @if($ri->kategori === 'Sakit') bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800
+                                        @elseif($ri->kategori === 'Izin') bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800
+                                        @else bg-purple-50 dark:bg-purple-950/50 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800 @endif mb-1">
+                                        {{ $ri->kategori }}
+                                    </span>
+                                    <p class="text-[11px] text-slate-600 dark:text-slate-400 font-mono">
+                                        {{ \Carbon\Carbon::parse($ri->tanggal_mulai)->translatedFormat('d M Y') }}
+                                        @if($ri->tanggal_mulai !== $ri->tanggal_selesai)
+                                            s/d {{ \Carbon\Carbon::parse($ri->tanggal_selesai)->translatedFormat('d M Y') }}
+                                        @endif
+                                    </p>
+                                </td>
+                                <td class="py-2 px-3">
+                                    <p class="text-xs text-slate-800 dark:text-slate-200 leading-relaxed font-medium">{{ $ri->alasan }}</p>
+                                    @if($ri->status === 'Ditolak' && $ri->catatan_penolakan)
+                                        <p class="text-[11px] text-rose-600 dark:text-rose-400 mt-1 italic">
+                                            Alasan Tolak: {{ $ri->catatan_penolakan }}
+                                        </p>
+                                    @endif
+                                </td>
+                                <td class="py-2 px-3 text-center">
+                                    @if($ri->status === 'Disetujui')
+                                        <span class="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                                            <i data-lucide="check-circle" class="w-3 h-3"></i>
+                                            <span>Disetujui</span>
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-rose-50 dark:bg-rose-950/50 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800">
+                                            <i data-lucide="x-circle" class="w-3 h-3"></i>
+                                            <span>Ditolak</span>
+                                        </span>
+                                    @endif
+                                </td>
+                                <td class="py-2 px-3 text-center">
+                                    @if($ri->bukti_foto)
+                                        <button type="button" onclick="openDetailApprovalModal({
+                                            title: 'Detail Riwayat Izin Siswa',
+                                            applicantName: '{{ addslashes($ri->siswa ? $ri->siswa->nama_siswa : $ri->nis) }}',
+                                            applicantMeta: 'NIS: {{ $ri->nis }} • Kelas: {{ addslashes($ri->siswa && $ri->siswa->kelas ? $ri->siswa->kelas->nama_kelas : "-") }}',
+                                            category: '{{ $ri->kategori }} ({{ $ri->status }})',
+                                            period: '{{ \Carbon\Carbon::parse($ri->tanggal_mulai)->translatedFormat("d M Y") }} s/d {{ \Carbon\Carbon::parse($ri->tanggal_selesai)->translatedFormat("d M Y") }}',
+                                            reason: '{{ addslashes($ri->alasan) }}',
+                                            proofUrl: '{{ $ri->bukti_foto ? (\Illuminate\Support\Str::startsWith($ri->bukti_foto, ["http", "uploads/", "storage/"]) ? asset($ri->bukti_foto) : asset("storage/" . $ri->bukti_foto)) : "" }}'
+                                        })" class="inline-flex items-center space-x-1 px-2.5 py-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-bold transition-colors cursor-pointer">
+                                            <i data-lucide="eye" class="w-3.5 h-3.5 text-slate-600 dark:text-slate-400"></i>
+                                            <span>Lihat</span>
                                         </button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="6" class="py-8 text-center text-slate-400 dark:text-slate-400 italic text-xs">
-                                <i data-lucide="check-circle" class="w-6 h-6 mx-auto mb-1.5 text-emerald-500 dark:text-emerald-400"></i>
-                                Tidak ada permohonan izin siswa dari orang tua yang menunggu persetujuan.
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                                    @else
+                                        <span class="text-slate-400 dark:text-slate-500 italic text-[11px]">Tanpa Foto</span>
+                                    @endif
+                                </td>
+                                <td class="py-2 px-3 text-right">
+                                    <p class="font-bold text-slate-800 dark:text-slate-200 text-xs leading-tight">
+                                        {{ $ri->disetujuiOleh ? ($ri->disetujuiOleh->guru ? $ri->disetujuiOleh->guru->nama_guru : $ri->disetujuiOleh->name) : 'Guru Piket' }}
+                                    </p>
+                                    <p class="text-[10.5px] text-slate-400 dark:text-slate-500 font-mono mt-0.5">
+                                        {{ $ri->updated_at ? $ri->updated_at->format('d/m/Y H:i') : '-' }}
+                                    </p>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="7" class="py-6 text-center text-slate-400 dark:text-slate-400 italic text-xs">
+                                    Belum ada riwayat izin siswa yang telah diproses.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>

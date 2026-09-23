@@ -108,6 +108,33 @@
             overflow: hidden;
         }
 
+        html.dark,
+        html.dark body {
+            background-color: #1C1F26 !important;
+        }
+
+        /* Prevent SweetAlert2 from collapsing html/body height and causing white cutout gap */
+        html.swal2-shown,
+        body.swal2-shown,
+        html.swal2-height-auto,
+        body.swal2-height-auto {
+            height: 100% !important;
+            min-height: 100% !important;
+            overflow: hidden !important;
+            padding-right: 0 !important;
+        }
+
+        html.dark.swal2-shown,
+        body.dark.swal2-shown,
+        html.dark.swal2-height-auto,
+        body.dark.swal2-height-auto {
+            background-color: #1C1F26 !important;
+        }
+
+        .swal2-container {
+            z-index: 99999 !important;
+        }
+
         /* Light Mode Global Styles (Matching Image 2) */
         .bg-\[\#F8FAFC\],
         .bg-\[\#F4F6FA\] {
@@ -306,18 +333,29 @@
             display: flex !important;
             align-items: center !important;
             min-height: 2.25rem !important;
-            height: 2.25rem !important;
-            padding: 0 2rem 0 0.75rem !important;
             border-radius: 0.625rem !important; /* 10px rounded-lg */
             border: 1px solid #CBD5E1 !important;
             background-color: #FFFFFF !important;
             color: #1E293B !important;
-            overflow: hidden !important;
             box-sizing: border-box !important;
             margin: 0 !important;
         }
 
-        .ts-control > .item {
+        .ts-wrapper.single .ts-control {
+            height: 2.25rem !important;
+            padding: 0 2rem 0 0.75rem !important;
+            overflow: hidden !important;
+        }
+
+        .ts-wrapper.multi .ts-control {
+            height: auto !important;
+            flex-wrap: wrap !important;
+            padding: 0.25rem 0.5rem !important;
+            gap: 0.375rem !important;
+            overflow: visible !important;
+        }
+
+        .ts-wrapper.single .ts-control > .item {
             display: inline-flex !important;
             align-items: center !important;
             height: 100% !important;
@@ -331,10 +369,51 @@
             background: transparent !important;
         }
 
+        .ts-wrapper.multi .ts-control > .item {
+            display: inline-flex !important;
+            align-items: center !important;
+            background: #E2E8F0 !important;
+            color: #1E293B !important;
+            border-radius: 0.375rem !important;
+            padding: 0.2rem 0.5rem !important;
+            font-size: 0.75rem !important;
+            font-weight: 600 !important;
+            margin: 0 !important;
+            line-height: 1.25 !important;
+        }
+
+        .ts-wrapper.multi .ts-control > .item .remove {
+            margin-left: 0.375rem !important;
+            cursor: pointer !important;
+            color: #64748B !important;
+            font-weight: bold !important;
+            text-decoration: none !important;
+            border-left: 1px solid rgba(100, 116, 139, 0.3) !important;
+            padding-left: 0.25rem !important;
+        }
+
+        .ts-wrapper.multi .ts-control > .item .remove:hover {
+            color: #EF4444 !important;
+        }
+
+        html.dark .ts-wrapper.multi .ts-control > .item {
+            background: #334155 !important;
+            color: #F8FAFC !important;
+        }
+
+        html.dark .ts-wrapper.multi .ts-control > .item .remove {
+            color: #94A3B8 !important;
+            border-left-color: rgba(148, 163, 184, 0.3) !important;
+        }
+
+        html.dark .ts-wrapper.multi .ts-control > .item .remove:hover {
+            color: #F87171 !important;
+        }
+
         .ts-control input {
             display: inline-flex !important;
             align-items: center !important;
-            height: 100% !important;
+            height: 1.75rem !important;
             margin: 0 !important;
             padding: 0 !important;
             font-size: 0.8125rem !important;
@@ -352,8 +431,8 @@
             border-color: #64748B transparent transparent transparent !important;
         }
 
-        /* Sembunyikan item pilihan lama saat user mengklik/mengetik pencarian agar bersih & tidak perlu hapus dulu */
-        .ts-wrapper.input-active .ts-control .item {
+        /* Sembunyikan item pilihan lama saat user mengklik/mengetik pencarian HANYA pada single select */
+        .ts-wrapper.single.input-active .ts-control .item {
             display: none !important;
         }
 
@@ -1101,6 +1180,7 @@
 
         function applyLanguage(lang) {
             const targetLang = lang || 'id';
+            const currentLang = localStorage.getItem('app_language') || 'id';
             localStorage.setItem('app_language', targetLang);
 
             // Update button styles in modal
@@ -1119,12 +1199,17 @@
                 }
             }
 
-            // Translate text nodes & placeholders across DOM
-            const elements = document.querySelectorAll('span, p, h1, h2, h3, h4, h5, button, a, th, td, label, div, option');
+            // Skip heavy DOM traversal if language is Bahasa Indonesia and wasn't changed from EN
+            if (targetLang === 'id' && currentLang === 'id') {
+                return;
+            }
+
+            // Translate text nodes & placeholders across DOM leaf elements (avoiding wrapper divs)
+            const elements = document.querySelectorAll('span, p, h1, h2, h3, h4, h5, button, a, th, td, label, option');
             elements.forEach(el => {
                 el.childNodes.forEach(node => {
                     if (node.nodeType === Node.TEXT_NODE) {
-                        const trimmed = node.nodeValue.trim();
+                        const trimmed = node.nodeValue ? node.nodeValue.trim() : '';
                         if (!trimmed) return;
                         for (const [key, val] of Object.entries(i18nDict)) {
                             if (targetLang === 'en' && trimmed === val.id) {
@@ -1167,6 +1252,7 @@
                     text: lang === 'id' ? 'Bahasa berhasil diubah ke Indonesia.' : 'App language successfully changed to English.',
                     timer: 1800,
                     showConfirmButton: false,
+                    heightAuto: false,
                     background: isDark ? '#151B26' : '#FFFFFF',
                     color: isDark ? '#F1F5F9' : '#0F172A'
                 });
@@ -1196,17 +1282,31 @@
                 if (el.id === 'perPageSelect' || el.classList.contains('no-search')) return;
                 if (!el.tomselect) {
                     try {
-                        new TomSelect(el, {
-                            create: false,
-                            maxOptions: 250,
-                            placeholder: el.getAttribute('placeholder') || 'Cari / pilih...',
-                            allowEmptyOption: true,
-                            onChange: function(value) {
-                                // Trigger native change event so onchange/auto-submit works
-                                el.dispatchEvent(new Event('change', { bubbles: true }));
-                                this.blur();
-                            }
-                        });
+                        const isMultiple = el.hasAttribute('multiple');
+                        if (isMultiple) {
+                            new TomSelect(el, {
+                                plugins: ['remove_button', 'clear_button'],
+                                create: false,
+                                maxOptions: null,
+                                placeholder: el.getAttribute('placeholder') || 'Pilih beberapa...',
+                                closeAfterSelect: false,
+                                hideSelected: true,
+                                onChange: function(value) {
+                                    el.dispatchEvent(new Event('change', { bubbles: true }));
+                                }
+                            });
+                        } else {
+                            new TomSelect(el, {
+                                create: false,
+                                maxOptions: 1000,
+                                placeholder: el.getAttribute('placeholder') || 'Cari / pilih...',
+                                allowEmptyOption: true,
+                                onChange: function(value) {
+                                    el.dispatchEvent(new Event('change', { bubbles: true }));
+                                    this.blur();
+                                }
+                            });
+                        }
                     } catch(e) {
                         console.warn('TomSelect init error:', e);
                     }
@@ -1311,6 +1411,7 @@
                             confirmButtonText: 'Ya, Lanjutkan',
                             cancelButtonText: 'Batal',
                             reverseButtons: true,
+                            heightAuto: false,
                             background: isDark ? '#151B26' : '#FFFFFF',
                             color: isDark ? '#F1F5F9' : '#0F172A',
                             customClass: {
@@ -1344,6 +1445,7 @@
                     timer: 3000,
                     timerProgressBar: true,
                     showConfirmButton: false,
+                    heightAuto: false,
                     background: isDarkTheme ? '#151B26' : '#FFFFFF',
                     color: isDarkTheme ? '#F1F5F9' : '#0F172A',
                     customClass: {
@@ -1357,6 +1459,7 @@
                     icon: 'error',
                     title: 'Gagal!',
                     text: "{{ session('error') }}",
+                    heightAuto: false,
                     background: isDarkTheme ? '#151B26' : '#FFFFFF',
                     color: isDarkTheme ? '#F1F5F9' : '#0F172A',
                     customClass: {
@@ -1370,6 +1473,7 @@
                     icon: 'warning',
                     title: 'Peringatan!',
                     text: "{{ session('warning') }}",
+                    heightAuto: false,
                     background: isDarkTheme ? '#151B26' : '#FFFFFF',
                     color: isDarkTheme ? '#F1F5F9' : '#0F172A',
                     customClass: {
@@ -1383,6 +1487,7 @@
                     icon: 'info',
                     title: 'Informasi',
                     text: "{{ session('info') }}",
+                    heightAuto: false,
                     background: isDarkTheme ? '#151B26' : '#FFFFFF',
                     color: isDarkTheme ? '#F1F5F9' : '#0F172A',
                     customClass: {

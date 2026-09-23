@@ -11,6 +11,7 @@ use App\Models\Kelas;
 use App\Models\Siswa;
 use App\Models\JurnalDetailKetidakhadiran;
 use App\Models\DispenSiswa;
+use App\Models\SiswaTelat;
 use Carbon\Carbon;
 
 use App\Services\WhatsAppService;
@@ -158,18 +159,24 @@ class GuruDashboardController extends Controller
         if ($kelasAktif) {
             $siswaList = Siswa::where('id_kelas', $kelasAktif->id_kelas)->orderBy('nama_siswa')->get();
 
+            // Total pertemuan / jurnal kelas semester berjalan
+            $totalJurnalKelas = JurnalMengajar::whereHas('jadwal', function($q) use ($kelasAktif) {
+                $q->where('id_kelas', $kelasAktif->id_kelas);
+            })->count();
+
             foreach ($siswaList as $s) {
                 $semuaKetidakhadiran = JurnalDetailKetidakhadiran::with(['jurnal.jadwal.jamMulaiData', 'jurnal.jadwal.jamSelesaiData'])
                     ->where('id_siswa', $s->nis)
                     ->get();
 
-                $alpaCount = 0; $sakitCount = 0; $izinCount = 0;
+                $alpaCount = 0; $sakitCount = 0; $izinCount = 0; $telatJurnalCount = 0;
                 $groupedByDate = [];
                 
                 foreach ($semuaKetidakhadiran as $kh) {
                     if ($kh->keterangan == 'Alpa') $alpaCount++;
                     elseif ($kh->keterangan == 'Sakit') $sakitCount++;
                     elseif ($kh->keterangan == 'Izin') $izinCount++;
+                    elseif ($kh->keterangan == 'Terlambat') $telatJurnalCount++;
 
                     if (!$kh->jurnal) continue;
                     $tgl = $kh->jurnal->tanggal;
@@ -192,7 +199,7 @@ class GuruDashboardController extends Controller
                             $jamText = "Di " . $jamText;
                         }
                         $riwayatAbsen[] = [
-                            'tanggal' => $tgl,
+                            'tanggal'    => $tgl,
                             'keterangan' => $ket,
                             'detail_jam' => $jamText
                         ];
@@ -202,6 +209,7 @@ class GuruDashboardController extends Controller
                     return strtotime($b['tanggal']) - strtotime($a['tanggal']);
                 });
 
+                // Riwayat Dispensasi
                 $semuaDispen = DispenSiswa::where('nis', $s->nis)
                     ->orderBy('tanggal', 'desc')
                     ->get();
@@ -219,6 +227,46 @@ class GuruDashboardController extends Controller
                         'jam_kembali'=> $d->jam_kembali_aktual,
                     ];
                 }
+
+                // Riwayat Keterlambatan (Piket & Jurnal)
+                $semuaTelatPiket = SiswaTelat::where('nis', $s->nis)
+                    ->orderBy('tanggal', 'desc')
+                    ->get();
+
+                $riwayatTelat = [];
+                foreach ($semuaTelatPiket as $tp) {
+                    $riwayatTelat[] = [
+                        'tanggal'       => $tp->tanggal,
+                        'jam_terlambat' => $tp->jam_terlambat ? substr($tp->jam_terlambat, 0, 5) . ' WIB' : '-',
+                        'alasan'        => $tp->alasan ?: 'Tidak ada catatan alasan',
+                        'tindakan'      => $tp->tindakan ?: '-',
+                        'sumber'        => 'Guru Piket'
+                    ];
+                }
+
+                $telatJurnals = $semuaKetidakhadiran->where('keterangan', 'Terlambat');
+                foreach ($telatJurnals as $tj) {
+                    if (!$tj->jurnal) continue;
+                    $jamM = $tj->jurnal->jadwal->jamMulaiData->jam_ke ?? '?';
+                    $jamS = $tj->jurnal->jadwal->jamSelesaiData->jam_ke ?? '?';
+                    $teksJam = $jamM == $jamS ? "Jam ke-$jamM" : "Jam ke-$jamM-$jamS";
+                    
+                    // Cek jika sudah tercatat di tanggal yang sama oleh piket
+                    $tglJurnal = $tj->jurnal->tanggal;
+                    $riwayatTelat[] = [
+                        'tanggal'       => $tglJurnal,
+                        'jam_terlambat' => $teksJam,
+                        'alasan'        => $tj->jurnal->materi ? "Materi: " . \Illuminate\Support\Str::limit($tj->jurnal->materi, 35) : 'Keterlambatan di sesi mapel',
+                        'tindakan'      => '-',
+                        'sumber'        => 'Jurnal Kelas'
+                    ];
+                }
+
+                usort($riwayatTelat, function($a, $b) {
+                    return strtotime($b['tanggal']) - strtotime($a['tanggal']);
+                });
+
+                $telatCount = count($riwayatTelat);
 
                 // 1. Ambil daftar tanggal (unik) di mana siswa dicatat 'Alpa'
                 $tanggalAlpaList = JurnalDetailKetidakhadiran::where('id_siswa', $s->nis)
@@ -259,29 +307,45 @@ class GuruDashboardController extends Controller
                     $prevDate = $currDate;
                 }
 
-                // 2. Kriteria 3 Status Peringatan:
-                $perluPengawasan = $maxBerturut >= 5; // 5 Hari Berturut-turut -> TERAWASI
-                $perluTindak     = $alpaCount > 5;     // Total Alpa > 5 Hari (Acak) -> PERLU DITINDAK
-                $perluAtensi     = $alpaCount >= 3;    // Total Alpa >= 3 Hari -> PERLU ATENSI
+                // 2. Kriteria Status Peringatan:
+                $perluPengawasan   = $maxBerturut >= 5;   // 5 Hari Berturut-turut -> TERAWASI
+                $perluTindak       = $alpaCount > 5;       // Total Alpa > 5 Hari (Acak) -> PERLU DITINDAK
+                $perluAtensi       = $alpaCount >= 3;      // Total Alpa >= 3 Hari -> PERLU ATENSI
+                $perluBimbinganTelat = $telatCount >= 3;   // Total Telat >= 3 Kali -> SERING TELAT
 
-                // 3. Simpan ke array rekapSiswa
+                // 3. Perhitungan Persentase
+                // Siswa yang telat TETAP DIHITUNG HADIR
+                $totalTidakHadir = $alpaCount + $sakitCount + $izinCount;
+                $totalHadir = max(0, $totalJurnalKelas - $totalTidakHadir);
+                $persentaseTelat = $totalJurnalKelas > 0 ? round(($telatCount / $totalJurnalKelas) * 100, 1) : 0;
+                $persentaseHadir = $totalJurnalKelas > 0 ? round(($totalHadir / $totalJurnalKelas) * 100, 1) : 100;
+
+                // 4. Simpan ke array rekapSiswa
                 $rekapSiswa->push([
-                    'nis'               => $s->nis,
-                    'nama_siswa'        => $s->nama_siswa,
-                    'alpa'              => $alpaCount,
-                    'sakit'             => $sakitCount,
-                    'izin'              => $izinCount,
-                    'dispen'            => $dispenCount,
-                    'total_absen'       => $alpaCount + $sakitCount + $izinCount,
-                    'perlu_atensi'      => $perluAtensi,
-                    'perlu_pengawasan'  => $perluPengawasan,
-                    'perlu_tindak'      => $perluTindak,
-                    'max_berturut_alpa' => $maxBerturut,
-                    'riwayat_absen'     => $riwayatAbsen,
-                    'riwayat_dispen'    => $riwayatDispen,
+                    'nis'                   => $s->nis,
+                    'nama_siswa'            => $s->nama_siswa,
+                    'alpa'                  => $alpaCount,
+                    'sakit'                 => $sakitCount,
+                    'izin'                  => $izinCount,
+                    'telat'                 => $telatCount,
+                    'dispen'                => $dispenCount,
+                    'total_absen'           => $totalTidakHadir,
+                    'total_hadir'           => $totalHadir,
+                    'persentase_telat'      => $persentaseTelat,
+                    'persentase_hadir'      => $persentaseHadir,
+                    'perlu_atensi'          => $perluAtensi,
+                    'perlu_pengawasan'      => $perluPengawasan,
+                    'perlu_tindak'          => $perluTindak,
+                    'perlu_bimbingan_telat' => $perluBimbinganTelat,
+                    'max_berturut_alpa'     => $maxBerturut,
+                    'riwayat_absen'         => $riwayatAbsen,
+                    'riwayat_dispen'        => $riwayatDispen,
+                    'riwayat_telat'         => $riwayatTelat,
                 ]);
             }
-            $rekapSiswa = $rekapSiswa->sortByDesc('total_absen')->values();
+            $rekapSiswa = $rekapSiswa->sortByDesc(function ($item) {
+                return $item['total_absen'] * 10 + $item['telat'];
+            })->values();
         }
 
         return view('guru.wali-kelas.index', compact('guru', 'daftarKelas', 'kelasAktif', 'rekapSiswa'));

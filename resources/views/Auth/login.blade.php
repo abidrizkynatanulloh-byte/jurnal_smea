@@ -987,6 +987,7 @@
                 icon: 'info',
                 confirmButtonColor: '#0284C7',
                 confirmButtonText: 'Saya Mengerti',
+                heightAuto: false,
                 background: isDark ? '#151B26' : '#FFFFFF',
                 color: isDark ? '#F1F5F9' : '#0F172A',
                 customClass: {

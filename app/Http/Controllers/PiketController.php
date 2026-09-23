@@ -11,6 +11,7 @@ use App\Models\SiswaTelat;
 use App\Models\Jadwal;
 use App\Models\JurnalMengajar;
 use App\Models\IzinGuru;
+use App\Models\IzinSiswa;
 use App\Models\AuditLog;
 use App\Models\Notifikasi;
 use App\Models\User;
@@ -50,12 +51,18 @@ class PiketController extends Controller
             ->orderBy('id', 'desc')
             ->get();
 
-        $izinSiswaPending = \App\Models\IzinSiswa::with(['siswa.kelas'])
+        $izinSiswaPending = IzinSiswa::with(['siswa.kelas'])
             ->where('status', 'Pending')
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return view('piket.dashboard', compact('daftarSiswa', 'dispenHariIni', 'siswaTelatHariIni', 'izinGuruPending', 'izinSiswaPending'));
+        $riwayatIzinSiswa = IzinSiswa::with(['siswa.kelas', 'disetujuiOleh.guru'])
+            ->whereIn('status', ['Disetujui', 'Ditolak'])
+            ->orderBy('updated_at', 'desc')
+            ->limit(50)
+            ->get();
+
+        return view('piket.dashboard', compact('daftarSiswa', 'dispenHariIni', 'siswaTelatHariIni', 'izinGuruPending', 'izinSiswaPending', 'riwayatIzinSiswa'));
     }
 
     /**
@@ -69,27 +76,29 @@ class PiketController extends Controller
             'disetujui_oleh' => Auth::id(),
         ]);
 
-        // Otomatis buatkan record di DispenSiswa agar guru & piket dapat memantau
-        $start = \Carbon\Carbon::parse($izin->tanggal_mulai);
-        $end   = \Carbon\Carbon::parse($izin->tanggal_selesai);
+        // Hanya buatkan record di DispenSiswa jika kategori permohonan memang berupa Dispensasi
+        if ($izin->kategori === 'Dispen') {
+            $start = \Carbon\Carbon::parse($izin->tanggal_mulai);
+            $end   = \Carbon\Carbon::parse($izin->tanggal_selesai);
 
-        for ($date = $start->copy(); $date->lte($end); $date->addDay()) {
-            $tglStr = $date->toDateString();
+            for ($date = $start->copy(); $date->lte($end); $date->addDay()) {
+                $tglStr = $date->toDateString();
 
-            \App\Models\DispenSiswa::updateOrCreate(
-                [
-                    'nis'     => $izin->nis,
-                    'tanggal' => $tglStr,
-                ],
-                [
-                    'keperluan'          => "{$izin->kategori}: {$izin->alasan}",
-                    'jam_ke'             => 'Full Day',
-                    'jam_keluar_rencana' => '07:00:00',
-                    'jam_kembali_rencana'=> '15:30:00',
-                    'status'             => 'DISETUJUI',
-                    'disetujui_oleh'     => Auth::id(),
-                ]
-            );
+                \App\Models\DispenSiswa::updateOrCreate(
+                    [
+                        'nis'     => $izin->nis,
+                        'tanggal' => $tglStr,
+                    ],
+                    [
+                        'keperluan'          => "{$izin->kategori}: {$izin->alasan}",
+                        'jam_ke'             => 'Full Day',
+                        'jam_keluar_rencana' => '07:00:00',
+                        'jam_kembali_rencana'=> '15:30:00',
+                        'status'             => 'Disetujui',
+                        'disetujui_oleh'     => Auth::id(),
+                    ]
+                );
+            }
         }
 
         AuditLog::log(

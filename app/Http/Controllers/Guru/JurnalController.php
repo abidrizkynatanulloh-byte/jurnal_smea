@@ -8,8 +8,10 @@ use App\Models\Jadwal;
 use App\Models\JurnalMengajar;
 use App\Models\JurnalDetailKetidakhadiran;
 use App\Models\Siswa;
+use App\Models\IzinSiswa;
 use App\Models\PengajuanIzinSiswa;
 use App\Models\DispenSiswa;
+use App\Models\SiswaTelat;
 use App\Models\FotoMengajar;
 use Carbon\Carbon;
 
@@ -63,39 +65,71 @@ class JurnalController
             ->orderBy('nama_siswa')
             ->get()
             ->map(function ($s) use ($tanggalHariIni) {
-                // 1. Cek izin resmi siswa hari ini
-                $izin = PengajuanIzinSiswa::where('nis', $s->nis)
-                    ->where('tanggal', $tanggalHariIni)
+                // 1. Cek izin resmi siswa hari ini dari Orang Tua (IzinSiswa)
+                $izin = IzinSiswa::where('nis', $s->nis)
                     ->where('status', 'Disetujui')
+                    ->whereDate('tanggal_mulai', '<=', $tanggalHariIni)
+                    ->whereDate('tanggal_selesai', '>=', $tanggalHariIni)
+                    ->latest()
                     ->first();
 
-                // 2. Cek dispensasi aktif siswa hari ini
+                // Fallback jika ada record di model lama PengajuanIzinSiswa
+                if (!$izin) {
+                    $izinOld = PengajuanIzinSiswa::where('nis', $s->nis)
+                        ->where('tanggal', $tanggalHariIni)
+                        ->where('status', 'Disetujui')
+                        ->first();
+                    if ($izinOld) {
+                        $izin = (object) [
+                            'id'       => $izinOld->id,
+                            'kategori' => $izinOld->jenis_izin,
+                            'alasan'   => $izinOld->keterangan,
+                        ];
+                    }
+                }
+
+                // 2. Cek dispensasi aktif siswa hari ini (Dispensasi murni yang bukan catatan izin/sakit)
                 $dispen = DispenSiswa::where('nis', $s->nis)
                     ->where('tanggal', $tanggalHariIni)
                     ->whereIn('status', ['Disetujui', 'Sedang di Luar'])
+                    ->where(function ($q) {
+                        $q->where('keperluan', 'NOT LIKE', 'Sakit%')
+                          ->where('keperluan', 'NOT LIKE', 'Izin%');
+                    })
                     ->first();
 
-                // 3. Cek apakah ada status Sakit / Izin / Alpa dari jurnal jam sebelumnya hari ini (Berantai dari Guru Pertama)
+                // 3. Cek apakah ada status Sakit / Izin / Alpa / Terlambat dari jurnal jam sebelumnya hari ini (Berantai dari Guru Pertama)
                 $presensiSebelumnya = JurnalDetailKetidakhadiran::where('id_siswa', $s->nis)
                     ->whereHas('jurnal', function ($q) use ($tanggalHariIni) {
                         $q->whereDate('tanggal', $tanggalHariIni);
                     })
-                    ->whereIn('keterangan', ['Sakit', 'Izin', 'Alpa'])
+                    ->whereIn('keterangan', ['Sakit', 'Izin', 'Alpa', 'Terlambat'])
                     ->latest('id_detail')
+                    ->first();
+
+                // 4. Cek apakah ada catatan siswa datang terlambat dari Guru Piket hari ini
+                $siswaTelatHariIni = SiswaTelat::where('nis', $s->nis)
+                    ->whereDate('tanggal', $tanggalHariIni)
+                    ->latest()
                     ->first();
 
                 $autoStatus = 'Hadir';
                 $infoStatus = null;
 
                 if ($izin) {
-                    $autoStatus = ($izin->jenis_izin === 'Sakit') ? 'Sakit' : 'Izin';
-                    $infoStatus = "Izin Resmi: {$izin->jenis_izin}";
+                    $autoStatus = ($izin->kategori === 'Sakit') ? 'Sakit' : 'Izin';
+                    $alasanTeks = $izin->alasan ? ": {$izin->alasan}" : '';
+                    $infoStatus = "Izin Resmi: {$izin->kategori}{$alasanTeks}";
                 } elseif ($dispen) {
                     $autoStatus = 'Dispen';
                     $infoStatus = "Dispensasi: {$dispen->keperluan}";
                 } elseif ($presensiSebelumnya) {
                     $autoStatus = $presensiSebelumnya->keterangan;
                     $infoStatus = "Otomatis: Tercatat {$presensiSebelumnya->keterangan} pada sesi guru sebelumnya";
+                } elseif ($siswaTelatHariIni) {
+                    $autoStatus = 'Terlambat';
+                    $jamTelat = substr($siswaTelatHariIni->jam_terlambat, 0, 5);
+                    $infoStatus = "Terlambat Piket (pk. {$jamTelat})";
                 }
 
                 $s->auto_status = $autoStatus;
@@ -176,11 +210,12 @@ class JurnalController
             }
         }
 
-        // 3. Simpan ketidakhadiran siswa (Sakit, Izin, Alpa, Dispen)
+        // 3. Simpan ketidakhadiran siswa (Sakit, Izin, Alpa, Dispen, Terlambat)
         // Note: Notifikasi WA Alpa akan dikonsolidasi & dikirim setelah jam sekolah selesai
-        if ($request->filled('ketidakhadiran')) {
-            foreach ($request->ketidakhadiran as $nis => $keterangan) {
-                if (in_array($keterangan, ['Sakit', 'Izin', 'Alpa', 'Dispen'])) {
+        $ketidakhadiranInput = $request->input('ketidakhadiran') ?? $request->input('ketidakhadiran_mob') ?? [];
+        if (!empty($ketidakhadiranInput) && is_array($ketidakhadiranInput)) {
+            foreach ($ketidakhadiranInput as $nis => $keterangan) {
+                if (in_array($keterangan, ['Sakit', 'Izin', 'Alpa', 'Dispen', 'Terlambat'])) {
                     $refIzin = PengajuanIzinSiswa::where('nis', $nis)
                         ->where('tanggal', $request->tanggal)
                         ->where('status', 'Disetujui')
