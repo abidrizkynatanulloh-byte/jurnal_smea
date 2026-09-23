@@ -11,8 +11,10 @@ use App\Models\Kelas;
 use App\Models\Siswa;
 use App\Models\JurnalDetailKetidakhadiran;
 use App\Models\DispenSiswa;
+use App\Models\IzinSiswa;
 use App\Models\SiswaTelat;
 use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 
 use App\Services\WhatsAppService;
 use Illuminate\Support\Facades\Cache;
@@ -165,31 +167,82 @@ class GuruDashboardController extends Controller
             })->count();
 
             foreach ($siswaList as $s) {
+                // 1. Ambil Izin Resmi Siswa yang sudah Disetujui Piket (IzinSiswa)
+                $semuaIzinResmi = IzinSiswa::where('nis', $s->nis)
+                    ->where('status', 'Disetujui')
+                    ->get();
+
+                $tanggalIzinSakitResmi = [];
+                $sakitCount = 0;
+                $izinCount = 0;
+
+                foreach ($semuaIzinResmi as $ir) {
+                    $period = CarbonPeriod::create($ir->tanggal_mulai, $ir->tanggal_selesai);
+                    foreach ($period as $dt) {
+                        $tglStr = $dt->toDateString();
+                        $kat = ucfirst(strtolower($ir->kategori));
+                        if (!isset($tanggalIzinSakitResmi[$tglStr])) {
+                            $tanggalIzinSakitResmi[$tglStr] = [
+                                'kategori' => $kat,
+                                'alasan'   => $ir->alasan ?: 'Izin resmi disetujui Guru Piket',
+                                'sumber'   => 'Guru Piket'
+                            ];
+                            if ($kat === 'Sakit') $sakitCount++;
+                            elseif ($kat === 'Izin') $izinCount++;
+                        }
+                    }
+                }
+
+                // 2. Ambil Ketidakhadiran dari Jurnal Mengajar Guru Mapel
                 $semuaKetidakhadiran = JurnalDetailKetidakhadiran::with(['jurnal.jadwal.jamMulaiData', 'jurnal.jadwal.jamSelesaiData'])
                     ->where('id_siswa', $s->nis)
                     ->get();
 
-                $alpaCount = 0; $sakitCount = 0; $izinCount = 0; $telatJurnalCount = 0;
+                $alpaCount = 0;
+                $telatJurnalCount = 0;
                 $groupedByDate = [];
-                
-                foreach ($semuaKetidakhadiran as $kh) {
-                    if ($kh->keterangan == 'Alpa') $alpaCount++;
-                    elseif ($kh->keterangan == 'Sakit') $sakitCount++;
-                    elseif ($kh->keterangan == 'Izin') $izinCount++;
-                    elseif ($kh->keterangan == 'Terlambat') $telatJurnalCount++;
 
+                foreach ($semuaKetidakhadiran as $kh) {
                     if (!$kh->jurnal) continue;
                     $tgl = $kh->jurnal->tanggal;
                     $jamM = $kh->jurnal->jadwal->jamMulaiData->jam_ke ?? '?';
                     $jamS = $kh->jurnal->jadwal->jamSelesaiData->jam_ke ?? '?';
                     $teksJam = $jamM == $jamS ? "Jam ke-$jamM" : "Jam ke-$jamM-$jamS";
-                    
+
+                    if ($kh->keterangan == 'Alpa') {
+                        $alpaCount++;
+                    } elseif ($kh->keterangan == 'Terlambat') {
+                        $telatJurnalCount++;
+                    } elseif ($kh->keterangan == 'Sakit' || $kh->keterangan == 'Izin') {
+                        if (!isset($tanggalIzinSakitResmi[$tgl])) {
+                            if ($kh->keterangan == 'Sakit') $sakitCount++;
+                            elseif ($kh->keterangan == 'Izin') $izinCount++;
+                        }
+                    }
+
                     if (!isset($groupedByDate[$tgl])) $groupedByDate[$tgl] = [];
                     if (!isset($groupedByDate[$tgl][$kh->keterangan])) $groupedByDate[$tgl][$kh->keterangan] = [];
                     $groupedByDate[$tgl][$kh->keterangan][] = $teksJam;
                 }
 
+                // 3. Susun Riwayat Absen untuk Modal
                 $riwayatAbsen = [];
+                foreach ($tanggalIzinSakitResmi as $tglStr => $infoIzin) {
+                    $detailJam = "1 Hari Full (Izin Resmi Piket)";
+                    if (isset($groupedByDate[$tglStr][$infoIzin['kategori']])) {
+                        $jams = $groupedByDate[$tglStr][$infoIzin['kategori']];
+                        $detailJam .= " • Sesi " . implode(', ', $jams);
+                        unset($groupedByDate[$tglStr][$infoIzin['kategori']]);
+                    }
+                    $riwayatAbsen[] = [
+                        'tanggal'    => $tglStr,
+                        'keterangan' => $infoIzin['kategori'],
+                        'detail_jam' => $detailJam,
+                        'alasan'     => $infoIzin['alasan'],
+                        'sumber'     => $infoIzin['sumber']
+                    ];
+                }
+
                 foreach ($groupedByDate as $tgl => $ketGroups) {
                     foreach ($ketGroups as $ket => $jams) {
                         $jamText = implode(', ', $jams);
@@ -201,10 +254,13 @@ class GuruDashboardController extends Controller
                         $riwayatAbsen[] = [
                             'tanggal'    => $tgl,
                             'keterangan' => $ket,
-                            'detail_jam' => $jamText
+                            'detail_jam' => $jamText,
+                            'alasan'     => '-',
+                            'sumber'     => 'Jurnal Kelas'
                         ];
                     }
                 }
+
                 usort($riwayatAbsen, function($a, $b) {
                     return strtotime($b['tanggal']) - strtotime($a['tanggal']);
                 });
@@ -214,17 +270,30 @@ class GuruDashboardController extends Controller
                     ->orderBy('tanggal', 'desc')
                     ->get();
 
-                $dispenCount = $semuaDispen->count();
-
+                $dispenCount = 0;
                 $riwayatDispen = [];
                 foreach ($semuaDispen as $d) {
+                    $tglMulai = $d->tanggal;
+                    $tglSelesai = $d->tanggal_selesai ?: $d->tanggal;
+
+                    if ($d->status === 'Disetujui' || $d->status === 'Sudah Kembali' || $d->status === 'Sedang di Luar') {
+                        $period = CarbonPeriod::create($tglMulai, $tglSelesai);
+                        $dispenCount += count($period);
+                    }
+
+                    $periodeTeks = ($d->tanggal_selesai && $d->tanggal_selesai !== $d->tanggal)
+                        ? \Carbon\Carbon::parse($d->tanggal)->translatedFormat('d M Y') . ' s/d ' . \Carbon\Carbon::parse($d->tanggal_selesai)->translatedFormat('d M Y')
+                        : \Carbon\Carbon::parse($d->tanggal)->locale('id')->isoFormat('dddd, D MMMM Y');
+
                     $riwayatDispen[] = [
-                        'tanggal'    => $d->tanggal,
-                        'keperluan'  => $d->keperluan,
-                        'jam_ke'     => $d->jam_ke,
-                        'status'     => $d->status,
-                        'jam_keluar' => $d->jam_keluar_aktual,
-                        'jam_kembali'=> $d->jam_kembali_aktual,
+                        'tanggal'         => $d->tanggal,
+                        'tanggal_selesai' => $d->tanggal_selesai,
+                        'periode_teks'    => $periodeTeks,
+                        'keperluan'       => $d->keperluan,
+                        'jam_ke'          => $d->jam_ke,
+                        'status'          => $d->status,
+                        'jam_keluar'      => $d->jam_keluar_aktual,
+                        'jam_kembali'     => $d->jam_kembali_aktual,
                     ];
                 }
 
@@ -292,8 +361,8 @@ class GuruDashboardController extends Controller
                     } else {
                         $diff = $prevDate->diffInDays($currDate);
 
-                        // Selisih 1 hari (atau 3 hari jika melewati weekend Jumat -> Senin)
-                        if ($diff == 1 || ($prevDate->isFriday() && $diff == 3)) {
+                        // Selisih 1 hari (atau 3 hari jika melewati weekend Jumat -> Senin, atau 2 hari Sabtu -> Senin)
+                        if ($diff == 1 || ($prevDate->isFriday() && $diff == 3) || ($prevDate->isSaturday() && $diff == 2)) {
                             $currentBerturut++;
                         } else {
                             $currentBerturut = 1;
@@ -307,10 +376,12 @@ class GuruDashboardController extends Controller
                     $prevDate = $currDate;
                 }
 
-                // 2. Kriteria Status Peringatan:
-                $perluPengawasan   = $maxBerturut >= 5;   // 5 Hari Berturut-turut -> TERAWASI
-                $perluTindak       = $alpaCount > 5;       // Total Alpa > 5 Hari (Acak) -> PERLU DITINDAK
-                $perluAtensi       = $alpaCount >= 3;      // Total Alpa >= 3 Hari -> PERLU ATENSI
+                // 2. Kriteria Status Peringatan Siswa (Sesuai Aturan Sekolah):
+                // - Alpa 3 hari berturut-turut
+                // - ATAU Total Alpa >= 7 hari (meski tidak berturut-turut)
+                $alpaBerturut3Hari   = $maxBerturut >= 3;
+                $alpaTotal7Hari      = $alpaCount >= 7;
+                $perluPerhatianAlpa  = $alpaBerturut3Hari || $alpaTotal7Hari;
                 $perluBimbinganTelat = $telatCount >= 3;   // Total Telat >= 3 Kali -> SERING TELAT
 
                 // 3. Perhitungan Persentase
@@ -333,9 +404,9 @@ class GuruDashboardController extends Controller
                     'total_hadir'           => $totalHadir,
                     'persentase_telat'      => $persentaseTelat,
                     'persentase_hadir'      => $persentaseHadir,
-                    'perlu_atensi'          => $perluAtensi,
-                    'perlu_pengawasan'      => $perluPengawasan,
-                    'perlu_tindak'          => $perluTindak,
+                    'alpa_berturut_3'       => $alpaBerturut3Hari,
+                    'alpa_total_7'          => $alpaTotal7Hari,
+                    'perlu_perhatian_alpa'  => $perluPerhatianAlpa,
                     'perlu_bimbingan_telat' => $perluBimbinganTelat,
                     'max_berturut_alpa'     => $maxBerturut,
                     'riwayat_absen'         => $riwayatAbsen,
@@ -343,9 +414,6 @@ class GuruDashboardController extends Controller
                     'riwayat_telat'         => $riwayatTelat,
                 ]);
             }
-            $rekapSiswa = $rekapSiswa->sortByDesc(function ($item) {
-                return $item['total_absen'] * 10 + $item['telat'];
-            })->values();
         }
 
         return view('guru.wali-kelas.index', compact('guru', 'daftarKelas', 'kelasAktif', 'rekapSiswa'));

@@ -65,7 +65,17 @@
             <!-- Status Berada di Sekolah -->
             <div class="text-center sm:text-right shrink-0">
                 <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-0.5">Status Keberadaan</span>
-                @if($dispenHariIni && $dispenHariIni->status === 'Sedang di Luar')
+                @if($izinHariIni && $izinHariIni->kategori === 'Sakit')
+                    <span class="inline-flex items-center px-2.5 py-1 bg-blue-50 text-blue-700 text-xs font-semibold rounded-full border border-blue-200">
+                        <span class="w-1.5 h-1.5 rounded-full bg-blue-500 mr-1.5"></span>
+                        Tidak Masuk (Izin Sakit)
+                    </span>
+                @elseif($izinHariIni && $izinHariIni->kategori === 'Izin')
+                    <span class="inline-flex items-center px-2.5 py-1 bg-purple-50 text-purple-700 text-xs font-semibold rounded-full border border-purple-200">
+                        <span class="w-1.5 h-1.5 rounded-full bg-purple-500 mr-1.5"></span>
+                        Tidak Masuk (Izin Resmi)
+                    </span>
+                @elseif($dispenHariIni && $dispenHariIni->status === 'Sedang di Luar')
                     <span class="inline-flex items-center px-2.5 py-1 bg-amber-50 text-amber-700 text-xs font-semibold rounded-full border border-amber-200">
                         <span class="w-1.5 h-1.5 rounded-full bg-amber-500 mr-1.5 animate-pulse"></span>
                         Sedang Izin Keluar Sekolah
@@ -89,7 +99,7 @@
                     </div>
                     <div>
                         <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Sakit Bulan Ini</p>
-                        <h3 class="text-base sm:text-lg font-bold text-slate-900 mt-0.5">{{ $rekapBulanIni['sakit'] }} Sesi</h3>
+                        <h3 class="text-base sm:text-lg font-bold text-slate-900 mt-0.5">{{ $rekapBulanIni['sakit'] }} Hari</h3>
                     </div>
                 </div>
                 <div class="text-slate-300 group-hover:text-blue-500 transition-colors">
@@ -105,7 +115,7 @@
                     </div>
                     <div>
                         <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Izin Bulan Ini</p>
-                        <h3 class="text-base sm:text-lg font-bold text-slate-900 mt-0.5">{{ $rekapBulanIni['izin'] }} Sesi</h3>
+                        <h3 class="text-base sm:text-lg font-bold text-slate-900 mt-0.5">{{ $rekapBulanIni['izin'] }} Hari</h3>
                     </div>
                 </div>
                 <div class="text-slate-300 group-hover:text-purple-500 transition-colors">
@@ -137,7 +147,7 @@
                     </div>
                     <div>
                         <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Alpa / Tanpa Ket.</p>
-                        <h3 class="text-base sm:text-lg font-bold text-rose-600 mt-0.5">{{ $rekapBulanIni['alpa'] }} Sesi</h3>
+                        <h3 class="text-base sm:text-lg font-bold text-rose-600 mt-0.5">{{ $rekapBulanIni['alpa'] }} Hari</h3>
                     </div>
                 </div>
                 <div class="text-slate-300 group-hover:text-rose-500 transition-colors">

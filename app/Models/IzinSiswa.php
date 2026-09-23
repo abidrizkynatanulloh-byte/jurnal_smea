@@ -8,6 +8,22 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * Model IzinSiswa
  * Digunakan untuk mengelola permohonan izin / sakit siswa yang diajukan oleh Orang Tua.
+ * 
+ * @property int $id
+ * @property string $nis
+ * @property string $kategori
+ * @property string $alasan
+ * @property string $tanggal_mulai
+ * @property string $tanggal_selesai
+ * @property string|null $bukti_foto
+ * @property string $status
+ * @property int|null $disetujui_oleh
+ * @property string|null $catatan_penolakan
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ * @property \Carbon\Carbon|null $deleted_at
+ * @property-read \App\Models\Siswa|null $siswa
+ * @property-read \App\Models\User|null $disetujuiOleh
  */
 class IzinSiswa extends Model
 {

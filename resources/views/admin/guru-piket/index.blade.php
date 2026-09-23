@@ -2,6 +2,14 @@
 
 @section('title', 'Kelola Jadwal Guru Piket Bulanan - Jurnal Esemkita')
 
+@php
+    /** @var array<int|string, string> $namaBulanList */
+    /** @var int|string $bulanSelected */
+    /** @var int|string $tahunSelected */
+    /** @var array $datesInMonth */
+    /** @var array $weeksInMonth */
+@endphp
+
 @section('content')
 <div class="space-y-4">
     <!-- Header Page & Filter Bulan/Tahun -->
@@ -21,26 +29,22 @@
             <div class="w-36">
                 <select name="bulan" onchange="this.form.submit()" class="block w-full h-9 px-2.5 bg-white dark:bg-[#1A212D] border border-slate-200 dark:border-[#2D394C] rounded-lg text-xs font-semibold text-slate-800 dark:text-slate-200 focus:outline-none focus:border-brand-500">
                     @foreach($namaBulanList as $num => $nama)
-                        <option value="{{ $num }}" {{ $bulanSelected == $num ? 'selected' : '' }}>
-                            {{ $nama }}
-                        </option>
+                        <option value="{{ $num }}" {{ (int)$bulanSelected === (int)$num ? 'selected' : '' }}>{{ $nama }}</option>
                     @endforeach
                 </select>
             </div>
 
             <div class="w-24">
                 <select name="tahun" onchange="this.form.submit()" class="block w-full h-9 px-2.5 bg-white dark:bg-[#1A212D] border border-slate-200 dark:border-[#2D394C] rounded-lg text-xs font-semibold text-slate-800 dark:text-slate-200 focus:outline-none focus:border-brand-500">
-                    @for($t = date('Y') - 1; $t <= date('Y') + 1; $t++)
-                        <option value="{{ $t }}" {{ $tahunSelected == $t ? 'selected' : '' }}>
-                            {{ $t }}
-                        </option>
-                    @endfor
+                    @foreach(range(2024, 2035) as $t)
+                        <option value="{{ $t }}" {{ (int)$tahunSelected === (int)$t ? 'selected' : '' }}>{{ $t }}</option>
+                    @endforeach
                 </select>
             </div>
 
             <button type="button" onclick="openModalTambah('')" class="h-10 px-4 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white rounded-xl text-xs font-bold transition-all inline-flex items-center justify-center gap-2 shadow-2xs hover:shadow-md cursor-pointer whitespace-nowrap shrink-0">
                 <i data-lucide="plus" class="w-4 h-4"></i>
-                <span>+ Tambah Penugasan</span>
+                <span> Tambah Penugasan</span>
             </button>
         </form>
     </div>
@@ -48,7 +52,7 @@
     <!-- NOTIFIKASI BULAN YANG DIPILIH -->
     <div class="flex items-center justify-between px-1">
         <h2 class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider flex items-center space-x-1.5">
-            <span>Daftar Tanggal: {{ $namaBulanList[$bulanSelected] }} {{ $tahunSelected }}</span>
+            <span>Daftar Tanggal: {{ $namaBulanList[$bulanSelected] ?? ($namaBulanList[(int)$bulanSelected] ?? '') }} {{ $tahunSelected }}</span>
             <span class="px-2 py-0.5 bg-brand-50 dark:bg-brand-950/60 text-brand-700 dark:text-brand-300 border border-brand-200 dark:border-brand-800 rounded-full text-[10px]">
                 {{ count($datesInMonth) }} Hari Kerja
             </span>
@@ -292,7 +296,7 @@
 
             <div>
                 <label for="guruSelect" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Pilih Guru *</label>
-                <select name="id_guru" id="guruSelect" required placeholder="Cari / pilih guru..." class="searchable-select block w-full h-9 px-2.5 bg-white dark:bg-[#1A212D] border border-slate-200 dark:border-[#2D394C] rounded-lg text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-brand-500">
+                <select name="id_guru" id="guruSelect" required data-placeholder="Cari / pilih guru..." class="searchable-select block w-full h-9 px-2.5 bg-white dark:bg-[#1A212D] border border-slate-200 dark:border-[#2D394C] rounded-lg text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-brand-500">
                     <option value="">-- Pilih Guru --</option>
                     @foreach($guruList as $g)
                         <option value="{{ $g->id_guru }}">{{ $g->nama_guru }} ({{ $g->nip ?? '-' }})</option>

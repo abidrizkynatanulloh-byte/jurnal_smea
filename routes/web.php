@@ -155,7 +155,7 @@ Route::middleware('auth')->group(function () {
     // ---------------------------------------------------------------------
     // 10. WAKIL KESISWAAN (DISPEN SISWA)
     // ---------------------------------------------------------------------
-    Route::middleware('role:wakasis_siswa,staf_tu')->group(function () {
+    Route::middleware('role:wakasis_siswa,waka_kurikulum,wakasis_guru,waka_sdm,staf_tu')->group(function () {
         Route::get('/wakasis-siswa/dashboard',            [WakasisSiswaController::class, 'index']  )->name('wakasis.siswa.dashboard');
         Route::post('/wakasis-siswa/dispen/{id}/approve', [WakasisSiswaController::class, 'approve'])->name('wakasis.siswa.dispen.approve');
         Route::post('/wakasis-siswa/dispen/{id}/reject',  [WakasisSiswaController::class, 'reject'] )->name('wakasis.siswa.dispen.reject');
@@ -164,7 +164,7 @@ Route::middleware('auth')->group(function () {
     // ---------------------------------------------------------------------
     // 11. WAKA KURIKULUM & SDM (IZIN GURU)
     // ---------------------------------------------------------------------
-    Route::middleware('role:wakasis_guru,waka_kurikulum,waka_sdm,staf_tu')->group(function () {
+    Route::middleware('role:wakasis_guru,waka_kurikulum,waka_sdm,wakasis_siswa,staf_tu')->group(function () {
         Route::get('/wakasis-guru/dashboard',                 [WakasisGuruController::class, 'index']       )->name('wakasis.guru.dashboard');
         Route::post('/wakasis-guru/izin/{id}/approve-waka',   [WakasisGuruController::class, 'approveWaka'] )->name('wakasis.guru.approve.waka');
         Route::post('/wakasis-guru/izin/{id}/reject-waka',    [WakasisGuruController::class, 'rejectWaka']  )->name('wakasis.guru.reject.waka');

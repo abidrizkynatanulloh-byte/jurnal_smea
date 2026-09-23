@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\IzinGuru;
 use App\Models\DispenSiswa;
 use App\Models\IzinSiswa;
+use App\Models\GuruPiket;
 use App\Models\User;
 use App\Models\Siswa;
 use App\Models\Guru;
@@ -23,15 +24,48 @@ class WhatsAppService
      */
     public static function getBaseUrl(): string
     {
+        // 1. Jika ada HTTP Request aktif dari browser (misal Guru Piket membuka web lewat Cloudflare tunnel atau Domain publik)
         try {
             if (request() && request()->getHttpHost()) {
-                return request()->getSchemeAndHttpHost();
+                $host = request()->getSchemeAndHttpHost();
+                // Jika user sedang mengakses lewat domain publik (bukan localhost), gunakan URL tersebut langsung
+                if (!str_contains($host, 'localhost') && !str_contains($host, '127.0.0.1')) {
+                    return rtrim($host, '/');
+                }
             }
         } catch (\Throwable $e) {
-            // Ignore jika dipanggil dari CLI/queue tanpa HTTP request
+            // Ignore jika CLI/queue
         }
 
-        return config('app.url', 'http://localhost:8000');
+        // 2. Cek apakah ada Cloudflare Quick Tunnel yang aktif di mesin lokal (misal saat diinput dari localhost tapi tunnel aktif)
+        try {
+            $tunnelCheck = Http::timeout(1)->get('http://127.0.0.1:20241/quicktunnel');
+            if ($tunnelCheck->successful()) {
+                $hostname = $tunnelCheck->json('hostname');
+                if (!empty($hostname)) {
+                    return 'https://' . rtrim($hostname, '/');
+                }
+            }
+        } catch (\Throwable $e) {
+            // Abaikan jika tunnel metrics port tidak tersedia
+        }
+
+        // 3. Jika ada konfigurasi domain publik di APP_URL .env
+        $appUrl = config('app.url');
+        if (!empty($appUrl) && !str_contains($appUrl, 'localhost') && !str_contains($appUrl, '127.0.0.1')) {
+            return rtrim($appUrl, '/');
+        }
+
+        // 4. Fallback ke Host request saat ini atau default localhost
+        try {
+            if (request() && request()->getHttpHost()) {
+                return rtrim(request()->getSchemeAndHttpHost(), '/');
+            }
+        } catch (\Throwable $e) {
+            // Ignore
+        }
+
+        return rtrim($appUrl ?: 'http://localhost:8000', '/');
     }
 
     /**
@@ -53,7 +87,7 @@ class WhatsAppService
             $appUrl = self::getBaseUrl();
 
             // 1. Kirim Notifikasi ke Waka Kurikulum & SDM
-            $wakaRecipients = User::where('role', 'wakasis_guru')
+            $wakaRecipients = User::whereIn('role', ['wakasis_guru', 'waka_kurikulum', 'waka_sdm'])
                 ->with('guru')
                 ->where('is_active', true)
                 ->get();
@@ -198,7 +232,9 @@ class WhatsAppService
 
             $firstDispen = $dispens->first();
             $firstDispen->loadMissing('siswa.kelas');
-            $tanggal = date('d-m-Y', strtotime($firstDispen->tanggal));
+            $tanggal = ($firstDispen->tanggal_selesai && $firstDispen->tanggal_selesai !== $firstDispen->tanggal)
+                ? date('d-m-Y', strtotime($firstDispen->tanggal)) . ' s/d ' . date('d-m-Y', strtotime($firstDispen->tanggal_selesai))
+                : date('d-m-Y', strtotime($firstDispen->tanggal));
             $keperluan = $firstDispen->keperluan ?? '-';
             $jamMulai = $firstDispen->jam_keluar_rencana ? substr($firstDispen->jam_keluar_rencana, 0, 5) : '-';
             $jamKembali = $firstDispen->jam_kembali_rencana ? substr($firstDispen->jam_kembali_rencana, 0, 5) : 'Selesai KBM';
@@ -230,13 +266,48 @@ class WhatsAppService
                 "🔗 {$linkDashboard}\n\n" .
                 "Terima Kasih.";
 
-            // Ambil akun Waka Kesiswaan Siswa
-            $recipients = User::where('role', 'wakasis_siswa')
+            // 1. Ambil Piket Waka yang bertugas pada tanggal pengajuan (tanggal_khusus / hari)
+            $tglDispen = $firstDispen->tanggal ?? date('Y-m-d');
+            $hariMap = [
+                'Monday'    => 'Senin',
+                'Tuesday'   => 'Selasa',
+                'Wednesday' => 'Rabu',
+                'Thursday'  => 'Kamis',
+                'Friday'    => 'Jumat',
+                'Saturday'  => 'Sabtu',
+                'Sunday'    => 'Minggu',
+            ];
+            $namaHari = $hariMap[date('l', strtotime($tglDispen))] ?? 'Senin';
+
+            $phoneNumbers = [];
+
+            // Ambil Guru Piket Waka yang bertugas
+            $piketWakaList = GuruPiket::with('guru')
+                ->where('peran_piket', 'Piket Waka')
+                ->where(function ($q) use ($tglDispen, $namaHari) {
+                    $q->whereDate('tanggal_khusus', $tglDispen)
+                      ->orWhere(function ($sub) use ($namaHari) {
+                          $sub->whereNull('tanggal_khusus')->where('hari', $namaHari);
+                      });
+                })
+                ->whereNull('deleted_at')
+                ->get();
+
+            foreach ($piketWakaList as $pw) {
+                if ($pw->guru && !empty($pw->guru->no_hp)) {
+                    $fn = self::formatPhoneNumber($pw->guru->no_hp);
+                    if ($fn) {
+                        $phoneNumbers[] = $fn;
+                    }
+                }
+            }
+
+            // 2. Ambil juga akun Waka Kesiswaan & Waka Kurikulum
+            $recipients = User::whereIn('role', ['wakasis_siswa', 'waka_kurikulum'])
                 ->with('guru')
                 ->where('is_active', true)
                 ->get();
 
-            $phoneNumbers = [];
             foreach ($recipients as $recipient) {
                 if ($recipient->guru && !empty($recipient->guru->no_hp)) {
                     $formattedNo = self::formatPhoneNumber($recipient->guru->no_hp);
@@ -246,8 +317,10 @@ class WhatsAppService
                 }
             }
 
+            $phoneNumbers = array_values(array_unique($phoneNumbers));
+
             if (empty($phoneNumbers)) {
-                Log::info("WhatsAppService: Tidak ada nomor HP penerima (Wakasis Siswa) yang valid untuk DispenSiswa.");
+                Log::info("WhatsAppService: Tidak ada nomor HP penerima (Piket Waka / Wakasis Siswa) yang valid untuk DispenSiswa.");
                 return;
             }
 
@@ -287,13 +360,47 @@ class WhatsAppService
                 "🔗 {$linkApproval}\n\n" .
                 "Terima Kasih.";
 
-            // Ambil akun Guru Piket & Wakasis Siswa
-            $recipients = User::whereIn('role', ['guru_piket', 'wakasis_siswa'])
+            // 1. Ambil Piket yang bertugas pada tanggal mulai izin
+            $tglIzin = $izin->tanggal_mulai ?? date('Y-m-d');
+            $hariMap = [
+                'Monday'    => 'Senin',
+                'Tuesday'   => 'Selasa',
+                'Wednesday' => 'Rabu',
+                'Thursday'  => 'Kamis',
+                'Friday'    => 'Jumat',
+                'Saturday'  => 'Sabtu',
+                'Sunday'    => 'Minggu',
+            ];
+            $namaHari = $hariMap[date('l', strtotime($tglIzin))] ?? 'Senin';
+
+            $phoneNumbers = [];
+
+            // Ambil semua guru piket bertugas di hari/tanggal tersebut
+            $piketToday = GuruPiket::with('guru')
+                ->where(function ($q) use ($tglIzin, $namaHari) {
+                    $q->whereDate('tanggal_khusus', $tglIzin)
+                      ->orWhere(function ($sub) use ($namaHari) {
+                          $sub->whereNull('tanggal_khusus')->where('hari', $namaHari);
+                      });
+                })
+                ->whereNull('deleted_at')
+                ->get();
+
+            foreach ($piketToday as $piket) {
+                if ($piket->guru && !empty($piket->guru->no_hp)) {
+                    $fn = self::formatPhoneNumber($piket->guru->no_hp);
+                    if ($fn) {
+                        $phoneNumbers[] = $fn;
+                    }
+                }
+            }
+
+            // 2. Ambil akun Guru Piket, Wakasis Siswa & Waka Kurikulum
+            $recipients = User::whereIn('role', ['guru_piket', 'wakasis_siswa', 'waka_kurikulum'])
                 ->with('guru')
                 ->where('is_active', true)
                 ->get();
 
-            $phoneNumbers = [];
             foreach ($recipients as $recipient) {
                 if ($recipient->guru && !empty($recipient->guru->no_hp)) {
                     $formattedNo = self::formatPhoneNumber($recipient->guru->no_hp);
@@ -302,6 +409,8 @@ class WhatsAppService
                     }
                 }
             }
+
+            $phoneNumbers = array_values(array_unique($phoneNumbers));
 
             if (!empty($phoneNumbers)) {
                 self::sendBulkMessage($phoneNumbers, $message);

@@ -9,6 +9,29 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 // Mengimpor trait notifikasi bawaan Laravel
 use Illuminate\Notifications\Notifiable;
 
+/**
+ * Model User
+ * 
+ * @property int $id
+ * @property string $username
+ * @property string $password
+ * @property string $role
+ * @property int|null $id_guru
+ * @property int|null $id_staf
+ * @property int|null $id_satpam
+ * @property string|null $nisn_siswa
+ * @property bool $is_active
+ * @property string|null $remember_token
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ * @property \Carbon\Carbon|null $deleted_at
+ * @property-read string $nama_display
+ * @property-read string $initials
+ * @property-read \App\Models\Guru|null $guru
+ * @property-read \App\Models\StafTu|null $stafTu
+ * @property-read \App\Models\Satpam|null $satpam
+ * @property-read \App\Models\Siswa|null $siswa
+ */
 class User extends Authenticatable
 {
     // SoftDeletes: Data yang dihapus tidak langsung hilang permanen (mengisi kolom deleted_at)

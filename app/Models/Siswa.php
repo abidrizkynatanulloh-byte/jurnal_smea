@@ -8,6 +8,18 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * Model Siswa
  * Digunakan untuk mengelola data master siswa di sekolah.
+ * 
+ * @property string $nis
+ * @property string $nisn
+ * @property string $nama_siswa
+ * @property int|null $id_kelas
+ * @property string|null $jenis_kelamin
+ * @property string|null $no_hp_wali
+ * @property string|null $kota_lahir
+ * @property string|null $tanggal_lahir
+ * @property string|null $alamat
+ * @property string|null $alasan_hapus
+ * @property-read \App\Models\Kelas|null $kelas
  */
 class Siswa extends Model
 {

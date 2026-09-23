@@ -35,8 +35,14 @@ class PiketController extends Controller
 
         $daftarSiswa = Siswa::with('kelas')->orderBy('nama_siswa', 'asc')->get();
 
+        $todayDate = date('Y-m-d');
         $dispenHariIni = DispenSiswa::with(['siswa.kelas', 'disetujuiOleh'])
-            ->whereDate('tanggal', date('Y-m-d'))
+            ->whereDate('tanggal', '<=', $todayDate)
+            ->where(function ($q) use ($todayDate) {
+                $q->whereNull('tanggal_selesai')
+                  ->whereDate('tanggal', $todayDate)
+                  ->orWhereDate('tanggal_selesai', '>=', $todayDate);
+            })
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -191,13 +197,16 @@ class PiketController extends Controller
             'nis'                 => 'required',
             'jenis_dispen'        => 'nullable|string|in:sekolah,pribadi',
             'keperluan'           => 'required|string|max:255',
+            'tanggal'             => 'nullable|date',
+            'tanggal_selesai'     => 'nullable|date|after_or_equal:tanggal',
             'jam_ke'              => 'nullable|string|max:50',
             'jam_keluar_rencana'  => 'required',
             'jam_kembali_rencana' => 'nullable',
         ], [
-            'nis.required'                => 'Silakan pilih minimal satu siswa yang mengajukan dispen.',
-            'keperluan.required'          => 'Alasan / keperluan dispen wajib diisi.',
-            'jam_keluar_rencana.required' => 'Rencana jam keluar wajib diisi.',
+            'nis.required'                   => 'Silakan pilih minimal satu siswa yang mengajukan dispen.',
+            'keperluan.required'             => 'Alasan / keperluan dispen wajib diisi.',
+            'jam_keluar_rencana.required'    => 'Rencana jam keluar wajib diisi.',
+            'tanggal_selesai.after_or_equal' => 'Tanggal selesai dispen tidak boleh lebih awal dari tanggal mulai.',
         ]);
 
         $nisList = is_array($request->nis) ? array_filter($request->nis) : [$request->nis];
@@ -211,6 +220,9 @@ class PiketController extends Controller
         $status = $isAutoApproved ? 'Disetujui' : 'Menunggu';
         $disetujuiOleh = $isAutoApproved ? Auth::id() : null;
 
+        $tglMulai = $request->filled('tanggal') ? $request->input('tanggal') : date('Y-m-d');
+        $tglSelesai = $request->filled('tanggal_selesai') ? $request->input('tanggal_selesai') : $tglMulai;
+
         DB::beginTransaction();
 
         try {
@@ -221,7 +233,8 @@ class PiketController extends Controller
                     'nis'                 => $nis,
                     'keperluan'           => $request->keperluan,
                     'jam_ke'              => $request->jam_ke,
-                    'tanggal'             => date('Y-m-d'),
+                    'tanggal'             => $tglMulai,
+                    'tanggal_selesai'     => $tglSelesai,
                     'jam_keluar_rencana'  => $request->jam_keluar_rencana,
                     'jam_kembali_rencana' => $request->jam_kembali_rencana,
                     'status'              => $status,

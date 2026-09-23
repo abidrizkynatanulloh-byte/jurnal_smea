@@ -19,7 +19,12 @@ class SatpamController extends Controller
 
         // Query dasar dispensasi hari ini yang sudah disetujui Waka
         $query = DispenSiswa::with(['siswa.kelas', 'disetujuiOleh'])
-            ->where('tanggal', $hariIni);
+            ->whereDate('tanggal', '<=', $hariIni)
+            ->where(function ($q) use ($hariIni) {
+                $q->whereNull('tanggal_selesai')
+                  ->whereDate('tanggal', $hariIni)
+                  ->orWhereDate('tanggal_selesai', '>=', $hariIni);
+            });
 
         if ($search) {
             $query->where(function ($q) use ($search) {

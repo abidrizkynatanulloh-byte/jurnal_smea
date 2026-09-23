@@ -1516,40 +1516,48 @@
             }
 
             // Proof Container (Photo / File / Fallback)
+            const proofWrapper = document.getElementById('previewProofWrapper');
             const proofContainer = document.getElementById('previewProofContainer');
-            proofContainer.innerHTML = '';
 
-            if (cfg.proofUrl) {
-                const isImage = /\.(jpg|jpeg|png|webp|gif)($|\?)/i.test(cfg.proofUrl);
-                if (isImage) {
-                    proofContainer.innerHTML = `
-                        <div class="relative group w-full flex flex-col items-center">
-                            <img src="${cfg.proofUrl}" alt="Bukti Surat" class="max-h-72 rounded-xl object-contain border border-slate-200 dark:border-slate-700 shadow-sm transition-all hover:scale-[1.01]">
-                            <a href="${cfg.proofUrl}" target="_blank" class="mt-2 text-xs font-bold text-blue-600 hover:text-blue-800 dark:text-blue-400 inline-flex items-center space-x-1">
-                                <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
-                                <span>Buka Gambar Ukuran Penuh</span>
-                            </a>
-                        </div>
-                    `;
+            if (cfg.hideProof) {
+                if (proofWrapper) proofWrapper.classList.add('hidden');
+                if (proofContainer) proofContainer.innerHTML = '';
+            } else {
+                if (proofWrapper) proofWrapper.classList.remove('hidden');
+                if (proofContainer) proofContainer.innerHTML = '';
+
+                if (cfg.proofUrl) {
+                    const isImage = /\.(jpg|jpeg|png|webp|gif)($|\?)/i.test(cfg.proofUrl);
+                    if (isImage) {
+                        proofContainer.innerHTML = `
+                            <div class="relative group w-full flex flex-col items-center">
+                                <img src="${cfg.proofUrl}" alt="Bukti Surat" class="max-h-72 rounded-xl object-contain border border-slate-200 dark:border-slate-700 shadow-sm transition-all hover:scale-[1.01]">
+                                <a href="${cfg.proofUrl}" target="_blank" class="mt-2 text-xs font-bold text-blue-600 hover:text-blue-800 dark:text-blue-400 inline-flex items-center space-x-1">
+                                    <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                                    <span>Buka Gambar Ukuran Penuh</span>
+                                </a>
+                            </div>
+                        `;
+                    } else {
+                        proofContainer.innerHTML = `
+                            <div class="flex flex-col items-center space-y-2 py-3">
+                                <i data-lucide="file-text" class="w-10 h-10 text-slate-400"></i>
+                                <p class="text-xs text-slate-600 dark:text-slate-300 font-medium">Dokumen Surat Terlampir</p>
+                                <a href="${cfg.proofUrl}" target="_blank" class="px-3.5 py-1.5 bg-[#1E2538] hover:bg-[#121724] text-white rounded-lg text-xs font-bold transition-all shadow-xs inline-flex items-center space-x-1.5">
+                                    <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                                    <span>Buka / Unduh Dokumen</span>
+                                </a>
+                            </div>
+                        `;
+                    }
                 } else {
                     proofContainer.innerHTML = `
-                        <div class="flex flex-col items-center space-y-2 py-3">
-                            <i data-lucide="file-text" class="w-10 h-10 text-slate-400"></i>
-                            <p class="text-xs text-slate-600 dark:text-slate-300 font-medium">Dokumen Surat Terlampir</p>
-                            <a href="${cfg.proofUrl}" target="_blank" class="px-3.5 py-1.5 bg-[#1E2538] hover:bg-[#121724] text-white rounded-lg text-xs font-bold transition-all shadow-xs inline-flex items-center space-x-1.5">
-                                <i data-lucide="download" class="w-3.5 h-3.5"></i>
-                                <span>Buka / Unduh Dokumen</span>
-                            </a>
+                        <div class="py-4 text-slate-400 italic text-xs flex flex-col items-center space-y-1">
+                            <i data-lucide="image-off" class="w-8 h-8 text-slate-300 dark:text-slate-600"></i>
+                            <span>Pemohon Tidak Melampirkan Bukti Foto/Surat</span>
                         </div>
                     `;
                 }
-            } else {
-                proofContainer.innerHTML = `
-                    <div class="py-4 text-slate-400 italic text-xs flex flex-col items-center space-y-1">
-                        <i data-lucide="image-off" class="w-8 h-8 text-slate-300 dark:text-slate-600"></i>
-                        <span>Pemohon Tidak Melampirkan Bukti Foto/Surat</span>
-                    </div>
-                `;
             }
 
             // Footer Action Forms (ACC & Tolak)
@@ -1652,7 +1660,7 @@
                 </div>
 
                 <!-- Bukti Surat Image Container -->
-                <div class="space-y-1.5">
+                <div id="previewProofWrapper" class="space-y-1.5">
                     <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block">Foto Bukti Surat / Dokter / Lampiran</span>
                     <div id="previewProofContainer" class="bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-3 flex flex-col items-center justify-center min-h-[140px] text-center">
                         <!-- Image content injected dynamically -->

@@ -42,6 +42,15 @@
                                 <div class="text-[11px] text-indigo-600 font-semibold">{{ $d->siswa && $d->siswa->kelas ? $d->siswa->kelas->nama_kelas : '-' }}</div>
                             </td>
                             <td class="py-2 px-3.5 text-xs leading-normal">
+                                @if($d->tanggal_selesai && $d->tanggal_selesai !== $d->tanggal)
+                                    <div class="font-bold text-indigo-600 text-[11px] mb-0.5">
+                                        📅 {{ \Carbon\Carbon::parse($d->tanggal)->translatedFormat('d M') }} - {{ \Carbon\Carbon::parse($d->tanggal_selesai)->translatedFormat('d M Y') }}
+                                    </div>
+                                @else
+                                    <div class="text-slate-500 text-[11px] mb-0.5">
+                                        📅 {{ \Carbon\Carbon::parse($d->tanggal)->translatedFormat('d M Y') }}
+                                    </div>
+                                @endif
                                 @if($d->jam_ke)
                                     <div class="font-bold text-slate-900 mb-0.5">{{ $d->jam_ke }}</div>
                                 @endif
@@ -62,14 +71,15 @@
                                         applicantName: '{{ addslashes($d->siswa ? $d->siswa->nama_siswa : $d->nis) }}',
                                         applicantMeta: 'NIS: {{ $d->nis }} • Kelas: {{ addslashes($d->siswa && $d->siswa->kelas ? $d->siswa->kelas->nama_kelas : "-") }}',
                                         category: 'Dispensasi Siswa',
-                                        period: '{{ $d->jam_ke ? $d->jam_ke . " (" . substr($d->jam_keluar_rencana, 0, 5) . " s/d " . ($d->jam_kembali_rencana ? substr($d->jam_kembali_rencana, 0, 5) : "Selesai KBM") . ")" : "Tanggal " . $d->tanggal }}',
+                                        period: '{{ ($d->tanggal_selesai && $d->tanggal_selesai !== $d->tanggal ? \Carbon\Carbon::parse($d->tanggal)->translatedFormat("d M Y") . " s/d " . \Carbon\Carbon::parse($d->tanggal_selesai)->translatedFormat("d M Y") : \Carbon\Carbon::parse($d->tanggal)->translatedFormat("d M Y")) . ($d->jam_ke ? " • " . $d->jam_ke : "") . " (" . substr($d->jam_keluar_rencana, 0, 5) . " s/d " . ($d->jam_kembali_rencana ? substr($d->jam_kembali_rencana, 0, 5) : "Selesai KBM") . ")" }}',
                                         reason: '{{ addslashes($d->keperluan) }}',
+                                        hideProof: true,
                                         approveUrl: '{{ route("wakasis.siswa.dispen.approve", $d->id) }}',
                                         rejectUrl: '{{ route("wakasis.siswa.dispen.reject", $d->id) }}',
                                         rejectInputName: 'catatan_wakasis'
                                     })" class="h-7 px-2.5 bg-blue-50 border border-blue-200 text-blue-700 hover:bg-blue-100 rounded-lg text-xs font-bold transition-colors cursor-pointer inline-flex items-center space-x-1 shadow-2xs">
                                         <i data-lucide="eye" class="w-3.5 h-3.5 text-blue-600"></i>
-                                        <span>Detail & Bukti</span>
+                                        <span>Detail</span>
                                     </button>
 
                                     <!-- Approve Form -->
@@ -131,7 +141,13 @@
                 <tbody class="divide-y divide-slate-100 text-slate-700">
                     @forelse ($historyDispen as $d)
                         <tr class="hover:bg-slate-50/80 transition-colors">
-                            <td class="py-2 px-3.5 font-semibold text-slate-600">{{ $d->tanggal }}</td>
+                            <td class="py-2 px-3.5 font-semibold text-slate-600 text-xs">
+                                @if($d->tanggal_selesai && $d->tanggal_selesai !== $d->tanggal)
+                                    {{ \Carbon\Carbon::parse($d->tanggal)->translatedFormat('d M') }} - {{ \Carbon\Carbon::parse($d->tanggal_selesai)->translatedFormat('d M Y') }}
+                                @else
+                                    {{ \Carbon\Carbon::parse($d->tanggal)->translatedFormat('d M Y') }}
+                                @endif
+                            </td>
                             <td class="py-2 px-3.5">
                                 <div class="font-bold text-slate-900">{{ $d->siswa ? $d->siswa->nama_siswa : '-' }}</div>
                                 <div class="text-[11px] text-slate-400">NIS: {{ $d->nis }}</div>

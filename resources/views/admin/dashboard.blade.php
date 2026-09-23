@@ -416,8 +416,8 @@
                                     <span class="px-1.5 py-0.5 bg-slate-100 border border-slate-200 rounded text-[10px] font-semibold text-slate-700">{{ $d->siswa && $d->siswa->kelas ? $d->siswa->kelas->nama_kelas : '-' }}</span>
                                 </td>
                                 <td class="py-2 px-3 text-slate-600">
-                                    {{ $d->jurnal && $d->jurnal->jadwal && $d->jurnal->jadwal->mapel ? $d->jurnal->jadwal->mapel->nama_mapel : '-' }}
-                                    @if($d->jurnal && $d->jurnal->jadwal && $d->jurnal->jadwal->kelas)
+                                    {{ $d->mapel_text ?? ($d->jurnal && $d->jurnal->jadwal && $d->jurnal->jadwal->mapel ? $d->jurnal->jadwal->mapel->nama_mapel : '-') }}
+                                    @if(empty($d->mapel_text) && $d->jurnal && $d->jurnal->jadwal && $d->jurnal->jadwal->kelas)
                                         <span class="text-[10px] text-slate-400">({{ $d->jurnal->jadwal->kelas->nama_kelas }})</span>
                                     @endif
                                 </td>
@@ -484,8 +484,8 @@
                                         <span class="px-1.5 py-0.5 bg-slate-100 border border-slate-200 rounded text-[10px] font-semibold text-slate-700">{{ $d->siswa && $d->siswa->kelas ? $d->siswa->kelas->nama_kelas : '-' }}</span>
                                     </td>
                                     <td class="py-2 px-3 text-slate-600">
-                                        {{ $d->jurnal && $d->jurnal->jadwal && $d->jurnal->jadwal->mapel ? $d->jurnal->jadwal->mapel->nama_mapel : '-' }}
-                                        @if($d->jurnal && $d->jurnal->jadwal && $d->jurnal->jadwal->kelas)
+                                        {{ $d->mapel_text ?? ($d->jurnal && $d->jurnal->jadwal && $d->jurnal->jadwal->mapel ? $d->jurnal->jadwal->mapel->nama_mapel : '-') }}
+                                        @if(empty($d->mapel_text) && $d->jurnal && $d->jurnal->jadwal && $d->jurnal->jadwal->kelas)
                                             <span class="text-[10px] text-slate-400">({{ $d->jurnal->jadwal->kelas->nama_kelas }})</span>
                                         @endif
                                     </td>

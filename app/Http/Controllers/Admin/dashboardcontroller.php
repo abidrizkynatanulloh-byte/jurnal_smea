@@ -12,6 +12,7 @@ use App\Models\Kelas;
 use App\Models\JurnalMengajar;
 use App\Models\JurnalDetailKetidakhadiran;
 use App\Models\DispenSiswa;
+use App\Models\IzinSiswa;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -113,22 +114,101 @@ class DashboardController
         $guruAlpaHariIni = $listGuruAlpaHariIni->pluck('id_guru')->unique()->count();
 
         // 4. DATA REKAP ABSENSI SISWA HARI INI (dengan detail list siswa)
-        $listSiswaSakitHariIni = JurnalDetailKetidakhadiran::with(['siswa.kelas', 'jurnal.jadwal.kelas', 'jurnal.jadwal.mapel'])
+        // A. Siswa Sakit Hari Ini (Izin Piket & Jurnal Mengajar)
+        $listSiswaSakitPiket = IzinSiswa::with('siswa.kelas')
+            ->where('kategori', 'Sakit')
+            ->where('status', 'Disetujui')
+            ->whereDate('tanggal_mulai', '<=', $todayDate)
+            ->whereDate('tanggal_selesai', '>=', $todayDate)
+            ->get();
+
+        $listSiswaSakitJurnal = JurnalDetailKetidakhadiran::with(['siswa.kelas', 'jurnal.jadwal.kelas', 'jurnal.jadwal.mapel'])
             ->where('keterangan', 'Sakit')
             ->whereHas('jurnal', function ($q) use ($todayDate) {
                 $q->whereDate('tanggal', $todayDate);
             })->get();
+
+        $listSiswaSakitHariIni = collect();
+        $nisSakitRecorded = [];
+
+        foreach ($listSiswaSakitPiket as $sp) {
+            $listSiswaSakitHariIni->push((object)[
+                'id_siswa'   => $sp->nis,
+                'siswa'      => $sp->siswa,
+                'mapel_text' => '1 Hari Full (Izin Resmi Piket)',
+                'alasan'     => $sp->alasan,
+                'sumber'     => 'Guru Piket'
+            ]);
+            $nisSakitRecorded[] = $sp->nis;
+        }
+
+        foreach ($listSiswaSakitJurnal as $sj) {
+            if (!in_array($sj->id_siswa, $nisSakitRecorded)) {
+                $mapelNama = $sj->jurnal && $sj->jurnal->jadwal && $sj->jurnal->jadwal->mapel ? $sj->jurnal->jadwal->mapel->nama_mapel : 'Pelajaran';
+                $kelasNama = $sj->jurnal && $sj->jurnal->jadwal && $sj->jurnal->jadwal->kelas ? $sj->jurnal->jadwal->kelas->nama_kelas : '';
+                $listSiswaSakitHariIni->push((object)[
+                    'id_siswa'   => $sj->id_siswa,
+                    'siswa'      => $sj->siswa,
+                    'mapel_text' => $mapelNama . ($kelasNama ? " ($kelasNama)" : ''),
+                    'alasan'     => '-',
+                    'sumber'     => 'Jurnal Kelas'
+                ]);
+                $nisSakitRecorded[] = $sj->id_siswa;
+            }
+        }
         $siswaSakitHariIni = $listSiswaSakitHariIni->count();
 
-        $listSiswaIzinHariIni = JurnalDetailKetidakhadiran::with(['siswa.kelas', 'jurnal.jadwal.kelas', 'jurnal.jadwal.mapel'])
+        // B. Siswa Izin Hari Ini (Izin Piket & Jurnal Mengajar)
+        $listSiswaIzinPiket = IzinSiswa::with('siswa.kelas')
+            ->where('kategori', 'Izin')
+            ->where('status', 'Disetujui')
+            ->whereDate('tanggal_mulai', '<=', $todayDate)
+            ->whereDate('tanggal_selesai', '>=', $todayDate)
+            ->get();
+
+        $listSiswaIzinJurnal = JurnalDetailKetidakhadiran::with(['siswa.kelas', 'jurnal.jadwal.kelas', 'jurnal.jadwal.mapel'])
             ->where('keterangan', 'Izin')
             ->whereHas('jurnal', function ($q) use ($todayDate) {
                 $q->whereDate('tanggal', $todayDate);
             })->get();
+
+        $listSiswaIzinHariIni = collect();
+        $nisIzinRecorded = [];
+
+        foreach ($listSiswaIzinPiket as $ip) {
+            $listSiswaIzinHariIni->push((object)[
+                'id_siswa'   => $ip->nis,
+                'siswa'      => $ip->siswa,
+                'mapel_text' => '1 Hari Full (Izin Resmi Piket)',
+                'alasan'     => $ip->alasan,
+                'sumber'     => 'Guru Piket'
+            ]);
+            $nisIzinRecorded[] = $ip->nis;
+        }
+
+        foreach ($listSiswaIzinJurnal as $ij) {
+            if (!in_array($ij->id_siswa, $nisIzinRecorded)) {
+                $mapelNama = $ij->jurnal && $ij->jurnal->jadwal && $ij->jurnal->jadwal->mapel ? $ij->jurnal->jadwal->mapel->nama_mapel : 'Pelajaran';
+                $kelasNama = $ij->jurnal && $ij->jurnal->jadwal && $ij->jurnal->jadwal->kelas ? $ij->jurnal->jadwal->kelas->nama_kelas : '';
+                $listSiswaIzinHariIni->push((object)[
+                    'id_siswa'   => $ij->id_siswa,
+                    'siswa'      => $ij->siswa,
+                    'mapel_text' => $mapelNama . ($kelasNama ? " ($kelasNama)" : ''),
+                    'alasan'     => '-',
+                    'sumber'     => 'Jurnal Kelas'
+                ]);
+                $nisIzinRecorded[] = $ij->id_siswa;
+            }
+        }
         $siswaIzinHariIni = $listSiswaIzinHariIni->count();
         
         $listDispenActive = DispenSiswa::with(['siswa.kelas'])
-            ->whereDate('tanggal', $todayDate)
+            ->whereDate('tanggal', '<=', $todayDate)
+            ->where(function ($q) use ($todayDate) {
+                $q->whereNull('tanggal_selesai')
+                  ->whereDate('tanggal', $todayDate)
+                  ->orWhereDate('tanggal_selesai', '>=', $todayDate);
+            })
             ->whereIn('status', ['Disetujui', 'Sedang di Luar'])
             ->get();
         $dispenActiveCount = $listDispenActive->count();

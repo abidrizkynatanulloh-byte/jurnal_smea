@@ -88,14 +88,20 @@ class JurnalController
                     }
                 }
 
-                // 2. Cek dispensasi aktif siswa hari ini (Dispensasi murni yang bukan catatan izin/sakit)
+                // 2. Cek dispensasi aktif siswa hari ini (Dispensasi murni yang bukan catatan izin/sakit, mencakup multi-hari)
                 $dispen = DispenSiswa::where('nis', $s->nis)
-                    ->where('tanggal', $tanggalHariIni)
+                    ->whereDate('tanggal', '<=', $tanggalHariIni)
+                    ->where(function ($q) use ($tanggalHariIni) {
+                        $q->whereNull('tanggal_selesai')
+                          ->whereDate('tanggal', $tanggalHariIni)
+                          ->orWhereDate('tanggal_selesai', '>=', $tanggalHariIni);
+                    })
                     ->whereIn('status', ['Disetujui', 'Sedang di Luar'])
                     ->where(function ($q) {
                         $q->where('keperluan', 'NOT LIKE', 'Sakit%')
                           ->where('keperluan', 'NOT LIKE', 'Izin%');
                     })
+                    ->latest('tanggal')
                     ->first();
 
                 // 3. Cek apakah ada status Sakit / Izin / Alpa / Terlambat dari jurnal jam sebelumnya hari ini (Berantai dari Guru Pertama)
@@ -122,7 +128,10 @@ class JurnalController
                     $infoStatus = "Izin Resmi: {$izin->kategori}{$alasanTeks}";
                 } elseif ($dispen) {
                     $autoStatus = 'Dispen';
-                    $infoStatus = "Dispensasi: {$dispen->keperluan}";
+                    $rentangTeks = ($dispen->tanggal_selesai && $dispen->tanggal_selesai !== $dispen->tanggal)
+                        ? ' (s/d ' . \Carbon\Carbon::parse($dispen->tanggal_selesai)->translatedFormat('d M Y') . ')'
+                        : '';
+                    $infoStatus = "Dispensasi: {$dispen->keperluan}{$rentangTeks}";
                 } elseif ($presensiSebelumnya) {
                     $autoStatus = $presensiSebelumnya->keterangan;
                     $infoStatus = "Otomatis: Tercatat {$presensiSebelumnya->keterangan} pada sesi guru sebelumnya";

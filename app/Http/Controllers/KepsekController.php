@@ -52,10 +52,20 @@ class KepsekController extends Controller
             : 100;
 
         // 3. Siswa Izin / Di Luar Sekolah
-        $siswaIzinHariIni = DispenSiswa::where('tanggal', $hariIni)
+        $siswaIzinHariIni = DispenSiswa::whereDate('tanggal', '<=', $hariIni)
+            ->where(function ($q) use ($hariIni) {
+                $q->whereNull('tanggal_selesai')
+                  ->whereDate('tanggal', $hariIni)
+                  ->orWhereDate('tanggal_selesai', '>=', $hariIni);
+            })
             ->whereIn('status', ['Disetujui', 'Sedang di Luar'])
             ->count();
-        $siswaSedangDiLuar = DispenSiswa::where('tanggal', $hariIni)
+        $siswaSedangDiLuar = DispenSiswa::whereDate('tanggal', '<=', $hariIni)
+            ->where(function ($q) use ($hariIni) {
+                $q->whereNull('tanggal_selesai')
+                  ->whereDate('tanggal', $hariIni)
+                  ->orWhereDate('tanggal_selesai', '>=', $hariIni);
+            })
             ->where('status', 'Sedang di Luar')
             ->count();
 

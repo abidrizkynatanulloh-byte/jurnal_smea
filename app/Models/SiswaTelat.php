@@ -8,6 +8,18 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * Model SiswaTelat
  * Digunakan untuk mengelola pendataan keterlambatan siswa yang dicatat oleh Guru Piket.
+ * 
+ * @property int $id
+ * @property string $nis
+ * @property string $tanggal
+ * @property string $jam_terlambat
+ * @property string|null $alasan
+ * @property string|null $tindakan
+ * @property int $id_guru_piket
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ * @property-read \App\Models\Siswa|null $siswa
+ * @property-read \App\Models\Guru|null $guruPiket
  */
 class SiswaTelat extends Model
 {

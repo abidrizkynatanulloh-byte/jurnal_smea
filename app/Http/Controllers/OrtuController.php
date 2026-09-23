@@ -14,6 +14,7 @@ use App\Models\IzinSiswa;
 use App\Models\SiswaTelat;
 use App\Services\WhatsAppService;
 use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 
 class OrtuController extends Controller
 {
@@ -50,6 +51,7 @@ class OrtuController extends Controller
 
         $presensiPerJp = collect();
         $dispenHariIni = null;
+        $izinHariIni   = null;
         $rekapBulanIni = [
             'hadir' => 0,
             'sakit' => 0,
@@ -58,15 +60,26 @@ class OrtuController extends Controller
             'telat' => 0,
         ];
 
+        $awalBulan = Carbon::now()->startOfMonth()->toDateString();
+        $akhirBulan = Carbon::now()->endOfMonth()->toDateString();
+
         if ($siswa && $siswa->id_kelas) {
-            // 1. Jadwal kelas anak hari ini
+            // 1. Cek Izin Resmi Siswa Hari Ini (yang sudah di-ACC Piket)
+            $izinHariIni = IzinSiswa::where('nis', $siswa->nis)
+                ->where('status', 'Disetujui')
+                ->where('tanggal_mulai', '<=', $hariIni)
+                ->where('tanggal_selesai', '>=', $hariIni)
+                ->latest()
+                ->first();
+
+            // 2. Jadwal kelas anak hari ini
             $jadwalHariIni = Jadwal::with(['mapel', 'guru', 'ruangan', 'jamMulaiData', 'jamSelesaiData'])
                 ->where('id_kelas', $siswa->id_kelas)
                 ->where('hari', $namaHari)
                 ->orderBy('jam_mulai')
                 ->get();
 
-            // 2. Cek status presensi per jam pelajaran
+            // 3. Cek status presensi per jam pelajaran hari ini
             foreach ($jadwalHariIni as $j) {
                 $jurnal = JurnalMengajar::where('id_jadwal', $j->id_jadwal)
                     ->where('tanggal', $hariIni)
@@ -103,6 +116,15 @@ class OrtuController extends Controller
                         $statusKehadiran = 'Hadir';
                         $badgeClass = 'bg-emerald-50 text-emerald-700 border border-emerald-200';
                     }
+                } elseif ($izinHariIni) {
+                    // Jika jurnal belum diisi tapi sudah ada izin resmi piket
+                    if ($izinHariIni->kategori === 'Sakit') {
+                        $statusKehadiran = 'Izin Sakit (Disetujui)';
+                        $badgeClass = 'bg-blue-50 text-blue-700 border border-blue-200';
+                    } elseif ($izinHariIni->kategori === 'Izin') {
+                        $statusKehadiran = 'Izin Resmi (Disetujui)';
+                        $badgeClass = 'bg-purple-50 text-purple-700 border border-purple-200';
+                    }
                 }
 
                 $presensiPerJp->push([
@@ -116,26 +138,82 @@ class OrtuController extends Controller
                 ]);
             }
 
-            // 3. Status izin / dispensasi anak hari ini
+            // 4. Status dispensasi keluar anak hari ini
             $dispenHariIni = DispenSiswa::where('nis', $siswa->nis)
-                ->where('tanggal', $hariIni)
+                ->whereDate('tanggal', '<=', $hariIni)
+                ->where(function ($q) use ($hariIni) {
+                    $q->whereNull('tanggal_selesai')
+                      ->whereDate('tanggal', $hariIni)
+                      ->orWhereDate('tanggal_selesai', '>=', $hariIni);
+                })
+                ->whereIn('status', ['Disetujui', 'Sedang di Luar'])
                 ->latest()
                 ->first();
 
-            // 4. Rekap ketidakhadiran bulan ini
-            $awalBulan = Carbon::now()->startOfMonth()->toDateString();
-            $akhirBulan = Carbon::now()->endOfMonth()->toDateString();
+            // 5. Rekap Izin / Sakit Resmi dari Piket Bulan Ini
+            $semuaIzinResmiBulanIni = IzinSiswa::where('nis', $siswa->nis)
+                ->where('status', 'Disetujui')
+                ->where(function($q) use ($awalBulan, $akhirBulan) {
+                    $q->whereBetween('tanggal_mulai', [$awalBulan, $akhirBulan])
+                      ->orWhereBetween('tanggal_selesai', [$awalBulan, $akhirBulan])
+                      ->orWhere(function($sub) use ($awalBulan, $akhirBulan) {
+                          $sub->where('tanggal_mulai', '<=', $awalBulan)
+                              ->where('tanggal_selesai', '>=', $akhirBulan);
+                      });
+                })
+                ->get();
 
-            $ketidakhadiranList = JurnalDetailKetidakhadiran::where('id_siswa', $siswa->nis)
+            $tanggalIzinSakitResmi = [];
+            $tanggalSakitBulanIni = [];
+            $tanggalIzinBulanIni  = [];
+
+            foreach ($semuaIzinResmiBulanIni as $ir) {
+                $period = CarbonPeriod::create(max($awalBulan, $ir->tanggal_mulai), min($akhirBulan, $ir->tanggal_selesai));
+                foreach ($period as $dt) {
+                    $dayNameEn = $dt->format('l');
+                    if (in_array($dayNameEn, ['Saturday', 'Sunday'])) continue;
+                    $tglStr = $dt->toDateString();
+                    $kat = ucfirst(strtolower($ir->kategori));
+
+                    if (!isset($tanggalIzinSakitResmi[$tglStr])) {
+                        $tanggalIzinSakitResmi[$tglStr] = [
+                            'kategori' => $kat,
+                            'alasan'   => $ir->alasan ?: 'Izin resmi disetujui Guru Piket',
+                            'sumber'   => 'Guru Piket',
+                        ];
+                        if ($kat === 'Sakit') $tanggalSakitBulanIni[$tglStr] = true;
+                        elseif ($kat === 'Izin') $tanggalIzinBulanIni[$tglStr] = true;
+                    }
+                }
+            }
+
+            // 6. Rekap ketidakhadiran dari Jurnal Mengajar bulan ini (per hari)
+            $ketidakhadiranList = JurnalDetailKetidakhadiran::with('jurnal')
+                ->where('id_siswa', $siswa->nis)
                 ->whereHas('jurnal', function ($q) use ($awalBulan, $akhirBulan) {
                     $q->whereBetween('tanggal', [$awalBulan, $akhirBulan]);
                 })
                 ->get();
 
-            $rekapBulanIni['sakit'] = $ketidakhadiranList->where('keterangan', 'Sakit')->count();
-            $rekapBulanIni['izin']  = $ketidakhadiranList->where('keterangan', 'Izin')->count();
-            $rekapBulanIni['alpa']  = $ketidakhadiranList->where('keterangan', 'Alpa')->count();
-            $rekapBulanIni['telat'] = $ketidakhadiranList->where('keterangan', 'Terlambat')->count();
+            $tanggalAlpaBulanIni = [];
+            foreach ($ketidakhadiranList as $kh) {
+                $tglJurnal = $kh->jurnal ? $kh->jurnal->tanggal : null;
+                if (!$tglJurnal) continue;
+
+                if ($kh->keterangan === 'Alpa') {
+                    $tanggalAlpaBulanIni[$tglJurnal] = true;
+                } elseif ($kh->keterangan === 'Terlambat') {
+                    $rekapBulanIni['telat']++;
+                } elseif ($kh->keterangan === 'Sakit') {
+                    $tanggalSakitBulanIni[$tglJurnal] = true;
+                } elseif ($kh->keterangan === 'Izin') {
+                    $tanggalIzinBulanIni[$tglJurnal] = true;
+                }
+            }
+
+            $rekapBulanIni['sakit'] = count($tanggalSakitBulanIni);
+            $rekapBulanIni['izin']  = count($tanggalIzinBulanIni);
+            $rekapBulanIni['alpa']  = count($tanggalAlpaBulanIni);
 
             // Ambil juga catatan telat dari piket bulan ini
             $piketTelatBulanIni = SiswaTelat::where('nis', $siswa->nis)
@@ -155,7 +233,7 @@ class OrtuController extends Controller
             $rekapBulanIni['hadir'] = max(0, $totalJurnalKelas - $totalTidakHadir);
         }
 
-        // 5. Riwayat Izin yang diajukan Orang Tua
+        // 7. Riwayat Izin yang diajukan Orang Tua
         $riwayatIzin = [];
         if ($siswa) {
             $riwayatIzin = IzinSiswa::where('nis', $siswa->nis)
@@ -163,10 +241,31 @@ class OrtuController extends Controller
                 ->get();
         }
 
-        // 6. Riwayat Ketidakhadiran & Keterlambatan (Semua Waktu) dikelompokkan per tanggal
+        // 8. Riwayat Ketidakhadiran & Keterlambatan (Semua Waktu)
         $riwayatAbsen = [];
         $riwayatTelat = [];
         if ($siswa) {
+            // Ambil semua izin resmi piket siswa sepanjang waktu
+            $semuaIzinResmiTotal = IzinSiswa::where('nis', $siswa->nis)
+                ->where('status', 'Disetujui')
+                ->get();
+
+            $tanggalIzinSakitTotal = [];
+            foreach ($semuaIzinResmiTotal as $ir) {
+                $period = CarbonPeriod::create($ir->tanggal_mulai, $ir->tanggal_selesai);
+                foreach ($period as $dt) {
+                    $tglStr = $dt->toDateString();
+                    $kat = ucfirst(strtolower($ir->kategori));
+                    if (!isset($tanggalIzinSakitTotal[$tglStr])) {
+                        $tanggalIzinSakitTotal[$tglStr] = [
+                            'kategori' => $kat,
+                            'alasan'   => $ir->alasan ?: 'Izin resmi disetujui Guru Piket',
+                            'sumber'   => 'Guru Piket'
+                        ];
+                    }
+                }
+            }
+
             $semuaKetidakhadiran = JurnalDetailKetidakhadiran::with(['jurnal.jadwal.jamMulaiData', 'jurnal.jadwal.jamSelesaiData'])
                 ->where('id_siswa', $siswa->nis)
                 ->get();
@@ -178,7 +277,6 @@ class OrtuController extends Controller
                 $keterangan = $kh->keterangan;
                 $jamM = $kh->jurnal->jadwal->jamMulaiData->jam_ke ?? '?';
                 $jamS = $kh->jurnal->jadwal->jamSelesaiData->jam_ke ?? '?';
-                
                 $teksJam = $jamM == $jamS ? "Jam ke-$jamM" : "Jam ke-$jamM-$jamS";
                 
                 if (!isset($groupedByDate[$tgl])) {
@@ -190,6 +288,24 @@ class OrtuController extends Controller
                 $groupedByDate[$tgl][$keterangan][] = $teksJam;
             }
             
+            // Masukkan data Izin Resmi Piket
+            foreach ($tanggalIzinSakitTotal as $tglStr => $infoIzin) {
+                $detailJam = "1 Hari Full (Izin Resmi Piket)";
+                if (isset($groupedByDate[$tglStr][$infoIzin['kategori']])) {
+                    $jams = $groupedByDate[$tglStr][$infoIzin['kategori']];
+                    $detailJam .= " • Sesi " . implode(', ', $jams);
+                    unset($groupedByDate[$tglStr][$infoIzin['kategori']]);
+                }
+                $riwayatAbsen[] = [
+                    'tanggal'    => $tglStr,
+                    'keterangan' => $infoIzin['kategori'],
+                    'detail_jam' => $detailJam,
+                    'alasan'     => $infoIzin['alasan'],
+                    'sumber'     => $infoIzin['sumber']
+                ];
+            }
+
+            // Masukkan data dari Jurnal Mapel
             foreach ($groupedByDate as $tgl => $ketGroups) {
                 foreach ($ketGroups as $ket => $jams) {
                     $jamText = implode(', ', $jams);
@@ -200,9 +316,11 @@ class OrtuController extends Controller
                     }
                     
                     $riwayatAbsen[] = [
-                        'tanggal' => $tgl,
+                        'tanggal'    => $tgl,
                         'keterangan' => $ket,
-                        'detail_jam' => $jamText
+                        'detail_jam' => $jamText,
+                        'alasan'     => '-',
+                        'sumber'     => 'Jurnal Kelas'
                     ];
                 }
             }
@@ -223,6 +341,7 @@ class OrtuController extends Controller
             'namaHari',
             'presensiPerJp',
             'dispenHariIni',
+            'izinHariIni',
             'rekapBulanIni',
             'riwayatIzin',
             'riwayatAbsen',

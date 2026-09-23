@@ -16,7 +16,7 @@
             <button type="button" onclick="openTambahGuruModal()"
                 class="h-10 px-4 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white rounded-xl text-xs font-bold transition-all flex items-center space-x-2 shadow-2xs cursor-pointer whitespace-nowrap shrink-0">
                 <i data-lucide="user-plus" class="w-4 h-4"></i>
-                <span>+ Tambah Pegawai</span>
+                <span> Tambah Pegawai</span>
             </button>
             <button type="button" onclick="openImportGuruModal()"
                 class="h-10 px-4 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white rounded-xl text-xs font-bold transition-all flex items-center space-x-2 shadow-2xs cursor-pointer whitespace-nowrap shrink-0">

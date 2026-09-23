@@ -8,6 +8,26 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * Model DispenSiswa
  * Digunakan untuk mengelola data izin keluar / dispensasi siswa dari lingkungan sekolah.
+ * 
+ * @property int $id
+ * @property string $nis
+ * @property string $keperluan
+ * @property string|null $jam_ke
+ * @property string $tanggal
+ * @property string|null $tanggal_selesai
+ * @property string $jam_keluar_rencana
+ * @property string|null $jam_kembali_rencana
+ * @property string|null $jam_keluar_aktual
+ * @property string|null $jam_kembali_aktual
+ * @property string $status
+ * @property int|null $disetujui_oleh
+ * @property string|null $catatan_wakasis
+ * @property int|null $dicatat_satpam
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ * @property-read \App\Models\Siswa|null $siswa
+ * @property-read \App\Models\User|null $disetujuiOleh
+ * @property-read \App\Models\User|null $dicatatSatpam
  */
 class DispenSiswa extends Model
 {
@@ -22,7 +42,8 @@ class DispenSiswa extends Model
         'nis',                  // NIS siswa yang mengajukan dispen
         'keperluan',            // Alasan/keperluan dispen (misal: lomba, urusan keluarga)
         'jam_ke',               // Jam pelajaran ke-berapa (misal: Jam ke-2 s/d 4)
-        'tanggal',              // Tanggal dispen dilaksanakan
+        'tanggal',              // Tanggal mulai dispen dilaksanakan
+        'tanggal_selesai',      // Tanggal selesai dispen (opsional, jika lebih dari 1 hari)
         'jam_keluar_rencana',   // Estimasi waktu siswa keluar sekolah
         'jam_kembali_rencana',  // Estimasi waktu siswa kembali ke sekolah
         'jam_keluar_aktual',   // Jam nyata siswa melewati gerbang (dicatat satpam)

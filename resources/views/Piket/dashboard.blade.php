@@ -75,12 +75,10 @@
                 <div>
                     <label for="nis" class="block text-[11px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">Pilih Siswa (Bisa Pilih Lebih Dari 1 Siswa)</label>
                     <select name="nis[]" id="nis" multiple required 
-                        placeholder="Ketik / pilih beberapa nama siswa..."
+                        data-placeholder="Ketik / pilih beberapa nama siswa..."
                         class="block w-full bg-white dark:bg-[#1A212D] border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:border-blue-600 transition-all cursor-pointer">
                         @foreach ($daftarSiswa as $s)
-                            <option value="{{ $s->nis }}">
-                                {{ $s->nama_siswa }} ({{ $s->kelas ? $s->kelas->nama_kelas : '-' }})
-                            </option>
+                            <option value="{{ $s->nis }}">{{ $s->nama_siswa }} ({{ $s->kelas ? $s->kelas->nama_kelas : '-' }})</option>
                         @endforeach
                     </select>
                     <p class="text-[10px] text-slate-400 dark:text-slate-400 mt-1">Ketik nama siswa untuk mencari, lalu klik untuk memilih beberapa siswa sekaligus.</p>
@@ -90,14 +88,27 @@
                     <label for="jenis_dispen" class="block text-[11px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">Kategori Dispensasi</label>
                     <select name="jenis_dispen" id="jenis_dispen" 
                         class="block w-full h-8 px-2.5 bg-white dark:bg-[#1A212D] border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-semibold text-slate-800 dark:text-slate-100 focus:outline-none focus:border-blue-600 transition-all cursor-pointer">
-                        <option value="sekolah" selected> Keperluan Sekolah / Lomba </option>
-                        <option value="pribadi"> Keperluan Pribadi / Lainnya </option>
+                        <option value="sekolah" selected>Keperluan Sekolah / Lomba</option>
+                        <option value="pribadi">Keperluan Pribadi / Lainnya</option>
                     </select>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2.5">
+                    <div>
+                        <label for="tanggal" class="block text-[11px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">Tanggal Mulai</label>
+                        <input type="date" name="tanggal" id="tanggal" value="{{ old('tanggal', date('Y-m-d')) }}" required
+                            class="block w-full h-8 px-2 bg-white dark:bg-[#1A212D] border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:border-blue-600 transition-all cursor-pointer">
+                    </div>
+                    <div>
+                        <label for="tanggal_selesai" class="block text-[11px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">Tanggal Selesai <span class="text-[10px] text-slate-400 font-normal">(Opsional)</span></label>
+                        <input type="date" name="tanggal_selesai" id="tanggal_selesai" value="{{ old('tanggal_selesai') }}"
+                            class="block w-full h-8 px-2 bg-white dark:bg-[#1A212D] border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:border-blue-600 transition-all cursor-pointer">
+                    </div>
                 </div>
 
                 <div>
                     <label for="jam_ke" class="block text-[11px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">Jam Ke-Berapa s/d Jam Ke-Berapa</label>
-                    <input type="text" name="jam_ke" id="jam_ke" placeholder="Contoh: Jam ke-2 s/d Jam ke-4" value="{{ old('jam_ke') }}"
+                    <input type="text" name="jam_ke" id="jam_ke" placeholder="Contoh: Jam ke-2 s/d Jam ke-4 (atau Full Hari)" value="{{ old('jam_ke') }}"
                         class="block w-full h-8 px-2.5 bg-white dark:bg-[#1A212D] border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-blue-600 transition-all">
                 </div>
 
@@ -161,6 +172,11 @@
                                         <div class="text-[10px] text-blue-600 dark:text-blue-400 font-semibold">{{ $d->siswa && $d->siswa->kelas ? $d->siswa->kelas->nama_kelas : '-' }}</div>
                                     </td>
                                     <td class="py-2.5 px-3.5 text-xs leading-normal">
+                                        @if($d->tanggal_selesai && $d->tanggal_selesai !== $d->tanggal)
+                                            <div class="font-bold text-blue-600 dark:text-blue-400 text-[11px] mb-0.5">
+                                                📅 {{ \Carbon\Carbon::parse($d->tanggal)->translatedFormat('d M') }} - {{ \Carbon\Carbon::parse($d->tanggal_selesai)->translatedFormat('d M Y') }}
+                                            </div>
+                                        @endif
                                         @if($d->jam_ke)
                                             <div class="font-bold text-slate-800 dark:text-slate-200">{{ $d->jam_ke }}</div>
                                         @endif
@@ -217,13 +233,11 @@
                 <div>
                     <label for="nis_telat" class="block text-[11px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">Pilih Siswa Terlambat</label>
                     <select name="nis" id="nis_telat" required 
-                        placeholder="Cari / pilih nama siswa..."
+                        data-placeholder="Cari / pilih nama siswa..."
                         class="block w-full h-8 px-2.5 bg-white dark:bg-[#1A212D] border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:border-amber-600 transition-all cursor-pointer">
                         <option value="">-- Pilih Siswa --</option>
                         @foreach ($daftarSiswa as $s)
-                            <option value="{{ $s->nis }}" {{ old('nis') == $s->nis ? 'selected' : '' }}>
-                                {{ $s->nama_siswa }} ({{ $s->kelas ? $s->kelas->nama_kelas : '-' }})
-                            </option>
+                            <option value="{{ $s->nis }}" {{ old('nis') == $s->nis ? 'selected' : '' }}>{{ $s->nama_siswa }} ({{ $s->kelas ? $s->kelas->nama_kelas : '-' }})</option>
                         @endforeach
                     </select>
                 </div>
@@ -335,6 +349,7 @@
                     </thead>
                     <tbody class="divide-y divide-slate-100 dark:divide-slate-800 text-slate-700 dark:text-slate-300">
                         @forelse ($izinSiswaPending as $idx => $is)
+                            @php /** @var \App\Models\IzinSiswa $is */ @endphp
                             <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
                                 <td class="py-2 px-3 text-center font-mono text-slate-400 dark:text-slate-400 text-[11px]">{{ $idx + 1 }}</td>
                                 <td class="py-2 px-3">
@@ -365,18 +380,23 @@
                                 </td>
                                 <td class="py-2 px-3 text-center">
                                     @if($is->bukti_foto)
-                                        <button type="button" onclick="openDetailApprovalModal({
-                                            title: 'Detail Permohonan Izin Siswa',
-                                            applicantName: '{{ addslashes($is->siswa ? $is->siswa->nama_siswa : $is->nis) }}',
-                                            applicantMeta: 'NIS: {{ $is->nis }} • Kelas: {{ addslashes($is->siswa && $is->siswa->kelas ? $is->siswa->kelas->nama_kelas : "-") }}',
-                                            category: '{{ $is->kategori }}',
-                                            period: '{{ \Carbon\Carbon::parse($is->tanggal_mulai)->translatedFormat("d M Y") }} s/d {{ \Carbon\Carbon::parse($is->tanggal_selesai)->translatedFormat("d M Y") }}',
-                                            reason: '{{ addslashes($is->alasan) }}',
-                                            proofUrl: '{{ $is->bukti_foto ? (\Illuminate\Support\Str::startsWith($is->bukti_foto, ["http", "uploads/", "storage/"]) ? asset($is->bukti_foto) : asset("storage/" . $is->bukti_foto)) : "" }}',
-                                            approveUrl: '{{ route("piket.izin-siswa.approve", $is->id) }}',
-                                            rejectUrl: '{{ route("piket.izin-siswa.reject", $is->id) }}',
-                                            rejectInputName: 'catatan_penolakan'
-                                        })" class="inline-flex items-center space-x-1 px-2.5 py-1 bg-blue-50 dark:bg-blue-950/50 hover:bg-blue-100 dark:hover:bg-blue-900/60 text-blue-700 dark:text-blue-300 rounded-lg border border-blue-200 dark:border-blue-800 text-[11px] font-bold transition-colors cursor-pointer">
+                                        @php
+                                            $proofUrlPending = \Illuminate\Support\Str::startsWith($is->bukti_foto, ['http', 'uploads/', 'storage/']) ? asset($is->bukti_foto) : asset('storage/' . $is->bukti_foto);
+                                            $periodPending = \Carbon\Carbon::parse($is->tanggal_mulai)->translatedFormat('d M Y') . ($is->tanggal_mulai !== $is->tanggal_selesai ? ' s/d ' . \Carbon\Carbon::parse($is->tanggal_selesai)->translatedFormat('d M Y') : '');
+                                            $modalPendingData = [
+                                                'title' => 'Detail Permohonan Izin Siswa',
+                                                'applicantName' => $is->siswa ? $is->siswa->nama_siswa : $is->nis,
+                                                'applicantMeta' => 'NIS: ' . $is->nis . ' • Kelas: ' . ($is->siswa && $is->siswa->kelas ? $is->siswa->kelas->nama_kelas : '-'),
+                                                'category' => $is->kategori,
+                                                'period' => $periodPending,
+                                                'reason' => $is->alasan,
+                                                'proofUrl' => $proofUrlPending,
+                                                'approveUrl' => route('piket.izin-siswa.approve', $is->id),
+                                                'rejectUrl' => route('piket.izin-siswa.reject', $is->id),
+                                                'rejectInputName' => 'catatan_penolakan'
+                                            ];
+                                        @endphp
+                                        <button type="button" onclick="openDetailApprovalModal({{ json_encode($modalPendingData) }})" class="inline-flex items-center space-x-1 px-2.5 py-1 bg-blue-50 dark:bg-blue-950/50 hover:bg-blue-100 dark:hover:bg-blue-900/60 text-blue-700 dark:text-blue-300 rounded-lg border border-blue-200 dark:border-blue-800 text-[11px] font-bold transition-colors cursor-pointer">
                                             <i data-lucide="eye" class="w-3.5 h-3.5 text-blue-600 dark:text-blue-400"></i>
                                             <span>Lihat Detail & Foto</span>
                                         </button>
@@ -443,6 +463,7 @@
                     </thead>
                     <tbody class="divide-y divide-slate-100 dark:divide-slate-800 text-slate-700 dark:text-slate-300">
                         @forelse ($riwayatIzinSiswa ?? [] as $rIdx => $ri)
+                            @php /** @var \App\Models\IzinSiswa $ri */ @endphp
                             <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
                                 <td class="py-2 px-3 text-center font-mono text-slate-400 dark:text-slate-400 text-[11px]">{{ $rIdx + 1 }}</td>
                                 <td class="py-2 px-3">
@@ -491,15 +512,20 @@
                                 </td>
                                 <td class="py-2 px-3 text-center">
                                     @if($ri->bukti_foto)
-                                        <button type="button" onclick="openDetailApprovalModal({
-                                            title: 'Detail Riwayat Izin Siswa',
-                                            applicantName: '{{ addslashes($ri->siswa ? $ri->siswa->nama_siswa : $ri->nis) }}',
-                                            applicantMeta: 'NIS: {{ $ri->nis }} • Kelas: {{ addslashes($ri->siswa && $ri->siswa->kelas ? $ri->siswa->kelas->nama_kelas : "-") }}',
-                                            category: '{{ $ri->kategori }} ({{ $ri->status }})',
-                                            period: '{{ \Carbon\Carbon::parse($ri->tanggal_mulai)->translatedFormat("d M Y") }} s/d {{ \Carbon\Carbon::parse($ri->tanggal_selesai)->translatedFormat("d M Y") }}',
-                                            reason: '{{ addslashes($ri->alasan) }}',
-                                            proofUrl: '{{ $ri->bukti_foto ? (\Illuminate\Support\Str::startsWith($ri->bukti_foto, ["http", "uploads/", "storage/"]) ? asset($ri->bukti_foto) : asset("storage/" . $ri->bukti_foto)) : "" }}'
-                                        })" class="inline-flex items-center space-x-1 px-2.5 py-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-bold transition-colors cursor-pointer">
+                                        @php
+                                            $proofUrlHistory = \Illuminate\Support\Str::startsWith($ri->bukti_foto, ['http', 'uploads/', 'storage/']) ? asset($ri->bukti_foto) : asset('storage/' . $ri->bukti_foto);
+                                            $periodHistory = \Carbon\Carbon::parse($ri->tanggal_mulai)->translatedFormat('d M Y') . ($ri->tanggal_mulai !== $ri->tanggal_selesai ? ' s/d ' . \Carbon\Carbon::parse($ri->tanggal_selesai)->translatedFormat('d M Y') : '');
+                                            $modalHistoryData = [
+                                                'title' => 'Detail Riwayat Izin Siswa',
+                                                'applicantName' => $ri->siswa ? $ri->siswa->nama_siswa : $ri->nis,
+                                                'applicantMeta' => 'NIS: ' . $ri->nis . ' • Kelas: ' . ($ri->siswa && $ri->siswa->kelas ? $ri->siswa->kelas->nama_kelas : '-'),
+                                                'category' => $ri->kategori . ' (' . $ri->status . ')',
+                                                'period' => $periodHistory,
+                                                'reason' => $ri->alasan,
+                                                'proofUrl' => $proofUrlHistory
+                                            ];
+                                        @endphp
+                                        <button type="button" onclick="openDetailApprovalModal({{ json_encode($modalHistoryData) }})" class="inline-flex items-center space-x-1 px-2.5 py-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-bold transition-colors cursor-pointer">
                                             <i data-lucide="eye" class="w-3.5 h-3.5 text-slate-600 dark:text-slate-400"></i>
                                             <span>Lihat</span>
                                         </button>
