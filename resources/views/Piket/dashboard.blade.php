@@ -254,11 +254,11 @@
                         class="block w-full px-2.5 py-1.5 bg-white dark:bg-[#1A212D] border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-amber-600 transition-all resize-none">{{ old('alasan') }}</textarea>
                 </div>
 
-                <div>
+                <!-- <div>
                     <label for="tindakan" class="block text-[11px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">Tindakan / Sanksi Piket (Opsional)</label>
                     <input type="text" name="tindakan" id="tindakan" placeholder="Contoh: Pembinaan & kebersihan halaman" value="{{ old('tindakan') }}"
                         class="block w-full h-8 px-2.5 bg-white dark:bg-[#1A212D] border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-amber-600 transition-all">
-                </div>
+                </div> -->
 
                 <div class="pt-1">
                     <button type="submit" class="w-full min-h-[44px] py-3 px-5 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold tracking-wide transition-all flex items-center justify-center space-x-2 shadow-xs cursor-pointer shrink-0">

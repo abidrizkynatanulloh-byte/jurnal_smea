@@ -19,6 +19,7 @@ class RekapJurnalController
         $tanggal = $request->input('tanggal', date('Y-m-d'));
         $carbonDate = Carbon::parse($tanggal);
         $filterKelas = $request->input('kelas');
+        $tingkat = $request->input('tingkat');
 
         $hariMap = [
             'Monday'    => 'Senin',
@@ -31,8 +32,16 @@ class RekapJurnalController
         ];
         $namaHari = $hariMap[$carbonDate->format('l')] ?? 'Senin';
 
-        // Daftar kelas untuk dropdown filter
-        $daftarKelas = Kelas::orderBy('nama_kelas', 'asc')->get();
+        // Daftar kelas untuk dropdown & matriks
+        $daftarKelasQuery = Kelas::orderBy('nama_kelas', 'asc');
+        if ($tingkat) {
+            $daftarKelasQuery->where(function ($k) use ($tingkat) {
+                $k->where('nama_kelas', 'like', $tingkat . ' %')
+                  ->orWhere('nama_kelas', 'like', $tingkat . '-%')
+                  ->orWhere('nama_kelas', 'like', $tingkat . '.%');
+            });
+        }
+        $daftarKelas = $daftarKelasQuery->get();
 
         // 2. TABEL A: Jurnal Tersimpan + Bukti Foto pada Tanggal Tersebut
         $qJurnal = JurnalMengajar::with([
@@ -116,6 +125,76 @@ class RekapJurnalController
             })
             ->values();
 
+        // 5. MATRIX TIMELINE SESI PER KELAS (VERTICAL BALOK)
+        $qJadwalHari = Jadwal::with(['guru', 'kelas', 'mapel', 'ruangan'])
+            ->where('hari', $namaHari);
+        if ($filterKelas) {
+            $qJadwalHari->where('id_kelas', $filterKelas);
+        }
+        $allJadwalHari = $qJadwalHari->get();
+
+        $jurnalMap = $jurnalTersimpan->keyBy('id_jadwal');
+
+        $approvedIzin = IzinGuru::where('status_akhir', 'Disetujui')
+            ->whereDate('tanggal_mulai', '<=', $tanggal)
+            ->whereDate('tanggal_selesai', '>=', $tanggal)
+            ->get()
+            ->keyBy('id_guru');
+
+        $maxJam = max(10, (int)($allJadwalHari->max('jam_selesai') ?? 10));
+
+        $matrixKelas = [];
+        $daftarKelasMatrix = $filterKelas ? $daftarKelas->where('id_kelas', $filterKelas) : $daftarKelas;
+
+        foreach ($daftarKelasMatrix as $kls) {
+            $sessions = $allJadwalHari->where('id_kelas', $kls->id_kelas)->sortBy('jam_mulai');
+            $sessionBlocks = [];
+
+            foreach ($sessions as $s) {
+                $jurnal = $jurnalMap->get($s->id_jadwal);
+                $hasIzin = $approvedIzin->has($s->id_guru);
+
+                if ($jurnal) {
+                    $status = 'terisi'; // Hijau
+                    $statusLabel = 'Terisi (Hadir)';
+                    $color = 'green';
+                } elseif ($hasIzin) {
+                    $status = 'izin'; // Kuning
+                    $statusLabel = $approvedIzin->get($s->id_guru)->alasan . ' (Izin Sah)';
+                    $color = 'yellow';
+                } else {
+                    $status = 'alpa'; // Merah
+                    $statusLabel = 'Belum Mengisi Jurnal / Alpa';
+                    $color = 'red';
+                }
+
+                $sessionBlocks[] = [
+                    'id_jadwal' => $s->id_jadwal,
+                    'jam_mulai' => (int)$s->jam_mulai,
+                    'jam_selesai' => (int)$s->jam_selesai,
+                    'durasi' => (int)($s->jam_selesai - $s->jam_mulai + 1),
+                    'nama_guru' => $s->guru ? $s->guru->nama_guru : 'Guru Belum Ditentukan',
+                    'nip' => $s->guru ? $s->guru->nip : '-',
+                    'nama_mapel' => $s->mapel ? $s->mapel->nama_mapel : 'Mata Pelajaran',
+                    'nama_ruangan' => $s->ruangan ? $s->ruangan->nama_ruangan : 'Default Kelas',
+                    'status' => $status,
+                    'status_label' => $statusLabel,
+                    'color' => $color,
+                    'materi' => $jurnal ? $jurnal->materi : null,
+                    'id_jurnal' => $jurnal ? $jurnal->id_jurnal : null,
+                ];
+            }
+
+            $matrixKelas[] = [
+                'id_kelas' => $kls->id_kelas,
+                'nama_kelas' => $kls->nama_kelas,
+                'total_sesi' => $sessions->count(),
+                'terisi_count' => collect($sessionBlocks)->where('status', 'terisi')->count(),
+                'alpa_count' => collect($sessionBlocks)->where('status', 'alpa')->count(),
+                'sessions' => $sessionBlocks,
+            ];
+        }
+
         // --- CHART DATA PREPARATION ---
         // 1. Pie Chart Data (Selected Day)
         $totalTerisi = $jurnalTersimpan->count();
@@ -155,11 +234,14 @@ class RekapJurnalController
             'tanggal',
             'namaHari',
             'filterKelas',
+            'tingkat',
             'daftarKelas',
             'jurnalTersimpan',
             'siswaAbsenList',
             'guruAlpaList',
-            'chartData'
+            'chartData',
+            'matrixKelas',
+            'maxJam'
         ));
     }
 

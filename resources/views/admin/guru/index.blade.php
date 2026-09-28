@@ -7,7 +7,7 @@
     <!-- Header Halaman (Proporsi Gambar 1 - FIXED) -->
     <div class="shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
         <div class="flex items-center space-x-2.5">
-            <h1 class="text-lg font-bold text-slate-900 tracking-tight">Data Guru & Pegawai</h1>
+            <h1 class="text-lg font-bold text-slate-900 tracking-tight">Data Guru</h1>
             <span class="px-2 py-0.5 text-[11px] font-semibold bg-slate-100 text-slate-700 rounded-md font-mono tabular-nums border border-slate-200">
                 {{ $totalGuru }} Pendidik
             </span>
@@ -16,7 +16,7 @@
             <button type="button" onclick="openTambahGuruModal()"
                 class="h-10 px-4 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white rounded-xl text-xs font-bold transition-all flex items-center space-x-2 shadow-2xs cursor-pointer whitespace-nowrap shrink-0">
                 <i data-lucide="user-plus" class="w-4 h-4"></i>
-                <span> Tambah Pegawai</span>
+                <span> Tambah guru</span>
             </button>
             <button type="button" onclick="openImportGuruModal()"
                 class="h-10 px-4 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white rounded-xl text-xs font-bold transition-all flex items-center space-x-2 shadow-2xs cursor-pointer whitespace-nowrap shrink-0">
@@ -101,7 +101,7 @@
                 <div class="w-7 h-7 rounded-lg bg-[#1E2538] text-white flex items-center justify-center">
                     <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
                 </div>
-                <span>Edit Data Pegawai</span>
+                <span>Edit Data Guru</span>
             </span>
             <button type="button" onclick="closeEditGuruModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
                 <i data-lucide="x" class="w-4 h-4"></i>
@@ -113,7 +113,7 @@
             @method('PUT')
 
             <div>
-                <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">NIP / Kode Pegawai *</label>
+                <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">NIP / Kode Guru *</label>
                 <input type="text" name="nip" id="edit_nip" required
                     class="w-full h-10 px-3 bg-white dark:bg-[#1A2230] border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-slate-900 dark:text-slate-100 font-mono focus:outline-none focus:border-slate-800 transition-colors">
             </div>
@@ -286,8 +286,8 @@
                     <i data-lucide="user-plus" class="w-4 h-4"></i>
                 </div>
                 <div>
-                    <h3 class="font-extrabold text-slate-900 dark:text-slate-100 text-base">Tambah Pegawai Baru</h3>
-                    <p class="text-xs text-slate-500 dark:text-slate-400">Isi data lengkap guru atau pegawai sekolah</p>
+                    <h3 class="font-extrabold text-slate-900 dark:text-slate-100 text-base">Tambah Guru Baru</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Isi data lengkap guru sekolah</p>
                 </div>
             </div>
             <button type="button" onclick="closeTambahGuruModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
@@ -298,7 +298,7 @@
         <form action="{{ route('admin.guru.store') }}" method="POST" class="space-y-3.5">
             @csrf
             <div>
-                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">NIP / Kode Pegawai *</label>
+                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">NIP / Kode Guru *</label>
                 <input type="text" name="nip" value="{{ old('nip') }}" placeholder="Contoh: 198001012005011001" required
                     class="w-full h-10 px-3 bg-white dark:bg-[#1A2230] border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-600 font-mono transition-colors">
             </div>
@@ -316,19 +316,15 @@
             </div>
 
             <div>
-                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Role / Jabatan Sistem *</label>
+                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Jabatan</label>
                 <select name="role" required
                     class="w-full h-10 px-3 bg-white dark:bg-[#1A2230] border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-slate-100 font-medium focus:outline-none focus:border-blue-600 cursor-pointer">
                     <option value="guru" {{ old('role') == 'guru' ? 'selected' : '' }}>Guru Mata Pelajaran</option>
-                    <option value="guru_piket" {{ old('role') == 'guru_piket' ? 'selected' : '' }}>Guru Piket</option>
                     @if(isset($existingKepsek) && $existingKepsek)
                         <option value="kepala_sekolah" disabled class="bg-slate-100 text-slate-400">Kepala Sekolah (Sudah Ada: {{ $existingKepsek->nama_display }})</option>
                     @else
                         <option value="kepala_sekolah" {{ old('role') == 'kepala_sekolah' ? 'selected' : '' }}>Kepala Sekolah</option>
                     @endif
-                    <option value="wakasis_siswa" {{ old('role') == 'wakasis_siswa' ? 'selected' : '' }}>Waka Kesiswaan (Dispensasi Siswa)</option>
-                    <option value="waka_kurikulum" {{ old('role') == 'waka_kurikulum' || old('role') == 'wakasis_guru' ? 'selected' : '' }}>Waka Kurikulum (ACC Izin Guru Tahap 1)</option>
-                    <option value="waka_sdm" {{ old('role') == 'waka_sdm' ? 'selected' : '' }}>Waka SDM / Kepegawaian (ACC Izin Guru Tahap 2)</option>
                 </select>
             </div>
 
@@ -350,7 +346,7 @@
                 </button>
                 <button type="submit" class="h-10 px-5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition-colors shadow-xs flex items-center space-x-1.5 cursor-pointer">
                     <i data-lucide="plus" class="w-4 h-4"></i>
-                    <span>Simpan Pegawai</span>
+                    <span>Simpan Guru</span>
                 </button>
             </div>
         </form>

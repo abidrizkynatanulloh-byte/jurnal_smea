@@ -29,10 +29,10 @@
             </a>
             <form action="{{ route('admin.siswa.reset') }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin MENGHAPUS SELURUH data siswa & akun wali murid dari database? Action ini akan mengosongkan tabel siswa.');" class="inline">
                 @csrf
-                <button type="submit" class="h-10 px-4 bg-red-600 hover:bg-red-700 active:scale-[0.98] text-white rounded-xl text-xs font-bold transition-all flex items-center space-x-2 shadow-2xs cursor-pointer whitespace-nowrap shrink-0">
+                <!-- <button type="submit" class="h-10 px-4 bg-red-600 hover:bg-red-700 active:scale-[0.98] text-white rounded-xl text-xs font-bold transition-all flex items-center space-x-2 shadow-2xs cursor-pointer whitespace-nowrap shrink-0">
                     <i data-lucide="refresh-cw" class="w-4 h-4"></i>
                     <span>Kosongkan DB</span>
-                </button>
+                </button> -->
             </form>
         </div>
     </div>
@@ -81,17 +81,13 @@
                 <!-- Table Body -->
                 <div class="flex-1 overflow-y-auto overflow-x-auto min-h-0">
                     <table class="w-full text-left border-collapse text-xs" id="tableSiswa">
-                        <thead class="sticky top-0 bg-white border-b border-slate-200 z-10 text-[10.5px] font-bold text-slate-500 uppercase tracking-wider">
+                        <thead class="sticky top-0 bg-white dark:bg-[#151B26] border-b border-slate-200 dark:border-slate-800 z-10 text-[10.5px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                             <tr>
-                                <th class="py-2 px-2.5 text-center w-10 bg-white">NO</th>
-                                <th class="py-2 px-2.5 w-20 bg-white">NIS</th>
-                                <th class="py-2 px-2.5 w-24 bg-white">NISN</th>
-                                <th class="py-2 px-2.5 bg-white">NAMA LENGKAP SISWA</th>
-                                <th class="py-2 px-2 text-center w-12 bg-white">L/P</th>
-                                <th class="py-2 px-2.5 w-24 bg-white">KELAS</th>
-                                <th class="py-2 px-2.5 w-36 bg-white">TEMPAT, TGL LAHIR</th>
-                                <th class="py-2 px-2.5 w-28 bg-white">NO. HP WALI</th>
-                                <th class="py-2 px-2.5 text-center w-16 bg-white">AKSI</th>
+                                <th class="py-2.5 px-3 text-center w-12 bg-white dark:bg-[#151B26]">NO</th>
+                                <th class="py-2.5 px-3 w-32 bg-white dark:bg-[#151B26]">NISN</th>
+                                <th class="py-2.5 px-3 bg-white dark:bg-[#151B26]">NAMA LENGKAP SISWA</th>
+                                <th class="py-2.5 px-2 text-center w-16 bg-white dark:bg-[#151B26]">GENDER</th>
+                                <th class="py-2.5 px-3 text-center w-28 bg-white dark:bg-[#151B26]">AKSI</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100 text-slate-700" id="siswaTbody">
@@ -128,16 +124,18 @@
             @csrf
             @method('PUT')
 
-            <div>
-                <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Nomor Induk Siswa (NIS) <span class="text-slate-400 font-normal">(Opsional)</span></label>
-                <input type="text" name="nis" id="edit_nis" placeholder="Boleh dikosongkan..."
-                    class="w-full h-10 px-3 bg-white dark:bg-[#1A2230] border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-slate-900 dark:text-slate-100 font-mono focus:outline-none focus:border-slate-800 transition-colors">
-            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Nomor Induk Siswa (NIS) <span class="text-slate-400 font-normal">(Opsional)</span></label>
+                    <input type="text" name="nis" id="edit_nis" placeholder="Boleh dikosongkan..."
+                        class="w-full h-10 px-3 bg-white dark:bg-[#1A2230] border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-slate-900 dark:text-slate-100 font-mono focus:outline-none focus:border-slate-800 transition-colors">
+                </div>
 
-            <div>
-                <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Nomor Induk Siswa Nasional (NISN) *</label>
-                <input type="text" name="nisn" id="edit_nisn" required
-                    class="w-full h-10 px-3 bg-white dark:bg-[#1A2230] border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-slate-900 dark:text-slate-100 font-mono focus:outline-none focus:border-slate-800 transition-colors">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Nomor Induk Siswa Nasional (NISN) *</label>
+                    <input type="text" name="nisn" id="edit_nisn" required
+                        class="w-full h-10 px-3 bg-white dark:bg-[#1A2230] border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-slate-900 dark:text-slate-100 font-mono focus:outline-none focus:border-slate-800 transition-colors">
+                </div>
             </div>
 
             <div>
@@ -170,7 +168,7 @@
             <div class="grid grid-cols-2 gap-3">
                 <div>
                     <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Tempat Lahir</label>
-                    <input type="text" name="kota_lahir" id="edit_kota_lahir" placeholder="Misal: Boyolali"
+                    <input type="text" name="kota_lahir" id="edit_kota_lahir" placeholder="Misal: Tulungagung"
                         class="w-full h-10 px-3 bg-white dark:bg-[#1A2230] border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:border-slate-800 transition-colors">
                 </div>
 
@@ -407,7 +405,86 @@
     </div>
 </div>
 
+<!-- MODAL DETAIL SISWA -->
+<div id="modalDetailSiswa" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center hidden p-4">
+    <div class="bg-white dark:bg-[#151B26] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-4">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+            <span class="font-bold text-slate-900 dark:text-slate-100 text-sm uppercase tracking-tight flex items-center space-x-2">
+                <div class="w-7 h-7 rounded-lg bg-blue-600 text-white flex items-center justify-center">
+                    <i data-lucide="user" class="w-3.5 h-3.5"></i>
+                </div>
+                <span>Detail Data Siswa</span>
+            </span>
+            <button type="button" onclick="closeDetailModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
+                <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+        </div>
+
+        <div class="space-y-3 text-xs">
+            <div class="flex justify-between py-2 border-b border-slate-100 dark:border-slate-800/60">
+                <span class="text-slate-500 dark:text-slate-400 font-medium">NISN</span>
+                <span class="font-bold text-slate-900 dark:text-slate-100 font-mono" id="detail_nisn">-</span>
+            </div>
+            <div class="flex justify-between py-2 border-b border-slate-100 dark:border-slate-800/60">
+                <span class="text-slate-500 dark:text-slate-400 font-medium">NIS</span>
+                <span class="font-bold text-slate-900 dark:text-slate-100 font-mono" id="detail_nis">-</span>
+            </div>
+            <div class="flex justify-between py-2 border-b border-slate-100 dark:border-slate-800/60">
+                <span class="text-slate-500 dark:text-slate-400 font-medium">Nama Lengkap</span>
+                <span class="font-bold text-slate-900 dark:text-slate-100" id="detail_nama">-</span>
+            </div>
+            <div class="flex justify-between py-2 border-b border-slate-100 dark:border-slate-800/60">
+                <span class="text-slate-500 dark:text-slate-400 font-medium">Jenis Kelamin</span>
+                <span class="font-bold text-slate-900 dark:text-slate-100" id="detail_jk">-</span>
+            </div>
+            <div class="flex justify-between py-2 border-b border-slate-100 dark:border-slate-800/60">
+                <span class="text-slate-500 dark:text-slate-400 font-medium">Kelas / Rombel</span>
+                <span class="font-bold text-blue-600 dark:text-blue-400" id="detail_kelas">-</span>
+            </div>
+            <div class="flex justify-between py-2 border-b border-slate-100 dark:border-slate-800/60">
+                <span class="text-slate-500 dark:text-slate-400 font-medium">Tempat, Tgl Lahir</span>
+                <span class="font-semibold text-slate-900 dark:text-slate-100" id="detail_ttl">-</span>
+            </div>
+            <div class="flex justify-between py-2">
+                <span class="text-slate-500 dark:text-slate-400 font-medium">No. HP / WA Wali</span>
+                <span class="font-bold text-slate-900 dark:text-slate-100 font-mono" id="detail_no_hp_wali">-</span>
+            </div>
+        </div>
+
+        <div class="flex items-center justify-end pt-3 border-t border-slate-100 dark:border-slate-800">
+            <button type="button" onclick="closeDetailModal()" class="h-9 px-5 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
+                Tutup
+            </button>
+        </div>
+    </div>
+</div>
+
 <script>
+    function openDetailModal(nisn, nama, nis, kelas, jk, noHpWali, kotaLahir = '', tglLahir = '') {
+        document.getElementById('detail_nisn').innerText = nisn || '-';
+        document.getElementById('detail_nis').innerText = nis || '-';
+        document.getElementById('detail_nama').innerText = nama || '-';
+        document.getElementById('detail_jk').innerText = jk || '-';
+        document.getElementById('detail_kelas').innerText = kelas || '-';
+        
+        let ttl = '-';
+        if (kotaLahir && tglLahir && tglLahir !== '-') {
+            ttl = `${kotaLahir}, ${tglLahir}`;
+        } else if (kotaLahir) {
+            ttl = kotaLahir;
+        } else if (tglLahir && tglLahir !== '-') {
+            ttl = tglLahir;
+        }
+        document.getElementById('detail_ttl').innerText = ttl;
+        document.getElementById('detail_no_hp_wali').innerText = noHpWali || '-';
+
+        document.getElementById('modalDetailSiswa').classList.remove('hidden');
+    }
+
+    function closeDetailModal() {
+        document.getElementById('modalDetailSiswa').classList.add('hidden');
+    }
+
     function openTambahSiswaModal() {
         document.getElementById('modalTambahSiswa').classList.remove('hidden');
     }
@@ -424,18 +501,26 @@
         document.getElementById('modalImportSiswa').classList.add('hidden');
     }
 
-    function openEditModal(targetKey, nama, nisn, idKelas, jk, noHpWali, nis, kotaLahir = '', tglLahir = '') {
-        document.getElementById('edit_nis').value = nis || '';
-        document.getElementById('edit_nama').value = nama;
-        document.getElementById('edit_nisn').value = nisn;
-        document.getElementById('edit_kelas').value = idKelas;
-        document.getElementById('edit_jk').value = jk;
-        document.getElementById('edit_no_hp_wali').value = noHpWali;
-        document.getElementById('edit_kota_lahir').value = kotaLahir || '';
-        document.getElementById('edit_tanggal_lahir').value = tglLahir || '';
+    function openEditModal(targetKey, nama, nisn, idKelas, jk, noHpWali, nis = '', kotaLahir = '', tglLahir = '') {
+        const setVal = (id, val) => {
+            const el = document.getElementById(id);
+            if (el) el.value = val || '';
+        };
 
-        document.getElementById('formEditSiswa').action = `/admin/siswa/${targetKey}`;
-        document.getElementById('modalEditSiswa').classList.remove('hidden');
+        setVal('edit_nis', nis);
+        setVal('edit_nama', nama);
+        setVal('edit_nisn', nisn);
+        setVal('edit_kelas', idKelas);
+        setVal('edit_jk', jk);
+        setVal('edit_no_hp_wali', noHpWali);
+        setVal('edit_kota_lahir', kotaLahir);
+        setVal('edit_tanggal_lahir', tglLahir);
+
+        const form = document.getElementById('formEditSiswa');
+        if (form) form.action = `/admin/siswa/${targetKey}`;
+
+        const modal = document.getElementById('modalEditSiswa');
+        if (modal) modal.classList.remove('hidden');
     }
 
     function closeEditModal() {

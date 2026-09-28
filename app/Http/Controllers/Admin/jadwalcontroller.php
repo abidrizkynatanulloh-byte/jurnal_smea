@@ -117,12 +117,41 @@ class JadwalController
         $validated = $request->validate([
             'id_kelas'    => 'required|exists:kelas,id_kelas',
             'id_guru'     => 'required|exists:guru,id_guru',
-            'id_ruangan'  => 'required|exists:ruangan,id_ruangan',
+            'id_ruangan'  => 'nullable|exists:ruangan,id_ruangan',
             'kode_mapel'  => 'required|exists:mapel,kode_mapel',
             'hari'        => 'required|in:Senin,Selasa,Rabu,Kamis,Jumat',
             'jam_mulai'   => 'required|integer|min:1|max:15',
             'jam_selesai' => 'required|integer|gte:jam_mulai|max:15',
         ]);
+
+        // 1. Cek apakah slot jam di kelas tersebut sudah terisi
+        $conflictKelas = Jadwal::with(['mapel', 'guru'])
+            ->where('id_kelas', $request->id_kelas)
+            ->where('hari', $request->hari)
+            ->where('jam_mulai', $request->jam_mulai)
+            ->first();
+
+        if ($conflictKelas) {
+            $namaMapel = $conflictKelas->mapel ? $conflictKelas->mapel->nama_mapel : 'Mapel';
+            $namaGuru = $conflictKelas->guru ? $conflictKelas->guru->nama_guru : 'Guru';
+            return back()->withInput()->withErrors([
+                'jam_mulai' => "Gagal: Kelas ini sudah memiliki jadwal {$namaMapel} ({$namaGuru}) pada hari {$request->hari} jam ke-{$request->jam_mulai}."
+            ]);
+        }
+
+        // 2. Cek apakah guru sudah mengajar di kelas lain pada jam & hari yang sama
+        $conflictGuru = Jadwal::with(['kelas', 'mapel'])
+            ->where('id_guru', $request->id_guru)
+            ->where('hari', $request->hari)
+            ->where('jam_mulai', $request->jam_mulai)
+            ->first();
+
+        if ($conflictGuru) {
+            $namaKelas = $conflictGuru->kelas ? $conflictGuru->kelas->nama_kelas : 'lain';
+            return back()->withInput()->withErrors([
+                'id_guru' => "Jadwal bentrok: Guru pengampu sudah memiliki jadwal mengajar di kelas {$namaKelas} pada hari {$request->hari} jam ke-{$request->jam_mulai}."
+            ]);
+        }
 
         Jadwal::create($validated);
 
@@ -179,6 +208,7 @@ class JadwalController
 
         $insertedCount = 0;
         $updatedCount = 0;
+        $skippedCount = 0;
 
         foreach ($rows as $row) {
             $kelasInput  = trim($row['kelas'] ?? ($row['nama_kelas'] ?? ($row['id_kelas'] ?? '')));
@@ -280,37 +310,62 @@ class JadwalController
                 $idRuangan = $ruangan->id_ruangan;
             }
 
-            // Upsert Jadwal
-            $existingJadwal = Jadwal::where('id_kelas', $idKelas)
+            // 5. Cek apakah ada jadwal guru bentrok di kelas lain pada hari & jam_mulai yang sama
+            $guruConflict = Jadwal::where('id_guru', $idGuru)
                 ->where('hari', $hari)
                 ->where('jam_mulai', $jamMulai)
                 ->first();
 
-            if ($existingJadwal) {
-                $updatedCount++;
-            } else {
-                $insertedCount++;
-            }
-
-            Jadwal::updateOrCreate(
-                [
-                    'id_kelas'  => $idKelas,
-                    'hari'      => $hari,
-                    'jam_mulai' => $jamMulai,
-                ],
-                [
+            if ($guruConflict && $guruConflict->id_kelas != $idKelas) {
+                // Timpa/pindahkan jadwal guru ke kelas baru ini
+                $guruConflict->update([
+                    'id_kelas'    => $idKelas,
                     'jam_selesai' => $jamSelesai,
                     'kode_mapel'  => $kodeMapel,
-                    'id_guru'     => $idGuru,
                     'id_ruangan'  => $idRuangan,
-                ]
-            );
+                ]);
+                $updatedCount++;
+                continue;
+            }
+
+            // 6. Upsert Jadwal Kelas
+            try {
+                $existingJadwal = Jadwal::where('id_kelas', $idKelas)
+                    ->where('hari', $hari)
+                    ->where('jam_mulai', $jamMulai)
+                    ->first();
+
+                if ($existingJadwal) {
+                    $existingJadwal->update([
+                        'jam_selesai' => $jamSelesai,
+                        'kode_mapel'  => $kodeMapel,
+                        'id_guru'     => $idGuru,
+                        'id_ruangan'  => $idRuangan,
+                    ]);
+                    $updatedCount++;
+                } else {
+                    Jadwal::create([
+                        'id_kelas'    => $idKelas,
+                        'hari'        => $hari,
+                        'jam_mulai'   => $jamMulai,
+                        'jam_selesai' => $jamSelesai,
+                        'kode_mapel'  => $kodeMapel,
+                        'id_guru'     => $idGuru,
+                        'id_ruangan'  => $idRuangan,
+                    ]);
+                    $insertedCount++;
+                }
+            } catch (\Exception $e) {
+                $skippedCount++;
+            }
         }
 
-        return redirect()->route('admin.jadwal.index')->with(
-            'success',
-            "Import jadwal KBM selesai! Jadwal baru: {$insertedCount}, Jadwal diperbarui: {$updatedCount}."
-        );
+        $msg = "Import jadwal KBM selesai! Jadwal baru: {$insertedCount}, Jadwal diperbarui: {$updatedCount}.";
+        if ($skippedCount > 0) {
+            $msg .= " ({$skippedCount} baris bentrok dilewati secara aman).";
+        }
+
+        return redirect()->route('admin.jadwal.index')->with('success', $msg);
     }
 
     /**

@@ -45,7 +45,7 @@
             </div>
             <div class="flex-1 min-w-0">
                 <div class="flex items-center justify-between">
-                    <p class="text-[11px] font-bold text-[#1B5D9D] dark:text-[#93C5FD] uppercase tracking-wider">Guru & Pegawai</p>
+                    <p class="text-[11px] font-bold text-[#1B5D9D] dark:text-[#93C5FD] uppercase tracking-wider">Guru</p>
                     <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-[#2B6EA8] dark:text-[#BFDBFE] group-hover:translate-x-0.5 transition-all"></i>
                 </div>
                 <h3 class="text-xl font-extrabold text-[#0B3054] dark:text-[#EFF6FF] mt-0.5 tracking-tight tabular-nums">{{ $totalPegawai }}</h3>
