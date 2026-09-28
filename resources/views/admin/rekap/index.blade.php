@@ -16,7 +16,7 @@
             <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Pemantauan visual balok kehadiran guru & pengisian jurnal per sesi kelas per hari</p>
         </div>
 
-        <div class="flex items-center space-x-2 shrink-0 flex-wrap">
+        <div class="flex items-center space-x-2 shrink-0 flex-wrap gap-y-1">
             <span class="px-3 py-1 bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800/80 text-emerald-700 dark:text-emerald-300 text-xs font-bold rounded-xl font-mono tabular-nums shadow-2xs flex items-center space-x-1.5">
                 <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
                 <span>{{ $jurnalTersimpan->count() }} Terisi</span>
@@ -31,6 +31,15 @@
                 <span>{{ $guruAlpaList->filter(fn($g) => str_contains($g->status_rekap, 'Sah'))->count() }} Izin Sah</span>
             </span>
             @endif
+
+            <form action="{{ route('admin.rekap.kirimWaOrtu') }}" method="POST" class="inline" onsubmit="return confirm('Kirim rekap notifikasi WhatsApp siswa Alpa pada tanggal {{ $tanggal }} ke Orang Tua & Wali Kelas sekarang?')">
+                @csrf
+                <input type="hidden" name="tanggal" value="{{ $tanggal }}">
+                <button type="submit" class="h-8 px-3 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white rounded-xl text-xs font-bold transition-all flex items-center space-x-1.5 shadow-2xs cursor-pointer ml-1">
+                    <i data-lucide="send" class="w-3.5 h-3.5"></i>
+                    <span>Kirim WA Rekap ke Ortu</span>
+                </button>
+            </form>
         </div>
     </div>
 
@@ -145,24 +154,24 @@
             @endphp
 
             <!-- AREA CHART GRID BALOK TIMELINE -->
-            <div class="p-4 sm:p-6 overflow-x-auto select-none">
-                <div class="inline-flex pb-2 items-start">
-                    
-                    <!-- Sumbu Y: Indikator Jam Pelajaran (Sticky di Kiri, Bersih & Solid) -->
-                    <div class="shrink-0 w-8 sm:w-10 pr-2 select-none sticky left-0 bg-white dark:bg-[#1C2433] z-30 flex flex-col justify-start border-r border-slate-200/80 dark:border-slate-800/80">
-                        <div class="flex flex-col justify-between" style="height: {{ $chartHeight }}px;">
-                            @for ($jam = $maxJam; $jam >= 1; $jam--)
-                                <div class="flex items-center justify-end pr-1 text-[11px] font-mono font-bold text-slate-400 dark:text-slate-500" style="height: {{ $slotHeight }}px;">
-                                    {{ $jam }}
-                                </div>
-                            @endfor
-                        </div>
-                        <!-- Spacer Bawah (Sejajar dengan tinggi tulisan nama kelas) -->
-                        <div class="h-28 sm:h-32 mt-2.5"></div>
+            <div class="p-4 sm:p-6 select-none flex items-start">
+                
+                <!-- Sumbu Y: Indikator Jam Pelajaran (Mepet Kiri Statis di Luar Scroll) -->
+                <div class="shrink-0 w-6 sm:w-7 select-none flex flex-col justify-start pr-1.5 border-r border-slate-200/90 dark:border-slate-800">
+                    <div class="flex flex-col justify-between" style="height: {{ $chartHeight }}px;">
+                        @for ($jam = $maxJam; $jam >= 1; $jam--)
+                            <div class="flex items-center justify-end pr-0.5 text-[11px] font-mono font-bold text-slate-400 dark:text-slate-500" style="height: {{ $slotHeight }}px;">
+                                {{ $jam }}
+                            </div>
+                        @endfor
                     </div>
+                    <!-- Spacer Bawah (Sejajar dengan tinggi tulisan nama kelas) -->
+                    <div class="h-28 sm:h-32 mt-2.5"></div>
+                </div>
 
-                    <!-- Kolom Balok Tiap Kelas Berjejer ke Samping (Sumbu X: Bawah Kelas) -->
-                    <div class="flex items-start space-x-2 sm:space-x-2.5 pl-3 relative">
+                <!-- Area Kolom Kelas yang Dapat Di-scroll Horizontal -->
+                <div class="flex-1 min-w-0 overflow-x-auto pl-2.5 sm:pl-3 pb-2">
+                    <div class="inline-flex items-start space-x-2 sm:space-x-2.5 min-w-max relative">
                         
                         <!-- Garis Grid Horizontal Latar Belakang -->
                         <div class="absolute inset-0 pointer-events-none flex flex-col justify-between" style="height: {{ $chartHeight }}px;">

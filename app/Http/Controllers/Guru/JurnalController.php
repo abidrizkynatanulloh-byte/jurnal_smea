@@ -13,6 +13,7 @@ use App\Models\PengajuanIzinSiswa;
 use App\Models\DispenSiswa;
 use App\Models\SiswaTelat;
 use App\Models\FotoMengajar;
+use App\Services\WhatsAppService;
 use Carbon\Carbon;
 
 class JurnalController
@@ -183,12 +184,20 @@ class JurnalController
             return back()->withErrors(['error' => 'Waktu pengisian jurnal telah habis! Sesi mengajar ini sudah tercatat Terlambat (Alpa) dan tidak dapat disimpan.']);
         }
 
-        $sudahAda = JurnalMengajar::where('id_jadwal', $request->id_jadwal)
+        $existingRecord = JurnalMengajar::withTrashed()
+            ->where('id_jadwal', $request->id_jadwal)
             ->whereDate('tanggal', $request->tanggal)
-            ->exists();
+            ->first();
 
-        if ($sudahAda) {
-            return back()->withErrors(['error' => 'Jurnal untuk sesi ini sudah pernah diisi.']);
+        if ($existingRecord) {
+            if ($existingRecord->trashed()) {
+                // Bersihkan record trashed lama beserta detailnya agar unique key bebas
+                JurnalDetailKetidakhadiran::where('id_jurnal', $existingRecord->id_jurnal)->delete();
+                FotoMengajar::where('id_jurnal', $existingRecord->id_jurnal)->delete();
+                $existingRecord->forceDelete();
+            } else {
+                return back()->withErrors(['error' => 'Jurnal untuk sesi ini sudah pernah diisi.']);
+            }
         }
 
         // 1. Simpan jurnal mengajar
@@ -220,8 +229,9 @@ class JurnalController
         }
 
         // 3. Simpan ketidakhadiran siswa (Sakit, Izin, Alpa, Dispen, Terlambat)
-        // Note: Notifikasi WA Alpa akan dikonsolidasi & dikirim setelah jam sekolah selesai
         $ketidakhadiranInput = $request->input('ketidakhadiran') ?? $request->input('ketidakhadiran_mob') ?? [];
+        $ketidakhadiranMap = [];
+
         if (!empty($ketidakhadiranInput) && is_array($ketidakhadiranInput)) {
             foreach ($ketidakhadiranInput as $nis => $keterangan) {
                 if (in_array($keterangan, ['Sakit', 'Izin', 'Alpa', 'Dispen', 'Terlambat'])) {
@@ -237,7 +247,15 @@ class JurnalController
                         'ref_izin_id'  => $refIzin ? $refIzin->id : null,
                         'dicatat_oleh' => $user->id,
                     ]);
+
+                    $ketidakhadiranMap[$nis] = $keterangan;
                 }
+            }
+
+            // Kirim notifikasi WA langsung (instan) ke nomor Orang Tua & Wali Kelas saat jurnal disimpan
+            // (Meliputi status: Sakit, Izin, Dispen, dan Alpa agar orang tua mengetahui kondisi real kehadiran anaknya)
+            if (!empty($ketidakhadiranMap)) {
+                WhatsAppService::sendKetidakhadiranSiswaNotification($ketidakhadiranMap, $jurnal);
             }
         }
 

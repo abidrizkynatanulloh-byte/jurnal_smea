@@ -133,7 +133,9 @@ Route::middleware('auth')->group(function () {
     // ---------------------------------------------------------------------
     Route::middleware('role:staf_tu,kepala_sekolah,wakasis_guru,waka_kurikulum,waka_sdm,wakasis_siswa')->group(function () {
         Route::get('/admin/rekap-jurnal',            [RekapJurnalController::class, 'index'])->name('admin.rekap.index');
+        Route::post('/admin/rekap-jurnal/kirim-wa-ortu', [RekapJurnalController::class, 'kirimWaOrtu'])->name('admin.rekap.kirimWaOrtu');
         Route::get('/admin/kepatuhan-jurnal',        [RekapJurnalController::class, 'kepatuhan'])->name('admin.rekap.kepatuhan');
+        Route::get('/admin/rekap-guru-alpha',        [RekapJurnalController::class, 'guruAlpha'])->name('admin.rekap.guruAlpha');
         Route::get('/admin/rekap-jurnal/{id}',       [RekapJurnalController::class, 'show'] )->name('admin.rekap.show');
         Route::get('/admin/guru-piket',              [AdminGuruPiketController::class, 'index'])->name('admin.guru-piket.index');
     });

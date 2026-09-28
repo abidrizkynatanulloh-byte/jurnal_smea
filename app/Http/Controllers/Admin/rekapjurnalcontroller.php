@@ -360,19 +360,310 @@ class RekapJurnalController
     }
 
     /**
-     * Tampilkan Detail Jurnal Mengajar (Termasuk Foto Bukti & Absensi Siswa)
+     * Trigger Manual Pengiriman Notifikasi WA Rekap Siswa Alpa ke Orang Tua & Wali Kelas
      */
-    public function show($id)
+    public function kirimWaOrtu(Request $request)
     {
-        $jurnal = JurnalMengajar::with([
-            'foto',
-            'jadwal.guru',
-            'jadwal.kelas',
-            'jadwal.mapel',
-            'jadwal.ruangan',
-            'detailKetidakhadiran.siswa'
-        ])->findOrFail($id);
+        $tanggal = $request->input('tanggal', date('Y-m-d'));
+        $res = \App\Services\WhatsAppService::sendDailyAlphaSummaryToParents($tanggal);
 
-        return view('admin.rekap.show', compact('jurnal'));
+        $msg = "Notifikasi WhatsApp berhasil diproses! Total Siswa Alpa: {$res['total_siswa_alpa']} (Full: {$res['full_alpa']}, Partial: {$res['partial_alpa']}). Terkirim ke Ortu: {$res['ortu_sent']}, Terkirim ke Wali: {$res['wali_sent']}.";
+
+        return back()->with('success', $msg);
+    }
+
+    /**
+     * Rekapitulasi Guru Alpha (Bulanan & Matriks 12 Bulan) untuk Kepsek & Waka
+     */
+    public function guruAlpha(Request $request)
+    {
+        $tahun = (int)$request->input('tahun', date('Y'));
+        $bulan = (int)$request->input('bulan', date('n')); // 1..12
+        $tab = $request->input('tab', 'bulanan'); // 'bulanan' | 'matriks'
+        $search = $request->input('search');
+
+        $hariMap = [
+            'Monday'    => 'Senin',
+            'Tuesday'   => 'Selasa',
+            'Wednesday' => 'Rabu',
+            'Thursday'  => 'Kamis',
+            'Friday'    => 'Jumat',
+            'Saturday'  => 'Sabtu',
+            'Sunday'    => 'Minggu',
+        ];
+
+        $today = Carbon::today()->toDateString();
+
+        // 1. Ambil Semua Data Guru
+        $guruQuery = Guru::with(['jadwal.kelas', 'jadwal.mapel', 'jadwal.ruangan'])
+            ->orderBy('nama_guru', 'asc');
+
+        if (!empty($search)) {
+            $guruQuery->where(function ($q) use ($search) {
+                $q->where('nama_guru', 'like', "%{$search}%")
+                  ->orWhere('nip', 'like', "%{$search}%");
+            });
+        }
+
+        $allGuru = $guruQuery->get();
+
+        // --- TAHAP 1: PERHITUNGAN REKAP BULANAN TERPILIH ---
+        $startOfMonth = Carbon::createFromDate($tahun, $bulan, 1)->startOfMonth();
+        $endOfMonth = Carbon::createFromDate($tahun, $bulan, 1)->endOfMonth();
+
+        // Ambil semua jurnal pada bulan ini
+        $jurnalsBulanIni = JurnalMengajar::whereBetween('tanggal', [$startOfMonth->toDateString(), $endOfMonth->toDateString()])
+            ->get()
+            ->groupBy(function ($item) {
+                return $item->id_jadwal . '_' . $item->tanggal;
+            });
+
+        // Ambil semua izin guru yang disetujui pada bulan ini
+        $izinsBulanIni = IzinGuru::where('status_akhir', 'Disetujui')
+            ->whereDate('tanggal_mulai', '<=', $endOfMonth->toDateString())
+            ->whereDate('tanggal_selesai', '>=', $startOfMonth->toDateString())
+            ->get();
+
+        // Kumpulkan hari kerja (Senin - Jumat) di bulan ini yang <= today
+        $workDaysInMonth = [];
+        $cursor = $startOfMonth->copy();
+        while ($cursor->lte($endOfMonth)) {
+            $dayNameEn = $cursor->format('l');
+            if (isset($hariMap[$dayNameEn]) && in_array($hariMap[$dayNameEn], ['Senin','Selasa','Rabu','Kamis','Jumat'])) {
+                $dateStr = $cursor->toDateString();
+                $workDaysInMonth[] = [
+                    'date'     => $dateStr,
+                    'hari'     => $hariMap[$dayNameEn],
+                    'is_past'  => ($dateStr <= $today),
+                    'is_today' => ($dateStr === $today),
+                ];
+            }
+            $cursor->addDay();
+        }
+
+        $rekapBulanan = $allGuru->map(function ($g) use ($workDaysInMonth, $jurnalsBulanIni, $izinsBulanIni) {
+            $jadwalGuru = $g->jadwal ?? collect();
+            $totalSesiWajib = 0;
+            $totalHadir = 0;
+            $totalIzin = 0;
+            $totalAlpha = 0;
+            $rincianAlpha = [];
+
+            foreach ($workDaysInMonth as $wd) {
+                if (!$wd['is_past']) continue; // Belum lewat, lewati
+
+                // Jadwal guru di hari tersebut
+                $jadwalHari = $jadwalGuru->where('hari', $wd['hari']);
+
+                foreach ($jadwalHari as $j) {
+                    $totalSesiWajib++;
+                    $key = $j->id_jadwal . '_' . $wd['date'];
+                    $jurnalAda = $jurnalsBulanIni->has($key);
+
+                    if ($jurnalAda) {
+                        $totalHadir++;
+                    } else {
+                        // Cek Izin Sah
+                        $hasIzin = $izinsBulanIni->where('id_guru', $g->id_guru)->first(function ($iz) use ($wd) {
+                            return $iz->tanggal_mulai <= $wd['date'] && $iz->tanggal_selesai >= $wd['date'];
+                        });
+
+                        if ($hasIzin) {
+                            $totalIzin++;
+                        } else {
+                            // Cek jika hari ini, apakah jamnya sudah telat
+                            if ($wd['is_today']) {
+                                $statusWaktu = $j->statusWaktuMengajar();
+                                if ($statusWaktu === 'telat') {
+                                    $totalAlpha++;
+                                    $rincianAlpha[] = [
+                                        'tanggal'   => $wd['date'],
+                                        'hari'      => $wd['hari'],
+                                        'jam_ke'    => "Jam ke-{$j->jam_mulai} s/d {$j->jam_selesai}",
+                                        'kelas'     => $j->kelas ? $j->kelas->nama_kelas : '-',
+                                        'mapel'     => $j->mapel ? $j->mapel->nama_mapel : '-',
+                                        'ruangan'   => $j->ruangan ? $j->ruangan->nama_ruangan : '-',
+                                    ];
+                                }
+                            } else {
+                                $totalAlpha++;
+                                $rincianAlpha[] = [
+                                    'tanggal'   => $wd['date'],
+                                    'hari'      => $wd['hari'],
+                                    'jam_ke'    => "Jam ke-{$j->jam_mulai} s/d {$j->jam_selesai}",
+                                    'kelas'     => $j->kelas ? $j->kelas->nama_kelas : '-',
+                                    'mapel'     => $j->mapel ? $j->mapel->nama_mapel : '-',
+                                    'ruangan'   => $j->ruangan ? $j->ruangan->nama_ruangan : '-',
+                                ];
+                            }
+                        }
+                    }
+                }
+            }
+
+            $persenHadir = $totalSesiWajib > 0 ? round(($totalHadir / $totalSesiWajib) * 100) : 100;
+
+            // Status Tindak Lanjut
+            $statusTindakLanjut = 'Tertib';
+            $badgeColor = 'emerald';
+            if ($totalAlpha >= 3) {
+                $statusTindakLanjut = 'Peringatan / Tindak Lanjut';
+                $badgeColor = 'rose';
+            } elseif ($totalAlpha >= 1) {
+                $statusTindakLanjut = 'Perlu Perhatian';
+                $badgeColor = 'amber';
+            }
+
+            return [
+                'id_guru'               => $g->id_guru,
+                'nama_guru'             => $g->nama_guru,
+                'nip'                   => $g->nip ?? '-',
+                'no_hp'                 => $g->no_hp ?? '-',
+                'total_jadwal_mingguan' => $jadwalGuru->count(),
+                'total_sesi_wajib'      => $totalSesiWajib,
+                'total_hadir'           => $totalHadir,
+                'total_izin'            => $totalIzin,
+                'total_alpha'           => $totalAlpha,
+                'persen_hadir'          => $persenHadir,
+                'status_tindak_lanjut'  => $statusTindakLanjut,
+                'badge_color'           => $badgeColor,
+                'rincian_alpha'         => $rincianAlpha,
+            ];
+        })->sortByDesc('total_alpha')->values();
+
+        // --- TAHAP 2: PERHITUNGAN MATRIKS AKUMULASI 12 BULAN (JAN - DES) ---
+        $startOfYear = Carbon::createFromDate($tahun, 1, 1)->startOfYear();
+        $endOfYear = Carbon::createFromDate($tahun, 12, 31)->endOfYear();
+
+        // Ambil semua jurnal & izin sepanjang tahun ini
+        $jurnalsTahunIni = JurnalMengajar::whereBetween('tanggal', [$startOfYear->toDateString(), $endOfYear->toDateString()])
+            ->get()
+            ->groupBy(function ($item) {
+                return $item->id_jadwal . '_' . $item->tanggal;
+            });
+
+        $izinsTahunIni = IzinGuru::where('status_akhir', 'Disetujui')
+            ->whereDate('tanggal_mulai', '<=', $endOfYear->toDateString())
+            ->whereDate('tanggal_selesai', '>=', $startOfYear->toDateString())
+            ->get();
+
+        // Kumpulkan hari kerja per bulan sepanjang tahun
+        $monthsWorkDays = [];
+        for ($m = 1; $m <= 12; $m++) {
+            $mStart = Carbon::createFromDate($tahun, $m, 1)->startOfMonth();
+            $mEnd = Carbon::createFromDate($tahun, $m, 1)->endOfMonth();
+            $mDays = [];
+            $mCur = $mStart->copy();
+            while ($mCur->lte($mEnd)) {
+                $dayNameEn = $mCur->format('l');
+                if (isset($hariMap[$dayNameEn]) && in_array($hariMap[$dayNameEn], ['Senin','Selasa','Rabu','Kamis','Jumat'])) {
+                    $dateStr = $mCur->toDateString();
+                    $mDays[] = [
+                        'date'     => $dateStr,
+                        'hari'     => $hariMap[$dayNameEn],
+                        'is_past'  => ($dateStr <= $today),
+                        'is_today' => ($dateStr === $today),
+                    ];
+                }
+                $mCur->addDay();
+            }
+            $monthsWorkDays[$m] = $mDays;
+        }
+
+        $namaBulanList = [
+            1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
+            5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
+            9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
+        ];
+
+        $rekapMatriks12Bulan = $allGuru->map(function ($g) use ($monthsWorkDays, $jurnalsTahunIni, $izinsTahunIni) {
+            $jadwalGuru = $g->jadwal ?? collect();
+            $alphaPerBulan = [];
+            $totalAlphaTahunan = 0;
+            $totalSesiWajibTahunan = 0;
+            $totalHadirTahunan = 0;
+
+            for ($m = 1; $m <= 12; $m++) {
+                $mDays = $monthsWorkDays[$m] ?? [];
+                $alphaBulanCount = 0;
+
+                foreach ($mDays as $wd) {
+                    if (!$wd['is_past']) continue;
+
+                    $jadwalHari = $jadwalGuru->where('hari', $wd['hari']);
+                    foreach ($jadwalHari as $j) {
+                        $totalSesiWajibTahunan++;
+                        $key = $j->id_jadwal . '_' . $wd['date'];
+                        $jurnalAda = $jurnalsTahunIni->has($key);
+
+                        if ($jurnalAda) {
+                            $totalHadirTahunan++;
+                        } else {
+                            $hasIzin = $izinsTahunIni->where('id_guru', $g->id_guru)->first(function ($iz) use ($wd) {
+                                return $iz->tanggal_mulai <= $wd['date'] && $iz->tanggal_selesai >= $wd['date'];
+                            });
+
+                            if (!$hasIzin) {
+                                if ($wd['is_today']) {
+                                    if ($j->statusWaktuMengajar() === 'telat') {
+                                        $alphaBulanCount++;
+                                    }
+                                } else {
+                                    $alphaBulanCount++;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                $alphaPerBulan[$m] = $alphaBulanCount;
+                $totalAlphaTahunan += $alphaBulanCount;
+            }
+
+            // Status Tindak Lanjut Tahunan
+            $statusTindakLanjut = 'Tertib';
+            $badgeColor = 'emerald';
+            if ($totalAlphaTahunan >= 5) {
+                $statusTindakLanjut = 'Peringatan / Tindak Lanjut';
+                $badgeColor = 'rose';
+            } elseif ($totalAlphaTahunan >= 1) {
+                $statusTindakLanjut = 'Perlu Perhatian';
+                $badgeColor = 'amber';
+            }
+
+            return [
+                'id_guru'               => $g->id_guru,
+                'nama_guru'             => $g->nama_guru,
+                'nip'                   => $g->nip ?? '-',
+                'no_hp'                 => $g->no_hp ?? '-',
+                'alpha_per_bulan'       => $alphaPerBulan,
+                'total_alpha_tahunan'   => $totalAlphaTahunan,
+                'total_sesi_tahunan'    => $totalSesiWajibTahunan,
+                'total_hadir_tahunan'   => $totalHadirTahunan,
+                'status_tindak_lanjut'  => $statusTindakLanjut,
+                'badge_color'           => $badgeColor,
+            ];
+        })->sortByDesc('total_alpha_tahunan')->values();
+
+        // KPI Ringkasan
+        $kpi = [
+            'total_guru'             => $allGuru->count(),
+            'guru_alpha_bulan_ini'   => $rekapBulanan->where('total_alpha', '>', 0)->count(),
+            'total_sesi_alpha_bulan' => $rekapBulanan->sum('total_alpha'),
+            'guru_peringatan_bulan'  => $rekapBulanan->where('total_alpha', '>=', 3)->count(),
+            'total_sesi_alpha_tahun' => $rekapMatriks12Bulan->sum('total_alpha_tahunan'),
+            'guru_peringatan_tahun'  => $rekapMatriks12Bulan->where('total_alpha_tahunan', '>=', 5)->count(),
+        ];
+
+        return view('Admin.rekap.guru_alpha', compact(
+            'tahun',
+            'bulan',
+            'tab',
+            'search',
+            'namaBulanList',
+            'rekapBulanan',
+            'rekapMatriks12Bulan',
+            'kpi'
+        ));
     }
 }

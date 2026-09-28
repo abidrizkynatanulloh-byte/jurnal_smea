@@ -16,7 +16,7 @@
             <button type="button" onclick="openTambahMapelModal()"
                 class="h-10 px-4 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white rounded-xl text-xs font-bold transition-all flex items-center space-x-2 shadow-2xs cursor-pointer whitespace-nowrap shrink-0">
                 <i data-lucide="plus" class="w-4 h-4"></i>
-                <span>+ Tambah Mapel</span>
+                <span> Tambah Mapel</span>
             </button>
         </div>
     </div>

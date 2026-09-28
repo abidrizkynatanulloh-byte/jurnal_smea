@@ -13,7 +13,11 @@
             </p>
         </div>
         <div class="flex items-center space-x-2">
-            <span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 text-xs font-semibold border border-slate-200/80 shadow-2xs space-x-1.5">
+            <a href="{{ route('admin.rekap.guruAlpha') }}" class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-400 text-xs font-semibold border border-rose-200 dark:border-rose-900 shadow-2xs hover:bg-rose-100 transition">
+                <i data-lucide="user-x" class="w-3.5 h-3.5 text-rose-600"></i>
+                <span>Rekap Guru Alpha</span>
+            </a>
+            <span class="inline-flex items-center px-2.5 py-1.5 rounded-lg bg-slate-100 text-slate-700 text-xs font-semibold border border-slate-200/80 shadow-2xs space-x-1.5">
                 <i data-lucide="shield" class="w-3.5 h-3.5 text-slate-500"></i>
                 <span>Akses Pimpinan Utama</span>
             </span>

@@ -11,6 +11,7 @@ use App\Models\Siswa;
 use App\Models\Guru;
 use App\Models\Kelas;
 use App\Models\JurnalMengajar;
+use App\Models\JurnalDetailKetidakhadiran;
 use App\Models\Notifikasi;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -415,6 +416,25 @@ class WhatsAppService
             if (!empty($phoneNumbers)) {
                 self::sendBulkMessage($phoneNumbers, $message);
             }
+
+            // 3. Kirim konfirmasi WA ke nomor HP Orang Tua / Wali Siswa
+            // (Untuk mengantisipasi jika siswa mengajukan izin sendiri di HP/akun ortu)
+            if (!empty($izin->siswa->no_hp_wali)) {
+                $formattedOrtu = self::formatPhoneNumber($izin->siswa->no_hp_wali);
+                if ($formattedOrtu) {
+                    $msgOrtuConfirm = "[Konfirmasi Pengajuan Izin/Sakit Siswa]\n\n" .
+                        "Yth. Orang Tua / Wali dari *{$namaSiswa}*,\n\n" .
+                        "Sistem sekolah telah menerima permohonan *{$kategori}*:\n\n" .
+                        "🎓 *Nama Siswa* : {$namaSiswa} ({$kelas})\n" .
+                        "📌 *Kategori*   : *{$kategori}*\n" .
+                        "📅 *Tanggal*    : {$tglMulai} s/d {$tglSelesai}\n" .
+                        "📝 *Alasan*     : {$alasan}\n" .
+                        "ℹ️ *Status*     : Menunggu Verifikasi Guru Piket\n\n" .
+                        "⚠️ *PERHATIAN:* Notifikasi ini dikirimkan sebagai bentuk konfirmasi. Jika Anda merasa *TIDAK mengajukan izin* ini atau ada penyalahgunaan akun, segera hubungi Wali Kelas atau pihak sekolah.\n\n" .
+                        "Terima Kasih.\nSMK Negeri 1";
+                    self::sendBulkMessage([$formattedOrtu], $msgOrtuConfirm);
+                }
+            }
         } catch (\Throwable $e) {
             Log::error("WhatsAppService Error (IzinSiswa ID {$izin->id}): " . $e->getMessage());
         }
@@ -500,17 +520,32 @@ class WhatsAppService
     }
 
     /**
-     * Kirim notifikasi WA ke Ortu/Wali & Wali Kelas saat siswa tercatat Alpa pada presensi jurnal.
+     * Kirim notifikasi WA ke Ortu/Wali & Wali Kelas saat ada siswa tidak hadir (Sakit, Izin, Dispen, Alpa) pada presensi jurnal.
      *
-     * @param array|string $nisInput Single NIS or Array of NIS
+     * @param array|string $inputData Array associative [nis => keterangan], Array of NIS, atau single NIS
      * @param JurnalMengajar|int $jurnalInput JurnalMengajar instance or ID Jurnal
      * @return void
      */
-    public static function sendAlphaSiswaNotification($nisInput, $jurnalInput): void
+    public static function sendKetidakhadiranSiswaNotification($inputData, $jurnalInput): void
     {
         try {
-            $nisList = is_array($nisInput) ? $nisInput : [$nisInput];
-            if (empty($nisList)) {
+            // Normalisasi inputData menjadi format [nis => keterangan]
+            $ketidakhadiranMap = [];
+            if (is_array($inputData)) {
+                foreach ($inputData as $key => $val) {
+                    if (in_array($val, ['Sakit', 'Izin', 'Alpa', 'Dispen', 'Terlambat'])) {
+                        // Key adalah NIS (misal: 24435 => 'Sakit')
+                        $ketidakhadiranMap[$key] = $val;
+                    } elseif (is_numeric($val) || (is_string($val) && strlen($val) >= 4)) {
+                        // Val adalah NIS (misal: [24435, 24438])
+                        $ketidakhadiranMap[$val] = 'Alpa';
+                    }
+                }
+            } elseif (is_string($inputData) || is_numeric($inputData)) {
+                $ketidakhadiranMap[$inputData] = 'Alpa';
+            }
+
+            if (empty($ketidakhadiranMap)) {
                 return;
             }
 
@@ -523,42 +558,94 @@ class WhatsAppService
                 return;
             }
 
-            $jurnal->loadMissing(['jadwal.kelas', 'jadwal.mapel', 'jadwal.guru']);
+            $jurnal->loadMissing(['jadwal.kelas', 'jadwal.mapel', 'jadwal.guru', 'jadwal.jamMulaiData', 'jadwal.jamSelesaiData']);
 
             $tanggal = date('d-m-Y', strtotime($jurnal->tanggal));
             $mapel = $jurnal->jadwal->mapel->nama_mapel ?? 'Mata Pelajaran';
             $guruPengajar = $jurnal->jadwal->guru->nama_guru ?? 'Guru Pengajar';
-            $jamMulai = $jurnal->jadwal->jam_mulai ?? null;
-            $jamSelesai = $jurnal->jadwal->jam_selesai ?? null;
-            $jamInfo = ($jamMulai && $jamSelesai) ? "(Jam ke-{$jamMulai} s/d {$jamSelesai})" : "";
+            $jamMulai = $jurnal->jadwal->jam_mulai ?? '-';
+            $jamSelesai = $jurnal->jadwal->jam_selesai ?? '-';
 
-            // Pengelompokan data siswa Alpa per Wali Kelas
+            $waktuMulai = $jurnal->jadwal->jamMulaiData->waktu_mulai ? substr($jurnal->jadwal->jamMulaiData->waktu_mulai, 0, 5) : null;
+            $waktuSelesai = $jurnal->jadwal->jamSelesaiData->waktu_selesai ? substr($jurnal->jadwal->jamSelesaiData->waktu_selesai, 0, 5) : null;
+
+            $jamInfo = "Jam ke-{$jamMulai} s/d {$jamSelesai}";
+            if ($waktuMulai && $waktuSelesai) {
+                $jamInfo .= " ({$waktuMulai} - {$waktuSelesai} WIB)";
+            }
+
+            // Pengelompokan data siswa tidak hadir per Wali Kelas
             $waliKelasMap = []; // [ id_guru => [ 'guru' => Guru, 'kelas' => Kelas, 'siswa_list' => [] ] ]
 
-            foreach ($nisList as $nis) {
+            foreach ($ketidakhadiranMap as $nis => $keterangan) {
                 $siswa = Siswa::with('kelas')->where('nis', $nis)->orWhere('nisn', $nis)->first();
                 if (!$siswa) continue;
 
                 $namaSiswa = $siswa->nama_siswa;
                 $namaKelas = $siswa->kelas->nama_kelas ?? '-';
 
+                $labelKeterangan = match(strtoupper($keterangan)) {
+                    'SAKIT'      => 'SAKIT',
+                    'IZIN'       => 'IZIN',
+                    'DISPEN'     => 'DISPENSASI',
+                    'TERLAMBAT'  => 'TERLAMBAT',
+                    default      => 'ALPA (Tanpa Keterangan)',
+                };
+
+                $isSakitIzin = in_array(strtoupper($keterangan), ['SAKIT', 'IZIN', 'DISPEN']);
+
                 // 1. Kirim WA ke Orang Tua / Wali Siswa jika ada nomor HP Wali
                 if (!empty($siswa->no_hp_wali)) {
                     $formattedOrtu = self::formatPhoneNumber($siswa->no_hp_wali);
                     if ($formattedOrtu) {
-                        $msgOrtu = "[Pemberitahuan Presensi Siswa]\n\n" .
-                            "Yth. Orang Tua / Wali dari *{$namaSiswa}*,\n\n" .
-                            "Informasi ketidakhadiran siswa di sekolah:\n\n" .
-                            "🎓 *Nama Siswa* : {$namaSiswa}\n" .
-                            "🏫 *Kelas*      : {$namaKelas}\n" .
-                            "📅 *Tanggal*    : {$tanggal}\n" .
-                            "📚 *Mata Pelajaran*: {$mapel} {$jamInfo}\n" .
-                            "👨‍🏫 *Guru Pengajar*: {$guruPengajar}\n" .
-                            "⚠️ *Keterangan* : *ALPA (Tanpa Keterangan)*\n\n" .
-                            "Mohon konfirmasi atau hubungi Wali Kelas jika siswa berhalangan hadir.\n\n" .
-                            "Terima Kasih.\nSMK Negeri 1";
+                        $kirimKeOrtu = true;
 
-                        self::sendBulkMessage([$formattedOrtu], $msgOrtu);
+                        // Jika statusnya Sakit / Izin / Dispen, cukup kirim notifikasi 1x saja hari ini
+                        if ($isSakitIzin) {
+                            $sudahPernahNotifHariIni = JurnalDetailKetidakhadiran::where('id_siswa', $nis)
+                                ->whereIn('keterangan', ['Sakit', 'Izin', 'Dispen'])
+                                ->whereHas('jurnal', function ($q) use ($jurnal) {
+                                    $q->whereDate('tanggal', $jurnal->tanggal)
+                                      ->where('id_jurnal', '<', $jurnal->id_jurnal);
+                                })
+                                ->exists();
+
+                            if ($sudahPernahNotifHariIni) {
+                                $kirimKeOrtu = false;
+                            }
+                        }
+
+                        if ($kirimKeOrtu) {
+                            if ($isSakitIzin) {
+                                $msgOrtu = "[Pemberitahuan Presensi Siswa]\n\n" .
+                                    "Yth. Orang Tua / Wali dari *{$namaSiswa}*,\n\n" .
+                                    "Informasi ketidakhadiran siswa di sekolah hari ini:\n\n" .
+                                    "🎓 *Nama Siswa*       : {$namaSiswa}\n" .
+                                    "🏫 *Kelas*            : {$namaKelas}\n" .
+                                    "📅 *Tanggal*          : {$tanggal}\n" .
+                                    "⚠️ *Status Presensi*  : *{$labelKeterangan}*\n" .
+                                    "📚 *Tercatat Pada*    : {$mapel} ({$jamInfo})\n" .
+                                    "👨‍🏫 *Guru Pengajar*   : {$guruPengajar}\n\n" .
+                                    "Notifikasi ini dikirimkan 1x per hari sebagai konfirmasi status kehadiran siswa. Apabila terdapat kekeliruan, silakan hubungi pihak sekolah / Wali Kelas.\n\n" .
+                                    "Terima Kasih.\nSMK Negeri 1";
+                            } else {
+                                // Status ALPA (dikirim per jam mapel setiap sesi)
+                                $msgOrtu = "[Pemberitahuan Siswa Alpa]\n\n" .
+                                    "Yth. Orang Tua / Wali dari *{$namaSiswa}*,\n\n" .
+                                    "Siswa berikut tercatat *ALPA (Tanpa Keterangan)* pada jam pelajaran berikut:\n\n" .
+                                    "🎓 *Nama Siswa*       : {$namaSiswa}\n" .
+                                    "🏫 *Kelas*            : {$namaKelas}\n" .
+                                    "📅 *Tanggal*          : {$tanggal}\n" .
+                                    "⏰ *Jam Pembelajaran* : {$jamInfo}\n" .
+                                    "📚 *Mata Pelajaran*   : {$mapel}\n" .
+                                    "👨‍🏫 *Guru Pengajar*   : {$guruPengajar}\n" .
+                                    "⚠️ *Status Presensi*  : *{$labelKeterangan}*\n\n" .
+                                    "Informasi ini dikirimkan otomatis di setiap jam mata pelajaran agar Orang Tua dapat memantau jika siswa tidak berada di kelas. Mohon segera hubungi putra/putri Anda atau Wali Kelas.\n\n" .
+                                    "Terima Kasih.\nSMK Negeri 1";
+                            }
+
+                            self::sendBulkMessage([$formattedOrtu], $msgOrtu);
+                        }
                     }
                 }
 
@@ -579,14 +666,17 @@ class WhatsAppService
                                 'siswa_list' => [],
                             ];
                         }
-                        $waliKelasMap[$key]['siswa_list'][] = $namaSiswa;
+                        $waliKelasMap[$key]['siswa_list'][] = [
+                            'nama'       => $namaSiswa,
+                            'keterangan' => $labelKeterangan,
+                        ];
 
                         // Buat notifikasi dalam aplikasi jika Wali Kelas memiliki akun user
                         if ($waliGuru->user) {
                             Notifikasi::create([
                                 'untuk_user_id' => $waliGuru->user->id,
-                                'judul'         => "Siswa Alpa: {$namaSiswa}",
-                                'pesan'         => "Siswa {$namaSiswa} ({$namaKelas}) tercatat Alpa pada mata pelajaran {$mapel} tanggal {$tanggal}.",
+                                'judul'         => "Presensi Siswa: {$namaSiswa} ({$labelKeterangan})",
+                                'pesan'         => "Siswa {$namaSiswa} ({$namaKelas}) tercatat {$labelKeterangan} pada mata pelajaran {$mapel} ({$jamInfo}) tanggal {$tanggal}.",
                                 'jenis'         => 'siswa_alpha',
                                 'ref_id'        => $jurnal->id_jurnal,
                                 'sudah_dibaca'  => 0,
@@ -609,28 +699,37 @@ class WhatsAppService
                 if (!$formattedWali) continue;
 
                 $daftarText = "";
-                foreach ($siswaList as $idx => $sNama) {
+                foreach ($siswaList as $idx => $sItem) {
                     $num = $idx + 1;
-                    $daftarText .= "  {$num}. *{$sNama}*\n";
+                    $daftarText .= "  {$num}. *{$sItem['nama']}* — {$sItem['keterangan']}\n";
                 }
 
-                $msgWali = "[Laporan Siswa Alpa - Wali Kelas]\n\n" .
+                $msgWali = "[Laporan Presensi Siswa - Wali Kelas]\n\n" .
                     "Yth. Bpk/Ibu Wali Kelas *{$kelasObj->nama_kelas}*,\n\n" .
-                    "Laporan siswa tercatat *ALPA (Tanpa Keterangan)* pada presensi kelas:\n\n" .
-                    "📅 *Tanggal*    : {$tanggal}\n" .
-                    "📚 *Mata Pelajaran*: {$mapel} {$jamInfo}\n" .
-                    "👨‍🏫 *Guru Pengajar*: {$guruPengajar}\n\n" .
-                    "📌 *Daftar Siswa Alpa* (" . count($siswaList) . " siswa):\n" .
+                    "Laporan status ketidakhadiran siswa pada presensi kelas:\n\n" .
+                    "📅 *Tanggal*          : {$tanggal}\n" .
+                    "⏰ *Jam Pembelajaran* : {$jamInfo}\n" .
+                    "📚 *Mata Pelajaran*   : {$mapel}\n" .
+                    "👨‍🏫 *Guru Pengajar*   : {$guruPengajar}\n\n" .
+                    "📌 *Daftar Siswa* (" . count($siswaList) . " siswa):\n" .
                     $daftarText . "\n" .
-                    "Notifikasi otomatis ini juga telah dikirimkan ke WhatsApp Orang Tua/Wali siswa yang bersangkutan.\n\n" .
+                    "Notifikasi otomatis ini juga telah dikirimkan ke WhatsApp masing-masing Orang Tua/Wali siswa.\n\n" .
                     "Terima Kasih.";
 
                 self::sendBulkMessage([$formattedWali], $msgWali);
             }
 
         } catch (\Throwable $e) {
-            Log::error("WhatsAppService Error (sendAlphaSiswaNotification): " . $e->getMessage());
+            Log::error("WhatsAppService Error (sendKetidakhadiranSiswaNotification): " . $e->getMessage());
         }
+    }
+
+    /**
+     * Backward compatibility helper for sendAlphaSiswaNotification.
+     */
+    public static function sendAlphaSiswaNotification($nisInput, $jurnalInput): void
+    {
+        self::sendKetidakhadiranSiswaNotification($nisInput, $jurnalInput);
     }
 
     /**

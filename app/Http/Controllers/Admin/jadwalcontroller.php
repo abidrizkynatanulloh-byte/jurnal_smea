@@ -229,11 +229,27 @@ class JadwalController
                 continue;
             }
 
-            // 1. Resolve Kelas
+            // 1. Resolve Kelas (Smart Match + Parenthesis Alias Support e.g. "X BD 3" -> "X BD 3 (Alfamart)")
             $kelas = Kelas::where('id_kelas', $kelasInput)
                 ->orWhere('nama_kelas', $kelasInput)
                 ->orWhere('nama_kelas', 'LIKE', $kelasInput)
+                ->orWhere('nama_kelas', 'LIKE', "{$kelasInput} (%")
+                ->orWhere('nama_kelas', 'LIKE', "{$kelasInput} %")
                 ->first();
+
+            if (!$kelas) {
+                // Try matching by stripping parentheses from existing classes
+                $cleanInput = trim(preg_replace('/\s*\([^)]*\)/', '', $kelasInput));
+                $allKelas = Kelas::all();
+                foreach ($allKelas as $k) {
+                    $cleanDbName = trim(preg_replace('/\s*\([^)]*\)/', '', $k->nama_kelas));
+                    if (strcasecmp($cleanDbName, $cleanInput) === 0) {
+                        $kelas = $k;
+                        break;
+                    }
+                }
+            }
+
             if (!$kelas) {
                 $kelas = Kelas::create(['nama_kelas' => $kelasInput]);
             }
@@ -252,12 +268,13 @@ class JadwalController
                     'MTK' => 'MTK', 'MATEMATIKA' => 'MTK',
                     'BIND' => 'BIND', 'B. INDONESIA' => 'BIND', 'BAHASA INDONESIA' => 'BIND',
                     'BING' => 'BING', 'B. INGGRIS' => 'BING', 'BAHASA INGGRIS' => 'BING',
-                    'PAI' => 'PAIBP', 'PAIBP' => 'PAIBP', 'PAI & BP' => 'PAIBP',
+                    'PAI' => 'PAIBP', 'PAIBP' => 'PAIBP', 'PAI & BP' => 'PAIBP', 'PENDIDIKAN AGAMA' => 'PAIBP',
                     'PJOK' => 'PJOK', 'PENJAS' => 'PJOK',
                     'PPKN' => 'PPKN', 'PANCASILA' => 'PPKN',
                     'IPAS' => 'IPAS', 'INF' => 'INF', 'INFORMATIKA' => 'INF',
                     'SEJ' => 'SEJ', 'SEJARAH' => 'SEJ',
                     'BJAW' => 'BJAW', 'B. JAWA' => 'BJAW', 'BAHASA JAWA' => 'BJAW',
+                    'SENI BUDAYA' => 'SENI-BUDAYA', 'SENI' => 'SENI-BUDAYA',
                 ];
 
                 if (isset($aliasMap[$mapelInputClean])) {
@@ -283,14 +300,41 @@ class JadwalController
             }
             $kodeMapel = $mapel->kode_mapel;
 
-            // 3. Resolve Guru
-            $guru = Guru::where('id_guru', $guruInput)
-                ->orWhere('nip', $guruInput)
-                ->orWhere('nama_guru', $guruInput)
-                ->orWhere('nama_guru', 'LIKE', "%{$guruInput}%")
-                ->first();
-            if (!$guru) {
-                continue; // Cannot assign schedule without a valid teacher
+            // 3. Resolve Guru (Smart Multi-Strategy Search + Auto-Create fallback)
+            $guru = null;
+            if (!empty($guruInput)) {
+                $guru = Guru::where('id_guru', $guruInput)
+                    ->orWhere('nip', $guruInput)
+                    ->orWhere('nama_guru', $guruInput)
+                    ->orWhere('nama_guru', 'LIKE', "%{$guruInput}%")
+                    ->first();
+
+                if (!$guru) {
+                    // Try matching by individual key words (e.g. "Fitria Diah", "Bella Prako", "Sri Subekti")
+                    $cleanGuruWords = array_filter(explode(' ', preg_replace('/[^a-zA-Z0-9\s]/', '', $guruInput)));
+                    if (count($cleanGuruWords) >= 2) {
+                        $firstTwo = implode(' ', array_slice($cleanGuruWords, 0, 2));
+                        $guru = Guru::where('nama_guru', 'LIKE', "%{$firstTwo}%")->first();
+                    }
+                    if (!$guru && count($cleanGuruWords) >= 1) {
+                        $guru = Guru::where('nama_guru', 'LIKE', "%" . reset($cleanGuruWords) . "%")->first();
+                    }
+                }
+
+                if (!$guru) {
+                    // Auto-create guru to prevent schedule sessions from being skipped
+                    $guru = Guru::create([
+                        'nama_guru' => $guruInput,
+                        'nip'       => 'NIP-' . rand(100000, 999999),
+                        'role'      => 'guru',
+                    ]);
+                }
+            } else {
+                // If guru is empty (e.g. Upacara / Pembiasaan), assign default Guru Piket / Pembina
+                $guru = Guru::firstOrCreate(
+                    ['nama_guru' => 'Pembina / Guru Piket'],
+                    ['role' => 'guru', 'nip' => 'PIKET-001']
+                );
             }
             $idGuru = $guru->id_guru;
 
