@@ -130,43 +130,6 @@ class PiketController extends Controller
         return back()->with('info', "Permohonan izin siswa " . ($izin->siswa ? $izin->siswa->nama_siswa : '') . " telah ditolak.");
     }
 
-    /**
-     * Layar Monitoring Kondisi Seluruh Kelas Hari Ini Real-Time.
-     */
-    public function monitoringKelas()
-    {
-        $hariIni = Carbon::today()->toDateString();
-        $hariMap = [
-            'Monday'    => 'Senin',
-            'Tuesday'   => 'Selasa',
-            'Wednesday' => 'Rabu',
-            'Thursday'  => 'Kamis',
-            'Friday'    => 'Jumat',
-            'Saturday'  => 'Sabtu',
-            'Sunday'    => 'Minggu',
-        ];
-        $namaHari = $hariMap[Carbon::now()->format('l')] ?? 'Senin';
-
-        // Ambil semua jadwal KBM hari ini
-        $jadwalHariIni = Jadwal::with(['guru', 'kelas', 'mapel', 'ruangan'])
-            ->where('hari', $namaHari)
-            ->orderBy('jam_mulai')
-            ->get();
-
-        // Cek guru yang punya izin sah hari ini
-        $guruIzinHariIni = IzinGuru::where('status_akhir', 'Disetujui')
-            ->where('tanggal_mulai', '<=', $hariIni)
-            ->where('tanggal_selesai', '>=', $hariIni)
-            ->pluck('id_guru')
-            ->toArray();
-
-        return view('piket.monitoring-kelas', compact(
-            'jadwalHariIni',
-            'hariIni',
-            'namaHari',
-            'guruIzinHariIni'
-        ));
-    }
 
     /**
      * Guru piket / sekolah mencatat tugas untuk kelas yang gurunya tidak hadir / alpa.

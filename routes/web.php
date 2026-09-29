@@ -141,13 +141,12 @@ Route::middleware('auth')->group(function () {
     });
 
     // ---------------------------------------------------------------------
-    // 9. GURU PIKET (DISPEN & MONITORING KELAS & SISWA TELAT)
+    // 9. GURU PIKET (DISPEN & SISWA TELAT)
     // ---------------------------------------------------------------------
     Route::middleware('role:guru_piket,guru,staf_tu')->group(function () {
         Route::get('/piket/dashboard',               [PiketController::class, 'index']          )->name('piket.dashboard');
         Route::post('/piket/dispen',                 [PiketController::class, 'storeDispen']    )->name('piket.dispen.store');
         Route::post('/piket/siswa-telat',            [PiketController::class, 'storeSiswaTelat'])->name('piket.siswa-telat.store');
-        Route::get('/piket/monitoring-kelas',        [PiketController::class, 'monitoringKelas'])->name('piket.monitoring-kelas');
         Route::post('/piket/izin-guru/{id}/approve', [PiketController::class, 'approveIzinGuru'])->name('piket.izin-guru.approve');
         Route::post('/piket/izin-guru/{id}/reject',  [PiketController::class, 'rejectIzinGuru'] )->name('piket.izin-guru.reject');
         Route::post('/piket/izin-siswa/{id}/approve', [PiketController::class, 'approveIzinSiswa'])->name('piket.izin-siswa.approve');
