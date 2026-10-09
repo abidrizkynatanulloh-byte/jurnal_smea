@@ -132,13 +132,29 @@
                                         </td>
                                         <td class="py-2.5 px-4 text-center">
                                             @if ($k->keterangan === 'Sakit')
-                                                <span class="px-2.5 py-0.5 bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-bold rounded-md inline-block text-[10px] border border-blue-200/60 dark:border-blue-900">Sakit</span>
+                                                <span class="inline-flex items-center px-2.5 py-1 bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-bold rounded-lg text-[10.5px] border border-blue-200/60 dark:border-blue-900 whitespace-nowrap">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-blue-500 mr-1.5"></span>
+                                                    Sakit
+                                                </span>
                                             @elseif ($k->keterangan === 'Izin')
-                                                <span class="px-2.5 py-0.5 bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 font-bold rounded-md inline-block text-[10px] border border-amber-200/60 dark:border-amber-900">Izin</span>
+                                                <span class="inline-flex items-center px-2.5 py-1 bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 font-bold rounded-lg text-[10.5px] border border-amber-200/60 dark:border-amber-900 whitespace-nowrap">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500 mr-1.5"></span>
+                                                    Izin
+                                                </span>
                                             @elseif ($k->keterangan === 'Alpa')
-                                                <span class="px-2.5 py-0.5 bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 font-bold rounded-md inline-block text-[10px] border border-rose-200/60 dark:border-rose-900">Alpa Mapel</span>
+                                                <span class="inline-flex items-center px-2.5 py-1 bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 font-bold rounded-lg text-[10.5px] border border-rose-200/60 dark:border-rose-900 whitespace-nowrap">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-rose-500 mr-1.5"></span>
+                                                    Alpa Jam Mapel
+                                                </span>
+                                            @elseif ($k->keterangan === 'Dispen')
+                                                <span class="inline-flex items-center px-2.5 py-1 bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 font-bold rounded-lg text-[10.5px] border border-purple-200/60 dark:border-purple-900 whitespace-nowrap">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-purple-500 mr-1.5"></span>
+                                                    Dispen
+                                                </span>
                                             @else
-                                                <span class="px-2.5 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold rounded-md inline-block text-[10px] border border-slate-200 dark:border-slate-700">{{ $k->keterangan }}</span>
+                                                <span class="inline-flex items-center px-2.5 py-1 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold rounded-lg text-[10.5px] border border-slate-200 dark:border-slate-700 whitespace-nowrap">
+                                                    {{ $k->keterangan }}
+                                                </span>
                                             @endif
                                         </td>
                                     </tr>

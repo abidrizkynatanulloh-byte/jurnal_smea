@@ -106,11 +106,11 @@
                     </div>
                 </div>
 
-                <div>
+                <!-- <div>
                     <label for="jam_ke" class="block text-[11px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">Jam Ke-Berapa s/d Jam Ke-Berapa</label>
                     <input type="text" name="jam_ke" id="jam_ke" placeholder="Contoh: Jam ke-2 s/d Jam ke-4 (atau Full Hari)" value="{{ old('jam_ke') }}"
                         class="block w-full h-8 px-2.5 bg-white dark:bg-[#1A212D] border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-blue-600 transition-all">
-                </div>
+                </div> -->
 
                 <div>
                     <label for="keperluan" class="block text-[11px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">Alasan / Keperluan Dispensasi</label>
@@ -125,7 +125,9 @@
                             class="block w-full h-8 px-2 bg-white dark:bg-[#1A212D] border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:border-blue-600 transition-all cursor-pointer">
                     </div>
                     <div>
-                        <label for="jam_kembali_rencana" class="block text-[11px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">Estimasi Jam Kembali</label>
+                        <label for="jam_kembali_rencana" class="block text-[11px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">
+                            Estimasi Jam Kembali <span class="text-[10px] text-slate-400 font-normal lowercase">(opsional / jika 1 hari)</span>
+                        </label>
                         <input type="time" name="jam_kembali_rencana" id="jam_kembali_rencana"
                             class="block w-full h-8 px-2 bg-white dark:bg-[#1A212D] border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:border-blue-600 transition-all cursor-pointer">
                     </div>
@@ -176,12 +178,18 @@
                                             <div class="font-bold text-blue-600 dark:text-blue-400 text-[11px] mb-0.5">
                                                 📅 {{ \Carbon\Carbon::parse($d->tanggal)->translatedFormat('d M') }} - {{ \Carbon\Carbon::parse($d->tanggal_selesai)->translatedFormat('d M Y') }}
                                             </div>
+                                            @if($d->jam_ke)
+                                                <div class="font-bold text-slate-800 dark:text-slate-200">{{ $d->jam_ke }}</div>
+                                            @endif
+                                            <div class="text-slate-500 dark:text-slate-400 text-[11px]">Keluar: {{ substr($d->jam_keluar_rencana, 0, 5) ?? '-' }} WIB</div>
+                                            <div class="text-slate-500 dark:text-slate-400 text-[11px]">Selesai: {{ \Carbon\Carbon::parse($d->tanggal_selesai)->translatedFormat('d M Y') }}{{ $d->jam_kembali_rencana ? ' (pk. ' . substr($d->jam_kembali_rencana, 0, 5) . ')' : '' }}</div>
+                                        @else
+                                            @if($d->jam_ke)
+                                                <div class="font-bold text-slate-800 dark:text-slate-200">{{ $d->jam_ke }}</div>
+                                            @endif
+                                            <div class="text-slate-500 dark:text-slate-400 text-[11px]">Keluar: {{ substr($d->jam_keluar_rencana, 0, 5) ?? '-' }} WIB</div>
+                                            <div class="text-slate-500 dark:text-slate-400 text-[11px]">Kembali: {{ $d->jam_kembali_rencana ? substr($d->jam_kembali_rencana, 0, 5) . ' WIB' : 'Selesai KBM / Hari Ini' }}</div>
                                         @endif
-                                        @if($d->jam_ke)
-                                            <div class="font-bold text-slate-800 dark:text-slate-200">{{ $d->jam_ke }}</div>
-                                        @endif
-                                        <div class="text-slate-500 dark:text-slate-400 text-[11px]">Keluar: {{ substr($d->jam_keluar_rencana, 0, 5) ?? '-' }}</div>
-                                        <div class="text-slate-500 dark:text-slate-400 text-[11px]">Kembali: {{ $d->jam_kembali_rencana ? substr($d->jam_kembali_rencana, 0, 5) : 'Selesai KBM' }}</div>
                                     </td>
                                     <td class="py-2.5 px-3.5 text-xs text-slate-600 dark:text-slate-300 max-w-xs leading-relaxed">{{ $d->keperluan }}</td>
                                     <td class="py-2.5 px-3.5 text-center">
@@ -321,10 +329,83 @@
         </div>
     </div>
 
-    <!-- TAB 3: PERSETUJUAN & RIWAYAT IZIN SISWA DARI ORANG TUA -->
-    <div id="tabIzinSiswa" class="hidden space-y-4">
-        <!-- SUB-TAB 1: PERMOHONAN MENUNGGU ACC -->
-        <div class="bg-white dark:bg-[#242A35] border border-slate-200 dark:border-slate-800 rounded-xl shadow-xs overflow-hidden">
+    <!-- TAB 3: PERSETUJUAN & RIWAYAT IZIN SISWA DARI ORANG TUA / INPUT GURU PIKET -->
+    <div id="tabIzinSiswa" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-5 items-start">
+
+        <!-- FORM INPUT SURAT IZIN FISIK (GURU PIKET) -->
+        <div class="bg-white dark:bg-[#242A35] border border-slate-200 dark:border-slate-800 rounded-xl shadow-xs p-4 lg:sticky lg:top-8 space-y-3">
+            <div class="flex items-center space-x-2 pb-2 border-b border-slate-100 dark:border-slate-800">
+                <div class="w-7 h-7 rounded-lg bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                    <i data-lucide="file-check-2" class="w-4 h-4"></i>
+                </div>
+                <div>
+                    <h3 class="font-bold text-slate-900 dark:text-slate-100 text-xs">Input Surat Izin Fisik</h3>
+                    <p class="text-[10px] text-slate-500 dark:text-slate-400">Untuk ortu gaptek / surat fisik ke sekolah</p>
+                </div>
+            </div>
+
+            <form action="{{ route('piket.izin-siswa.store') }}" method="POST" enctype="multipart/form-data" class="space-y-3">
+                @csrf
+
+                <div>
+                    <label for="nis_izin_piket" class="block text-[11px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">Pilih Siswa *</label>
+                    <select name="nis" id="nis_izin_piket" required
+                        class="block w-full h-8 px-2.5 bg-white dark:bg-[#1A212D] border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:border-emerald-600 transition-all cursor-pointer">
+                        <option value="">-- Pilih Nama Siswa --</option>
+                        @foreach ($daftarSiswa as $s)
+                            <option value="{{ $s->nis }}">{{ $s->nama_siswa }} ({{ $s->kelas ? $s->kelas->nama_kelas : '-' }})</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div>
+                    <label for="kategori_piket" class="block text-[11px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">Kategori Izin *</label>
+                    <select name="kategori" id="kategori_piket" required
+                        class="block w-full h-8 px-2.5 bg-white dark:bg-[#1A212D] border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-semibold text-slate-800 dark:text-slate-100 focus:outline-none focus:border-emerald-600 transition-all cursor-pointer">
+                        <option value="Sakit">🏥 Sakit</option>
+                        <option value="Izin">📄 Izin Kepentingan / Keluarga</option>
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2.5">
+                    <div>
+                        <label for="tanggal_mulai_piket" class="block text-[11px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">Tgl Mulai *</label>
+                        <input type="date" name="tanggal_mulai" id="tanggal_mulai_piket" value="{{ date('Y-m-d') }}" required
+                            class="block w-full h-8 px-2 bg-white dark:bg-[#1A212D] border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:border-emerald-600 transition-all cursor-pointer">
+                    </div>
+                    <div>
+                        <label for="tanggal_selesai_piket" class="block text-[11px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">Tgl Selesai *</label>
+                        <input type="date" name="tanggal_selesai" id="tanggal_selesai_piket" value="{{ date('Y-m-d') }}" required
+                            class="block w-full h-8 px-2 bg-white dark:bg-[#1A212D] border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:border-emerald-600 transition-all cursor-pointer">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="alasan_piket" class="block text-[11px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">Alasan / Keterangan *</label>
+                    <textarea name="alasan" id="alasan_piket" rows="2" placeholder="Contoh: Sakit demam berdarah, surat fisik dari ortu..." required
+                        class="block w-full px-2.5 py-1.5 bg-white dark:bg-[#1A212D] border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-emerald-600 transition-all resize-none"></textarea>
+                </div>
+
+                <div>
+                    <label for="bukti_foto_piket" class="block text-[11px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">Scan / Foto Surat Fisik <span class="text-[10px] text-slate-400 font-normal">(Opsional)</span></label>
+                    <input type="file" name="bukti_foto" id="bukti_foto_piket" accept="image/*"
+                        class="block w-full text-xs text-slate-500 file:mr-2 file:py-1 file:px-2.5 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200 dark:file:bg-slate-800 dark:file:text-slate-300 cursor-pointer">
+                </div>
+
+                <div class="pt-1">
+                    <button type="submit"
+                        class="w-full h-9 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition-all shadow-2xs flex items-center justify-center space-x-1.5 cursor-pointer">
+                        <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i>
+                        <span>Simpan & ACC Izin Siswa</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- RIGHT SIDE: TABLES (2 COLS) -->
+        <div class="lg:col-span-2 space-y-4">
+            <!-- SUB-TAB 1: PERMOHONAN MENUNGGU ACC -->
+            <div class="bg-white dark:bg-[#242A35] border border-slate-200 dark:border-slate-800 rounded-xl shadow-xs overflow-hidden">
             <div class="px-4 py-3 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-amber-50/40 dark:bg-amber-950/20">
                 <div class="flex items-center space-x-2">
                     <i data-lucide="clock" class="w-4 h-4 text-amber-600 dark:text-amber-400"></i>

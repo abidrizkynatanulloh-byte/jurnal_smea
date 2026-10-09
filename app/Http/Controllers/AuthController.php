@@ -136,6 +136,49 @@ class AuthController extends Controller
     }
 
     /**
+     * Memproses penggantian kata sandi pengguna yang sedang login.
+     */
+    public function changePassword(Request $request)
+    {
+        $user = Auth::user();
+
+        $validated = $request->validate([
+            'current_password'          => 'required|string',
+            'new_password'              => 'required|string|min:4|confirmed',
+            'new_password_confirmation' => 'required|string',
+        ], [
+            'current_password.required'          => 'Password saat ini wajib diisi.',
+            'new_password.required'              => 'Password baru wajib diisi.',
+            'new_password.min'                   => 'Password baru minimal 4 karakter.',
+            'new_password.confirmed'             => 'Konfirmasi password baru tidak cocok.',
+            'new_password_confirmation.required' => 'Ulangi password baru wajib diisi.',
+        ]);
+
+        if (!\Illuminate\Support\Facades\Hash::check($validated['current_password'], $user->password)) {
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'status'  => 'error',
+                    'message' => 'Password saat ini yang Anda masukkan salah.',
+                ], 422);
+            }
+            return back()->withErrors(['current_password' => 'Password saat ini yang Anda masukkan salah.']);
+        }
+
+        $user->update([
+            'password' => \Illuminate\Support\Facades\Hash::make($validated['new_password']),
+        ]);
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'status'  => 'success',
+                'message' => 'Kata sandi berhasil diperbarui!',
+            ]);
+        }
+
+        return back()->with('success', 'Kata sandi berhasil diperbarui!');
+    }
+
+    /**
      * Helper: Menentukan rute dashboard tujuan berdasarkan role.
      * Jika role 'guru' dan hari ini dia jadwal piket → otomatis ke piket dashboard.
      */

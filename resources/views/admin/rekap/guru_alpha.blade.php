@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Rekapitulasi Guru Alpha & Ketidakhadiran Mengajar')
+@section('title', 'Rekapitulasi Guru Belum Mengisi Jurnal')
 
 @section('content')
 <div class="space-y-4">
@@ -8,16 +8,16 @@
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
             <div class="flex items-center space-x-2">
-                <h1 class="text-xl font-bold text-slate-900 dark:text-white tracking-tight">Rekapitulasi Guru Alpha</h1>
-                <span class="inline-flex items-center px-2 py-0.5 rounded-md bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-400 text-xs font-semibold border border-rose-200/60 dark:border-rose-900/50">
-                    <i data-lucide="alert-octagon" class="w-3.5 h-3.5 mr-1"></i> Monitoring Evaluasi
+                <h1 class="text-xl font-bold text-slate-900 dark:text-white tracking-tight">Rekapitulasi Guru Belum Mengisi Jurnal</h1>
+                <span class="inline-flex items-center px-2 py-0.5 rounded-md bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 text-xs font-semibold border border-amber-200/60 dark:border-amber-900/50">
+                    <i data-lucide="alert-circle" class="w-3.5 h-3.5 mr-1"></i> Monitoring & Konfirmasi
                 </span>
             </div>
             <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                Pantau akumulasi ketidakhadiran guru mengajar per bulan & sepanjang tahun untuk tindak lanjut Kepala Sekolah & Waka.
+                Pantau akumulasi guru belum mengisi jurnal per bulan & sepanjang tahun untuk tindak lanjut konfirmasi perwakilan siswa.
             </p>
         </div>
-        <div class="flex items-center space-x-2">
+        <!-- <div class="flex items-center space-x-2">
             <button onclick="window.print()" class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-white dark:bg-[#202020] text-slate-700 dark:text-slate-200 text-xs font-semibold border border-slate-200 dark:border-slate-700 shadow-2xs hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer">
                 <i data-lucide="printer" class="w-3.5 h-3.5 text-slate-500"></i>
                 <span>Cetak Laporan</span>
@@ -26,7 +26,7 @@
                 <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
                 <span>Rekap Harian Jurnal</span>
             </a>
-        </div>
+        </div> -->
     </div>
 
     <!-- 4 EXECUTIVE KPI CARDS -->
@@ -45,45 +45,45 @@
             </div>
         </div>
 
-        <!-- KPI 2: Guru Alpha Bulan Ini -->
+        <!-- KPI 2: Guru Belum Mengisi Jurnal Bulan Ini -->
         <div class="bg-white dark:bg-[#202020] border border-slate-200 dark:border-slate-800 rounded-xl p-3 shadow-2xs">
             <div class="flex items-center justify-between">
-                <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Guru Alpha ({{ $namaBulanList[$bulan] }})</p>
+                <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Belum Mengisi ({{ $namaBulanList[$bulan] }})</p>
                 <div class="p-1 bg-amber-50 dark:bg-amber-950/40 text-amber-600 rounded-lg border border-amber-200/50 dark:border-amber-900/50">
                     <i data-lucide="user-x" class="w-3.5 h-3.5"></i>
                 </div>
             </div>
             <div class="mt-1">
                 <h3 class="text-xl font-bold text-amber-600">{{ $kpi['guru_alpha_bulan_ini'] }} <span class="text-xs font-normal text-slate-500">Guru</span></h3>
-                <p class="text-[10px] text-slate-500 dark:text-slate-400">{{ $kpi['total_sesi_alpha_bulan'] }} total sesi tertunggak</p>
+                <p class="text-[10px] text-slate-500 dark:text-slate-400">{{ $kpi['total_sesi_alpha_bulan'] }} total sesi belum diisi</p>
             </div>
         </div>
 
-        <!-- KPI 3: Butuh Tindak Lanjut Bulan Ini -->
+        <!-- KPI 3: Butuh Konfirmasi Siswa Bulan Ini -->
         <div class="bg-white dark:bg-[#202020] border border-slate-200 dark:border-slate-800 rounded-xl p-3 shadow-2xs">
             <div class="flex items-center justify-between">
-                <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Perlu Tindak Lanjut</p>
+                <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Konfirmasi Siswa</p>
                 <div class="p-1 bg-rose-50 dark:bg-rose-950/40 text-rose-600 rounded-lg border border-rose-200/50 dark:border-rose-900/50">
                     <i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i>
                 </div>
             </div>
             <div class="mt-1">
                 <h3 class="text-xl font-bold text-rose-600">{{ $kpi['guru_peringatan_bulan'] }} <span class="text-xs font-normal text-slate-500">Guru</span></h3>
-                <p class="text-[10px] text-rose-500 font-medium">≥ 3 Sesi Alpha di {{ $namaBulanList[$bulan] }}</p>
+                <p class="text-[10px] text-rose-500 font-medium">≥ 3 Sesi Belum Mengisi di {{ $namaBulanList[$bulan] }}</p>
             </div>
         </div>
 
-        <!-- KPI 4: Akumulasi Alpha Tahunan -->
+        <!-- KPI 4: Akumulasi Belum Isi Tahunan -->
         <div class="bg-white dark:bg-[#202020] border border-slate-200 dark:border-slate-800 rounded-xl p-3 shadow-2xs">
             <div class="flex items-center justify-between">
-                <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Total Alpha Th. {{ $tahun }}</p>
+                <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Total Belum Isi Th. {{ $tahun }}</p>
                 <div class="p-1 bg-purple-50 dark:bg-purple-950/40 text-purple-600 rounded-lg border border-purple-200/50 dark:border-purple-900/50">
                     <i data-lucide="history" class="w-3.5 h-3.5"></i>
                 </div>
             </div>
             <div class="mt-1">
                 <h3 class="text-xl font-bold text-purple-700 dark:text-purple-400">{{ $kpi['total_sesi_alpha_tahun'] }} <span class="text-xs font-normal text-slate-500">Sesi</span></h3>
-                <p class="text-[10px] text-slate-500 dark:text-slate-400">{{ $kpi['guru_peringatan_tahun'] }} guru perlu evaluasi tahunan</p>
+                <p class="text-[10px] text-slate-500 dark:text-slate-400">{{ $kpi['guru_peringatan_tahun'] }} guru perlu konfirmasi siswa</p>
             </div>
         </div>
     </div>
@@ -150,7 +150,7 @@
                 <h3 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">
                     Daftar Rekap Kehadiran Guru — Bulan {{ $namaBulanList[$bulan] }} {{ $tahun }}
                 </h3>
-                <p class="text-[10px] text-slate-500 dark:text-slate-400">Urutan teratas menampilkan guru dengan jumlah sesi Alpha terbanyak.</p>
+                <p class="text-[10px] text-slate-500 dark:text-slate-400">Urutan teratas menampilkan guru dengan jumlah sesi belum mengisi jurnal terbanyak.</p>
             </div>
             <span class="text-xs font-bold text-slate-600 dark:text-slate-300">{{ $rekapBulanan->count() }} Guru</span>
         </div>
@@ -164,7 +164,7 @@
                         <th class="px-3 py-2.5 text-center">Sesi Wajib</th>
                         <th class="px-3 py-2.5 text-center">Hadir (Terisi)</th>
                         <th class="px-3 py-2.5 text-center">Izin Sah</th>
-                        <th class="px-3 py-2.5 text-center">Alpha</th>
+                        <th class="px-3 py-2.5 text-center">Belum Mengisi Jurnal</th>
                         <th class="px-3 py-2.5 text-center">Kehadiran</th>
                         <th class="px-3 py-2.5 text-center">Rekomendasi Tindak Lanjut</th>
                         <th class="px-3 py-2.5 text-center">Rincian</th>
@@ -194,6 +194,7 @@
                                 <span class="inline-flex items-center px-2 py-0.5 rounded {{ $g['total_alpha'] >= 3 ? 'bg-rose-600 text-white font-extrabold shadow-2xs' : 'bg-rose-100 dark:bg-rose-900/50 text-rose-700 dark:text-rose-300 font-bold' }} text-[11px]">
                                     {{ $g['total_alpha'] }} Sesi
                                 </span>
+                                <div class="text-[9.5px] font-semibold text-rose-600 dark:text-rose-400 mt-0.5">({{ number_format($g['persen_alpha'], 2) }}%)</div>
                             @else
                                 <span class="text-slate-400 font-semibold">0</span>
                             @endif
@@ -203,7 +204,7 @@
                                 <div class="w-14 bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
                                     <div class="h-full rounded-full {{ $g['persen_hadir'] >= 90 ? 'bg-emerald-500' : ($g['persen_hadir'] >= 75 ? 'bg-amber-500' : 'bg-rose-500') }}" style="width: {{ $g['persen_hadir'] }}%"></div>
                                 </div>
-                                <span class="text-[10px] font-bold text-slate-700 dark:text-slate-300">{{ $g['persen_hadir'] }}%</span>
+                                <span class="text-[10px] font-bold text-slate-700 dark:text-slate-300">{{ number_format($g['persen_hadir'], 2) }}%</span>
                             </div>
                         </td>
                         <td class="px-3 py-2.5 text-center">
@@ -252,9 +253,9 @@
         <div class="p-3 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-900/30">
             <div>
                 <h3 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">
-                    Matriks Akumulasi Alpha Guru Sepanjang Tahun {{ $tahun }}
+                    Matriks Akumulasi Belum Mengisi Jurnal Guru Sepanjang Tahun {{ $tahun }}
                 </h3>
-                <p class="text-[10px] text-slate-500 dark:text-slate-400">Menampilkan tren jumlah sesi Alpha guru setiap bulan dari Januari hingga Desember.</p>
+                <p class="text-[10px] text-slate-500 dark:text-slate-400">Menampilkan tren jumlah sesi belum mengisi jurnal setiap bulan dari Januari hingga Desember.</p>
             </div>
             <span class="text-xs font-bold text-slate-600 dark:text-slate-300">{{ $rekapMatriks12Bulan->count() }} Guru</span>
         </div>
@@ -268,7 +269,7 @@
                         @for($m = 1; $m <= 12; $m++)
                             <th class="px-2 py-2.5 text-center w-12">{{ substr($namaBulanList[$m], 0, 3) }}</th>
                         @endfor
-                        <th class="px-3 py-2.5 text-center font-extrabold text-slate-900 dark:text-white bg-slate-200/50 dark:bg-slate-800/80 min-w-[90px]">Total Alpha</th>
+                        <th class="px-3 py-2.5 text-center font-extrabold text-slate-900 dark:text-white bg-slate-200/50 dark:bg-slate-800/80 min-w-[110px]">Total Belum Isi</th>
                         <th class="px-3 py-2.5 text-center min-w-[150px]">Status Tindak Lanjut</th>
                     </tr>
                 </thead>
@@ -380,7 +381,7 @@
         container.innerHTML = '';
 
         if (!rincian || rincian.length === 0) {
-            container.innerHTML = '<p class="text-center text-slate-400 py-4 italic">Tidak ada rincian sesi alpha.</p>';
+            container.innerHTML = '<p class="text-center text-slate-400 py-4 italic">Tidak ada rincian sesi belum mengisi jurnal.</p>';
         } else {
             rincian.forEach((item, idx) => {
                 const card = document.createElement('div');

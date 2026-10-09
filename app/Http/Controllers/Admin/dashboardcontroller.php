@@ -13,6 +13,7 @@ use App\Models\JurnalMengajar;
 use App\Models\JurnalDetailKetidakhadiran;
 use App\Models\DispenSiswa;
 use App\Models\IzinSiswa;
+use App\Models\EventSekolah;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -64,14 +65,20 @@ class DashboardController
                         ->whereDate('tanggal_selesai', '>=', $todayDate)
                         ->first();
 
-                    if ($izin) {
+                    $times  = $j->getWaktuMulaiSelesai();
+                    $exempt = EventSekolah::cekExempt($todayDate, $times['waktu_mulai'] ?? null);
+
+                    if ($exempt['exempt']) {
+                        $j->status_jurnal = $exempt['alasan'];
+                        $j->sort_order = 5;
+                    } elseif ($izin) {
                         $j->status_jurnal = $izin->alasan . ' (Sah)';
                         $j->sort_order = 3;
                     } else {
-                        // Jika jam mengajar telah lewat / telat mengisi -> ALPA
+                        // Jika jam mengajar telah lewat / telat mengisi -> Belum Mengisi Jurnal
                         $statusWaktu = $j->statusWaktuMengajar();
                         if ($statusWaktu === 'telat') {
-                            $j->status_jurnal = 'Alpa';
+                            $j->status_jurnal = 'Belum Mengisi Jurnal';
                             $j->sort_order = 1; // Prioritas utama di paling atas
                         } else {
                             $j->status_jurnal = 'Terjadwal';
@@ -83,12 +90,12 @@ class DashboardController
                 return $j;
             });
 
-        // Urutkan: ALPA (1) -> Terjadwal (2) -> Izin Sah (3) -> Selesai (4)
+        // Urutkan: Belum Mengisi Jurnal (1) -> Terjadwal (2) -> Izin Sah (3) -> Selesai (4) -> Exempt (5)
         $jadwalHariIni = $jadwalHariIniUnsorted->sortBy(function ($item) {
             return sprintf('%d-%02d', $item->sort_order, $item->jam_mulai);
         })->values();
 
-        // 3. PERLU TINDAKAN & LIST GURU ALPA / BELUM ISI
+        // 3. PERLU TINDAKAN & LIST GURU BELUM ISI
         $kemarin = Carbon::yesterday();
         $namaHariKemarin = $hariMap[$kemarin->format('l')] ?? null;
         $guruBelumIsiKemarin = 0;
@@ -107,9 +114,9 @@ class DashboardController
             $guruBelumIsiKemarin = $listGuruBelumIsiKemarin->count();
         }
 
-        // List Guru Alpa Hari Ini
+        // List Guru Belum Mengisi Hari Ini
         $listGuruAlpaHariIni = $jadwalHariIni->filter(function ($j) {
-            return $j->status_jurnal === 'Alpa';
+            return $j->status_jurnal === 'Belum Mengisi Jurnal';
         })->values();
         $guruAlpaHariIni = $listGuruAlpaHariIni->pluck('id_guru')->unique()->count();
 

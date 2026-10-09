@@ -5,7 +5,7 @@
 @section('content')
 <div class="space-y-5">
     <!-- Header Page & Title -->
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 sm:gap-6 bg-white dark:bg-[#242A35] p-5 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 sm:gap-6 bg-white dark:bg-[#1C2433] p-5 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs">
         <div class="space-y-1">
             <h1 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100 tracking-tight flex items-center space-x-2.5">
                 <div class="p-2 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 shrink-0">
@@ -14,21 +14,21 @@
                 <span>Data Per Kelas</span>
             </h1>
             <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed pt-0.5">
-                Kelola data kelas, alokasi wali kelas, dan lihat rincian siswa per kelas di SMK Negeri 1 Tulungagung.
+                Kelola data kelas, alokasi wali kelas, dan lihat rincian siswa serta jadwal KBM per kelas di SMK Negeri 1 Boyolangu.
             </p>
         </div>
 
         <div class="flex items-center space-x-2 shrink-0 pt-1 md:pt-0 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
             <button type="button" onclick="openAddModal()" class="h-10 px-4 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white rounded-xl text-xs font-bold transition-all flex items-center space-x-2 shadow-2xs cursor-pointer whitespace-nowrap shrink-0">
                 <i data-lucide="plus" class="w-4 h-4"></i>
-                <span>+ Tambah Kelas Baru</span>
+                <span>Tambah Kelas Baru</span>
             </button>
         </div>
     </div>
 
     <!-- Ringkasan Statistik -->
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div class="bg-white dark:bg-[#242A35] p-4 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between shadow-2xs">
+        <div class="bg-white dark:bg-[#1C2433] p-4 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between shadow-2xs">
             <div>
                 <p class="text-[11px] font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider">Total Kelas</p>
                 <p class="text-2xl font-extrabold text-slate-900 dark:text-slate-100 mt-0.5">{{ $totalKelas }} <span class="text-xs font-medium text-slate-400">Kelas</span></p>
@@ -38,7 +38,7 @@
             </div>
         </div>
 
-        <div class="bg-white dark:bg-[#242A35] p-4 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between shadow-2xs">
+        <div class="bg-white dark:bg-[#1C2433] p-4 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between shadow-2xs">
             <div>
                 <p class="text-[11px] font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider">Total Siswa Terdaftar</p>
                 <p class="text-2xl font-extrabold text-slate-900 dark:text-slate-100 mt-0.5">{{ number_format($totalSiswa, 0, ',', '.') }} <span class="text-xs font-medium text-slate-400">Siswa</span></p>
@@ -48,7 +48,7 @@
             </div>
         </div>
 
-        <div class="bg-white dark:bg-[#242A35] p-4 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between shadow-2xs">
+        <div class="bg-white dark:bg-[#1C2433] p-4 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between shadow-2xs">
             <div>
                 <p class="text-[11px] font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider">Wali Kelas Terisi</p>
                 <p class="text-2xl font-extrabold text-slate-900 dark:text-slate-100 mt-0.5">
@@ -62,7 +62,7 @@
         </div>
     </div>
 
-    <!-- Filter Bar & Search (Matches Reference 1:1) -->
+    <!-- Filter Bar & Search -->
     <div class="bg-white dark:bg-[#1C2433] p-3.5 sm:p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xs flex flex-col md:flex-row items-center justify-between gap-3.5">
         <!-- Left: Pill Filter Tabs (Semua Kelas, Kelas X, XI, XII) -->
         <div class="flex items-center space-x-2 overflow-x-auto w-full md:w-auto pb-1 md:pb-0 shrink-0">
@@ -93,24 +93,24 @@
                 @endif
                 <i data-lucide="search" class="w-4 h-4 text-slate-400 dark:text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
                 <input type="text" name="search" value="{{ $search }}" placeholder="Cari nama kelas..." 
-                    class="w-full h-8 pl-8 pr-2.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-800 transition-colors">
-                        </form>
+                    class="w-full h-8 pl-8 pr-2.5 bg-slate-50 dark:bg-[#141C29] border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-blue-600 transition-colors">
+            </form>
 
             <!-- View Toggle Buttons -->
             <div class="flex items-center space-x-1 bg-slate-100 dark:bg-[#141C29] p-1 rounded-xl border border-slate-200 dark:border-slate-800 shrink-0">
-                    <button type="button" onclick="setViewMode('grid')" id="btnViewGrid" class="h-8 px-3 rounded-lg text-xs font-bold transition-all bg-blue-600 text-white shadow-2xs flex items-center space-x-1.5 cursor-pointer">
-                        <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
-                        <span class="hidden sm:inline">Grid Kelas</span>
-                    </button>
-                    <button type="button" onclick="setViewMode('table')" id="btnViewTable" class="h-8 px-3 rounded-lg text-xs font-semibold transition-all text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 flex items-center space-x-1.5 cursor-pointer">
-                        <i data-lucide="table" class="w-3.5 h-3.5"></i>
-                        <span class="hidden sm:inline">Tabel Sesi</span>
-                    </button>
+                <button type="button" onclick="setViewMode('grid')" id="btnViewGrid" class="h-8 px-3 rounded-lg text-xs font-bold transition-all bg-blue-600 text-white shadow-2xs flex items-center space-x-1.5 cursor-pointer">
+                    <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
+                    <span class="hidden sm:inline">Grid Kelas</span>
+                </button>
+                <button type="button" onclick="setViewMode('table')" id="btnViewTable" class="h-8 px-3 rounded-lg text-xs font-semibold transition-all text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 flex items-center space-x-1.5 cursor-pointer">
+                    <i data-lucide="table" class="w-3.5 h-3.5"></i>
+                    <span class="hidden sm:inline">Tabel Sesi</span>
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- 1. GRID CARD VIEW (DESAIN TAMPILAN KELAS SEPERTI HARIAN PIKET) -->
+    <!-- 1. GRID CARD VIEW -->
     <div id="kelasGridView" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6">
         @forelse ($daftarKelas as $idx => $k)
             @php
@@ -121,30 +121,50 @@
                     });
                 }
             @endphp
-            <div class="bg-white dark:bg-[#242A35] border-2 border-slate-200 dark:border-slate-700/80 rounded-2xl p-5 shadow-2xs hover:border-blue-500 dark:hover:border-blue-500 hover:shadow-md transition-all flex flex-col justify-between space-y-4 group">
-                <div>
-                    <!-- Header Kartu -->
-                    <div class="flex items-start justify-between">
-                        <div class="flex items-center space-x-3">
+            <div class="bg-white dark:bg-[#1C2433] border-2 border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-2xs hover:border-blue-500 dark:hover:border-blue-500 hover:shadow-md transition-all flex flex-col justify-between space-y-4 group">
+                <div class="space-y-4">
+                    <!-- Header Kartu: Judul + Tingkat + Tombol Aksi di Atas -->
+                    <div class="flex items-start justify-between gap-2">
+                        <div class="flex items-center space-x-3 min-w-0">
                             <div class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold text-xs shrink-0 border border-blue-200/50 dark:border-blue-900/50 group-hover:scale-105 transition-transform">
                                 <i data-lucide="school" class="w-5 h-5"></i>
                             </div>
-                            <div>
-                                <h3 class="font-extrabold text-slate-900 dark:text-white text-base group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                            <div class="min-w-0">
+                                <h3 class="font-extrabold text-slate-900 dark:text-white text-base group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors truncate">
                                     {{ $k->nama_kelas }}
                                 </h3>
-                                <span class="text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider block -mt-0.5">
-                                    SMK Negeri 1 SMEA
+                                <span class="text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider block -mt-0.5 truncate">
+                                    SMK NEGERI 1 SMEA
                                 </span>
                             </div>
                         </div>
-                        <span class="px-3 py-1 rounded-xl text-xs font-extrabold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200/60 dark:border-slate-700">
-                            @if(Str::startsWith($k->nama_kelas, 'XII')) Kelas XII @elseif(Str::startsWith($k->nama_kelas, 'XI')) Kelas XI @else Kelas X @endif
-                        </span>
+
+                        <!-- Top Right Actions: Badge Tingkat & Tombol Edit / Hapus -->
+                        <div class="flex items-center space-x-1.5 shrink-0">
+                            <span class="px-2.5 py-1 rounded-xl text-xs font-extrabold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200/60 dark:border-slate-700">
+                                @if(Str::startsWith($k->nama_kelas, 'XII')) Kelas XII @elseif(Str::startsWith($k->nama_kelas, 'XI')) Kelas XI @else Kelas X @endif
+                            </span>
+
+                            <!-- Tombol Edit di Atas -->
+                            <button type="button" onclick="openEditModal({{ $k->id_kelas }}, '{{ addslashes($k->nama_kelas) }}', '{{ $waliGuru ? $waliGuru->id_guru : "" }}')"
+                                class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-blue-50 dark:bg-slate-800 dark:hover:bg-blue-950/60 text-slate-600 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400 border border-slate-200/80 dark:border-slate-700 flex items-center justify-center transition-all cursor-pointer shadow-2xs" title="Edit Data Kelas & Wali Kelas">
+                                <i data-lucide="edit-3" class="w-4 h-4"></i>
+                            </button>
+
+                            @if($k->siswa_count == 0 && $k->jadwal_count == 0)
+                                <form action="{{ route('admin.kelas.destroy', $k->id_kelas) }}" method="POST" data-confirm="Hapus kelas {{ $k->nama_kelas }}?" class="inline-block">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="w-8 h-8 rounded-xl bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 text-rose-600 dark:text-rose-300 border border-rose-200 dark:border-rose-900 flex items-center justify-center transition-all cursor-pointer shadow-2xs" title="Hapus Kelas">
+                                        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                    </button>
+                                </form>
+                            @endif
+                        </div>
                     </div>
 
                     <!-- Wali Kelas Box -->
-                    <div class="mt-4 p-3.5 rounded-xl bg-slate-50 dark:bg-[#1A212D] border border-slate-200/80 dark:border-slate-700/70">
+                    <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-[#141C29] border border-slate-200/80 dark:border-slate-700/70">
                         <div class="text-[10px] font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider mb-1 flex items-center justify-between">
                             <span>Wali Kelas</span>
                             <i data-lucide="user-cog" class="w-3.5 h-3.5 text-slate-400"></i>
@@ -164,62 +184,59 @@
                     </div>
                 </div>
 
-                <!-- Stats Grid (Jumlah Siswa & Sesi KBM) -->
+                <!-- Stats Grid: 2 Kotak Interaktif (Klik untuk Buka Pop-up Siswa & Jadwal) -->
                 <div class="grid grid-cols-2 gap-2.5 pt-2 border-t border-slate-100 dark:border-slate-800/80">
-                    <div class="p-2.5 rounded-xl bg-blue-50/70 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900/40 text-center">
-                        <span class="block text-[10px] font-bold text-blue-600/80 dark:text-blue-400/80 uppercase tracking-wider">Siswa</span>
-                        <span class="text-xs sm:text-sm font-extrabold text-blue-700 dark:text-blue-300">{{ $k->siswa_count }} Siswa</span>
+                    <!-- Kotak Siswa (Klik untuk Modal Siswa) -->
+                    <div role="button" tabindex="0" onclick="showSiswaModal({{ $k->id_kelas }}, '{{ addslashes($k->nama_kelas) }}')"
+                        class="p-3 rounded-xl bg-blue-50/70 hover:bg-blue-100/90 dark:bg-blue-950/30 dark:hover:bg-blue-900/50 border border-blue-100 hover:border-blue-300 dark:border-blue-900/40 dark:hover:border-blue-700 text-center cursor-pointer transition-all duration-200 active:scale-[0.97] group/box shadow-2xs">
+                        <span class="block text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider flex items-center justify-center space-x-1">
+                            <span>Siswa</span>
+                            <i data-lucide="users" class="w-3 h-3 group-hover/box:scale-110 transition-transform"></i>
+                        </span>
+                        <span class="text-sm sm:text-base font-extrabold text-blue-700 dark:text-blue-300 mt-0.5 block">
+                            {{ $k->siswa_count }} Siswa
+                        </span>
+                        <span class="text-[9.5px] font-semibold text-blue-500/80 dark:text-blue-400/70 mt-0.5 block">
+                            Klik lihat daftar
+                        </span>
                     </div>
-                    <div class="p-2.5 rounded-xl bg-indigo-50/70 dark:bg-indigo-950/30 border border-indigo-100 dark:border-indigo-900/40 text-center">
-                        <span class="block text-[10px] font-bold text-indigo-600/80 dark:text-indigo-400/80 uppercase tracking-wider">Jadwal KBM</span>
-                        <span class="text-xs sm:text-sm font-extrabold text-indigo-700 dark:text-indigo-300">{{ $k->jadwal_count }} Sesi</span>
+
+                    <!-- Kotak Jadwal KBM (Klik untuk Modal Jadwal KBM) -->
+                    <div role="button" tabindex="0" onclick="showJadwalModal({{ $k->id_kelas }}, '{{ addslashes($k->nama_kelas) }}')"
+                        class="p-3 rounded-xl bg-indigo-50/70 hover:bg-indigo-100/90 dark:bg-indigo-950/30 dark:hover:bg-indigo-900/50 border border-indigo-100 hover:border-indigo-300 dark:border-indigo-900/40 dark:hover:border-indigo-700 text-center cursor-pointer transition-all duration-200 active:scale-[0.97] group/box shadow-2xs">
+                        <span class="block text-[10px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider flex items-center justify-center space-x-1">
+                            <span>Jadwal KBM</span>
+                            <i data-lucide="calendar" class="w-3 h-3 group-hover/box:scale-110 transition-transform"></i>
+                        </span>
+                        <span class="text-sm sm:text-base font-extrabold text-indigo-700 dark:text-indigo-300 mt-0.5 block">
+                            {{ $k->jadwal_count }} Sesi
+                        </span>
+                        <span class="text-[9.5px] font-semibold text-indigo-500/80 dark:text-indigo-400/70 mt-0.5 block">
+                            Klik lihat jadwal
+                        </span>
                     </div>
-                </div>
-
-                <!-- Action Buttons Footer (Button Lihat Siswa Lebih Tinggi & Sturdy) -->
-                <div class="flex items-center space-x-2 pt-3 border-t border-slate-100 dark:border-slate-800">
-                    <button type="button" onclick="showSiswaModal({{ $k->id_kelas }}, '{{ addslashes($k->nama_kelas) }}')"
-                        class="flex-1 h-10.5 px-4 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white rounded-xl text-xs sm:text-sm font-extrabold transition-all flex items-center justify-center space-x-2 shadow-xs cursor-pointer">
-                        <i data-lucide="users" class="w-4 h-4"></i>
-                        <span>Lihat Siswa</span>
-                    </button>
-
-                    <button type="button" onclick="openEditModal({{ $k->id_kelas }}, '{{ addslashes($k->nama_kelas) }}', '{{ $waliGuru ? $waliGuru->id_guru : "" }}')"
-                        class="h-10.5 w-10.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold transition-all flex items-center justify-center shrink-0 cursor-pointer" title="Edit Kelas / Wali Kelas">
-                        <i data-lucide="edit-2" class="w-4 h-4"></i>
-                    </button>
-
-                    @if($k->siswa_count == 0)
-                        <form action="{{ route('admin.kelas.destroy', $k->id_kelas) }}" method="POST" data-confirm="Hapus kelas {{ $k->nama_kelas }}?" class="inline-block">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="h-10.5 w-10.5 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 text-rose-600 dark:text-rose-300 rounded-xl border border-rose-200 dark:border-rose-900 text-xs font-semibold transition-all flex items-center justify-center shrink-0 cursor-pointer" title="Hapus Kelas">
-                                <i data-lucide="trash-2" class="w-4 h-4"></i>
-                            </button>
-                        </form>
-                    @endif
                 </div>
             </div>
         @empty
-            <div class="col-span-full bg-white dark:bg-[#242A35] p-10 rounded-2xl border border-slate-200 dark:border-slate-800 text-center">
+            <div class="col-span-full bg-white dark:bg-[#1C2433] p-10 rounded-2xl border border-slate-200 dark:border-slate-800 text-center">
                 <i data-lucide="inbox" class="w-10 h-10 mx-auto text-slate-300 dark:text-slate-600 mb-2"></i>
                 <p class="text-slate-500 dark:text-slate-400 font-semibold text-xs">Tidak ada data kelas yang ditemukan.</p>
             </div>
         @endforelse
     </div>
 
-    <!-- 2. TABLE VIEW (OPSIONAL VIA TOGGLE) -->
-    <div id="kelasTableView" class="hidden bg-white dark:bg-[#242A35] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xs overflow-hidden">
+    <!-- 2. TABLE VIEW -->
+    <div id="kelasTableView" class="hidden bg-white dark:bg-[#1C2433] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xs overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse text-xs">
                 <thead>
-                    <tr class="bg-slate-50 dark:bg-[#1A2836] border-b border-slate-200 dark:border-slate-800 text-slate-600 dark:text-blue-300 font-bold uppercase tracking-wider text-[11px]">
+                    <tr class="bg-slate-50 dark:bg-[#141C29] border-b border-slate-200 dark:border-slate-800 text-slate-600 dark:text-blue-300 font-bold uppercase tracking-wider text-[11px]">
                         <th class="py-3 px-4 w-12 text-center">NO</th>
                         <th class="py-3 px-4 w-48">NAMA KELAS</th>
                         <th class="py-3 px-4">WALI KELAS</th>
                         <th class="py-3 px-4 text-center w-32">JUMLAH SISWA</th>
                         <th class="py-3 px-4 text-center w-32">JADWAL KBM</th>
-                        <th class="py-3 px-4 text-center w-64">AKSI</th>
+                        <th class="py-3 px-4 text-center w-40">AKSI</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 dark:divide-slate-800 text-slate-700 dark:text-slate-300">
@@ -251,30 +268,28 @@
                                 @endif
                             </td>
                             <td class="py-3 px-4 text-center">
-                                <span class="px-2.5 py-1 bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800 rounded-lg text-xs font-bold">
-                                    {{ $k->siswa_count }} Siswa
-                                </span>
+                                <button type="button" onclick="showSiswaModal({{ $k->id_kelas }}, '{{ addslashes($k->nama_kelas) }}')"
+                                    class="px-2.5 py-1 bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/50 dark:hover:bg-blue-900/60 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800 rounded-lg text-xs font-bold transition-colors cursor-pointer inline-flex items-center space-x-1">
+                                    <i data-lucide="users" class="w-3 h-3"></i>
+                                    <span>{{ $k->siswa_count }} Siswa</span>
+                                </button>
                             </td>
                             <td class="py-3 px-4 text-center">
-                                <span class="px-2.5 py-1 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-semibold">
-                                    {{ $k->jadwal_count }} Sesi KBM
-                                </span>
+                                <button type="button" onclick="showJadwalModal({{ $k->id_kelas }}, '{{ addslashes($k->nama_kelas) }}')"
+                                    class="px-2.5 py-1 bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/50 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 rounded-lg text-xs font-bold transition-colors cursor-pointer inline-flex items-center space-x-1">
+                                    <i data-lucide="calendar" class="w-3 h-3"></i>
+                                    <span>{{ $k->jadwal_count }} Sesi</span>
+                                </button>
                             </td>
                             <td class="py-3 px-4 text-center">
                                 <div class="flex items-center justify-center space-x-1.5">
-                                    <button type="button" onclick="showSiswaModal({{ $k->id_kelas }}, '{{ addslashes($k->nama_kelas) }}')" 
-                                        class="h-7 px-2.5 bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/40 dark:hover:bg-blue-900/60 text-blue-700 dark:text-blue-300 rounded-lg border border-blue-200 dark:border-blue-800 text-xs font-semibold transition-colors cursor-pointer inline-flex items-center space-x-1">
-                                        <i data-lucide="eye" class="w-3.5 h-3.5"></i>
-                                        <span>Lihat Siswa</span>
-                                    </button>
-
                                     <button type="button" onclick="openEditModal({{ $k->id_kelas }}, '{{ addslashes($k->nama_kelas) }}', '{{ $waliGuru ? $waliGuru->id_guru : "" }}')" 
                                         class="h-7 px-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-semibold transition-colors cursor-pointer inline-flex items-center space-x-1">
                                         <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
                                         <span>Edit</span>
                                     </button>
 
-                                    @if($k->siswa_count == 0)
+                                    @if($k->siswa_count == 0 && $k->jadwal_count == 0)
                                         <form action="{{ route('admin.kelas.destroy', $k->id_kelas) }}" method="POST" data-confirm="Hapus kelas {{ $k->nama_kelas }}?">
                                             @csrf
                                             @method('DELETE')
@@ -302,7 +317,7 @@
 
 <!-- MODAL TAMBAH KELAS -->
 <div id="modalAddKelas" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-white dark:bg-[#242A35] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl w-full max-w-md">
+    <div class="bg-white dark:bg-[#1C2433] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl w-full max-w-md">
         <div class="px-5 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between rounded-t-2xl">
             <h3 class="font-bold text-slate-900 dark:text-slate-100 text-sm flex items-center space-x-2">
                 <i data-lucide="plus-circle" class="w-4 h-4 text-blue-600 dark:text-blue-400"></i>
@@ -319,7 +334,7 @@
             <div>
                 <label for="add_nama_kelas" class="block text-[11px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">Nama Kelas</label>
                 <input type="text" name="nama_kelas" id="add_nama_kelas" placeholder="Contoh: X BD 3, X ULW, XI RPL 1..." required
-                    class="w-full h-9 px-3 bg-white dark:bg-[#1A212D] border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:border-blue-600">
+                    class="w-full h-9 px-3 bg-white dark:bg-[#141C29] border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:border-blue-600">
             </div>
 
             <div>
@@ -346,7 +361,7 @@
 
 <!-- MODAL EDIT KELAS -->
 <div id="modalEditKelas" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-white dark:bg-[#242A35] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl w-full max-w-md">
+    <div class="bg-white dark:bg-[#1C2433] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl w-full max-w-md">
         <div class="px-5 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between rounded-t-2xl">
             <h3 class="font-bold text-slate-900 dark:text-slate-100 text-sm flex items-center space-x-2">
                 <i data-lucide="edit-3" class="w-4 h-4 text-blue-600 dark:text-blue-400"></i>
@@ -364,7 +379,7 @@
             <div>
                 <label for="edit_nama_kelas" class="block text-[11px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">Nama Kelas</label>
                 <input type="text" name="nama_kelas" id="edit_nama_kelas" required
-                    class="w-full h-9 px-3 bg-white dark:bg-[#1A212D] border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:border-blue-600">
+                    class="w-full h-9 px-3 bg-white dark:bg-[#141C29] border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:border-blue-600">
             </div>
 
             <div>
@@ -391,7 +406,7 @@
 
 <!-- MODAL DAFTAR SISWA PER KELAS -->
 <div id="modalSiswaKelas" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-white dark:bg-[#242A35] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl w-full max-w-3xl overflow-hidden max-h-[90vh] flex flex-col">
+    <div class="bg-white dark:bg-[#1C2433] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl w-full max-w-3xl overflow-hidden max-h-[90vh] flex flex-col">
         <div class="px-5 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between shrink-0">
             <div>
                 <h3 class="font-bold text-slate-900 dark:text-slate-100 text-sm flex items-center space-x-2">
@@ -400,7 +415,7 @@
                 </h3>
                 <p class="text-[11px] text-slate-400 mt-0.5" id="modalMetaKelas"></p>
             </div>
-            <button type="button" onclick="closeSiswaModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer">
+            <button type="button" onclick="closeSiswaModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">
                 <i data-lucide="x" class="w-5 h-5"></i>
             </button>
         </div>
@@ -409,7 +424,7 @@
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse text-xs">
                     <thead>
-                        <tr class="bg-slate-50 dark:bg-[#1A2836] border-b border-slate-200 dark:border-slate-800 text-slate-600 dark:text-blue-300 font-bold uppercase tracking-wider text-[11px]">
+                        <tr class="bg-slate-50 dark:bg-[#141C29] border-b border-slate-200 dark:border-slate-800 text-slate-600 dark:text-blue-300 font-bold uppercase tracking-wider text-[11px]">
                             <th class="py-2.5 px-3 w-10 text-center">NO</th>
                             <th class="py-2.5 px-3 w-32">NISN</th>
                             <th class="py-2.5 px-3 w-28">NIS</th>
@@ -424,9 +439,56 @@
             </div>
         </div>
 
-        <div class="px-5 py-3 border-t border-slate-200 dark:border-slate-800 flex justify-between items-center shrink-0">
-            <span class="text-xs font-semibold text-slate-500" id="totalSiswaModalText">0 Siswa</span>
-            <button type="button" onclick="closeSiswaModal()" class="px-4 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-semibold hover:bg-slate-200 transition-colors">
+        <div class="px-5 py-3 border-t border-slate-200 dark:border-slate-800 flex justify-between items-center shrink-0 bg-slate-50/50 dark:bg-[#141C29]">
+            <span class="text-xs font-bold text-slate-500 dark:text-slate-400" id="totalSiswaModalText">0 Siswa</span>
+            <button type="button" onclick="closeSiswaModal()" class="px-4 py-1.5 bg-slate-900 hover:bg-slate-800 dark:bg-slate-800 dark:hover:bg-slate-700 text-white rounded-xl text-xs font-bold transition-colors cursor-pointer">
+                Tutup
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL DAFTAR JADWAL KBM PER KELAS -->
+<div id="modalJadwalKelas" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white dark:bg-[#1C2433] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl w-full max-w-4xl overflow-hidden max-h-[90vh] flex flex-col">
+        <div class="px-5 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between shrink-0 bg-slate-50/60 dark:bg-[#141C29]">
+            <div>
+                <h3 class="font-bold text-slate-900 dark:text-slate-100 text-sm flex items-center space-x-2">
+                    <div class="p-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400">
+                        <i data-lucide="calendar" class="w-4 h-4"></i>
+                    </div>
+                    <span>Jadwal KBM - <span id="modalJadwalTitleKelas" class="text-indigo-600 dark:text-indigo-400"></span></span>
+                </h3>
+                <p class="text-[11px] text-slate-400 mt-0.5" id="modalJadwalMetaKelas"></p>
+            </div>
+            <button type="button" onclick="closeJadwalModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+
+        <div class="p-4 overflow-y-auto flex-1">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse text-xs">
+                    <thead>
+                        <tr class="bg-slate-50 dark:bg-[#141C29] border-b border-slate-200 dark:border-slate-800 text-slate-600 dark:text-indigo-300 font-bold uppercase tracking-wider text-[11px]">
+                            <th class="py-2.5 px-3 w-10 text-center">NO</th>
+                            <th class="py-2.5 px-3 w-24">HARI</th>
+                            <th class="py-2.5 px-3 w-28 text-center">JAM SESI</th>
+                            <th class="py-2.5 px-3">MATA PELAJARAN</th>
+                            <th class="py-2.5 px-3">GURU PENGAJAR</th>
+                            <th class="py-2.5 px-3 text-center w-28">RUANGAN</th>
+                        </tr>
+                    </thead>
+                    <tbody id="jadwalTableBody" class="divide-y divide-slate-100 dark:divide-slate-800 text-slate-700 dark:text-slate-300">
+                        <!-- AJAX content -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="px-5 py-3 border-t border-slate-200 dark:border-slate-800 flex justify-between items-center shrink-0 bg-slate-50/50 dark:bg-[#141C29]">
+            <span class="text-xs font-bold text-slate-500 dark:text-slate-400" id="totalJadwalModalText">0 Sesi Terjadwal</span>
+            <button type="button" onclick="closeJadwalModal()" class="px-4 py-1.5 bg-slate-900 hover:bg-slate-800 dark:bg-slate-800 dark:hover:bg-slate-700 text-white rounded-xl text-xs font-bold transition-colors cursor-pointer">
                 Tutup
             </button>
         </div>
@@ -501,6 +563,7 @@
         document.getElementById('modalMetaKelas').innerText = 'Memuat data siswa...';
         document.getElementById('siswaTableBody').innerHTML = '<tr><td colspan="5" class="py-6 text-center text-slate-400 italic">Memuat data siswa...</td></tr>';
         document.getElementById('modalSiswaKelas').classList.remove('hidden');
+        if (window.lucide) window.lucide.createIcons();
 
         fetch('/admin/kelas/' + idKelas + '/siswa')
             .then(res => res.json())
@@ -509,7 +572,7 @@
                 document.getElementById('totalSiswaModalText').innerText = data.total + ' Siswa Terdaftar';
 
                 if (data.siswa.length === 0) {
-                    document.getElementById('siswaTableBody').innerHTML = '<tr><td colspan="5" class="py-6 text-center text-slate-400 italic">Belum ada data siswa di kelas ini.</td></tr>';
+                    document.getElementById('siswaTableBody').innerHTML = '<tr><td colspan="5" class="py-8 text-center text-slate-400 italic">Belum ada data siswa di kelas ini.</td></tr>';
                     return;
                 }
 
@@ -521,14 +584,15 @@
 
                     html += `<tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
                         <td class="py-2.5 px-3 text-center font-mono text-slate-400">${idx + 1}</td>
-                        <td class="py-2.5 px-3 font-mono font-semibold">${s.nisn || '-'}</td>
-                        <td class="py-2.5 px-3 font-mono">${s.nis}</td>
+                        <td class="py-2.5 px-3 font-mono font-semibold text-slate-600 dark:text-slate-300">${s.nisn || '-'}</td>
+                        <td class="py-2.5 px-3 font-mono font-bold text-slate-800 dark:text-slate-200">${s.nis}</td>
                         <td class="py-2.5 px-3 font-bold text-slate-800 dark:text-slate-100">${s.nama_siswa}</td>
                         <td class="py-2.5 px-3 text-center">${genderBadge}</td>
                     </tr>`;
                 });
 
                 document.getElementById('siswaTableBody').innerHTML = html;
+                if (window.lucide) window.lucide.createIcons();
             })
             .catch(err => {
                 document.getElementById('siswaTableBody').innerHTML = '<tr><td colspan="5" class="py-6 text-center text-rose-500 font-semibold">Gagal memuat data siswa.</td></tr>';
@@ -537,6 +601,76 @@
 
     function closeSiswaModal() {
         document.getElementById('modalSiswaKelas').classList.add('hidden');
+    }
+
+    function showJadwalModal(idKelas, namaKelas) {
+        document.getElementById('modalJadwalTitleKelas').innerText = namaKelas;
+        document.getElementById('modalJadwalMetaKelas').innerText = 'Memuat data jadwal KBM...';
+        document.getElementById('jadwalTableBody').innerHTML = '<tr><td colspan="6" class="py-6 text-center text-slate-400 italic">Memuat jadwal KBM...</td></tr>';
+        document.getElementById('modalJadwalKelas').classList.remove('hidden');
+        if (window.lucide) window.lucide.createIcons();
+
+        fetch('/admin/kelas/' + idKelas + '/jadwal')
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('modalJadwalMetaKelas').innerText = 'Wali Kelas: ' + (data.wali_kelas || 'Belum Ada') + ' • Total: ' + data.total + ' Sesi KBM';
+                document.getElementById('totalJadwalModalText').innerText = data.total + ' Sesi KBM Terjadwal';
+
+                if (data.jadwal.length === 0) {
+                    document.getElementById('jadwalTableBody').innerHTML = '<tr><td colspan="6" class="py-8 text-center text-slate-400 italic">Belum ada jadwal KBM yang dikonfigurasikan untuk kelas ini.</td></tr>';
+                    return;
+                }
+
+                let html = '';
+                const hariBadgeClass = {
+                    'Senin': 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300 border-blue-200 dark:border-blue-900',
+                    'Selasa': 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border-emerald-200 dark:border-emerald-900',
+                    'Rabu': 'bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border-amber-200 dark:border-amber-900',
+                    'Kamis': 'bg-purple-50 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300 border-purple-200 dark:border-purple-900',
+                    'Jumat': 'bg-rose-50 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300 border-rose-200 dark:border-rose-900',
+                };
+
+                data.jadwal.forEach((j, idx) => {
+                    const badgeH = hariBadgeClass[j.hari] || 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border-slate-200 dark:border-slate-700';
+                    const guruNama = j.guru ? j.guru.nama_guru : '<span class="text-amber-500 italic">Guru belum ditentukan</span>';
+                    const mapelNama = j.mapel ? j.mapel.nama_mapel : (j.kode_mapel || '-');
+                    const ruanganNama = j.ruangan ? j.ruangan.nama_ruangan : 'Default Kelas';
+
+                    html += `<tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
+                        <td class="py-2.5 px-3 text-center font-mono text-slate-400">${idx + 1}</td>
+                        <td class="py-2.5 px-3">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-md border text-[11px] font-bold ${badgeH}">
+                                ${j.hari}
+                            </span>
+                        </td>
+                        <td class="py-2.5 px-3 text-center font-mono font-bold text-slate-800 dark:text-slate-200">
+                            Jam ${j.jam_mulai} - ${j.jam_selesai}
+                        </td>
+                        <td class="py-2.5 px-3 font-semibold text-slate-800 dark:text-slate-200">
+                            ${mapelNama}
+                        </td>
+                        <td class="py-2.5 px-3">
+                            <div class="font-bold text-slate-900 dark:text-slate-100">${guruNama}</div>
+                            <div class="text-[10px] text-slate-400 font-mono">NIP: ${j.guru && j.guru.nip ? j.guru.nip : '-'}</div>
+                        </td>
+                        <td class="py-2.5 px-3 text-center">
+                            <span class="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded border border-slate-200 dark:border-slate-700 text-[10.5px] font-medium">
+                                ${ruanganNama}
+                            </span>
+                        </td>
+                    </tr>`;
+                });
+
+                document.getElementById('jadwalTableBody').innerHTML = html;
+                if (window.lucide) window.lucide.createIcons();
+            })
+            .catch(err => {
+                document.getElementById('jadwalTableBody').innerHTML = '<tr><td colspan="6" class="py-6 text-center text-rose-500 font-semibold">Gagal memuat jadwal KBM.</td></tr>';
+            });
+    }
+
+    function closeJadwalModal() {
+        document.getElementById('modalJadwalKelas').classList.add('hidden');
     }
 
     function setViewMode(mode) {
@@ -550,14 +684,14 @@
         if (mode === 'grid') {
             gridView.classList.remove('hidden');
             tableView.classList.add('hidden');
-            if (btnGrid) btnGrid.className = 'h-7.5 px-2.5 rounded-lg text-xs font-bold transition-all bg-blue-600 text-white shadow-2xs flex items-center space-x-1 cursor-pointer';
-            if (btnTable) btnTable.className = 'h-7.5 px-2.5 rounded-lg text-xs font-semibold transition-all text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 flex items-center space-x-1 cursor-pointer';
+            if (btnGrid) btnGrid.className = 'h-8 px-3 rounded-lg text-xs font-bold transition-all bg-blue-600 text-white shadow-2xs flex items-center space-x-1.5 cursor-pointer';
+            if (btnTable) btnTable.className = 'h-8 px-3 rounded-lg text-xs font-semibold transition-all text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 flex items-center space-x-1.5 cursor-pointer';
             localStorage.setItem('kelasViewMode', 'grid');
         } else {
             gridView.classList.add('hidden');
             tableView.classList.remove('hidden');
-            if (btnTable) btnTable.className = 'h-7.5 px-2.5 rounded-lg text-xs font-bold transition-all bg-blue-600 text-white shadow-2xs flex items-center space-x-1 cursor-pointer';
-            if (btnGrid) btnGrid.className = 'h-7.5 px-2.5 rounded-lg text-xs font-semibold transition-all text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 flex items-center space-x-1 cursor-pointer';
+            if (btnTable) btnTable.className = 'h-8 px-3 rounded-lg text-xs font-bold transition-all bg-blue-600 text-white shadow-2xs flex items-center space-x-1.5 cursor-pointer';
+            if (btnGrid) btnGrid.className = 'h-8 px-3 rounded-lg text-xs font-semibold transition-all text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 flex items-center space-x-1.5 cursor-pointer';
             localStorage.setItem('kelasViewMode', 'table');
         }
     }

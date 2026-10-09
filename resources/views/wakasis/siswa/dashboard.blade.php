@@ -54,14 +54,25 @@
                                 @if($d->jam_ke)
                                     <div class="font-bold text-slate-900 mb-0.5">{{ $d->jam_ke }}</div>
                                 @endif
-                                <div class="flex items-center space-x-1.5 text-[11px]">
-                                    <span class="font-semibold text-slate-600">Keluar:</span>
-                                    <span class="text-slate-800 font-medium">{{ substr($d->jam_keluar_rencana, 0, 5) ?? '-' }}</span>
-                                </div>
-                                <div class="flex items-center space-x-1.5 text-[11px]">
-                                    <span class="font-semibold text-slate-600">Kembali:</span>
-                                    <span class="text-slate-800 font-medium">{{ $d->jam_kembali_rencana ? substr($d->jam_kembali_rencana, 0, 5) : 'Tidak kembali' }}</span>
-                                </div>
+                                @if($d->tanggal_selesai && $d->tanggal_selesai !== $d->tanggal)
+                                    <div class="flex items-center space-x-1.5 text-[11px]">
+                                        <span class="font-semibold text-slate-600">Keluar:</span>
+                                        <span class="text-slate-800 font-medium">{{ substr($d->jam_keluar_rencana, 0, 5) ?? '-' }} WIB</span>
+                                    </div>
+                                    <div class="flex items-center space-x-1.5 text-[11px]">
+                                        <span class="font-semibold text-slate-600">Selesai:</span>
+                                        <span class="text-slate-800 font-medium">{{ \Carbon\Carbon::parse($d->tanggal_selesai)->translatedFormat('d M Y') }}{{ $d->jam_kembali_rencana ? ' (pk. ' . substr($d->jam_kembali_rencana, 0, 5) . ')' : '' }}</span>
+                                    </div>
+                                @else
+                                    <div class="flex items-center space-x-1.5 text-[11px]">
+                                        <span class="font-semibold text-slate-600">Keluar:</span>
+                                        <span class="text-slate-800 font-medium">{{ substr($d->jam_keluar_rencana, 0, 5) ?? '-' }} WIB</span>
+                                    </div>
+                                    <div class="flex items-center space-x-1.5 text-[11px]">
+                                        <span class="font-semibold text-slate-600">Kembali:</span>
+                                        <span class="text-slate-800 font-medium">{{ $d->jam_kembali_rencana ? substr($d->jam_kembali_rencana, 0, 5) . ' WIB' : 'Selesai KBM / Hari Ini' }}</span>
+                                    </div>
+                                @endif
                             </td>
                             <td class="py-2 px-3.5 text-slate-700 font-medium leading-relaxed">{{ $d->keperluan }}</td>
                             <td class="py-2 px-3.5 text-center">
@@ -153,14 +164,25 @@
                                 <div class="text-[11px] text-slate-400">NIS: {{ $d->nis }}</div>
                             </td>
                             <td class="py-2 px-3.5 text-xs leading-normal">
-                                <div class="flex items-center space-x-1 text-[11px]">
-                                    <span class="font-semibold text-slate-600">Keluar:</span>
-                                    <span class="text-slate-800">{{ substr($d->jam_keluar_rencana, 0, 5) ?? '-' }}</span>
-                                </div>
-                                <div class="flex items-center space-x-1 text-[11px]">
-                                    <span class="font-semibold text-slate-600">Kembali:</span>
-                                    <span class="text-slate-800">{{ $d->jam_kembali_rencana ? substr($d->jam_kembali_rencana, 0, 5) : 'Tidak kembali' }}</span>
-                                </div>
+                                @if($d->tanggal_selesai && $d->tanggal_selesai !== $d->tanggal)
+                                    <div class="flex items-center space-x-1 text-[11px]">
+                                        <span class="font-semibold text-slate-600">Keluar:</span>
+                                        <span class="text-slate-800">{{ substr($d->jam_keluar_rencana, 0, 5) ?? '-' }} WIB</span>
+                                    </div>
+                                    <div class="flex items-center space-x-1 text-[11px]">
+                                        <span class="font-semibold text-slate-600">Selesai:</span>
+                                        <span class="text-slate-800">{{ \Carbon\Carbon::parse($d->tanggal_selesai)->translatedFormat('d M Y') }}{{ $d->jam_kembali_rencana ? ' (pk. ' . substr($d->jam_kembali_rencana, 0, 5) . ')' : '' }}</span>
+                                    </div>
+                                @else
+                                    <div class="flex items-center space-x-1 text-[11px]">
+                                        <span class="font-semibold text-slate-600">Keluar:</span>
+                                        <span class="text-slate-800">{{ substr($d->jam_keluar_rencana, 0, 5) ?? '-' }} WIB</span>
+                                    </div>
+                                    <div class="flex items-center space-x-1 text-[11px]">
+                                        <span class="font-semibold text-slate-600">Kembali:</span>
+                                        <span class="text-slate-800">{{ $d->jam_kembali_rencana ? substr($d->jam_kembali_rencana, 0, 5) . ' WIB' : 'Selesai KBM / Hari Ini' }}</span>
+                                    </div>
+                                @endif
                             </td>
                             <td class="py-2 px-3.5 text-xs text-slate-700 max-w-xs truncate" title="{{ $d->keperluan }}">{{ $d->keperluan }}</td>
                             <td class="py-2 px-3.5 text-center">
@@ -182,7 +204,7 @@
                                 @endif
                                 <div class="text-[10px] text-slate-400 mt-0.5 flex items-center space-x-1">
                                     <i data-lucide="user-check" class="w-3 h-3 text-slate-400"></i>
-                                    <span>Diproses oleh: {{ $d->disetujuiOleh ? $d->disetujuiOleh->username : '-' }}</span>
+                                    <span>Diproses oleh: {{ $d->disetujuiOleh ? $d->disetujuiOleh->nama_display : '-' }}</span>
                                 </div>
                             </td>
                         </tr>

@@ -90,6 +90,21 @@
                         <i data-lucide="users-check" class="w-4 h-4 text-slate-700 dark:text-slate-300"></i>
                         <span>Presensi Siswa di Jam Mapel Ini</span>
                     </h3>
+                    {{-- Indikator Persentase Kehadiran Live --}}
+                    <div class="flex items-center space-x-2 mt-1.5">
+                        <div class="relative w-36 h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                            <div id="presensi-bar"
+                                 class="absolute inset-y-0 left-0 rounded-full transition-all duration-500"
+                                 style="width: 100%; background-color: #10b981;">
+                            </div>
+                        </div>
+                        <span id="presensi-persen"
+                              class="text-xs font-extrabold tabular-nums"
+                              style="color: #10b981;">
+                            100%
+                        </span>
+                        <span class="text-[10px] text-slate-400 dark:text-slate-500 font-medium">kehadiran</span>
+                    </div>
                 </div>
                 <div class="flex items-center space-x-2 shrink-0">
                     <button type="button" id="btn-semua-hadir" class="px-3 py-1.5 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 rounded-xl text-xs font-bold hover:bg-emerald-100 dark:hover:bg-emerald-900/50 transition-all flex items-center space-x-1.5 cursor-pointer shadow-2xs" title="Tandai semua siswa hadir">
@@ -355,7 +370,71 @@
                 refreshGroup(mobRadio.name);
             }
         }
+
+        // Perbarui persentase kehadiran
+        updatePresensiPersen();
     };
+
+    // ── Update Persentase Kehadiran Live ──
+    function updatePresensiPersen() {
+        // Hitung dari grup desktop (ketidakhadiran[NIS])
+        // Siswa dianggap TIDAK HADIR jika statusnya: Sakit, Izin, atau Alpa
+        var tidakHadir = 0;
+        var totalSiswa = 0;
+        var processedNis = {};
+
+        document.querySelectorAll('input.presensi-radio[name^="ketidakhadiran["]:checked').forEach(function(radio) {
+            var matches = radio.name.match(/\[(.*?)\]/);
+            if (!matches || !matches[1]) return;
+            var nis = matches[1];
+            if (processedNis[nis]) return;
+            processedNis[nis] = true;
+            totalSiswa++;
+            if (['Sakit', 'Izin', 'Alpa'].indexOf(radio.value) !== -1) {
+                tidakHadir++;
+            }
+        });
+
+        // Fallback: hitung total siswa dari semua radio desktop
+        if (totalSiswa === 0) {
+            var allNis = {};
+            document.querySelectorAll('input.presensi-radio[name^="ketidakhadiran["]').forEach(function(r) {
+                var m = r.name.match(/\[(.*?)\]/);
+                if (m && m[1]) allNis[m[1]] = true;
+            });
+            totalSiswa = Object.keys(allNis).length;
+        }
+
+        var persen = totalSiswa > 0
+            ? Math.max(0, ((totalSiswa - tidakHadir) / totalSiswa) * 100)
+            : 100;
+
+        var persenFormatted = persen % 1 === 0
+            ? persen.toFixed(0)
+            : persen.toFixed(2).replace(/\.?0+$/, '');
+
+        // Pilih warna berdasarkan persentase
+        var color;
+        if (persen >= 90) {
+            color = '#10b981'; // hijau emerald
+        } else if (persen >= 75) {
+            color = '#f59e0b'; // kuning amber
+        } else {
+            color = '#e11d48'; // merah rose
+        }
+
+        var bar = document.getElementById('presensi-bar');
+        var label = document.getElementById('presensi-persen');
+
+        if (bar) {
+            bar.style.width = persen + '%';
+            bar.style.backgroundColor = color;
+        }
+        if (label) {
+            label.textContent = persenFormatted + '%';
+            label.style.color = color;
+        }
+    }
 
     // ── Tombol "Semua Hadir" ──
     document.addEventListener('DOMContentLoaded', function() {
@@ -366,11 +445,14 @@
                     radio.checked = (radio.value === 'Hadir');
                 });
                 refreshAllPills();
+                updatePresensiPersen();
             });
         }
 
         // Render pill saat halaman selesai dimuat
         refreshAllPills();
+        // Hitung persentase awal (bisa ada auto-status Sakit/Izin dari sistem)
+        updatePresensiPersen();
     });
 
     // ── Deteksi perubahan tema (dark/light toggle) ──

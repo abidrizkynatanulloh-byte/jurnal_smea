@@ -13,6 +13,7 @@ use App\Models\PengajuanIzinSiswa;
 use App\Models\DispenSiswa;
 use App\Models\SiswaTelat;
 use App\Models\FotoMengajar;
+use App\Models\EventSekolah;
 use App\Services\WhatsAppService;
 use Carbon\Carbon;
 
@@ -105,6 +106,18 @@ class JurnalController
                     ->latest('tanggal')
                     ->first();
 
+                // Cek apakah siswa ini memiliki dispensasi hari ini yang sudah dikonfirmasi KEMBALI oleh Satpam
+                $dispenSudahKembali = DispenSiswa::where('nis', $s->nis)
+                    ->whereDate('tanggal', '<=', $tanggalHariIni)
+                    ->where(function ($q) use ($tanggalHariIni) {
+                        $q->whereNull('tanggal_selesai')
+                          ->whereDate('tanggal', $tanggalHariIni)
+                          ->orWhereDate('tanggal_selesai', '>=', $tanggalHariIni);
+                    })
+                    ->where('status', 'Sudah Kembali')
+                    ->latest('updated_at')
+                    ->first();
+
                 // 3. Cek apakah ada status Sakit / Izin / Alpa / Terlambat dari jurnal jam sebelumnya hari ini (Berantai dari Guru Pertama)
                 $presensiSebelumnya = JurnalDetailKetidakhadiran::where('id_siswa', $s->nis)
                     ->whereHas('jurnal', function ($q) use ($tanggalHariIni) {
@@ -132,7 +145,27 @@ class JurnalController
                     $rentangTeks = ($dispen->tanggal_selesai && $dispen->tanggal_selesai !== $dispen->tanggal)
                         ? ' (s/d ' . \Carbon\Carbon::parse($dispen->tanggal_selesai)->translatedFormat('d M Y') . ')'
                         : '';
-                    $infoStatus = "Dispensasi: {$dispen->keperluan}{$rentangTeks}";
+
+                    // Rangkum info jam pelajaran dan estimasi waktu keluar/kembali
+                    $waktuRincian = [];
+                    if (!empty($dispen->jam_ke)) {
+                        $waktuRincian[] = $dispen->jam_ke;
+                    }
+                    if (!empty($dispen->jam_keluar_rencana)) {
+                        $jamKeluar = substr($dispen->jam_keluar_rencana, 0, 5);
+                        $jamKembali = !empty($dispen->jam_kembali_rencana) ? substr($dispen->jam_kembali_rencana, 0, 5) : 'Selesai';
+                        $waktuRincian[] = "pk. {$jamKeluar}-{$jamKembali}";
+                    }
+                    $waktuTeks = !empty($waktuRincian) ? ' [' . implode(' | ', $waktuRincian) . ']' : '';
+
+                    $infoStatus = "Dispensasi: {$dispen->keperluan}{$waktuTeks}{$rentangTeks}";
+                } elseif ($dispenSudahKembali) {
+                    // Siswa telah dikonfirmasi kembali ke sekolah oleh Satpam -> Hadir kembali di kelas
+                    $autoStatus = 'Hadir';
+                    $jamKembaliStr = $dispenSudahKembali->jam_kembali_aktual ? substr($dispenSudahKembali->jam_kembali_aktual, 0, 5) : null;
+                    $infoStatus = $jamKembaliStr
+                        ? "Sudah kembali ke sekolah (pk. {$jamKembaliStr} WIB)"
+                        : "Sudah dikonfirmasi kembali ke sekolah oleh Satpam";
                 } elseif ($presensiSebelumnya) {
                     $autoStatus = $presensiSebelumnya->keterangan;
                     $infoStatus = "Otomatis: Tercatat {$presensiSebelumnya->keterangan} pada sesi guru sebelumnya";
@@ -359,8 +392,20 @@ class JurnalController
                         ->whereDate('tanggal_selesai', '>=', $tanggalJadwal)
                         ->first();
 
-                    $isToday = ($tanggalJadwal === $today->toDateString());
+                    // Cek event sekolah / pulang pagi
+                    $times   = $j->getWaktuMulaiSelesai();
+                    $exempt  = EventSekolah::cekExempt($tanggalJadwal, $times['waktu_mulai'] ?? null);
+
+                    $isToday     = ($tanggalJadwal === $today->toDateString());
                     $statusWaktu = $isToday ? $j->statusWaktuMengajar() : 'telat';
+
+                    if ($exempt['exempt']) {
+                        $keterangan = $exempt['alasan'];
+                    } elseif ($izin) {
+                        $keterangan = "Izin Sah ({$izin->alasan})";
+                    } else {
+                        $keterangan = 'Alpa (Belum Diisi)';
+                    }
 
                     $daftarTertunggak[] = [
                         'id_jadwal'      => $j->id_jadwal,
@@ -370,7 +415,8 @@ class JurnalController
                         'kelas'          => $j->kelas ? $j->kelas->nama_kelas : '-',
                         'mapel'          => $j->mapel ? $j->mapel->nama_mapel : '-',
                         'ruangan'        => $j->ruangan ? $j->ruangan->nama_ruangan : '-',
-                        'keterangan'     => $izin ? "Izin Sah ({$izin->alasan})" : 'Alpa (Belum Diisi)',
+                        'keterangan'     => $keterangan,
+                        'is_exempt'      => $exempt['exempt'],
                         'is_today'       => $isToday,
                         'status_waktu'   => $statusWaktu,
                     ];

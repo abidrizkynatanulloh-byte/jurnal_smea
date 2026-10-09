@@ -81,7 +81,7 @@ class UserController
             'nama'     => 'required|string|max:150',
             'username' => 'required|string|max:50|unique:users,username',
             'password' => 'required|string|min:4',
-            'no_hp'    => 'nullable|string|max:15',
+            'no_hp'    => 'nullable|string|max:30',
         ], [
             'role.required'     => 'Role wajib dipilih.',
             'nama.required'     => 'Nama lengkap wajib diisi.',

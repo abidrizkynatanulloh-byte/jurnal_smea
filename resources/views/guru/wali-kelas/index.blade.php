@@ -133,6 +133,125 @@
         </div>
     @endif
 
+    {{-- =========================================================
+         MODAL REKAP ABSENSI SISWA PER BULAN
+         ========================================================= --}}
+    <div x-data="{ modalRekap: false }" @keydown.escape.window="modalRekap = false">
+
+        {{-- Trigger: tombol kecil di header tabel, ditaruh via slot di bawah --}}
+        {{-- Modal Overlay + Panel --}}
+        <div
+            x-show="modalRekap"
+            style="display:none;"
+            class="fixed inset-0 z-50 overflow-y-auto"
+            aria-modal="true"
+        >
+            <div class="flex items-center justify-center min-h-screen p-4">
+                {{-- Backdrop --}}
+                <div
+                    x-show="modalRekap"
+                    x-transition.opacity
+                    @click="modalRekap = false"
+                    class="fixed inset-0 bg-black/50 backdrop-blur-xs"
+                ></div>
+
+                {{-- Panel --}}
+                <div
+                    x-show="modalRekap"
+                    x-transition
+                    x-data="{ bulanTerbuka: '{{ $rekapPerBulan->first()['label'] ?? '' }}' }"
+                    class="relative bg-white dark:bg-[#242A35] rounded-xl shadow-2xl border border-slate-200 dark:border-slate-800 w-full max-w-2xl z-10 overflow-hidden"
+                >
+                    {{-- Header Modal --}}
+                    <div class="flex items-center justify-between px-4 py-3 border-b border-slate-200 dark:border-slate-800">
+                        <div class="flex items-center space-x-2">
+                            <i data-lucide="calendar-range" class="w-4 h-4 text-slate-500 dark:text-slate-400"></i>
+                            <h3 class="font-bold text-slate-900 dark:text-slate-100 text-sm">Rekap Absensi Per Bulan</h3>
+                            <span class="text-[10px] text-slate-400 font-semibold">— Semester Berjalan</span>
+                        </div>
+                        <button @click="modalRekap = false" class="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors cursor-pointer">
+                            <i data-lucide="x" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+
+                    {{-- Isi Modal --}}
+                    <div class="max-h-[70vh] overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800">
+                        @if($rekapPerBulan->isEmpty())
+                            <div class="px-4 py-8 text-center text-slate-400 italic text-xs">Belum ada data jurnal untuk semester ini.</div>
+                        @else
+                            @foreach($rekapPerBulan as $bln)
+                                @php $adaSiswa = count($bln['siswa']) > 0; @endphp
+                                <div>
+                                    {{-- Header Bulan --}}
+                                    <button
+                                        @click="bulanTerbuka = (bulanTerbuka === '{{ $bln['label'] }}') ? null : '{{ $bln['label'] }}'"
+                                        class="w-full flex items-center justify-between px-4 py-2.5 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer text-left"
+                                    >
+                                        <div class="flex items-center space-x-2">
+                                            <i data-lucide="calendar" class="w-3.5 h-3.5 text-slate-400"></i>
+                                            <span class="font-bold text-xs text-slate-800 dark:text-slate-100">{{ $bln['label'] }}</span>
+                                            @if($adaSiswa)
+                                                <span class="px-1.5 py-0.5 bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 rounded text-[10px] font-bold">{{ count($bln['siswa']) }} siswa</span>
+                                            @else
+                                                <span class="px-1.5 py-0.5 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 rounded text-[10px] font-bold">Semua hadir ✓</span>
+                                            @endif
+                                        </div>
+                                        <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400 transition-transform duration-200" :class="bulanTerbuka === '{{ $bln['label'] }}' ? 'rotate-180' : ''"></i>
+                                    </button>
+
+                                    {{-- Detail --}}
+                                    <div x-show="bulanTerbuka === '{{ $bln['label'] }}'" x-transition style="display:none;">
+                                        @if($adaSiswa)
+                                            <div class="overflow-x-auto border-t border-slate-100 dark:border-slate-800">
+                                                <table class="w-full text-left text-xs border-collapse">
+                                                    <thead>
+                                                        <tr class="bg-slate-50/80 dark:bg-[#1A2836]/80 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                                                            <th class="py-2 px-4">Nama Siswa</th>
+                                                            <th class="py-2 px-3 text-center text-blue-600 dark:text-blue-400">Sakit</th>
+                                                            <th class="py-2 px-3 text-center text-purple-600 dark:text-purple-400">Izin</th>
+                                                            <th class="py-2 px-3 text-center text-rose-600 dark:text-rose-400">Alpa</th>
+                                                            <th class="py-2 px-3 text-center text-amber-600 dark:text-amber-400">Telat</th>
+                                                            <th class="py-2 px-3 text-center text-indigo-600 dark:text-indigo-400">Dispen</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+                                                        @foreach($bln['siswa'] as $sw)
+                                                            <tr class="hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors">
+                                                                <td class="py-1.5 px-4 font-semibold text-slate-800 dark:text-slate-100 text-xs">
+                                                                    {{ $sw['nama'] }}
+                                                                    <span class="ml-1 text-[10px] text-slate-400 font-mono">{{ $sw['nis'] }}</span>
+                                                                </td>
+                                                                @foreach(['sakit' => 'blue', 'izin' => 'purple', 'alpa' => 'rose', 'telat' => 'amber', 'dispen' => 'indigo'] as $key => $color)
+                                                                    <td class="py-1.5 px-3 text-center">
+                                                                        @if($sw[$key] > 0)
+                                                                            <span class="inline-flex items-center justify-center min-w-[22px] px-1 py-0.5 rounded bg-{{ $color }}-50 dark:bg-{{ $color }}-950/50 text-{{ $color }}-700 dark:text-{{ $color }}-300 font-bold border border-{{ $color }}-200 dark:border-{{ $color }}-800 text-[10px]">{{ $sw[$key] }}</span>
+                                                                        @else
+                                                                            <span class="text-slate-300 dark:text-slate-600 text-[10px]">-</span>
+                                                                        @endif
+                                                                    </td>
+                                                                @endforeach
+                                                            </tr>
+                                                        @endforeach
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        @else
+                                            <div class="px-4 py-3 text-xs text-slate-400 italic text-center border-t border-slate-100 dark:border-slate-800">Seluruh siswa hadir di bulan ini 🎉</div>
+                                        @endif
+                                    </div>
+                                </div>
+                            @endforeach
+                        @endif
+                    </div>
+
+                    {{-- Footer Modal --}}
+                    <div class="px-4 py-2.5 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-[#1A212D] flex justify-end">
+                        <button @click="modalRekap = false" class="h-8 px-4 bg-[#1E2538] hover:bg-[#121724] text-white rounded-lg text-xs font-bold transition-all cursor-pointer">Tutup</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     <!-- TABEL REKAPITULASI PRESENSI KELAS (URUTAN NOMOR ABSEN UTUH 1 s/d SELESAI) -->
     <div class="bg-white dark:bg-[#242A35] border border-slate-200 dark:border-slate-800 rounded-xl shadow-xs overflow-hidden">
         <div class="px-4 py-3 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
@@ -142,7 +261,13 @@
                     Daftar Siswa {{ $kelasAktif ? $kelasAktif->nama_kelas : '' }} ({{ $rekapSiswa->count() }} Siswa Sesuai Urutan Absen)
                 </h3>
             </div>
-            <span class="text-[11px] text-slate-400 font-semibold">Semester Berjalan</span>
+            <button
+                @click="modalRekap = true"
+                class="h-7 px-2.5 flex items-center space-x-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-lg text-[11px] font-semibold transition-colors cursor-pointer border border-slate-200 dark:border-slate-700"
+            >
+                <i data-lucide="calendar-range" class="w-3 h-3"></i>
+                <span>Rekap Per Bulan</span>
+            </button>
         </div>
 
         <div class="overflow-x-auto">
@@ -157,7 +282,6 @@
                         <th class="py-2.5 px-2.5 text-center w-16 text-rose-600 dark:text-rose-400">Alpa</th>
                         <th class="py-2.5 px-2.5 text-center w-16 text-amber-600 dark:text-amber-400">Telat</th>
                         <th class="py-2.5 px-2.5 text-center w-16">Dispen</th>
-                        <th class="py-2.5 px-2.5 text-center w-24">Persentase</th>
                         <th class="py-2.5 px-3 text-center w-40">Status & Aksi</th>
                     </tr>
                 </thead>
@@ -188,14 +312,6 @@
                                 @endif
                             </td>
                             <td class="py-2 px-2.5 text-center font-semibold text-slate-600 dark:text-slate-400 text-xs">{{ $s['dispen'] }}</td>
-                            <td class="py-2 px-2.5 text-center text-xs">
-                                <div class="flex flex-col items-center">
-                                    <span class="text-[10px] font-bold text-emerald-700 dark:text-emerald-400">Hdr: {{ $s['persentase_hadir'] }}%</span>
-                                    @if($s['telat'] > 0)
-                                        <span class="text-[9.5px] font-semibold text-amber-600 dark:text-amber-400">Tlt: {{ $s['persentase_telat'] }}%</span>
-                                    @endif
-                                </div>
-                            </td>
                             <td class="py-2 px-3 text-center" x-data="{ modalTerbuka: false }">
                                 <div class="flex items-center justify-center space-x-1.5">
                                     @if($s['alpa_berturut_3'])
@@ -390,7 +506,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="10" class="py-6 text-center text-slate-400 italic text-xs">
+                            <td colspan="9" class="py-6 text-center text-slate-400 italic text-xs">
                                 Tidak ada data siswa di kelas ini.
                             </td>
                         </tr>
@@ -399,6 +515,9 @@
             </table>
         </div>
     </div>
+
+    </div>{{-- end x-data="{ modalRekap: false }" --}}
+
 </div>
 @push('scripts')
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>

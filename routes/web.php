@@ -22,6 +22,7 @@ use App\Http\Controllers\Admin\RekapJurnalController;
 use App\Http\Controllers\Admin\AdminGuruPiketController;
 use App\Http\Controllers\Admin\AdminWaliKelasController;
 use App\Http\Controllers\Admin\AdminKelasController;
+use App\Http\Controllers\Admin\EventSekolahController;
 use App\Http\Controllers\Guru\GuruDashboardController;
 use App\Http\Controllers\Guru\JurnalController;
 
@@ -69,6 +70,7 @@ Route::middleware('auth')->group(function () {
 
     // Logout Sistem
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+    Route::post('/password/change', [AuthController::class, 'changePassword'])->name('password.change');
 
     // ---------------------------------------------------------------------
     // 1. DASHBOARD UTAMA & MANAJEMEN TATA USAHA (ADMIN)
@@ -123,9 +125,15 @@ Route::middleware('auth')->group(function () {
         Route::delete('/admin/wali-kelas/{id}',      [AdminWaliKelasController::class, 'destroy'])->name('admin.wali-kelas.destroy');
         Route::get('/admin/kelas',                  [AdminKelasController::class, 'index']  )->name('admin.kelas.index');
         Route::get('/admin/kelas/{id}/siswa',        [AdminKelasController::class, 'getSiswa'])->name('admin.kelas.siswa');
+        Route::get('/admin/kelas/{id}/jadwal',       [AdminKelasController::class, 'getJadwal'])->name('admin.kelas.jadwal');
         Route::post('/admin/kelas',                 [AdminKelasController::class, 'store']  )->name('admin.kelas.store');
         Route::put('/admin/kelas/{id}',             [AdminKelasController::class, 'update'] )->name('admin.kelas.update');
         Route::delete('/admin/kelas/{id}',          [AdminKelasController::class, 'destroy'])->name('admin.kelas.destroy');
+        // Event Sekolah & Pulang Pagi
+        Route::get('/admin/event-sekolah',           [EventSekolahController::class, 'index']  )->name('admin.event.index');
+        Route::post('/admin/event-sekolah',          [EventSekolahController::class, 'store']  )->name('admin.event.store');
+        Route::put('/admin/event-sekolah/{id}',      [EventSekolahController::class, 'update'] )->name('admin.event.update');
+        Route::delete('/admin/event-sekolah/{id}',   [EventSekolahController::class, 'destroy'])->name('admin.event.destroy');
     });
 
     // ---------------------------------------------------------------------
@@ -143,7 +151,7 @@ Route::middleware('auth')->group(function () {
     // ---------------------------------------------------------------------
     // 9. GURU PIKET (DISPEN & SISWA TELAT)
     // ---------------------------------------------------------------------
-    Route::middleware('role:guru_piket,guru,staf_tu')->group(function () {
+    Route::middleware('role:guru_piket,guru,staf_tu,waka_kurikulum,wakasis_guru,waka_sdm,wakasis_siswa')->group(function () {
         Route::get('/piket/dashboard',               [PiketController::class, 'index']          )->name('piket.dashboard');
         Route::post('/piket/dispen',                 [PiketController::class, 'storeDispen']    )->name('piket.dispen.store');
         Route::post('/piket/siswa-telat',            [PiketController::class, 'storeSiswaTelat'])->name('piket.siswa-telat.store');
@@ -151,6 +159,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/piket/izin-guru/{id}/reject',  [PiketController::class, 'rejectIzinGuru'] )->name('piket.izin-guru.reject');
         Route::post('/piket/izin-siswa/{id}/approve', [PiketController::class, 'approveIzinSiswa'])->name('piket.izin-siswa.approve');
         Route::post('/piket/izin-siswa/{id}/reject',  [PiketController::class, 'rejectIzinSiswa'])->name('piket.izin-siswa.reject');
+        Route::post('/piket/izin-siswa',             [PiketController::class, 'storeIzinSiswaByPiket'])->name('piket.izin-siswa.store');
     });
 
     // ---------------------------------------------------------------------

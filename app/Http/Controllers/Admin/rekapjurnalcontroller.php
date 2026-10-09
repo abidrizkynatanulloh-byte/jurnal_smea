@@ -10,6 +10,7 @@ use App\Models\JurnalMengajar;
 use App\Models\JurnalDetailKetidakhadiran;
 use App\Models\IzinGuru;
 use Carbon\Carbon;
+use App\Models\EventSekolah;
 
 class RekapJurnalController
 {
@@ -96,17 +97,24 @@ class RekapJurnalController
                     ->whereDate('tanggal_selesai', '>=', $tanggal)
                     ->first();
 
-                if ($izin) {
+                // Cek Event Sekolah / Pulang Pagi
+                $times  = $ga->getWaktuMulaiSelesai();
+                $exempt = EventSekolah::cekExempt($tanggal, $times['waktu_mulai'] ?? null);
+
+                if ($exempt['exempt']) {
+                    $ga->status_rekap = $exempt['alasan'];
+                    $ga->sort_order = 2;
+                } elseif ($izin) {
                     $ga->status_rekap = $izin->alasan . ' (Sah)';
                     $ga->sort_order = 2;
                 } else {
                     if ($isPast) {
-                        $ga->status_rekap = 'Alpa';
+                        $ga->status_rekap = 'Belum Mengisi Jurnal';
                         $ga->sort_order = 1;
                     } elseif ($isToday) {
                         $statusWaktu = $ga->statusWaktuMengajar();
                         if ($statusWaktu === 'telat') {
-                            $ga->status_rekap = 'Alpa';
+                            $ga->status_rekap = 'Belum Mengisi Jurnal';
                             $ga->sort_order = 1;
                         } else {
                             $ga->status_rekap = 'Terjadwal';
@@ -163,9 +171,18 @@ class RekapJurnalController
                     $statusLabel = $approvedIzin->get($s->id_guru)->alasan . ' (Izin Sah)';
                     $color = 'yellow';
                 } else {
-                    $status = 'alpa'; // Merah
-                    $statusLabel = 'Belum Mengisi Jurnal / Alpa';
-                    $color = 'red';
+                    // Cek event / pulang pagi
+                    $times  = $s->getWaktuMulaiSelesai();
+                    $exempt = EventSekolah::cekExempt($tanggal, $times['waktu_mulai'] ?? null);
+                    if ($exempt['exempt']) {
+                        $status = 'exempt'; // Abu-abu
+                        $statusLabel = $exempt['alasan'];
+                        $color = 'gray';
+                    } else {
+                        $status = 'alpa'; // Merah
+                        $statusLabel = 'Belum Mengisi Jurnal / Alpa';
+                        $color = 'red';
+                    }
                 }
 
                 $sessionBlocks[] = [
@@ -198,13 +215,13 @@ class RekapJurnalController
         // --- CHART DATA PREPARATION ---
         // 1. Pie Chart Data (Selected Day)
         $totalTerisi = $jurnalTersimpan->count();
-        $totalAlpa = $guruAlpaList->where('status_rekap', 'Alpa')->count();
+        $totalBelumIsi = $guruAlpaList->where('status_rekap', 'Belum Mengisi Jurnal')->count();
         $totalIzin = $guruAlpaList->filter(fn($g) => str_contains($g->status_rekap, 'Sah'))->count();
         $totalTerjadwal = $guruAlpaList->where('status_rekap', 'Terjadwal')->count();
         
         $pieChartData = [
             'Terisi' => $totalTerisi,
-            'Alpa' => $totalAlpa,
+            'Belum Mengisi Jurnal' => $totalBelumIsi,
             'Izin' => $totalIzin,
             'Terjadwal' => $totalTerjadwal
         ];
@@ -243,6 +260,24 @@ class RekapJurnalController
             'matrixKelas',
             'maxJam'
         ));
+    }
+
+    /**
+     * Tampilkan Detail Jurnal Mengajar
+     */
+    public function show($id)
+    {
+        $jurnal = JurnalMengajar::with([
+            'foto',
+            'jadwal.guru',
+            'jadwal.kelas',
+            'jadwal.mapel',
+            'jadwal.ruangan',
+            'detailKetidakhadiran.siswa'
+        ])
+        ->findOrFail($id);
+
+        return view('Admin.rekap.show', compact('jurnal'));
     }
 
     /**
@@ -292,18 +327,29 @@ class RekapJurnalController
                 }
 
                 if ($isSudahLewatAtauHariIni) {
-                    $sesiSeharusnya++;
-                    if ($jurnal) {
-                        $sesiTerisi++;
-                        $statusKode = 'terisi';
-                        $statusText = 'Sudah Diisi';
-                    } elseif ($izin) {
-                        $statusKode = 'izin';
-                        $statusText = 'Izin Resmi (' . $izin->alasan . ')';
+                    // Cek event sekolah / pulang pagi
+                    $times  = $j->getWaktuMulaiSelesai();
+                    $exempt = EventSekolah::cekExempt($tanggalJadwal, $times['waktu_mulai'] ?? null);
+
+                    if ($exempt['exempt']) {
+                        // Hari ini ada event/pulang pagi — sesi ini tidak dihitung dalam rekap
+                        $statusKode = 'exempt';
+                        $statusText = $exempt['alasan'];
+                        // Tidak increment $sesiSeharusnya agar tidak mempengaruhi persentase
                     } else {
-                        $sesiTertunggakCount++;
-                        $statusKode = 'tertunggak';
-                        $statusText = 'Alpa / Belum Diisi';
+                        $sesiSeharusnya++;
+                        if ($jurnal) {
+                            $sesiTerisi++;
+                            $statusKode = 'terisi';
+                            $statusText = 'Sudah Diisi';
+                        } elseif ($izin) {
+                            $statusKode = 'izin';
+                            $statusText = 'Izin Resmi (' . $izin->alasan . ')';
+                        } else {
+                            $sesiTertunggakCount++;
+                            $statusKode = 'tertunggak';
+                            $statusText = 'Belum Mengisi Jurnal';
+                        }
                     }
                 } else {
                     $statusKode = 'mendatang';
@@ -456,9 +502,17 @@ class RekapJurnalController
                 $jadwalHari = $jadwalGuru->where('hari', $wd['hari']);
 
                 foreach ($jadwalHari as $j) {
-                    $totalSesiWajib++;
                     $key = $j->id_jadwal . '_' . $wd['date'];
                     $jurnalAda = $jurnalsBulanIni->has($key);
+
+                    // Cek event sekolah / pulang pagi — skip sesi ini dari perhitungan
+                    $times  = $j->getWaktuMulaiSelesai();
+                    $exempt = EventSekolah::cekExempt($wd['date'], $times['waktu_mulai'] ?? null);
+                    if ($exempt['exempt'] && !$jurnalAda) {
+                        continue; // Sesi ini tidak dihitung sama sekali
+                    }
+
+                    $totalSesiWajib++;
 
                     if ($jurnalAda) {
                         $totalHadir++;
@@ -501,7 +555,8 @@ class RekapJurnalController
                 }
             }
 
-            $persenHadir = $totalSesiWajib > 0 ? round(($totalHadir / $totalSesiWajib) * 100) : 100;
+            $persenHadir = $totalSesiWajib > 0 ? round(($totalHadir / $totalSesiWajib) * 100, 2) : 100.00;
+            $persenAlpha = $totalSesiWajib > 0 ? round(($totalAlpha / $totalSesiWajib) * 100, 2) : 0.00;
 
             // Status Tindak Lanjut
             $statusTindakLanjut = 'Tertib';
@@ -525,6 +580,7 @@ class RekapJurnalController
                 'total_izin'            => $totalIzin,
                 'total_alpha'           => $totalAlpha,
                 'persen_hadir'          => $persenHadir,
+                'persen_alpha'          => $persenAlpha,
                 'status_tindak_lanjut'  => $statusTindakLanjut,
                 'badge_color'           => $badgeColor,
                 'rincian_alpha'         => $rincianAlpha,
@@ -592,9 +648,17 @@ class RekapJurnalController
 
                     $jadwalHari = $jadwalGuru->where('hari', $wd['hari']);
                     foreach ($jadwalHari as $j) {
-                        $totalSesiWajibTahunan++;
                         $key = $j->id_jadwal . '_' . $wd['date'];
                         $jurnalAda = $jurnalsTahunIni->has($key);
+
+                        // Skip sesi yang exempt karena event/pulang pagi
+                        $times  = $j->getWaktuMulaiSelesai();
+                        $exempt = EventSekolah::cekExempt($wd['date'], $times['waktu_mulai'] ?? null);
+                        if ($exempt['exempt'] && !$jurnalAda) {
+                            continue;
+                        }
+
+                        $totalSesiWajibTahunan++;
 
                         if ($jurnalAda) {
                             $totalHadirTahunan++;

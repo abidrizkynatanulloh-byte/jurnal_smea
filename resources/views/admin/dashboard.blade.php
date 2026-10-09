@@ -69,7 +69,7 @@
         </a>
 
         <!-- Card 4: Kepatuhan (Pastel Rose / Merah Lembut) -->
-        <a href="{{ route('admin.rekap.kepatuhan') }}" class="bg-[#FDEEF0] dark:bg-[#2F1318] border border-[#F9C6CE] dark:border-[#4B1E26] rounded-xl p-3.5 shadow-xs hover:shadow-sm hover:border-[#F49BA9] dark:hover:border-[#6B2B36] transition-all flex items-start space-x-3 group cursor-pointer">
+        <!-- <a href="{{ route('admin.rekap.kepatuhan') }}" class="bg-[#FDEEF0] dark:bg-[#2F1318] border border-[#F9C6CE] dark:border-[#4B1E26] rounded-xl p-3.5 shadow-xs hover:shadow-sm hover:border-[#F49BA9] dark:hover:border-[#6B2B36] transition-all flex items-start space-x-3 group cursor-pointer">
             <div class="w-8 h-8 rounded-lg bg-[#FBD6DC] dark:bg-[#431A21] text-[#C42B46] dark:text-[#F87171] border border-[#F7B6C0] dark:border-[#5E242F] flex items-center justify-center flex-shrink-0">
                 <i data-lucide="check-circle" class="w-4 h-4"></i>
             </div>
@@ -81,7 +81,7 @@
                 <h3 class="text-xl font-extrabold text-[#5E0B1A] dark:text-[#FFF1F2] mt-0.5 tracking-tight tabular-nums">{{ $persentaseKepatuhan }}%</h3>
                 <p class="text-[11px] font-medium text-[#AA2A43] dark:text-[#FECDD3] mt-0.5 truncate">Kepatuhan pengisian</p>
             </div>
-        </a>
+        </a> -->
     </div>
 
     <!-- 2. REKAP ABSENSI SISWA HARI INI (Sesuai Gambar 2 & 3) -->
@@ -142,15 +142,15 @@
     </div>
 
     <!-- 3. Perhatian Operasional (Klik untuk membuka daftar detail - Sesuai Gambar 2 & 3) -->
-    <div class="bg-white dark:bg-[#141412] border border-slate-200 dark:border-[#252525] rounded-xl p-5 shadow-xs">
+    <!-- <div class="bg-white dark:bg-[#141412] border border-slate-200 dark:border-[#252525] rounded-xl p-5 shadow-xs">
         <h3 class="font-bold text-slate-900 dark:text-slate-100 text-xs uppercase tracking-wider mb-3 flex items-center space-x-2">
             <i data-lucide="alert-triangle" class="w-4 h-4 text-slate-700 dark:text-slate-300"></i>
             <span>Perhatian Operasional (Klik Kartu untuk Melihat List Guru)</span>
-        </h3>
+        </h3> -->
         
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <!-- <div class="grid grid-cols-1 md:grid-cols-2 gap-3"> -->
             <!-- Warning 1: Jurnal Kemarin (Amber Sesuai Gambar) -->
-            <div onclick="openModalKemarin()" class="p-3.5 bg-[#FEF3E2] dark:bg-[#271B0B] border border-[#FADBAA] dark:border-[#453014] rounded-xl flex items-start space-x-3 hover:border-[#F8C882] dark:hover:border-[#6B4B20] transition-all cursor-pointer group">
+            <!-- <div onclick="openModalKemarin()" class="p-3.5 bg-[#FEF3E2] dark:bg-[#271B0B] border border-[#FADBAA] dark:border-[#453014] rounded-xl flex items-start space-x-3 hover:border-[#F8C882] dark:hover:border-[#6B4B20] transition-all cursor-pointer group">
                 <div class="p-1.5 bg-[#FDE7C4] dark:bg-[#3B2910] text-[#B45309] dark:text-[#F59E0B] rounded-lg flex-shrink-0">
                     <i data-lucide="book-x" class="w-4 h-4"></i>
                 </div>
@@ -164,10 +164,10 @@
                     </div>
                     <p class="text-xs text-[#78350F] dark:text-[#FEF3C7] mt-0.5"><span class="font-bold text-[#451A03] dark:text-white">{{ $guruBelumIsiKemarin }} sesi mengajar</span> terdeteksi belum mengisi jurnal kemarin.</p>
                 </div>
-            </div>
+            </div> -->
 
             <!-- Warning 2: Guru Alpa Hari Ini (Rose Sesuai Gambar) -->
-            <div onclick="openModalAlpa()" class="p-3.5 bg-[#FEECEB] dark:bg-[#2C1014] border border-[#F9C4C0] dark:border-[#4A1A22] rounded-xl flex items-start space-x-3 hover:border-[#F59E98] dark:hover:border-[#6D2732] transition-all cursor-pointer group">
+            <!-- <div onclick="openModalAlpa()" class="p-3.5 bg-[#FEECEB] dark:bg-[#2C1014] border border-[#F9C4C0] dark:border-[#4A1A22] rounded-xl flex items-start space-x-3 hover:border-[#F59E98] dark:hover:border-[#6D2732] transition-all cursor-pointer group">
                 <div class="p-1.5 bg-[#FDCFCD] dark:bg-[#3F161C] text-[#C53030] dark:text-[#F87171] rounded-lg flex-shrink-0">
                     <i data-lucide="user-x" class="w-4 h-4"></i>
                 </div>
@@ -183,7 +183,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
 
     <!-- 4. Tabel Jadwal Hari Ini (Urutan: ALPA lebih dulu - Sesuai Gambar 2 & 3) -->
     <div class="bg-white dark:bg-[#141412] border border-slate-200 dark:border-[#252525] rounded-xl shadow-xs overflow-hidden">
@@ -191,7 +191,7 @@
             <div class="flex items-center space-x-2.5">
                 <div class="w-2 h-2 bg-[#166876] dark:bg-[#84C4C9] rounded-full"></div>
                 <h3 class="font-bold text-slate-900 dark:text-slate-100 text-xs uppercase tracking-wider">Jadwal Mengajar Hari Ini ({{ $namaHariIni }})</h3>
-                <span class="text-[10.5px] font-bold text-rose-700 dark:text-rose-300 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50 px-2 py-0.5 rounded">Prioritas Alpa</span>
+                <span class="text-[10.5px] font-bold text-rose-700 dark:text-rose-300 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50 px-2 py-0.5 rounded">Prioritas Belum Isi</span>
             </div>
             
             <div class="flex items-center space-x-3">
@@ -222,7 +222,7 @@
                 </thead>
                 <tbody id="jadwalTbody" class="divide-y divide-slate-100 dark:divide-[#222220] text-slate-700 dark:text-slate-300">
                     @forelse ($jadwalHariIni as $index => $j)
-                        <tr class="jadwal-row hover:bg-slate-50/80 transition-colors {{ $j->status_jurnal === 'Alpa' ? 'bg-rose-50/20' : '' }}" data-index="{{ $index }}" style="{{ $index >= 10 ? 'display: none;' : '' }}">
+                        <tr class="jadwal-row hover:bg-slate-50/80 transition-colors {{ $j->status_jurnal === 'Belum Mengisi Jurnal' ? 'bg-rose-50/20' : '' }}" data-index="{{ $index }}" style="{{ $index >= 10 ? 'display: none;' : '' }}">
                             <td class="py-2.5 px-3.5 text-center font-medium text-slate-400 text-xs tabular-nums">{{ $index + 1 }}</td>
                             <td class="py-2.5 px-3.5 font-semibold text-slate-900">Jam {{ $j->jam_mulai }}{{ $j->jam_mulai != $j->jam_selesai ? '–' . $j->jam_selesai : '' }}</td>
                             <td class="py-2.5 px-3.5"><span class="px-2 py-0.5 bg-slate-100 border border-slate-200 rounded text-[11px] font-bold text-slate-700">{{ $j->kelas ? $j->kelas->nama_kelas : '-' }}</span></td>
@@ -234,9 +234,13 @@
                                     <span class="inline-block px-2.5 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-bold rounded">
                                         Selesai
                                     </span>
-                                @elseif ($j->status_jurnal === 'Alpa')
+                                @elseif ($j->status_jurnal === 'Belum Mengisi Jurnal')
                                     <span class="inline-block px-2.5 py-0.5 bg-rose-50 text-rose-700 border border-rose-200 text-[11px] font-bold rounded">
-                                        Alpa (Belum Diisi)
+                                        Belum Mengisi Jurnal
+                                    </span>
+                                @elseif (str_contains($j->status_jurnal, 'Event') || str_contains($j->status_jurnal, 'Pulang Pagi'))
+                                    <span class="inline-block px-2.5 py-0.5 bg-violet-50 text-violet-700 border border-violet-200 text-[11px] font-bold rounded">
+                                        {{ $j->status_jurnal }}
                                     </span>
                                 @elseif (str_contains($j->status_jurnal, 'Sah'))
                                     <span class="inline-block px-2.5 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 text-[11px] font-bold rounded">

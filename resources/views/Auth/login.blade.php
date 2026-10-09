@@ -391,7 +391,7 @@
 
                 <!-- Footer Status Below Card -->
                 <div class="text-center text-[10.5px] text-slate-500 dark:text-slate-400 font-medium py-1 shrink-0">
-                    Esemkita SMEA • Server Online v2.0 Enterprise
+                    Esemkita • Server Online v2.0 Enterprise
                 </div>
             </div>
 
@@ -551,7 +551,7 @@
 
             <!-- Bottom Copyright -->
             <div class="text-[11px] text-slate-400 dark:text-[#48566A] pt-4">
-                &copy; {{ date('Y') }} SMK Negeri 1 Jurnal Esemkita. All rights reserved.
+                &copy; {{ date('Y') }} SMK Negeri 1 Boyolangu. All rights reserved.
             </div>
         </div>
 
@@ -686,7 +686,7 @@
                 <!-- Bottom Motto -->
                 <div class="relative z-10 px-4 py-3 rounded-xl text-[12px] font-semibold flex items-center justify-between shadow-2xs"
                      style="background-color: var(--bottom-motto-bg); border: 1px solid var(--bottom-motto-border); color: var(--bottom-motto-text);">
-                    <span>Esemkita SMEA • Menuju Sekolah Unggul & Transparan</span>
+                    <span>Esemkita • Menuju Sekolah Unggul & Transparan</span>
                     <i data-lucide="sparkles" class="w-3.5 h-3.5 text-cyan-500 dark:text-cyan-400 shrink-0"></i>
                 </div>
             </div>

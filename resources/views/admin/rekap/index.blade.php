@@ -23,7 +23,7 @@
             </span>
             <span class="px-3 py-1 bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-800/80 text-rose-700 dark:text-rose-300 text-xs font-bold rounded-xl font-mono tabular-nums shadow-2xs flex items-center space-x-1.5">
                 <span class="w-2 h-2 rounded-full bg-rose-500"></span>
-                <span>{{ $guruAlpaList->where('status_rekap', 'Alpa')->count() }} Alpa / Belum</span>
+                <span>{{ $guruAlpaList->where('status_rekap', 'Belum Mengisi Jurnal')->count() }} Belum Mengisi Jurnal</span>
             </span>
             @if($guruAlpaList->filter(fn($g) => str_contains($g->status_rekap, 'Sah'))->count() > 0)
             <span class="px-3 py-1 bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-800/80 text-amber-700 dark:text-amber-300 text-xs font-bold rounded-xl font-mono tabular-nums shadow-2xs flex items-center space-x-1.5">
@@ -136,7 +136,7 @@
                     </div>
                     <div class="flex items-center space-x-1.5">
                         <span class="w-3 h-3 rounded-xs bg-rose-500 border border-rose-400 shrink-0"></span>
-                        <span class="text-slate-600 dark:text-slate-300 font-semibold text-[11px]">Belum Terisi / Alpa</span>
+                        <span class="text-slate-600 dark:text-slate-300 font-semibold text-[11px]">Belum Mengisi Jurnal</span>
                     </div>
                     <div class="flex items-center space-x-1.5">
                         <span class="w-3 h-3 rounded-xs bg-amber-400 border border-amber-300 shrink-0"></span>
@@ -439,12 +439,20 @@ function openDetailBalokModal(sesi, namaKelas, tanggal, hari) {
         
         materiContainer.classList.add('hidden');
         btnJurnal.classList.add('hidden');
+    } else if (sesi.status === 'exempt') {
+        cardEl.className = 'p-3.5 rounded-xl border bg-slate-50/80 dark:bg-slate-900/40 border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-300 flex items-center justify-between';
+        badgeEl.className = 'px-2.5 py-1 rounded-lg text-xs font-bold border bg-slate-600 text-white border-slate-500';
+        badgeEl.textContent = 'EXEMPT / BEBAS';
+        statusTeksEl.textContent = sesi.status_label || 'Bebas Jurnal (Event / Pulang Pagi)';
+
+        materiContainer.classList.add('hidden');
+        btnJurnal.classList.add('hidden');
     } else {
-        // Alpa / Belum Mengisi
+        // Belum Mengisi Jurnal
         cardEl.className = 'p-3.5 rounded-xl border bg-rose-50/80 dark:bg-rose-950/40 border-rose-200 dark:border-rose-800/70 text-rose-800 dark:text-rose-300 flex items-center justify-between';
         badgeEl.className = 'px-2.5 py-1 rounded-lg text-xs font-bold border bg-rose-600 text-white border-rose-500';
-        badgeEl.textContent = 'ALPA / BELUM MENGISI';
-        statusTeksEl.textContent = 'Guru Tidak Mengajar / Belum Isi Jurnal';
+        badgeEl.textContent = 'BELUM MENGISI JURNAL';
+        statusTeksEl.textContent = 'Guru Belum Mengisi Jurnal';
 
         materiContainer.classList.remove('hidden');
         materiEl.textContent = 'Belum ada catatan jurnal mengajar yang diinput oleh guru pada sesi jam ini.';

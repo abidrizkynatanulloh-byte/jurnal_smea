@@ -130,6 +130,51 @@ class PiketController extends Controller
         return back()->with('info', "Permohonan izin siswa " . ($izin->siswa ? $izin->siswa->nama_siswa : '') . " telah ditolak.");
     }
 
+    /**
+     * Guru Piket menginputkan langsung surat izin / sakit siswa fisik dari orang tua (Ortu Gaptek).
+     */
+    public function storeIzinSiswaByPiket(Request $request)
+    {
+        $request->validate([
+            'nis'             => 'required|exists:siswa,nis',
+            'kategori'        => 'required|in:Sakit,Izin',
+            'tanggal_mulai'   => 'required|date',
+            'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
+            'alasan'          => 'required|string|max:255',
+            'bukti_foto'      => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        ], [
+            'nis.required'                   => 'Silakan pilih siswa yang mengajukan izin.',
+            'alasan.required'                => 'Alasan / keterangan izin wajib diisi.',
+            'tanggal_selesai.after_or_equal' => 'Tanggal selesai tidak boleh lebih awal dari tanggal mulai.',
+        ]);
+
+        $buktiPath = null;
+        if ($request->hasFile('bukti_foto')) {
+            $buktiPath = $request->file('bukti_foto')->store('bukti_izin', 'public');
+        }
+
+        $izin = IzinSiswa::create([
+            'nis'             => $request->nis,
+            'kategori'        => $request->kategori,
+            'alasan'          => $request->alasan . ' (Input Surat Fisik oleh Guru Piket)',
+            'tanggal_mulai'   => $request->tanggal_mulai,
+            'tanggal_selesai' => $request->tanggal_selesai,
+            'bukti_foto'      => $buktiPath,
+            'status'          => 'Disetujui', // Langsung disetujui karena diinput resmi oleh Guru Piket
+            'disetujui_oleh' => Auth::id(),
+        ]);
+
+        $siswa = Siswa::find($request->nis);
+        $namaSiswa = $siswa ? $siswa->nama_siswa : $request->nis;
+
+        AuditLog::log(
+            'Input Izin Siswa Fisik oleh Piket',
+            "Guru Piket menginput izin {$request->kategori} siswa: {$namaSiswa} ({$request->tanggal_mulai} s/d {$request->tanggal_selesai})"
+        );
+
+        return back()->with('success', "Permohonan izin {$request->kategori} siswa {$namaSiswa} berhasil dicatat & langsung disetujui!");
+    }
+
 
     /**
      * Guru piket / sekolah mencatat tugas untuk kelas yang gurunya tidak hadir / alpa.

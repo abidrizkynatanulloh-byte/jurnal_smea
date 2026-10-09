@@ -572,6 +572,10 @@
                     <i data-lucide="clock" class="w-3.5 h-3.5 {{ Route::is('admin.jam.*') ? 'text-[#0F4E5A] dark:text-white' : 'text-[#A2D2D6] dark:text-[#9CA3AF]' }}"></i>
                     <span>Master Jam Pelajaran</span>
                 </a>
+                <a href="{{ route('admin.event.index') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg transition-all {{ Route::is('admin.event.*') ? 'bg-[#84C4C9] text-[#0F4E5A] font-bold shadow-xs dark:bg-[#2C2C2C] dark:text-white' : 'text-[#C7E8EA] hover:bg-white/10 hover:text-white dark:text-[#9CA3AF] dark:hover:bg-white/5 dark:hover:text-white font-medium' }}">
+                    <i data-lucide="calendar-days" class="w-3.5 h-3.5 {{ Route::is('admin.event.*') ? 'text-[#0F4E5A] dark:text-white' : 'text-[#A2D2D6] dark:text-[#9CA3AF]' }}"></i>
+                    <span>Event & Pulang Pagi</span>
+                </a>
                 <a href="{{ route('admin.jadwal.index') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg transition-all {{ Route::is('admin.jadwal.*') ? 'bg-[#84C4C9] text-[#0F4E5A] font-bold shadow-xs dark:bg-[#2C2C2C] dark:text-white' : 'text-[#C7E8EA] hover:bg-white/10 hover:text-white dark:text-[#9CA3AF] dark:hover:bg-white/5 dark:hover:text-white font-medium' }}">
                     <i data-lucide="calendar" class="w-3.5 h-3.5 {{ Route::is('admin.jadwal.*') ? 'text-[#0F4E5A] dark:text-white' : 'text-[#A2D2D6] dark:text-[#9CA3AF]' }}"></i>
                     <span>Jadwal Pelajaran</span>
@@ -594,7 +598,7 @@
                 </a>
                 <a href="{{ route('admin.rekap.guruAlpha') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg transition-all {{ Route::is('admin.rekap.guruAlpha') ? 'bg-[#84C4C9] text-[#0F4E5A] font-bold shadow-xs dark:bg-[#2C2C2C] dark:text-white' : 'text-[#C7E8EA] hover:bg-white/10 hover:text-white dark:text-[#9CA3AF] dark:hover:bg-white/5 dark:hover:text-white font-medium' }}">
                     <i data-lucide="user-x" class="w-3.5 h-3.5 {{ Route::is('admin.rekap.guruAlpha') ? 'text-[#0F4E5A] dark:text-white' : 'text-[#A2D2D6] dark:text-[#9CA3AF]' }}"></i>
-                    <span>Rekap Guru Alpha</span>
+                    <span>Guru Belum Mengisi Jurnal</span>
                 </a>
                 <a href="{{ route('admin.users.index') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg transition-all {{ Route::is('admin.users.*') ? 'bg-[#84C4C9] text-[#0F4E5A] font-bold shadow-xs dark:bg-[#2C2C2C] dark:text-white' : 'text-[#C7E8EA] hover:bg-white/10 hover:text-white dark:text-[#9CA3AF] dark:hover:bg-white/5 dark:hover:text-white font-medium' }}">
                     <i data-lucide="shield-check" class="w-3.5 h-3.5 {{ Route::is('admin.users.*') ? 'text-[#0F4E5A] dark:text-white' : 'text-[#A2D2D6] dark:text-[#9CA3AF]' }}"></i>
@@ -666,7 +670,7 @@
                 </a>
                 <a href="{{ route('admin.rekap.guruAlpha') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg text-xs transition-all {{ Route::is('admin.rekap.guruAlpha') ? 'bg-[#84C4C9] text-[#0F4E5A] font-bold shadow-xs dark:bg-[#2C2C2C] dark:text-white' : 'text-[#C7E8EA] hover:bg-white/10 hover:text-white dark:text-[#9CA3AF] dark:hover:bg-white/5 dark:hover:text-white font-medium' }}">
                     <i data-lucide="user-x" class="w-3.5 h-3.5 {{ Route::is('admin.rekap.guruAlpha') ? 'text-[#0F4E5A] dark:text-white' : 'text-[#A2D2D6] dark:text-[#9CA3AF]' }}"></i>
-                    <span>Rekap Guru Alpha</span>
+                    <span>Guru Belum Mengisi Jurnal</span>
                 </a>
                 <a href="{{ route('admin.rekap.index') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg text-xs transition-all {{ Route::is('admin.rekap.index') ? 'bg-[#84C4C9] text-[#0F4E5A] font-bold shadow-xs dark:bg-[#2C2C2C] dark:text-white' : 'text-[#C7E8EA] hover:bg-white/10 hover:text-white dark:text-[#9CA3AF] dark:hover:bg-white/5 dark:hover:text-white font-medium' }}">
                     <i data-lucide="book-open" class="w-3.5 h-3.5 {{ Route::is('admin.rekap.index') ? 'text-[#0F4E5A] dark:text-white' : 'text-[#A2D2D6] dark:text-[#9CA3AF]' }}"></i>
@@ -689,7 +693,7 @@
                 </div>
                 <a href="{{ route('admin.rekap.guruAlpha') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg text-xs transition-all {{ Route::is('admin.rekap.guruAlpha') ? 'bg-[#84C4C9] text-[#0F4E5A] font-bold shadow-xs dark:bg-[#2C2C2C] dark:text-white' : 'text-[#C7E8EA] hover:bg-white/10 hover:text-white dark:text-[#9CA3AF] dark:hover:bg-white/5 dark:hover:text-white font-medium' }}">
                     <i data-lucide="user-x" class="w-3.5 h-3.5 {{ Route::is('admin.rekap.guruAlpha') ? 'text-[#0F4E5A] dark:text-white' : 'text-[#A2D2D6] dark:text-[#9CA3AF]' }}"></i>
-                    <span>Rekap Guru Alpha</span>
+                    <span>Guru Belum Mengisi Jurnal</span>
                 </a>
                 <a href="{{ route('wakasis.guru.dashboard') }}" class="flex items-center space-x-2.5 px-2.5 h-8 rounded-lg text-xs transition-all {{ Route::is('wakasis.guru.dashboard') ? 'bg-[#84C4C9] text-[#0F4E5A] font-bold shadow-xs dark:bg-[#2C2C2C] dark:text-white' : 'text-[#C7E8EA] hover:bg-white/10 hover:text-white dark:text-[#9CA3AF] dark:hover:bg-white/5 dark:hover:text-white font-medium' }}">
                     <i data-lucide="users-2" class="w-3.5 h-3.5 {{ Route::is('wakasis.guru.dashboard') ? 'text-[#0F4E5A] dark:text-white' : 'text-[#A2D2D6] dark:text-[#9CA3AF]' }}"></i>
@@ -758,7 +762,7 @@
                     {{ str_replace('_', ' ', Auth::user()->role) }}
                 </span>
                 <span class="hidden sm:inline text-xs text-slate-300 dark:text-slate-600">/</span>
-                <span class="hidden sm:inline text-xs text-slate-500 dark:text-slate-400 font-medium">SMK Negeri 1 (SMEA)</span>
+                <span class="hidden sm:inline text-xs text-slate-500 dark:text-slate-400 font-medium">SMK Negeri 1 Boyolangu</span>
             </div>
             
             <div class="flex items-center space-x-2.5 sm:space-x-3">
@@ -854,34 +858,47 @@
         </div>
     </main>
 
-    <!-- Modal Pusat Bantuan (Semua Role) -->
+    <!-- Modal Pusat Bantuan & Pengaturan Akun (Semua Role) -->
     <div id="modalBantuan" class="fixed inset-0 z-50 hidden overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-[#141412] border border-slate-200 dark:border-slate-800 rounded-2xl max-w-md w-full shadow-2xl overflow-hidden transform transition-all">
+        <div class="bg-white dark:bg-[#1C2433] border border-slate-200 dark:border-slate-800 rounded-2xl max-w-md w-full shadow-2xl overflow-hidden transform transition-all flex flex-col">
             <!-- Modal Header -->
-            <div class="px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-900/50">
+            <div class="px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/70 dark:bg-[#141C29]">
                 <div class="flex items-center space-x-2.5">
-                    <div class="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-950/70 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
-                        <i data-lucide="help-circle" class="w-5 h-5"></i>
+                    <div class="w-8 h-8 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold">
+                        <i data-lucide="shield-check" class="w-4.5 h-4.5"></i>
                     </div>
                     <div>
-                        <h3 class="text-sm font-bold text-slate-900 dark:text-white">Pusat Bantuan & Informasi</h3>
-                        <p class="text-[11px] text-slate-500 dark:text-slate-400">Layanan dukungan pengguna Jurnal Esemkita</p>
+                        <h3 class="text-sm font-bold text-slate-900 dark:text-slate-100">Pusat Bantuan & Akun</h3>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400">Dukungan layanan & keamanan kata sandi</p>
                     </div>
                 </div>
-                <button type="button" onclick="closeBantuanModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                <button type="button" onclick="closeBantuanModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
                     <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
             </div>
 
-            <!-- Modal Body -->
-            <div class="p-5 space-y-4 text-xs">
+            <!-- Tab Switcher Navigation -->
+            <div class="p-2 bg-slate-100 dark:bg-[#141C29] border-b border-slate-200 dark:border-slate-800 flex items-center space-x-1.5">
+                <button type="button" id="tabBtnKontak" onclick="switchBantuanTab('kontak')"
+                    class="flex-1 py-1.5 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-1.5 bg-white dark:bg-[#1C2433] text-blue-600 dark:text-blue-400 shadow-2xs border border-slate-200 dark:border-slate-700 cursor-pointer">
+                    <i data-lucide="help-circle" class="w-3.5 h-3.5"></i>
+                    <span>Bantuan & Kontak</span>
+                </button>
+                <button type="button" id="tabBtnPassword" onclick="switchBantuanTab('password')"
+                    class="flex-1 py-1.5 px-3 rounded-xl text-xs font-semibold transition-all flex items-center justify-center space-x-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 cursor-pointer">
+                    <i data-lucide="key-round" class="w-3.5 h-3.5"></i>
+                    <span>Ganti Password</span>
+                </button>
+            </div>
+
+            <!-- Tab Content 1: Kontak & Dukungan -->
+            <div id="tabContentKontak" class="p-5 space-y-4 text-xs overflow-y-auto max-h-[70vh]">
                 <p class="text-slate-600 dark:text-slate-300 leading-relaxed">
-                    Jika Anda mengalami kendala teknis, lupa kata sandi, atau memerlukan panduan penggunaan, silakan hubungi tim kami melalui saluran di bawah ini:
+                    Jika Anda mengalami kendala teknis atau memerlukan panduan penggunaan, silakan hubungi tim kami melalui saluran resmi di bawah ini:
                 </p>
 
                 <!-- Contacts & Media Links -->
                 <div class="space-y-2.5">
-                    <!-- SALIN GAMBAR WHATSAPP ANDA KE: public/images/wa-icon.png -->
                     <a href="https://wa.me/6285807106570?text=Halo%20Admin%20Jurnal%20Esemkita,%20saya%20butuh%20bantuan" target="_blank"
                        class="flex items-center justify-between p-3 rounded-xl border border-emerald-200 dark:border-emerald-900/60 bg-emerald-50/50 dark:bg-emerald-950/30 hover:bg-emerald-100/60 dark:hover:bg-emerald-900/50 text-emerald-900 dark:text-emerald-200 transition-all group">
                         <div class="flex items-center space-x-3">
@@ -890,13 +907,12 @@
                                  class="w-8 h-8 rounded-lg object-cover shrink-0 shadow-xs" alt="WhatsApp Icon">
                             <div>
                                 <p class="font-bold text-xs">WhatsApp Support (Admin)</p>
-                                <p class="text-[10.5px] text-emerald-700 dark:text-emerald-400">Klik untuk chat otomatis ke WhatsApp</p>
+                                <p class="text-[10.5px] text-emerald-700 dark:text-emerald-400">Klik untuk chat langsung ke WhatsApp</p>
                             </div>
                         </div>
                         <i data-lucide="external-link" class="w-4 h-4 text-emerald-500 group-hover:translate-x-0.5 transition-transform"></i>
                     </a>
 
-                    <!-- SALIN GAMBAR INSTAGRAM ANDA KE: public/images/ig-icon.png -->
                     <a href="https://instagram.com/smkn1smea" target="_blank"
                        class="flex items-center justify-between p-3 rounded-xl border border-pink-200 dark:border-pink-900/60 bg-pink-50/50 dark:bg-pink-950/30 hover:bg-pink-100/60 dark:hover:bg-pink-900/50 text-pink-900 dark:text-pink-200 transition-all group">
                         <div class="flex items-center space-x-3">
@@ -911,7 +927,6 @@
                         <i data-lucide="external-link" class="w-4 h-4 text-pink-500 group-hover:translate-x-0.5 transition-transform"></i>
                     </a>
 
-                    <!-- SALIN GAMBAR TIKTOK ANDA KE: public/images/tiktok-icon.png -->
                     <a href="https://tiktok.com/@smkn1smea" target="_blank"
                        class="flex items-center justify-between p-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-900 dark:text-slate-100 transition-all group">
                         <div class="flex items-center space-x-3">
@@ -934,20 +949,90 @@
                     </label>
                     <div class="grid grid-cols-2 gap-2">
                         <button type="button" onclick="setLanguage('id')" id="lang-id-btn"
-                            class="px-3 py-2 rounded-lg border text-xs font-semibold flex items-center justify-center space-x-2 transition-all bg-emerald-50 border-emerald-500 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-600">
+                            class="px-3 py-2 rounded-lg border text-xs font-semibold flex items-center justify-center space-x-2 transition-all bg-emerald-50 border-emerald-500 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-600 cursor-pointer">
                             <span>🇮🇩 Indonesia</span>
                         </button>
                         <button type="button" onclick="setLanguage('en')" id="lang-en-btn"
-                            class="px-3 py-2 rounded-lg border text-xs font-semibold flex items-center justify-center space-x-2 transition-all bg-slate-50 border-slate-200 text-slate-600 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-300 hover:bg-slate-100">
+                            class="px-3 py-2 rounded-lg border text-xs font-semibold flex items-center justify-center space-x-2 transition-all bg-slate-50 border-slate-200 text-slate-600 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-300 hover:bg-slate-100 cursor-pointer">
                             <span>🇬🇧 English</span>
                         </button>
                     </div>
                 </div>
             </div>
 
+            <!-- Tab Content 2: Form Ganti Password -->
+            <div id="tabContentPassword" class="p-5 space-y-4 text-xs overflow-y-auto max-h-[70vh] hidden">
+                <div class="p-3 bg-blue-50/70 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900/60 rounded-xl text-blue-800 dark:text-blue-300 space-y-1">
+                    <p class="font-bold text-xs flex items-center space-x-1.5">
+                        <i data-lucide="info" class="w-3.5 h-3.5 shrink-0"></i>
+                        <span>Amankan Akun Anda</span>
+                    </p>
+                    <p class="text-[11px] leading-relaxed opacity-90">
+                        Gunakan kombinasi password yang kuat dan minimal 4 karakter untuk melindungi akun Anda.
+                    </p>
+                </div>
+
+                <!-- Alert Feedback Box -->
+                <div id="alertGantiPassword" class="hidden p-3 rounded-xl border text-xs font-medium"></div>
+
+                <form id="formGantiPassword" class="space-y-3.5">
+                    @csrf
+
+                    <!-- Password Saat Ini -->
+                    <div>
+                        <label for="pwd_current" class="block text-[11px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">
+                            Password Saat Ini <span class="text-rose-500">*</span>
+                        </label>
+                        <div class="relative">
+                            <input type="password" name="current_password" id="pwd_current" required placeholder="Masukkan password lama Anda"
+                                class="w-full h-9 pl-3 pr-9 bg-slate-50 dark:bg-[#141C29] border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:border-blue-600 transition-colors">
+                            <button type="button" onclick="togglePasswordVisibility('pwd_current', 'eye_current')" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer">
+                                <i data-lucide="eye" id="eye_current" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Password Baru -->
+                    <div>
+                        <label for="pwd_new" class="block text-[11px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">
+                            Password Baru <span class="text-rose-500">*</span>
+                        </label>
+                        <div class="relative">
+                            <input type="password" name="new_password" id="pwd_new" required minlength="4" placeholder="Minimal 4 karakter"
+                                class="w-full h-9 pl-3 pr-9 bg-slate-50 dark:bg-[#141C29] border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:border-blue-600 transition-colors">
+                            <button type="button" onclick="togglePasswordVisibility('pwd_new', 'eye_new')" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer">
+                                <i data-lucide="eye" id="eye_new" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Konfirmasi Password Baru -->
+                    <div>
+                        <label for="pwd_confirm" class="block text-[11px] font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">
+                            Ulangi Password Baru <span class="text-rose-500">*</span>
+                        </label>
+                        <div class="relative">
+                            <input type="password" name="new_password_confirmation" id="pwd_confirm" required minlength="4" placeholder="Ketik ulang password baru"
+                                class="w-full h-9 pl-3 pr-9 bg-slate-50 dark:bg-[#141C29] border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:border-blue-600 transition-colors">
+                            <button type="button" onclick="togglePasswordVisibility('pwd_confirm', 'eye_confirm')" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer">
+                                <i data-lucide="eye" id="eye_confirm" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="pt-2">
+                        <button type="submit" id="btnSubmitPassword"
+                            class="w-full h-9.5 px-4 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-2 shadow-2xs cursor-pointer">
+                            <i data-lucide="check" class="w-4 h-4"></i>
+                            <span>Simpan Password Baru</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
             <!-- Modal Footer -->
-            <div class="px-5 py-3 bg-slate-50 dark:bg-slate-900/80 border-t border-slate-100 dark:border-slate-800 text-right">
-                <button type="button" onclick="closeBantuanModal()" class="h-10 px-6 min-w-[100px] bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs sm:text-sm font-bold rounded-xl transition-colors cursor-pointer shadow-2xs">
+            <div class="px-5 py-3 bg-slate-50/70 dark:bg-[#141C29] border-t border-slate-100 dark:border-slate-800 text-right">
+                <button type="button" onclick="closeBantuanModal()" class="h-9 px-5 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-bold rounded-xl transition-colors cursor-pointer shadow-2xs">
                     Tutup
                 </button>
             </div>
@@ -1032,6 +1117,118 @@
                 modal.classList.add('hidden');
             }
         }
+
+        function switchBantuanTab(tab) {
+            const btnKontak = document.getElementById('tabBtnKontak');
+            const btnPassword = document.getElementById('tabBtnPassword');
+            const contentKontak = document.getElementById('tabContentKontak');
+            const contentPassword = document.getElementById('tabContentPassword');
+
+            if (!btnKontak || !btnPassword || !contentKontak || !contentPassword) return;
+
+            if (tab === 'kontak') {
+                btnKontak.className = 'flex-1 py-1.5 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-1.5 bg-white dark:bg-[#1C2433] text-blue-600 dark:text-blue-400 shadow-2xs border border-slate-200 dark:border-slate-700 cursor-pointer';
+                btnPassword.className = 'flex-1 py-1.5 px-3 rounded-xl text-xs font-semibold transition-all flex items-center justify-center space-x-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 cursor-pointer';
+                contentKontak.classList.remove('hidden');
+                contentPassword.classList.add('hidden');
+            } else {
+                btnPassword.className = 'flex-1 py-1.5 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-1.5 bg-white dark:bg-[#1C2433] text-blue-600 dark:text-blue-400 shadow-2xs border border-slate-200 dark:border-slate-700 cursor-pointer';
+                btnKontak.className = 'flex-1 py-1.5 px-3 rounded-xl text-xs font-semibold transition-all flex items-center justify-center space-x-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 cursor-pointer';
+                contentPassword.classList.remove('hidden');
+                contentKontak.classList.add('hidden');
+            }
+
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        function togglePasswordVisibility(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if (!input) return;
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                if (icon) icon.setAttribute('data-lucide', 'eye-off');
+            } else {
+                input.type = 'password';
+                if (icon) icon.setAttribute('data-lucide', 'eye');
+            }
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const formPwd = document.getElementById('formGantiPassword');
+            const alertBox = document.getElementById('alertGantiPassword');
+            const btnSubmit = document.getElementById('btnSubmitPassword');
+
+            if (formPwd) {
+                formPwd.addEventListener('submit', function (e) {
+                    e.preventDefault();
+
+                    const currentPwd = document.getElementById('pwd_current').value;
+                    const newPwd = document.getElementById('pwd_new').value;
+                    const confirmPwd = document.getElementById('pwd_confirm').value;
+
+                    if (newPwd !== confirmPwd) {
+                        alertBox.className = 'p-3 rounded-xl border border-rose-200 dark:border-rose-900/60 bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 text-xs font-medium';
+                        alertBox.textContent = 'Konfirmasi password baru tidak cocok!';
+                        alertBox.classList.remove('hidden');
+                        return;
+                    }
+
+                    if (newPwd.length < 4) {
+                        alertBox.className = 'p-3 rounded-xl border border-rose-200 dark:border-rose-900/60 bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 text-xs font-medium';
+                        alertBox.textContent = 'Password baru minimal 4 karakter!';
+                        alertBox.classList.remove('hidden');
+                        return;
+                    }
+
+                    // Loading state
+                    const originalText = btnSubmit.innerHTML;
+                    btnSubmit.disabled = true;
+                    btnSubmit.innerHTML = '<span>Menyimpan...</span>';
+
+                    const csrfToken = formPwd.querySelector('input[name="_token"]').value;
+
+                    fetch('{{ route("password.change") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken,
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            current_password: currentPwd,
+                            new_password: newPwd,
+                            new_password_confirmation: confirmPwd
+                        })
+                    })
+                    .then(async res => {
+                        const data = await res.json();
+                        if (!res.ok) {
+                            throw new Error(data.message || (data.errors ? Object.values(data.errors)[0][0] : 'Gagal mengganti password.'));
+                        }
+                        return data;
+                    })
+                    .then(data => {
+                        alertBox.className = 'p-3 rounded-xl border border-emerald-200 dark:border-emerald-900/60 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 text-xs font-medium';
+                        alertBox.textContent = data.message || 'Kata sandi berhasil diperbarui!';
+                        alertBox.classList.remove('hidden');
+                        formPwd.reset();
+                    })
+                    .catch(err => {
+                        alertBox.className = 'p-3 rounded-xl border border-rose-200 dark:border-rose-900/60 bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 text-xs font-medium';
+                        alertBox.textContent = err.message || 'Terjadi kesalahan sistem.';
+                        alertBox.classList.remove('hidden');
+                    })
+                    .finally(() => {
+                        btnSubmit.disabled = false;
+                        btnSubmit.innerHTML = originalText;
+                        if (typeof lucide !== 'undefined') lucide.createIcons();
+                    });
+                });
+            }
+        });
 
         const i18nDict = {
             // Sidebar Navigation & Sections
@@ -1295,12 +1492,14 @@
                             new TomSelect(el, {
                                 plugins: ['remove_button', 'clear_button'],
                                 create: false,
-                                maxOptions: null,
+                                maxOptions: 50,
                                 placeholder: el.getAttribute('placeholder') || 'Pilih beberapa...',
-                                closeAfterSelect: false,
+                                closeAfterSelect: true,
                                 hideSelected: true,
                                 onChange: function(value) {
                                     el.dispatchEvent(new Event('change', { bubbles: true }));
+                                    this.close();
+                                    this.blur();
                                 }
                             });
                         } else {

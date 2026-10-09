@@ -37,25 +37,40 @@ class SatpamController extends Controller
 
         $allDispen = $query->get();
 
-        // 1. Siswa dengan izin valid siap keluar gerbang
-        $siapKeluar = $allDispen->where('status', 'Disetujui');
+        // Pisahkan dispensasi lomba / multi-hari / kegiatan sekolah (TIDAK butuh validasi keluar-masuk gerbang)
+        $isLombaOrMultiDay = function ($item) use ($hariIni) {
+            $isMultiDay = !empty($item->tanggal_selesai) && $item->tanggal_selesai > $item->tanggal;
+            $isLomba = stripos($item->keperluan ?? '', 'lomba') !== false;
+            $isNoReturn = empty($item->jam_kembali_rencana);
+            return $isMultiDay || $isLomba || $isNoReturn;
+        };
+
+        // 1. Dispensasi keluar gerbang harian (hanya izin sementara non-lomba yang wajib dipantau satpam)
+        $dispenGerbang = $allDispen->reject($isLombaOrMultiDay);
+
+        // 2. Daftar siswa dispensasi resmi lomba / sekolah (Hanya info referensi)
+        $dispenLomba = $allDispen->filter($isLombaOrMultiDay)->where('status', 'Disetujui');
+
+        // 1. Siswa dengan izin valid siap keluar gerbang (khusus gerbang harian)
+        $siapKeluar = $dispenGerbang->where('status', 'Disetujui');
 
         // 2. Siswa yang saat ini sedang berada di luar lingkungan sekolah
-        $sedangDiLuar = $allDispen->where('status', 'Sedang di Luar');
+        $sedangDiLuar = $dispenGerbang->where('status', 'Sedang di Luar');
 
-        // 3. Siswa yang terlambat kembali (jam_kembali_rencana < jam sekarang)
+        // 3. Siswa yang terlambat kembali (jam_kembali_rencana < jam sekarang pada dispensasi gerbang)
         $terlambatKembali = $sedangDiLuar->filter(function ($item) use ($jamSekarang) {
-            return $item->jam_kembali_rencana && $item->jam_kembali_rencana < $jamSekarang;
+            return !empty($item->jam_kembali_rencana) && $item->jam_kembali_rencana < $jamSekarang;
         });
 
         // 4. Riwayat siswa yang sudah kembali ke sekolah hari ini
-        $sudahKembali = $allDispen->where('status', 'Sudah Kembali');
+        $sudahKembali = $dispenGerbang->where('status', 'Sudah Kembali');
 
         return view('satpam.dashboard', compact(
             'siapKeluar',
             'sedangDiLuar',
             'terlambatKembali',
             'sudahKembali',
+            'dispenLomba',
             'search',
             'hariIni',
             'jamSekarang'

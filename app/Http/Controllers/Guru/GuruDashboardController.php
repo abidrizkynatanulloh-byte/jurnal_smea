@@ -18,6 +18,7 @@ use Carbon\CarbonPeriod;
 
 use App\Services\WhatsAppService;
 use Illuminate\Support\Facades\Cache;
+use App\Models\EventSekolah;
 
 class GuruDashboardController extends Controller
 {
@@ -98,7 +99,14 @@ class GuruDashboardController extends Controller
             if ($tanggalJadwal > Carbon::today()->toDateString()) continue; // skip hari depan
             $ada = JurnalMengajar::where('id_jadwal', $j->id_jadwal)
                 ->whereDate('tanggal', $tanggalJadwal)->exists();
-            if (!$ada) $belumIsiMingguIni++;
+            if (!$ada) {
+                // Jangan hitung sebagai belum isi jika hari itu ada event / pulang pagi
+                $times  = $j->getWaktuMulaiSelesai();
+                $exempt = EventSekolah::cekExempt($tanggalJadwal, $times['waktu_mulai'] ?? null);
+                if (!$exempt['exempt']) {
+                    $belumIsiMingguIni++;
+                }
+            }
         }
 
         return view('guru.dashboard', compact(
@@ -157,14 +165,16 @@ class GuruDashboardController extends Controller
             $kelasAktif = $daftarKelas->first();
         }
 
-        $rekapSiswa = collect();
+        $rekapSiswa    = collect();
+        $rekapPerBulan = collect(); // Rekap agregat seluruh kelas per bulan
         if ($kelasAktif) {
             $siswaList = Siswa::where('id_kelas', $kelasAktif->id_kelas)->orderBy('nama_siswa')->get();
 
-            // Total pertemuan / jurnal kelas semester berjalan
+            // Total HARI EFEKTIF kelas = jumlah tanggal unik yang ada jurnalnya
+            // (bukan per sesi, karena 1 hari bisa ada banyak jam pelajaran)
             $totalJurnalKelas = JurnalMengajar::whereHas('jadwal', function($q) use ($kelasAktif) {
                 $q->where('id_kelas', $kelasAktif->id_kelas);
-            })->count();
+            })->distinct('tanggal')->count('tanggal');
 
             foreach ($siswaList as $s) {
                 // 1. Ambil Izin Resmi Siswa yang sudah Disetujui Piket (IzinSiswa)
@@ -198,25 +208,32 @@ class GuruDashboardController extends Controller
                     ->where('id_siswa', $s->nis)
                     ->get();
 
-                $alpaCount = 0;
+                $tanggalAlpaUnik  = []; // per hari unik, bukan per sesi
                 $telatJurnalCount = 0;
-                $groupedByDate = [];
+                $groupedByDate    = [];
 
                 foreach ($semuaKetidakhadiran as $kh) {
                     if (!$kh->jurnal) continue;
-                    $tgl = $kh->jurnal->tanggal;
-                    $jamM = $kh->jurnal->jadwal->jamMulaiData->jam_ke ?? '?';
-                    $jamS = $kh->jurnal->jadwal->jamSelesaiData->jam_ke ?? '?';
+                    $tgl   = $kh->jurnal->tanggal;
+                    $jamM  = $kh->jurnal->jadwal->jamMulaiData->jam_ke ?? '?';
+                    $jamS  = $kh->jurnal->jadwal->jamSelesaiData->jam_ke ?? '?';
                     $teksJam = $jamM == $jamS ? "Jam ke-$jamM" : "Jam ke-$jamM-$jamS";
 
                     if ($kh->keterangan == 'Alpa') {
-                        $alpaCount++;
+                        // 1 hari alpa = 1, berapapun sesi yang alpa di hari itu
+                        $tanggalAlpaUnik[$tgl] = true;
                     } elseif ($kh->keterangan == 'Terlambat') {
                         $telatJurnalCount++;
                     } elseif ($kh->keterangan == 'Sakit' || $kh->keterangan == 'Izin') {
+                        // Per hari unik — jika hari ini sudah tercatat dari izin resmi/piket, skip
                         if (!isset($tanggalIzinSakitResmi[$tgl])) {
-                            if ($kh->keterangan == 'Sakit') $sakitCount++;
-                            elseif ($kh->keterangan == 'Izin') $izinCount++;
+                            if ($kh->keterangan == 'Sakit') {
+                                $tanggalIzinSakitResmi[$tgl] = ['kategori' => 'Sakit', 'alasan' => '-', 'sumber' => 'Jurnal Kelas'];
+                                $sakitCount++;
+                            } elseif ($kh->keterangan == 'Izin') {
+                                $tanggalIzinSakitResmi[$tgl] = ['kategori' => 'Izin', 'alasan' => '-', 'sumber' => 'Jurnal Kelas'];
+                                $izinCount++;
+                            }
                         }
                     }
 
@@ -224,6 +241,9 @@ class GuruDashboardController extends Controller
                     if (!isset($groupedByDate[$tgl][$kh->keterangan])) $groupedByDate[$tgl][$kh->keterangan] = [];
                     $groupedByDate[$tgl][$kh->keterangan][] = $teksJam;
                 }
+
+                // alpaCount = jumlah HARI UNIK siswa tercatat alpa (1 hari = 1, berapapun sesinya)
+                $alpaCount = count($tanggalAlpaUnik);
 
                 // 3. Susun Riwayat Absen untuk Modal
                 $riwayatAbsen = [];
@@ -337,17 +357,8 @@ class GuruDashboardController extends Controller
 
                 $telatCount = count($riwayatTelat);
 
-                // 1. Ambil daftar tanggal (unik) di mana siswa dicatat 'Alpa'
-                $tanggalAlpaList = JurnalDetailKetidakhadiran::where('id_siswa', $s->nis)
-                    ->where('keterangan', 'Alpa')
-                    ->whereHas('jurnal')
-                    ->get()
-                    ->map(function ($kh) {
-                        return $kh->jurnal->tanggal;
-                    })
-                    ->unique()
-                    ->sort()
-                    ->values();
+                // Gunakan $tanggalAlpaUnik (sudah dihitung di atas) — sorted untuk cek berturut-turut
+                $tanggalAlpaList = collect(array_keys($tanggalAlpaUnik))->sort()->values();
 
                 $maxBerturut = 0;
                 $currentBerturut = 0;
@@ -414,8 +425,79 @@ class GuruDashboardController extends Controller
                     'riwayat_telat'         => $riwayatTelat,
                 ]);
             }
+
+            // --- Rekap Per Bulan: per bulan → per siswa ---
+            // Langkah 1: Inisialisasi bulan dari tanggal jurnal yang ada
+            $bulanData = [];
+            $tanggalJurnal = JurnalMengajar::whereHas('jadwal', function($q) use ($kelasAktif) {
+                $q->where('id_kelas', $kelasAktif->id_kelas);
+            })->distinct('tanggal')->pluck('tanggal');
+
+            foreach ($tanggalJurnal as $tgl) {
+                $bulanSort = Carbon::parse($tgl)->format('Y-m');
+                $bulanKey  = Carbon::parse($tgl)->locale('id')->translatedFormat('F Y');
+                if (!isset($bulanData[$bulanSort])) {
+                    $bulanData[$bulanSort] = ['label' => $bulanKey, 'siswa' => []];
+                }
+            }
+
+            // Langkah 2: Hitung sakit/izin/alpa/telat/dispen per siswa per bulan
+            foreach ($rekapSiswa as $siswa) {
+                $perBulanSiswa = [];
+
+                foreach ($siswa['riwayat_absen'] as $ra) {
+                    $bs = Carbon::parse($ra['tanggal'])->format('Y-m');
+                    if (!isset($perBulanSiswa[$bs])) {
+                        $perBulanSiswa[$bs] = ['sakit' => 0, 'izin' => 0, 'alpa' => 0, 'telat' => 0, 'dispen' => 0];
+                    }
+                    $ket = strtolower($ra['keterangan']);
+                    if ($ket === 'sakit')     $perBulanSiswa[$bs]['sakit']++;
+                    elseif ($ket === 'izin')  $perBulanSiswa[$bs]['izin']++;
+                    elseif ($ket === 'alpa')  $perBulanSiswa[$bs]['alpa']++;
+                }
+
+                foreach ($siswa['riwayat_telat'] as $rt) {
+                    $bs = Carbon::parse($rt['tanggal'])->format('Y-m');
+                    if (!isset($perBulanSiswa[$bs])) {
+                        $perBulanSiswa[$bs] = ['sakit' => 0, 'izin' => 0, 'alpa' => 0, 'telat' => 0, 'dispen' => 0];
+                    }
+                    $perBulanSiswa[$bs]['telat']++;
+                }
+
+                foreach ($siswa['riwayat_dispen'] as $rd) {
+                    $bs = Carbon::parse($rd['tanggal'])->format('Y-m');
+                    if (!isset($perBulanSiswa[$bs])) {
+                        $perBulanSiswa[$bs] = ['sakit' => 0, 'izin' => 0, 'alpa' => 0, 'telat' => 0, 'dispen' => 0];
+                    }
+                    $perBulanSiswa[$bs]['dispen']++;
+                }
+
+                // Masukkan ke bulanData hanya jika ada minimal 1 kejadian
+                foreach ($perBulanSiswa as $bs => $counts) {
+                    $total = $counts['sakit'] + $counts['izin'] + $counts['alpa'] + $counts['telat'] + $counts['dispen'];
+                    if ($total > 0) {
+                        if (!isset($bulanData[$bs])) {
+                            $bulanData[$bs] = [
+                                'label' => Carbon::parse($bs . '-01')->locale('id')->translatedFormat('F Y'),
+                                'siswa' => [],
+                            ];
+                        }
+                        $bulanData[$bs]['siswa'][] = [
+                            'nama'   => $siswa['nama_siswa'],
+                            'nis'    => $siswa['nis'],
+                            'sakit'  => $counts['sakit'],
+                            'izin'   => $counts['izin'],
+                            'alpa'   => $counts['alpa'],
+                            'telat'  => $counts['telat'],
+                            'dispen' => $counts['dispen'],
+                        ];
+                    }
+                }
+            }
+            ksort($bulanData);
+            $rekapPerBulan = collect(array_values($bulanData));
         }
 
-        return view('guru.wali-kelas.index', compact('guru', 'daftarKelas', 'kelasAktif', 'rekapSiswa'));
+        return view('guru.wali-kelas.index', compact('guru', 'daftarKelas', 'kelasAktif', 'rekapSiswa', 'rekapPerBulan'));
     }
 }

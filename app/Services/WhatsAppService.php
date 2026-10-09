@@ -131,12 +131,12 @@ class WhatsAppService
 
             if (!empty($kepsekNumbers)) {
                 $linkKepsek = rtrim($appUrl, '/') . '/kepsek/dashboard';
-                $msgKepsek = "[Izin Guru]\n\n" .
+                $msgKepsek = "ℹ️ [Izin Guru]\n\n" .
                     "Ada pengajuan izin guru baru dari {$namaGuru}:\n\n" .
-                    "📌 *Nama Guru* : {$namaGuru}\n" .
-                    "📅 *Tanggal*   : {$tglMulai} s/d {$tglSelesai}\n" .
-                    "📝 *Alasan*    : {$alasan}\n" .
-                    "ℹ️ *Keterangan*: {$keterangan}\n\n" .
+                    " *Nama Guru* : {$namaGuru}\n" .
+                    " *Tanggal*   : {$tglMulai} s/d {$tglSelesai}\n" .
+                    " *Alasan*    : {$alasan}\n" .
+                    " *Keterangan*: {$keterangan}\n\n" .
                     "Silakan buka tautan berikut untuk memantau & memberi persetujuan:\n" .
                     "🔗 {$linkKepsek}\n\n" .
                     "Terima Kasih.";
@@ -255,13 +255,13 @@ class WhatsAppService
             $appUrl = self::getBaseUrl();
             $linkDashboard = rtrim($appUrl, '/') . '/wakasis-siswa/dashboard';
 
-            $message = "[Pemberitahuan Dispen Siswa]\n\n" .
+            $message = "📢[Pemberitahuan Dispen Siswa]\n\n" .
                 "Terdaftar pengajuan dispensasi siswa dari Guru Piket:\n\n" .
-                "📝 *Keperluan* : {$keperluan}\n" .
-                "📅 *Tanggal*   : {$tanggal}\n" .
-                "⏰ *Waktu*     : {$jamMulai} - {$jamKembali}\n" .
-                "📌 *Status*    : *{$statusLabel}*\n\n" .
-                "🎓 *Daftar Siswa* (" . count($dispens) . " siswa):\n" .
+                " *Keperluan* : {$keperluan}\n" .
+                " *Tanggal*   : {$tanggal}\n" .
+                " *Waktu*     : {$jamMulai} - {$jamKembali}\n" .
+                " *Status*    : *{$statusLabel}*\n\n" .
+                " *Daftar Siswa* (" . count($dispens) . " siswa):\n" .
                 $daftarSiswaText . "\n" .
                 "Silakan buka tautan berikut untuk memantau data dispensasi:\n" .
                 "🔗 {$linkDashboard}\n\n" .
@@ -353,10 +353,10 @@ class WhatsAppService
 
             $message = "[Izin Siswa]\n\n" .
                 "Ada pengajuan {$kategori} siswa dari Orang Tua:\n\n" .
-                "🎓 *Nama Siswa* : {$namaSiswa} ({$kelas})\n" .
-                "📌 *Kategori*   : {$kategori}\n" .
-                "📅 *Tanggal*    : {$tglMulai} s/d {$tglSelesai}\n" .
-                "📝 *Alasan*     : {$alasan}\n\n" .
+                " *Nama Siswa* : {$namaSiswa} ({$kelas})\n" .
+                " *Kategori*   : {$kategori}\n" .
+                " *Tanggal*    : {$tglMulai} s/d {$tglSelesai}\n" .
+                " *Alasan*     : {$alasan}\n\n" .
                 "Silakan buka tautan berikut untuk memeriksa di Dashboard Piket:\n" .
                 "🔗 {$linkApproval}\n\n" .
                 "Terima Kasih.";
@@ -422,16 +422,16 @@ class WhatsAppService
             if (!empty($izin->siswa->no_hp_wali)) {
                 $formattedOrtu = self::formatPhoneNumber($izin->siswa->no_hp_wali);
                 if ($formattedOrtu) {
-                    $msgOrtuConfirm = "[Konfirmasi Pengajuan Izin/Sakit Siswa]\n\n" .
+                    $msgOrtuConfirm = "📢[Konfirmasi Pengajuan Izin/Sakit Siswa]\n\n" .
                         "Yth. Orang Tua / Wali dari *{$namaSiswa}*,\n\n" .
                         "Sistem sekolah telah menerima permohonan *{$kategori}*:\n\n" .
-                        "🎓 *Nama Siswa* : {$namaSiswa} ({$kelas})\n" .
-                        "📌 *Kategori*   : *{$kategori}*\n" .
-                        "📅 *Tanggal*    : {$tglMulai} s/d {$tglSelesai}\n" .
-                        "📝 *Alasan*     : {$alasan}\n" .
-                        "ℹ️ *Status*     : Menunggu Verifikasi Guru Piket\n\n" .
-                        "⚠️ *PERHATIAN:* Notifikasi ini dikirimkan sebagai bentuk konfirmasi. Jika Anda merasa *TIDAK mengajukan izin* ini atau ada penyalahgunaan akun, segera hubungi Wali Kelas atau pihak sekolah.\n\n" .
-                        "Terima Kasih.\nSMK Negeri 1";
+                        " *Nama Siswa* : {$namaSiswa} ({$kelas})\n" .
+                        " *Kategori*   : *{$kategori}*\n" .
+                        " *Tanggal*    : {$tglMulai} s/d {$tglSelesai}\n" .
+                        " *Alasan*     : {$alasan}\n" .
+                        " *Status*     : Menunggu Verifikasi Guru Piket\n\n" .
+                        " *PERHATIAN:* Notifikasi ini dikirimkan sebagai bentuk konfirmasi. Jika Anda merasa *TIDAK mengajukan izin* ini atau ada penyalahgunaan akun, segera hubungi Wali Kelas atau pihak sekolah.\n\n" .
+                        "Terima Kasih.\nSMK Negeri 1 Boyolangu";
                     self::sendBulkMessage([$formattedOrtu], $msgOrtuConfirm);
                 }
             }
@@ -617,31 +617,31 @@ class WhatsAppService
 
                         if ($kirimKeOrtu) {
                             if ($isSakitIzin) {
-                                $msgOrtu = "[Pemberitahuan Presensi Siswa]\n\n" .
+                                $msgOrtu = "⚠️[Pemberitahuan Presensi Siswa]\n\n" .
                                     "Yth. Orang Tua / Wali dari *{$namaSiswa}*,\n\n" .
                                     "Informasi ketidakhadiran siswa di sekolah hari ini:\n\n" .
-                                    "🎓 *Nama Siswa*       : {$namaSiswa}\n" .
-                                    "🏫 *Kelas*            : {$namaKelas}\n" .
-                                    "📅 *Tanggal*          : {$tanggal}\n" .
-                                    "⚠️ *Status Presensi*  : *{$labelKeterangan}*\n" .
-                                    "📚 *Tercatat Pada*    : {$mapel} ({$jamInfo})\n" .
-                                    "👨‍🏫 *Guru Pengajar*   : {$guruPengajar}\n\n" .
+                                    " *Nama Siswa*       : {$namaSiswa}\n" .
+                                    " *Kelas*            : {$namaKelas}\n" .
+                                    " *Tanggal*          : {$tanggal}\n" .
+                                    " *Status Presensi*  : *{$labelKeterangan}*\n" .
+                                    " *Tercatat Pada*    : {$mapel} ({$jamInfo})\n" .
+                                    " *Guru Pengajar*   : {$guruPengajar}\n\n" .
                                     "Notifikasi ini dikirimkan 1x per hari sebagai konfirmasi status kehadiran siswa. Apabila terdapat kekeliruan, silakan hubungi pihak sekolah / Wali Kelas.\n\n" .
-                                    "Terima Kasih.\nSMK Negeri 1";
+                                    "Terima Kasih.\nSMK Negeri 1 Boyolangu";
                             } else {
                                 // Status ALPA (dikirim per jam mapel setiap sesi)
-                                $msgOrtu = "[Pemberitahuan Siswa Alpa]\n\n" .
+                                $msgOrtu = "⚠️[Pemberitahuan Siswa Alpa]\n\n" .
                                     "Yth. Orang Tua / Wali dari *{$namaSiswa}*,\n\n" .
                                     "Siswa berikut tercatat *ALPA (Tanpa Keterangan)* pada jam pelajaran berikut:\n\n" .
-                                    "🎓 *Nama Siswa*       : {$namaSiswa}\n" .
-                                    "🏫 *Kelas*            : {$namaKelas}\n" .
-                                    "📅 *Tanggal*          : {$tanggal}\n" .
-                                    "⏰ *Jam Pembelajaran* : {$jamInfo}\n" .
-                                    "📚 *Mata Pelajaran*   : {$mapel}\n" .
-                                    "👨‍🏫 *Guru Pengajar*   : {$guruPengajar}\n" .
-                                    "⚠️ *Status Presensi*  : *{$labelKeterangan}*\n\n" .
+                                    " *Nama Siswa*       : {$namaSiswa}\n" .
+                                    " *Kelas*            : {$namaKelas}\n" .
+                                    " *Tanggal*          : {$tanggal}\n" .
+                                    " *Jam Pembelajaran* : {$jamInfo}\n" .
+                                    " *Mata Pelajaran*   : {$mapel}\n" .
+                                    " *Guru Pengajar*   : {$guruPengajar}\n" .
+                                    " *Status Presensi*  : *{$labelKeterangan}*\n\n" .
                                     "Informasi ini dikirimkan otomatis di setiap jam mata pelajaran agar Orang Tua dapat memantau jika siswa tidak berada di kelas. Mohon segera hubungi putra/putri Anda atau Wali Kelas.\n\n" .
-                                    "Terima Kasih.\nSMK Negeri 1";
+                                    "Terima Kasih.\nSMK Negeri 1 Boyolangu";
                             }
 
                             self::sendBulkMessage([$formattedOrtu], $msgOrtu);
@@ -704,14 +704,14 @@ class WhatsAppService
                     $daftarText .= "  {$num}. *{$sItem['nama']}* — {$sItem['keterangan']}\n";
                 }
 
-                $msgWali = "[Laporan Presensi Siswa - Wali Kelas]\n\n" .
+                $msgWali = "📝[Laporan Presensi Siswa - Wali Kelas]\n\n" .
                     "Yth. Bpk/Ibu Wali Kelas *{$kelasObj->nama_kelas}*,\n\n" .
                     "Laporan status ketidakhadiran siswa pada presensi kelas:\n\n" .
-                    "📅 *Tanggal*          : {$tanggal}\n" .
-                    "⏰ *Jam Pembelajaran* : {$jamInfo}\n" .
-                    "📚 *Mata Pelajaran*   : {$mapel}\n" .
-                    "👨‍🏫 *Guru Pengajar*   : {$guruPengajar}\n\n" .
-                    "📌 *Daftar Siswa* (" . count($siswaList) . " siswa):\n" .
+                    " *Tanggal*          : {$tanggal}\n" .
+                    " *Jam Pembelajaran* : {$jamInfo}\n" .
+                    " *Mata Pelajaran*   : {$mapel}\n" .
+                    " *Guru Pengajar*   : {$guruPengajar}\n\n" .
+                    " *Daftar Siswa* (" . count($siswaList) . " siswa):\n" .
                     $daftarText . "\n" .
                     "Notifikasi otomatis ini juga telah dikirimkan ke WhatsApp masing-masing Orang Tua/Wali siswa.\n\n" .
                     "Terima Kasih.";
@@ -763,14 +763,14 @@ class WhatsAppService
             $message = "[⚠️ PERINGATAN PENGISIAN JURNAL MENGAJAR]\n\n" .
                 "Yth. Bapak/Ibu *{$namaGuru}*,\n\n" .
                 "Waktu sesi mengajar Anda akan segera berakhir dalam *{$sisaMenit} menit lagi* dan jurnal belum terisi:\n\n" .
-                "🏫 *Kelas*          : {$namaKelas}\n" .
-                "📚 *Mata Pelajaran*: {$namaMapel}\n" .
-                "🚪 *Ruangan*       : {$namaRuangan}\n" .
-                "⏰ *Jam Mengajar*  : {$jamInfo}\n\n" .
+                " *Kelas*          : {$namaKelas}\n" .
+                " *Mata Pelajaran*: {$namaMapel}\n" .
+                " *Ruangan*       : {$namaRuangan}\n" .
+                " *Jam Mengajar*  : {$jamInfo}\n\n" .
                 "Mohon segera melakukan pengisian Jurnal Mengajar & Absensi Siswa.\n\n" .
                 "🔗 *Klik untuk isi jurnal sekarang*:\n" .
                 "{$linkIsiJurnal}\n\n" .
-                "Terima Kasih.\nSMK Negeri 1";
+                "Terima Kasih.\nSMK Negeri 1 Boyolangu";
 
             self::sendBulkMessage([$formattedPhone], $message);
         } catch (\Throwable $e) {
@@ -873,15 +873,15 @@ class WhatsAppService
                 if (!empty($siswa->no_hp_wali)) {
                     $formattedOrtu = self::formatPhoneNumber($siswa->no_hp_wali);
                     if ($formattedOrtu) {
-                        $msgOrtu = "[Pemberitahuan Rekap Presensi Siswa]\n\n" .
+                        $msgOrtu = "📢[Pemberitahuan Rekap Presensi Siswa]\n\n" .
                             "Yth. Orang Tua / Wali dari *{$namaSiswa}*,\n\n" .
                             "Informasi ketidakhadiran siswa di sekolah pada hari ini ({$dateFormatted}):\n\n" .
-                            "🎓 *Nama Siswa* : {$namaSiswa}\n" .
-                            "🏫 *Kelas*      : {$namaKelas}\n" .
-                            "📅 *Tanggal*    : {$dateFormatted}\n" .
+                            " *Nama Siswa* : {$namaSiswa}\n" .
+                            " *Kelas*      : {$namaKelas}\n" .
+                            " *Tanggal*    : {$dateFormatted}\n" .
                             "{$statusHeader}\n\n" .
                             "{$detailPesan}\n\n" .
-                            "Terima Kasih.\nSMK Negeri 1";
+                            "Terima Kasih.\nSMK Negeri 1 Boyolangu";
 
                         if (self::sendBulkMessage([$formattedOrtu], $msgOrtu)) {
                             $results['ortu_sent']++;

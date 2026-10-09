@@ -169,6 +169,33 @@
 
     </div>
 
+    @if(isset($dispenLomba) && $dispenLomba->isNotEmpty())
+        <!-- DAFTAR SISWA DISPEN RESMI / LOMBA (INFO NON-GERBANG) -->
+        <div class="bg-blue-50/50 border border-blue-200/80 rounded-xl p-3.5 shadow-2xs space-y-2">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <i data-lucide="award" class="w-4 h-4 text-blue-600"></i>
+                    <h3 class="font-bold text-slate-900 text-xs">Informasi: {{ $dispenLomba->count() }} Siswa Dispensasi Lomba / Resmi Sekolah Hari Ini</h3>
+                </div>
+                <span class="text-[10px] font-semibold text-blue-700 bg-blue-100/70 px-2 py-0.5 rounded-full">Bebas Validasi Gerbang</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+                @foreach($dispenLomba as $dl)
+                    <div class="p-2.5 bg-white border border-blue-100 rounded-lg text-xs space-y-0.5 shadow-2xs">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-slate-800">{{ $dl->siswa ? $dl->siswa->nama_siswa : '-' }}</span>
+                            <span class="text-[10px] bg-slate-100 font-semibold px-1.5 py-0.2 rounded">{{ $dl->siswa && $dl->siswa->kelas ? $dl->siswa->kelas->nama_kelas : '-' }}</span>
+                        </div>
+                        <p class="text-[11px] text-slate-600 truncate"><span class="font-medium text-slate-700">Keperluan:</span> {{ $dl->keperluan }}</p>
+                        <p class="text-[10px] text-blue-600 font-medium">
+                            📅 {{ \Carbon\Carbon::parse($dl->tanggal)->translatedFormat('d M') }}{{ $dl->tanggal_selesai && $dl->tanggal_selesai !== $dl->tanggal ? ' s/d ' . \Carbon\Carbon::parse($dl->tanggal_selesai)->translatedFormat('d M Y') : '' }}
+                        </p>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    @endif
+
     <!-- TABEL RIWAYAT SISWA SUDAH KEMBALI HARI INI -->
     <div class="bg-white border border-slate-200 rounded-xl shadow-xs overflow-hidden">
         <div class="px-4 py-3 border-b border-slate-200 flex items-center justify-between">

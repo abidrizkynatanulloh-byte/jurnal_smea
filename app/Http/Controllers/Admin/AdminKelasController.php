@@ -65,6 +65,38 @@ class AdminKelasController
     }
 
     /**
+     * Ambil data jadwal KBM untuk suatu kelas (API/JSON untuk modal detail).
+     */
+    public function getJadwal($id)
+    {
+        $kelas = Kelas::findOrFail($id);
+        
+        $hariOrder = ['Senin' => 1, 'Selasa' => 2, 'Rabu' => 3, 'Kamis' => 4, 'Jumat' => 5, 'Sabtu' => 6, 'Minggu' => 7];
+        
+        $jadwalList = Jadwal::with(['guru', 'mapel', 'ruangan'])
+            ->where('id_kelas', $id)
+            ->get()
+            ->sortBy(function($j) use ($hariOrder) {
+                $h = $hariOrder[$j->hari] ?? 99;
+                return sprintf('%02d-%02d', $h, $j->jam_mulai);
+            })
+            ->values();
+
+        $wali = null;
+        if ($kelas->wali_kelas) {
+            $g = Guru::where('nip', $kelas->wali_kelas)->orWhere('id_guru', $kelas->wali_kelas)->first();
+            $wali = $g ? $g->nama_guru : $kelas->wali_kelas;
+        }
+
+        return response()->json([
+            'kelas'      => $kelas,
+            'wali_kelas' => $wali,
+            'total'      => $jadwalList->count(),
+            'jadwal'     => $jadwalList,
+        ]);
+    }
+
+    /**
      * Tambah data kelas baru.
      */
     public function store(Request $request)
