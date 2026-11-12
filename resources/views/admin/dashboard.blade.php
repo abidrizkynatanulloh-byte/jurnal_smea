@@ -4,258 +4,244 @@
 
 @section('content')
 <div class="space-y-5">
-    <!-- Page Header -->
+    <!-- Page Header (Sesuai Desain Gambar) -->
     <div class="flex flex-col md:flex-row md:items-center md:justify-between space-y-3 md:space-y-0">
-        <div>
-            <h1 class="text-xl font-extrabold text-[#1E2538] tracking-tight">Dashboard Tata Usaha</h1>
-            <p class="text-xs text-slate-500 mt-0.5">
-                <span class="font-semibold text-[#405078]">{{ $tanggalHariIniTeks }}</span> • Monitoring & rekapitulasi operasional sekolah
-            </p>
+        <div class="flex items-center space-x-3">
+            <!-- Balok Biru Solid di Sisi Kiri -->
+            <div class="w-3 self-stretch bg-[#38BDF8] sm:bg-[#0284C7] rounded-l-md shrink-0 min-h-[48px]"></div>
+            <div>
+                <h1 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">Dashboard Tata Usaha</h1>
+                <p class="text-xs font-bold text-slate-800 dark:text-slate-200 mt-0.5">
+                    {{ $tanggalHariIniTeks }}
+                </p>
+                <p class="text-xs font-bold text-[#0284C7] dark:text-[#38BDF8] mt-0.5 flex items-center space-x-1">
+                    <span>• Monitoring & rekapitulasi operasional sekolah</span>
+                </p>
+            </div>
         </div>
-        <div class="flex items-center space-x-2.5">
-            <a href="{{ route('admin.rekap.index') }}" class="px-3.5 py-2 bg-[#1E293B] hover:bg-[#0F172A] text-white rounded-lg text-xs font-semibold transition-colors flex items-center space-x-1.5 shadow-xs">
+        <div class="hidden md:flex items-center space-x-2.5">
+            <a href="{{ route('admin.rekap.index') }}" class="px-4 py-2 bg-[#1E293B] hover:bg-[#0F172A] text-white rounded-xl text-xs font-bold transition-all flex items-center space-x-1.5 shadow-xs">
                 <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
                 <span>Lihat Rekapitulasi Jurnal</span>
             </a>
         </div>
     </div>
 
-    <!-- 1. Statistik Grid Utama (Klik untuk membuka halaman detail) -->
-    <!-- 1. Statistik Grid Utama (Klik untuk membuka halaman detail - Sesuai Gambar 2 & 3) -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
-        <!-- Card 1: Siswa (Pastel Hijau Mint) -->
-        <a href="{{ route('admin.siswa.index') }}" class="bg-[#E8F8F5] dark:bg-[#132924] border border-[#B2E6DC] dark:border-[#1D423A] rounded-xl p-3.5 shadow-xs hover:shadow-sm hover:border-[#83D6C6] dark:hover:border-[#2D665A] transition-all flex items-start space-x-3 group cursor-pointer">
-            <div class="w-8 h-8 rounded-lg bg-[#C6EFE6] dark:bg-[#1B3B34] text-[#147A64] dark:text-[#5EEAD4] border border-[#9EE2D4] dark:border-[#265349] flex items-center justify-center flex-shrink-0">
-                <i data-lucide="graduation-cap" class="w-4 h-4"></i>
-            </div>
-            <div class="flex-1 min-w-0">
-                <div class="flex items-center justify-between">
-                    <p class="text-[11px] font-bold text-[#16705D] dark:text-[#6EE7B7] uppercase tracking-wider">Total Siswa</p>
-                    <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-[#288470] dark:text-[#A7F3D0] group-hover:translate-x-0.5 transition-all"></i>
+    <!-- 1. Statistik 3 Kartu Utama (Sesuai Gambar Wireframe: Total Siswa, Total Guru, Total Jadwal) -->
+    <div class="flex overflow-x-auto snap-x snap-mandatory gap-3 pb-1 md:grid md:grid-cols-3 no-scrollbar">
+        <!-- Card 1: Total Siswa (Pastel Hijau Mint dengan Border Hijau Solid) -->
+        <a href="{{ route('admin.siswa.index') }}" class="min-w-[210px] sm:min-w-0 flex-1 snap-start bg-[#E8F8F5] dark:bg-[#132924] border-2 border-[#34D399] dark:border-[#10B981] rounded-2xl p-3.5 sm:p-4 shadow-xs hover:shadow-sm transition-all flex flex-col justify-between group cursor-pointer">
+            <div class="flex items-start justify-between">
+                <div class="w-10 h-10 rounded-xl bg-[#A7F3D0] dark:bg-[#1B3B34] text-[#065F46] dark:text-[#34D399] border border-[#6EE7B7] dark:border-[#265349] flex items-center justify-center flex-shrink-0 shadow-2xs">
+                    <i data-lucide="graduation-cap" class="w-5 h-5"></i>
                 </div>
-                <h3 class="text-xl font-extrabold text-[#083E33] dark:text-[#F0FDF4] mt-0.5 tracking-tight tabular-nums">{{ number_format($totalSiswa, 0, ',', '.') }}</h3>
-                <p class="text-[11px] font-medium text-[#288470] dark:text-[#A7F3D0] mt-0.5 truncate">Data siswa & rombel</p>
+                <div class="flex-1 ml-3 min-w-0">
+                    <div class="flex items-center justify-between">
+                        <p class="text-[10.5px] font-black text-[#047857] dark:text-[#6EE7B7] uppercase tracking-wider">TOTAL SISWA</p>
+                        <i data-lucide="chevron-right" class="w-4 h-4 text-[#059669] dark:text-[#A7F3D0] group-hover:translate-x-0.5 transition-all"></i>
+                    </div>
+                    <h3 class="text-2xl sm:text-3xl font-black text-[#065F46] dark:text-[#F0FDF4] mt-0.5 tracking-tight tabular-nums">{{ number_format($totalSiswa, 0, ',', '.') }}</h3>
+                </div>
+            </div>
+            <div class="mt-3 pt-2 border-t border-[#A7F3D0]/60 dark:border-[#1D423A]">
+                <p class="text-xs font-bold text-[#059669] dark:text-[#A7F3D0] truncate">Data Siswa & Rombel</p>
             </div>
         </a>
 
-        <!-- Card 2: Guru & Staf (Pastel Biru Muda) -->
-        <a href="{{ route('admin.guru.index') }}" class="bg-[#EBF4FC] dark:bg-[#132337] border border-[#BDE0FA] dark:border-[#1B3654] rounded-xl p-3.5 shadow-xs hover:shadow-sm hover:border-[#8FC6F5] dark:hover:border-[#2B5480] transition-all flex items-start space-x-3 group cursor-pointer">
-            <div class="w-8 h-8 rounded-lg bg-[#CFE5FA] dark:bg-[#19334F] text-[#1D63A8] dark:text-[#60A5FA] border border-[#A8D3F7] dark:border-[#23456B] flex items-center justify-center flex-shrink-0">
-                <i data-lucide="users" class="w-4 h-4"></i>
-            </div>
-            <div class="flex-1 min-w-0">
-                <div class="flex items-center justify-between">
-                    <p class="text-[11px] font-bold text-[#1B5D9D] dark:text-[#93C5FD] uppercase tracking-wider">Guru</p>
-                    <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-[#2B6EA8] dark:text-[#BFDBFE] group-hover:translate-x-0.5 transition-all"></i>
+        <!-- Card 2: Total Guru & Staf (Pastel Biru Muda dengan Border Biru Solid) -->
+        <a href="{{ route('admin.guru.index') }}" class="min-w-[210px] sm:min-w-0 flex-1 snap-start bg-[#E0F2FE] dark:bg-[#132337] border-2 border-[#38BDF8] dark:border-[#0284C7] rounded-2xl p-3.5 sm:p-4 shadow-xs hover:shadow-sm transition-all flex flex-col justify-between group cursor-pointer">
+            <div class="flex items-start justify-between">
+                <div class="w-10 h-10 rounded-xl bg-[#BAE6FD] dark:bg-[#19334F] text-[#0369A1] dark:text-[#38BDF8] border border-[#7DD3FC] dark:border-[#23456B] flex items-center justify-center flex-shrink-0 shadow-2xs">
+                    <i data-lucide="users" class="w-5 h-5"></i>
                 </div>
-                <h3 class="text-xl font-extrabold text-[#0B3054] dark:text-[#EFF6FF] mt-0.5 tracking-tight tabular-nums">{{ $totalPegawai }}</h3>
-                <p class="text-[11px] font-medium text-[#2B6EA8] dark:text-[#BFDBFE] mt-0.5 truncate">{{ $totalGuru }} Guru • {{ $totalStaf }} Staf TU</p>
+                <div class="flex-1 ml-3 min-w-0">
+                    <div class="flex items-center justify-between">
+                        <p class="text-[10.5px] font-black text-[#0369A1] dark:text-[#93C5FD] uppercase tracking-wider">TOTAL GURU</p>
+                        <i data-lucide="chevron-right" class="w-4 h-4 text-[#0284C7] dark:text-[#BFDBFE] group-hover:translate-x-0.5 transition-all"></i>
+                    </div>
+                    <h3 class="text-2xl sm:text-3xl font-black text-[#075985] dark:text-[#EFF6FF] mt-0.5 tracking-tight tabular-nums">{{ number_format($totalPegawai, 0, ',', '.') }}</h3>
+                </div>
+            </div>
+            <div class="mt-3 pt-2 border-t border-[#BAE6FD]/60 dark:border-[#1B3654]">
+                <p class="text-xs font-bold text-[#0284C7] dark:text-[#BFDBFE] truncate">{{ $totalGuru }} GURU | {{ $totalStaf }} staf TU</p>
             </div>
         </a>
 
-        <!-- Card 3: Jadwal (Pastel Amber / Kuning Hangat) -->
-        <a href="{{ route('admin.jadwal.index') }}" class="bg-[#FEF6EC] dark:bg-[#2C1F0E] border border-[#FCE1BD] dark:border-[#473216] rounded-xl p-3.5 shadow-xs hover:shadow-sm hover:border-[#F9CA88] dark:hover:border-[#694A20] transition-all flex items-start space-x-3 group cursor-pointer">
-            <div class="w-8 h-8 rounded-lg bg-[#FDE9CD] dark:bg-[#3D2C13] text-[#B87114] dark:text-[#FBBF24] border border-[#FBD79F] dark:border-[#573F1C] flex items-center justify-center flex-shrink-0">
-                <i data-lucide="calendar" class="w-4 h-4"></i>
-            </div>
-            <div class="flex-1 min-w-0">
-                <div class="flex items-center justify-between">
-                    <p class="text-[11px] font-bold text-[#9B5B08] dark:text-[#FCD34D] uppercase tracking-wider">Total Jadwal</p>
-                    <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-[#9B621B] dark:text-[#FDE68A] group-hover:translate-x-0.5 transition-all"></i>
+        <!-- Card 3: Total Jadwal (Pastel Kuning Hangat dengan Border Kuning Solid) -->
+        <a href="{{ route('admin.jadwal.index') }}" class="min-w-[210px] sm:min-w-0 flex-1 snap-start bg-[#FEF9C3] dark:bg-[#2C1F0E] border-2 border-[#FBBF24] dark:border-[#D97706] rounded-2xl p-3.5 sm:p-4 shadow-xs hover:shadow-sm transition-all flex flex-col justify-between group cursor-pointer">
+            <div class="flex items-start justify-between">
+                <div class="w-10 h-10 rounded-xl bg-[#FDE68A] dark:bg-[#3D2C13] text-[#B45309] dark:text-[#FBBF24] border border-[#FCD34D] dark:border-[#573F1C] flex items-center justify-center flex-shrink-0 shadow-2xs">
+                    <i data-lucide="calendar" class="w-5 h-5"></i>
                 </div>
-                <h3 class="text-xl font-extrabold text-[#583303] dark:text-[#FFFBEB] mt-0.5 tracking-tight tabular-nums">{{ $totalJadwal }}</h3>
-                <p class="text-[11px] font-medium text-[#9B621B] dark:text-[#FDE68A] mt-0.5 truncate">Jadwal KBM mengajar</p>
+                <div class="flex-1 ml-3 min-w-0">
+                    <div class="flex items-center justify-between">
+                        <p class="text-[10.5px] font-black text-[#B45309] dark:text-[#FCD34D] uppercase tracking-wider">TOTAL JADWAL</p>
+                        <i data-lucide="chevron-right" class="w-4 h-4 text-[#D97706] dark:text-[#FDE68A] group-hover:translate-x-0.5 transition-all"></i>
+                    </div>
+                    <h3 class="text-2xl sm:text-3xl font-black text-[#92400E] dark:text-[#FFFBEB] mt-0.5 tracking-tight tabular-nums">{{ number_format($totalJadwal, 0, ',', '.') }}</h3>
+                </div>
+            </div>
+            <div class="mt-3 pt-2 border-t border-[#FDE68A]/60 dark:border-[#473216]">
+                <p class="text-xs font-bold text-[#D97706] dark:text-[#FDE68A] truncate">{{ number_format($totalJadwal, 0, ',', '.') }} TERJADWALKAN</p>
             </div>
         </a>
-
-        <!-- Card 4: Kepatuhan (Pastel Rose / Merah Lembut) -->
-        <!-- <a href="{{ route('admin.rekap.kepatuhan') }}" class="bg-[#FDEEF0] dark:bg-[#2F1318] border border-[#F9C6CE] dark:border-[#4B1E26] rounded-xl p-3.5 shadow-xs hover:shadow-sm hover:border-[#F49BA9] dark:hover:border-[#6B2B36] transition-all flex items-start space-x-3 group cursor-pointer">
-            <div class="w-8 h-8 rounded-lg bg-[#FBD6DC] dark:bg-[#431A21] text-[#C42B46] dark:text-[#F87171] border border-[#F7B6C0] dark:border-[#5E242F] flex items-center justify-center flex-shrink-0">
-                <i data-lucide="check-circle" class="w-4 h-4"></i>
-            </div>
-            <div class="flex-1 min-w-0">
-                <div class="flex items-center justify-between">
-                    <p class="text-[11px] font-bold text-[#A81E38] dark:text-[#FDA4AF] uppercase tracking-wider">Kepatuhan Jurnal</p>
-                    <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-[#AA2A43] dark:text-[#FECDD3] group-hover:translate-x-0.5 transition-all"></i>
-                </div>
-                <h3 class="text-xl font-extrabold text-[#5E0B1A] dark:text-[#FFF1F2] mt-0.5 tracking-tight tabular-nums">{{ $persentaseKepatuhan }}%</h3>
-                <p class="text-[11px] font-medium text-[#AA2A43] dark:text-[#FECDD3] mt-0.5 truncate">Kepatuhan pengisian</p>
-            </div>
-        </a> -->
     </div>
 
-    <!-- 2. REKAP ABSENSI SISWA HARI INI (Sesuai Gambar 2 & 3) -->
-    <div class="bg-white dark:bg-[#141412] border border-slate-200 dark:border-[#252525] rounded-xl p-4 shadow-xs">
-        <div class="flex items-center justify-between mb-3">
-            <h3 class="font-bold text-slate-900 dark:text-slate-100 text-xs uppercase tracking-tight flex items-center space-x-2">
-                <i data-lucide="user-check" class="w-3.5 h-3.5 text-slate-700 dark:text-slate-300"></i>
-                <span>Data Absensi Siswa Hari Ini</span>
-            </h3>
-            <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">{{ $tanggalHariIniTeks }}</span>
+    <!-- 2. DATA ABSENSI SISWA HARI INI (Card Putih Rounded dengan 4 Kotak Status Sesuai Gambar) -->
+    <div class="bg-white dark:bg-[#141412] border border-slate-200 dark:border-[#252525] rounded-3xl p-4 sm:p-5 shadow-xs">
+        <div class="flex items-center space-x-2.5 mb-3.5">
+            <i data-lucide="user-check" class="w-6 h-6 text-slate-800 dark:text-slate-100"></i>
+            <h2 class="font-black text-slate-900 dark:text-slate-100 text-sm sm:text-base uppercase tracking-wider">
+                DATA ABSENSI SISWA HARI INI
+            </h2>
         </div>
 
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div class="grid grid-cols-4 gap-2 sm:gap-3">
             <!-- Hadir (Pastel Mint) -->
-            <div class="p-3 bg-[#E8F8F5] dark:bg-[#132924] border border-[#B2E6DC] dark:border-[#1D423A] rounded-lg flex items-center space-x-2.5">
-                <div class="w-7 h-7 rounded-md bg-[#C6EFE6] dark:bg-[#1B3B34] text-[#147A64] dark:text-[#5EEAD4] flex items-center justify-center flex-shrink-0 font-bold text-xs">
-                    <i data-lucide="user-check" class="w-3.5 h-3.5"></i>
+            <div class="p-2 sm:p-3 bg-[#DCFCE7] dark:bg-[#132924] border-2 border-[#86EFAC] dark:border-[#1D423A] rounded-2xl flex flex-col items-center justify-center text-center shadow-2xs">
+                <div class="w-7 h-7 rounded-lg bg-[#BBF7D0] dark:bg-[#1B3B34] text-[#15803D] dark:text-[#4ADE80] flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="user-check" class="w-4 h-4"></i>
                 </div>
-                <div>
-                    <p class="text-[10.5px] font-bold uppercase tracking-wider text-[#16705D] dark:text-[#6EE7B7]">Hadir</p>
-                    <h4 class="text-lg font-extrabold text-[#083E33] dark:text-[#F0FDF4] leading-tight tabular-nums">{{ $siswaHadirHariIni }}</h4>
-                </div>
+                <p class="text-[10px] sm:text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white mt-1.5">HADIR</p>
+                <h4 class="text-lg sm:text-2xl font-black text-slate-900 dark:text-white leading-tight tabular-nums mt-0.5">{{ $siswaHadirHariIni }}</h4>
             </div>
 
             <!-- Sakit (Pastel Kuning) -->
-            <div onclick="openModalSiswaSakit()" class="p-3 bg-[#FEF6EC] dark:bg-[#2C1F0E] border border-[#FCE1BD] dark:border-[#473216] hover:border-[#F9CA88] dark:hover:border-[#694A20] rounded-lg flex items-center space-x-2.5 transition-colors cursor-pointer group">
-                <div class="w-7 h-7 rounded-md bg-[#FDE9CD] dark:bg-[#3D2C13] text-[#B87114] dark:text-[#FBBF24] flex items-center justify-center flex-shrink-0 font-bold text-xs">
-                    <i data-lucide="thermometer" class="w-3.5 h-3.5"></i>
+            <div onclick="openModalSiswaSakit()" class="p-2 sm:p-3 bg-[#FEF9C3] dark:bg-[#2C1F0E] border-2 border-[#FDE047] dark:border-[#473216] hover:border-[#FACC15] rounded-2xl flex flex-col items-center justify-center text-center transition-all cursor-pointer group shadow-2xs">
+                <div class="w-7 h-7 rounded-lg bg-[#FEF08A] dark:bg-[#3D2C13] text-[#A16207] dark:text-[#FACC15] flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="thermometer" class="w-4 h-4"></i>
                 </div>
-                <div class="flex-1">
-                    <p class="text-[10.5px] font-bold uppercase tracking-wider text-[#9B5B08] dark:text-[#FCD34D]">Sakit</p>
-                    <h4 class="text-lg font-extrabold text-[#583303] dark:text-[#FFFBEB] leading-tight tabular-nums">{{ $siswaSakitHariIni }}</h4>
-                </div>
+                <p class="text-[10px] sm:text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white mt-1.5">SAKIT</p>
+                <h4 class="text-lg sm:text-2xl font-black text-slate-900 dark:text-white leading-tight tabular-nums mt-0.5">{{ $siswaSakitHariIni }}</h4>
             </div>
 
-            <!-- Izin / Dispen (Pastel Ungu) -->
-            <div onclick="openModalSiswaIzin()" class="p-3 bg-[#F3EEFC] dark:bg-[#221633] border border-[#DCCBF7] dark:border-[#382453] hover:border-[#C4A5F4] dark:hover:border-[#523577] rounded-lg flex items-center space-x-2.5 transition-colors cursor-pointer group">
-                <div class="w-7 h-7 rounded-md bg-[#E6DBFA] dark:bg-[#311F49] text-[#743DC4] dark:text-[#C084FC] flex items-center justify-center flex-shrink-0 font-bold text-xs">
-                    <i data-lucide="file-badge" class="w-3.5 h-3.5"></i>
+            <!-- Izin (Pastel Ungu Lavender Sesuai Gambar) -->
+            <div onclick="openModalSiswaIzin()" class="p-2 sm:p-3 bg-[#C084FC]/30 dark:bg-[#382453] border-2 border-[#A855F7] dark:border-[#523577] hover:border-[#9333EA] rounded-2xl flex flex-col items-center justify-center text-center transition-all cursor-pointer group shadow-2xs">
+                <div class="w-7 h-7 rounded-lg bg-[#E9D5FF] dark:bg-[#4C1D95] text-[#7E22CE] dark:text-[#C084FC] flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="file-badge" class="w-4 h-4"></i>
                 </div>
-                <div class="flex-1">
-                    <p class="text-[10.5px] font-bold uppercase tracking-wider text-[#672EB8] dark:text-[#D8B4FE]">Izin / Dispen</p>
-                    <h4 class="text-lg font-extrabold text-[#3F1678] dark:text-[#FAF5FF] leading-tight tabular-nums">{{ $siswaIzinTotal }}</h4>
-                </div>
+                <p class="text-[10px] sm:text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white mt-1.5">IZIN</p>
+                <h4 class="text-lg sm:text-2xl font-black text-slate-900 dark:text-white leading-tight tabular-nums mt-0.5">{{ $siswaIzinTotal }}</h4>
             </div>
 
-            <!-- Alpa (Pastel Rose) -->
-            <div onclick="openModalSiswaAlpa()" class="p-3 bg-[#FDEEF0] dark:bg-[#2F1318] border border-[#F9C6CE] dark:border-[#4B1E26] hover:border-[#F49BA9] dark:hover:border-[#6B2B36] rounded-lg flex items-center space-x-2.5 transition-colors cursor-pointer group">
-                <div class="w-7 h-7 rounded-md bg-[#FBD6DC] dark:bg-[#431A21] text-[#C42B46] dark:text-[#F87171] flex items-center justify-center flex-shrink-0 font-bold text-xs">
-                    <i data-lucide="user-x" class="w-3.5 h-3.5"></i>
+            <!-- Alpha (Pastel Merah Muda / Coral Sesuai Gambar) -->
+            <div onclick="openModalSiswaAlpa()" class="p-2 sm:p-3 bg-[#FCA5A5]/40 dark:bg-[#4B1E26] border-2 border-[#F87171] dark:border-[#6B2B36] hover:border-[#EF4444] rounded-2xl flex flex-col items-center justify-center text-center transition-all cursor-pointer group shadow-2xs">
+                <div class="w-7 h-7 rounded-lg bg-[#FECDD3] dark:bg-[#5C1D24] text-[#BE123C] dark:text-[#F87171] flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="user-x" class="w-4 h-4"></i>
                 </div>
-                <div class="flex-1">
-                    <p class="text-[10.5px] font-bold uppercase tracking-wider text-[#A81E38] dark:text-[#FDA4AF]">Alpa</p>
-                    <h4 class="text-lg font-extrabold text-[#5E0B1A] dark:text-[#FFF1F2] leading-tight tabular-nums">{{ $siswaAlpaHariIni }}</h4>
-                </div>
+                <p class="text-[10px] sm:text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white mt-1.5">ALPHA</p>
+                <h4 class="text-lg sm:text-2xl font-black text-slate-900 dark:text-white leading-tight tabular-nums mt-0.5">{{ $siswaAlpaHariIni }}</h4>
             </div>
         </div>
     </div>
 
-    <!-- 3. Perhatian Operasional (Klik untuk membuka daftar detail - Sesuai Gambar 2 & 3) -->
-    <!-- <div class="bg-white dark:bg-[#141412] border border-slate-200 dark:border-[#252525] rounded-xl p-5 shadow-xs">
-        <h3 class="font-bold text-slate-900 dark:text-slate-100 text-xs uppercase tracking-wider mb-3 flex items-center space-x-2">
-            <i data-lucide="alert-triangle" class="w-4 h-4 text-slate-700 dark:text-slate-300"></i>
-            <span>Perhatian Operasional (Klik Kartu untuk Melihat List Guru)</span>
-        </h3> -->
-        
-        <!-- <div class="grid grid-cols-1 md:grid-cols-2 gap-3"> -->
-            <!-- Warning 1: Jurnal Kemarin (Amber Sesuai Gambar) -->
-            <!-- <div onclick="openModalKemarin()" class="p-3.5 bg-[#FEF3E2] dark:bg-[#271B0B] border border-[#FADBAA] dark:border-[#453014] rounded-xl flex items-start space-x-3 hover:border-[#F8C882] dark:hover:border-[#6B4B20] transition-all cursor-pointer group">
-                <div class="p-1.5 bg-[#FDE7C4] dark:bg-[#3B2910] text-[#B45309] dark:text-[#F59E0B] rounded-lg flex-shrink-0">
-                    <i data-lucide="book-x" class="w-4 h-4"></i>
-                </div>
-                <div class="flex-1 min-w-0">
-                    <div class="flex items-center justify-between">
-                        <h4 class="text-xs font-bold text-[#92400E] dark:text-[#FBBF24]">Jurnal Mengajar Kemarin</h4>
-                        <span class="text-[10.5px] text-[#B45309] dark:text-[#FCD34D] font-bold underline flex items-center space-x-0.5">
-                            <span>Lihat List</span>
-                            <i data-lucide="chevron-right" class="w-3 h-3"></i>
-                        </span>
-                    </div>
-                    <p class="text-xs text-[#78350F] dark:text-[#FEF3C7] mt-0.5"><span class="font-bold text-[#451A03] dark:text-white">{{ $guruBelumIsiKemarin }} sesi mengajar</span> terdeteksi belum mengisi jurnal kemarin.</p>
-                </div>
-            </div> -->
-
-            <!-- Warning 2: Guru Alpa Hari Ini (Rose Sesuai Gambar) -->
-            <!-- <div onclick="openModalAlpa()" class="p-3.5 bg-[#FEECEB] dark:bg-[#2C1014] border border-[#F9C4C0] dark:border-[#4A1A22] rounded-xl flex items-start space-x-3 hover:border-[#F59E98] dark:hover:border-[#6D2732] transition-all cursor-pointer group">
-                <div class="p-1.5 bg-[#FDCFCD] dark:bg-[#3F161C] text-[#C53030] dark:text-[#F87171] rounded-lg flex-shrink-0">
-                    <i data-lucide="user-x" class="w-4 h-4"></i>
-                </div>
-                <div class="flex-1 min-w-0">
-                    <div class="flex items-center justify-between">
-                        <h4 class="text-xs font-bold text-[#991B1B] dark:text-[#FCA5A5]">Guru Alpa Hari Ini</h4>
-                        <span class="text-[10.5px] text-[#DC2626] dark:text-[#F87171] font-bold underline flex items-center space-x-0.5">
-                            <span>Lihat List Alpa</span>
-                            <i data-lucide="chevron-right" class="w-3 h-3"></i>
-                        </span>
-                    </div>
-                    <p class="text-xs text-[#7F1D1D] dark:text-[#FEE2E2] mt-0.5"><span class="font-bold text-[#450A0A] dark:text-white">{{count ( $listGuruAlpaHariIni ) }} sesi ({{ $guruAlpaHariIni }} guru)</span> terdeteksi Alpa (tidak mengisi jurnal).</p>
-                </div>
-            </div>
-        </div>
-    </div> -->
-
-    <!-- 4. Tabel Jadwal Hari Ini (Urutan: ALPA lebih dulu - Sesuai Gambar 2 & 3) -->
-    <div class="bg-white dark:bg-[#141412] border border-slate-200 dark:border-[#252525] rounded-xl shadow-xs overflow-hidden">
-        <div class="px-5 py-3.5 border-b border-slate-200 dark:border-[#252525] flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2.5 sm:space-y-0 bg-[#F4F7FA] dark:bg-[#1B1B18]">
-            <div class="flex items-center space-x-2.5">
-                <div class="w-2 h-2 bg-[#166876] dark:bg-[#84C4C9] rounded-full"></div>
-                <h3 class="font-bold text-slate-900 dark:text-slate-100 text-xs uppercase tracking-wider">Jadwal Mengajar Hari Ini ({{ $namaHariIni }})</h3>
-                <span class="text-[10.5px] font-bold text-rose-700 dark:text-rose-300 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50 px-2 py-0.5 rounded">Prioritas Belum Isi</span>
+    <!-- 3. TABEL JADWAL MENGAJAR HARI INI (Sesuai Desain Wireframe Gambar) -->
+    <div class="bg-white dark:bg-[#141412] border border-slate-300 dark:border-[#252525] rounded-3xl shadow-xs overflow-hidden">
+        <!-- Header Card: Judul, Badge Prioritas, Nav Panah < > -->
+        <div class="px-4 sm:px-5 py-3.5 border-b border-slate-200 dark:border-[#252525] flex items-center justify-between bg-white dark:bg-[#1B1B18]">
+            <div class="flex items-center space-x-2">
+                <span class="text-slate-900 dark:text-white text-lg font-black leading-none">•</span>
+                <h3 class="font-black text-slate-900 dark:text-slate-100 text-xs sm:text-sm tracking-tight">
+                    Jadwal Mengajar Hari Ini ({{ $namaHariIni }})
+                </h3>
             </div>
             
-            <div class="flex items-center space-x-3">
-                <span id="slideInfo" class="text-xs font-medium text-slate-500 dark:text-slate-400">Menampilkan 1-10 dari {{ count($jadwalHariIni) }} sesi</span>
-                <div class="inline-flex rounded border border-slate-300 dark:border-slate-700 p-0.5 bg-white dark:bg-[#202020] shadow-2xs">
-                    <button type="button" id="prevBtn" onclick="geserSlide(-1)" class="p-1 rounded hover:bg-slate-100 dark:hover:bg-white/10 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white disabled:opacity-40 transition-colors cursor-pointer" disabled>
-                        <i data-lucide="chevron-left" class="w-3.5 h-3.5"></i>
+            <div class="flex items-center space-x-2 sm:space-x-3">
+                <span class="text-[11px] font-bold text-rose-700 dark:text-rose-300 bg-[#FECDD3] dark:bg-rose-950/60 border border-[#FDA4AF] dark:border-rose-900/50 px-2.5 py-1 rounded-xl whitespace-nowrap">
+                    Prioritas Belum Isi
+                </span>
+                <div class="inline-flex rounded-xl border border-slate-300 dark:border-slate-700 p-0.5 bg-white dark:bg-[#202020] shadow-2xs">
+                    <button type="button" id="prevBtn" onclick="geserSlide(-1)" class="p-1 sm:p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-white/10 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white disabled:opacity-30 transition-colors cursor-pointer" disabled>
+                        <i data-lucide="chevron-left" class="w-4 h-4"></i>
                     </button>
-                    <button type="button" id="nextBtn" onclick="geserSlide(1)" class="p-1 rounded hover:bg-slate-100 dark:hover:bg-white/10 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white disabled:opacity-40 transition-colors cursor-pointer">
-                        <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                    <button type="button" id="nextBtn" onclick="geserSlide(1)" class="p-1 sm:p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-white/10 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white disabled:opacity-30 transition-colors cursor-pointer">
+                        <i data-lucide="chevron-right" class="w-4 h-4"></i>
                     </button>
                 </div>
             </div>
         </div>
 
-        <div class="overflow-x-auto max-h-[480px] overflow-y-auto">
-            <table class="w-full text-left border-collapse text-xs">
-                <thead class="sticky top-0 bg-[#DDF0F7] dark:bg-[#192634] border-b border-[#BCE1EE] dark:border-[#273B4E] z-10 shadow-xs">
-                    <tr class="text-[#0F4E5A] dark:text-[#7DD3FC] font-extrabold uppercase tracking-wider text-[11px]">
-                        <th class="py-3 px-3.5 text-center w-12">No</th>
-                        <th class="py-3 px-3.5 w-28">Jam Ke-</th>
-                        <th class="py-3 px-3.5 w-24">Kelas</th>
-                        <th class="py-3 px-3.5">Guru</th>
-                        <th class="py-3 px-3.5">Mata Pelajaran</th>
-                        <th class="py-3 px-3.5 w-28">Ruangan</th>
-                        <th class="py-3 px-3.5 text-center w-36">Status Jurnal</th>
+        <div class="overflow-x-hidden max-h-[520px] overflow-y-auto">
+            <table class="w-full table-fixed text-left border-collapse text-xs">
+                <!-- Header Cyan Sesuai Wireframe Gambar (5 Kolom Pas 1 Layar HP) -->
+                <thead class="sticky top-0 bg-[#67D5F2] dark:bg-[#0E4A5C] border-b-2 border-[#38BDF8] dark:border-[#166876] z-10 shadow-xs">
+                    <tr class="text-[#0C4A6E] dark:text-[#7DD3FC] font-black text-[11px] sm:text-xs">
+                        <th class="py-2.5 px-1 sm:px-2 text-center w-[13%]">Jam Ke-</th>
+                        <th class="py-2.5 px-1 sm:px-2 w-[18%]">Kelas</th>
+                        <th class="py-2.5 px-1.5 sm:px-2.5 w-[28%]">Guru</th>
+                        <th class="py-2.5 px-1.5 sm:px-2.5 w-[23%]">Mapel</th>
+                        <th class="py-2.5 px-1 sm:px-2 text-center w-[18%]">status</th>
                     </tr>
                 </thead>
-                <tbody id="jadwalTbody" class="divide-y divide-slate-100 dark:divide-[#222220] text-slate-700 dark:text-slate-300">
+                <tbody id="jadwalTbody" class="divide-y divide-slate-200 dark:divide-[#222220] text-slate-700 dark:text-slate-300">
                     @forelse ($jadwalHariIni as $index => $j)
                         <tr class="jadwal-row hover:bg-slate-50/80 transition-colors {{ $j->status_jurnal === 'Belum Mengisi Jurnal' ? 'bg-rose-50/20' : '' }}" data-index="{{ $index }}" style="{{ $index >= 10 ? 'display: none;' : '' }}">
-                            <td class="py-2.5 px-3.5 text-center font-medium text-slate-400 text-xs tabular-nums">{{ $index + 1 }}</td>
-                            <td class="py-2.5 px-3.5 font-semibold text-slate-900">Jam {{ $j->jam_mulai }}{{ $j->jam_mulai != $j->jam_selesai ? '–' . $j->jam_selesai : '' }}</td>
-                            <td class="py-2.5 px-3.5"><span class="px-2 py-0.5 bg-slate-100 border border-slate-200 rounded text-[11px] font-bold text-slate-700">{{ $j->kelas ? $j->kelas->nama_kelas : '-' }}</span></td>
-                            <td class="py-2.5 px-3.5 font-medium text-slate-900 leading-tight">{{ $j->guru ? $j->guru->nama_guru : '-' }}</td>
-                            <td class="py-2.5 px-3.5 font-medium text-slate-700">{{ $j->mapel ? $j->mapel->nama_mapel : '-' }}</td>
-                            <td class="py-2.5 px-3.5 text-slate-500"><span class="inline-flex items-center space-x-1"><i data-lucide="map-pin" class="w-3 h-3 text-slate-400"></i><span>{{ $j->ruangan ? $j->ruangan->nama_ruangan : '-' }}</span></span></td>
-                            <td class="py-2.5 px-3.5 text-center">
+                            <!-- Jam Ke- -->
+                            <td class="py-2.5 px-1 sm:px-2 text-center font-black text-slate-900 dark:text-white text-[11px] sm:text-xs leading-tight">
+                                {{ $j->jam_mulai }}{{ $j->jam_mulai != $j->jam_selesai ? ' - ' . $j->jam_selesai : '' }}
+                            </td>
+
+                            <!-- Kelas (Pill Cyan Sesuai Gambar: [XI TKJ 1] di atas, keterangan di bawah) -->
+                            <td class="py-2.5 px-1 sm:px-2 align-top">
+                                @php
+                                    $rawKelas = $j->kelas ? $j->kelas->nama_kelas : '-';
+                                    $namaUtama = $rawKelas;
+                                    $keterangan = null;
+                                    if (preg_match('/^(.*?)\s*\((.*?)\)$/i', $rawKelas, $matches)) {
+                                        $namaUtama = trim($matches[1]);
+                                        $keterangan = trim($matches[2]);
+                                    }
+                                @endphp
+                                <div class="flex flex-col items-start leading-tight">
+                                    <span class="px-1.5 sm:px-2 py-0.5 sm:py-1 bg-[#BCEBF5] dark:bg-[#16384C] border border-[#7DD3FC] dark:border-[#0284C7] rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-black text-[#0369A1] dark:text-[#7DD3FC] inline-block shadow-2xs">
+                                        {{ $namaUtama }}
+                                    </span>
+                                    @if($keterangan)
+                                        <span class="text-[9px] sm:text-[10px] font-semibold text-slate-500 dark:text-slate-400 mt-0.5 lowercase first-letter:uppercase tracking-tight leading-tight">
+                                            {{ $keterangan }}
+                                        </span>
+                                    @endif
+                                </div>
+                            </td>
+
+                            <!-- Guru -->
+                            <td class="py-2.5 px-1.5 sm:px-2.5 font-bold text-slate-800 dark:text-slate-200 text-[10.5px] sm:text-xs leading-snug break-words align-top">
+                                {{ $j->guru ? $j->guru->nama_guru : '-' }}
+                            </td>
+
+                            <!-- Mapel -->
+                            <td class="py-2.5 px-1.5 sm:px-2.5 font-bold text-slate-900 dark:text-white text-[10px] sm:text-xs uppercase leading-tight break-words align-top">
+                                {{ $j->mapel ? $j->mapel->nama_mapel : '-' }}
+                            </td>
+
+                            <!-- Status (Badge Terisi / Belum Mengisi Sesuai Gambar) -->
+                            <td class="py-2.5 px-1 sm:px-2 text-center align-top">
                                 @if ($j->status_jurnal === 'Selesai')
-                                    <span class="inline-block px-2.5 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-bold rounded">
-                                        Selesai
+                                    <span class="inline-block px-1.5 sm:px-2.5 py-1 bg-[#D1FAE5] dark:bg-[#132924] text-[#065F46] dark:text-[#6EE7B7] border border-[#34D399] dark:border-[#059669] text-[9.5px] sm:text-[11px] font-black rounded-lg sm:rounded-xl leading-none">
+                                        Terisi
                                     </span>
                                 @elseif ($j->status_jurnal === 'Belum Mengisi Jurnal')
-                                    <span class="inline-block px-2.5 py-0.5 bg-rose-50 text-rose-700 border border-rose-200 text-[11px] font-bold rounded">
-                                        Belum Mengisi Jurnal
+                                    <span class="inline-block px-1 sm:px-2 py-1 bg-[#FEE2E2] dark:bg-[#3D141A] text-[#991B1B] dark:text-[#F87171] border border-[#F87171] dark:border-[#B91C1C] text-[9px] sm:text-[10.5px] font-black rounded-lg sm:rounded-xl leading-none">
+                                        Belum Mengisi
                                     </span>
                                 @elseif (str_contains($j->status_jurnal, 'Event') || str_contains($j->status_jurnal, 'Pulang Pagi'))
-                                    <span class="inline-block px-2.5 py-0.5 bg-violet-50 text-violet-700 border border-violet-200 text-[11px] font-bold rounded">
+                                    <span class="inline-block px-1 sm:px-2 py-1 bg-violet-100 dark:bg-violet-950/60 text-violet-800 dark:text-violet-300 border border-violet-300 dark:border-violet-800 text-[9px] sm:text-[10.5px] font-bold rounded-lg sm:rounded-xl leading-none">
                                         {{ $j->status_jurnal }}
                                     </span>
                                 @elseif (str_contains($j->status_jurnal, 'Sah'))
-                                    <span class="inline-block px-2.5 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 text-[11px] font-bold rounded">
+                                    <span class="inline-block px-1 sm:px-2 py-1 bg-blue-100 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300 border border-blue-300 dark:border-blue-800 text-[9px] sm:text-[10.5px] font-bold rounded-lg sm:rounded-xl leading-none">
                                         {{ $j->status_jurnal }}
                                     </span>
                                 @else
-                                    <span class="inline-block px-2.5 py-0.5 bg-slate-100 text-slate-600 border border-slate-200 text-[11px] font-semibold rounded">
-                                        Terjadwal
+                                    <span class="inline-block px-1 sm:px-2 py-1 bg-slate-100 dark:bg-[#252525] text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700 text-[9px] sm:text-[10.5px] font-bold rounded-lg sm:rounded-xl leading-none">
+                                        {{ $j->status_jurnal }}
                                     </span>
                                 @endif
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="py-10 text-center text-slate-400 italic text-xs">
+                            <td colspan="5" class="py-10 text-center text-slate-400 italic text-xs">
                                 <i data-lucide="inbox" class="w-7 h-7 mx-auto mb-1.5 text-slate-300"></i>
                                 Tidak ada jadwal mengajar pada hari {{ $namaHariIni }}.
                             </td>

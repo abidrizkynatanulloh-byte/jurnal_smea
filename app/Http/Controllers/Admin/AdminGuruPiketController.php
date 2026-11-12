@@ -139,7 +139,17 @@ class AdminGuruPiketController
             'keterangan'     => $request->keterangan,
         ]);
 
+        // Otomatis sinkronkan role user menjadi guru_piket agar guru bisa langsung piket & tetap mengajar
+        $userGuru = \App\Models\User::where('id_guru', $request->id_guru)->first();
+        if ($userGuru && in_array($userGuru->role, ['guru'])) {
+            $userGuru->update(['role' => 'guru_piket']);
+        }
+
+        // Sinkronkan jabatan guru di tabel guru menjadi Guru Piket
         $guru = Guru::find($request->id_guru);
+        if ($guru && in_array($guru->jabatan, ['Guru', null, ''])) {
+            $guru->update(['jabatan' => 'Guru Piket']);
+        }
         $namaGuru = $guru ? $guru->nama_guru : 'Guru';
         $tglFormatted = $carbonDate->format('d/m/Y');
 
@@ -159,11 +169,25 @@ class AdminGuruPiketController
     public function destroy($id)
     {
         $guruPiket = GuruPiket::with('guru')->findOrFail($id);
+        $idGuru = $guruPiket->id_guru;
         $namaGuru = $guruPiket->guru ? $guruPiket->guru->nama_guru : 'Guru';
         $tglStr = $guruPiket->tanggal_khusus ? Carbon::parse($guruPiket->tanggal_khusus)->format('d/m/Y') : $guruPiket->hari;
         $shift = $guruPiket->shift;
 
         $guruPiket->delete();
+
+        // Cek jika guru sudah tidak memiliki jadwal piket aktif lainnya sama sekali
+        $sisaPiket = GuruPiket::where('id_guru', $idGuru)->whereNull('deleted_at')->exists();
+        if (!$sisaPiket) {
+            $userGuru = \App\Models\User::where('id_guru', $idGuru)->first();
+            if ($userGuru && $userGuru->role === 'guru_piket') {
+                $userGuru->update(['role' => 'guru']);
+            }
+            $guruModel = Guru::find($idGuru);
+            if ($guruModel && $guruModel->jabatan === 'Guru Piket') {
+                $guruModel->update(['jabatan' => 'Guru']);
+            }
+        }
 
         if (class_exists(AuditLog::class)) {
             AuditLog::log(

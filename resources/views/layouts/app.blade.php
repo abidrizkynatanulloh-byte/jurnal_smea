@@ -92,6 +92,9 @@
             height: 100%;
             margin: 0;
             padding: 0;
+            -webkit-text-size-adjust: 100%;
+            -moz-text-size-adjust: 100%;
+            text-size-adjust: 100%;
         }
         @media (min-width: 1024px) {
             html {
@@ -752,59 +755,52 @@
     <main class="flex-1 flex flex-col min-w-0 h-full overflow-hidden bg-[#EEF1F6] dark:bg-[#1C1F26] transition-colors pb-14 md:pb-0">
         @auth
         <!-- Top Navigation Header -->
-        <header class="h-12 bg-white dark:bg-[#141412] border-b border-slate-200 dark:border-[#252525] shrink-0 flex items-center justify-between px-3 sm:px-5 shadow-2xs z-30 transition-colors">
+        <header class="h-14 bg-white dark:bg-[#141412] border-b border-slate-200 dark:border-[#252525] shrink-0 flex items-center justify-between px-2.5 sm:px-5 shadow-2xs z-30 transition-colors">
             <div class="flex items-center space-x-1.5 sm:space-x-2">
-                <!-- Hamburger Button to open Drawer on Mobile -->
-                <button type="button" onclick="openSidebarDrawer()" class="md:hidden p-1.5 -ml-1 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer" title="Buka Menu">
-                    <i data-lucide="menu" class="w-5 h-5"></i>
-                </button>
-                <span class="inline-flex items-center px-2 py-0.5 bg-slate-100 dark:bg-[#222220] text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded text-[10px] sm:text-[10.5px] font-semibold uppercase tracking-wider truncate max-w-[120px] sm:max-w-none">
+                <span class="inline-flex items-center px-3.5 py-1.5 bg-[#E2E8F0] dark:bg-slate-800 text-slate-900 dark:text-slate-100 border border-slate-300 dark:border-slate-700 rounded-xl text-[11px] sm:text-xs font-black italic uppercase tracking-wider shrink-0 shadow-2xs">
                     {{ str_replace('_', ' ', Auth::user()->role) }}
                 </span>
                 <span class="hidden sm:inline text-xs text-slate-300 dark:text-slate-600">/</span>
                 <span class="hidden sm:inline text-xs text-slate-500 dark:text-slate-400 font-medium">SMK Negeri 1 Boyolangu</span>
             </div>
             
-            <div class="flex items-center space-x-2.5 sm:space-x-3">
-                <!-- Bantuan Button -->
+            <div class="flex items-center space-x-1.5 sm:space-x-2.5">
+                <!-- Bantuan Button (Kapsul Lonjong Hijau Sesuai Desain) -->
                 <button type="button" onclick="openBantuanModal()"
-                    class="h-7.5 px-2.5 rounded-lg border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 transition-all flex items-center space-x-1.5 shadow-2xs cursor-pointer text-xs font-semibold"
+                    class="h-8 w-11 sm:w-13 rounded-full border-2 border-emerald-400 dark:border-emerald-600 bg-[#D1FAE5] dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 hover:bg-emerald-200 transition-all flex items-center justify-center shadow-2xs cursor-pointer shrink-0"
                     title="Pusat Bantuan & Kontak WhatsApp">
-                    <i data-lucide="help-circle" class="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400"></i>
-                    <span class="hidden sm:inline text-[11px]">Bantuan</span>
+                    <i data-lucide="help-circle" class="w-4.5 h-4.5 text-emerald-700 dark:text-emerald-400 stroke-[2.2]"></i>
                 </button>
 
-                <!-- Audit Log Button -->
+                <!-- Audit Log Button (Kapsul Lonjong Biru Sesuai Desain) -->
                 <button type="button" onclick="openAuditLogModal()"
-                    class="h-7.5 px-2.5 rounded-lg border border-indigo-200 dark:border-indigo-800 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-all flex items-center space-x-1.5 shadow-2xs cursor-pointer text-xs font-semibold"
+                    class="h-8 w-11 sm:w-13 rounded-full border-2 border-sky-400 dark:border-sky-600 bg-[#BAE6FD] dark:bg-sky-950/60 text-sky-800 dark:text-sky-300 hover:bg-sky-200 transition-all flex items-center justify-center shadow-2xs cursor-pointer shrink-0"
                     title="Lihat Log Aktivitas Sistem">
-                    <i data-lucide="activity" class="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400"></i>
-                    <span class="hidden sm:inline text-[11px]">Audit Log</span>
+                    <i data-lucide="activity" class="w-4.5 h-4.5 text-sky-700 dark:text-sky-400 stroke-[2.2]"></i>
                 </button>
 
-                <!-- Theme Toggle Button (Light & Dark Mode) -->
+                <!-- Theme Toggle Button (Kapsul Lonjong Putih/Abu Sesuai Desain) -->
                 <button type="button" onclick="toggleTheme()" id="theme-toggle-btn"
-                    class="h-7.5 px-2.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/80 transition-all flex items-center space-x-1.5 shadow-2xs cursor-pointer text-xs font-semibold"
+                    class="h-8 w-11 sm:w-13 rounded-full border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 transition-all flex items-center justify-center shadow-2xs cursor-pointer shrink-0"
                     title="Ganti Mode Terang / Gelap">
-                    <i data-lucide="sun" id="theme-icon-sun" class="w-3.5 h-3.5 text-amber-500 hidden dark:inline-block"></i>
-                    <i data-lucide="moon" id="theme-icon-moon" class="w-3.5 h-3.5 text-slate-600 dark:hidden inline-block"></i>
-                    <span class="hidden sm:inline text-[11px]" id="theme-label">Tema</span>
+                    <i data-lucide="sun" id="theme-icon-sun" class="w-4.5 h-4.5 text-amber-500 hidden dark:inline-block stroke-[2.2]"></i>
+                    <i data-lucide="moon" id="theme-icon-moon" class="w-4.5 h-4.5 text-slate-700 dark:hidden inline-block stroke-[2.2]"></i>
                 </button>
 
                 <!-- Date Display -->
-                <div class="hidden sm:flex items-center space-x-1.5 text-xs text-slate-600 dark:text-slate-300 font-medium bg-slate-50 dark:bg-[#222220] px-2.5 py-1 rounded border border-slate-200 dark:border-slate-700">
+                <div class="hidden md:flex items-center space-x-1.5 text-xs text-slate-600 dark:text-slate-300 font-medium bg-slate-50 dark:bg-[#222220] px-2.5 py-1 rounded-xl border border-slate-200 dark:border-slate-700">
                     <i data-lucide="calendar" class="w-3.5 h-3.5 text-slate-400"></i>
                     <span>{{ date('l, d M Y') }}</span>
                 </div>
 
-                <!-- Live Real-Time Clock Display -->
-                <div class="flex items-center space-x-1.5 text-xs text-slate-800 dark:text-slate-100 font-bold font-mono bg-slate-50 dark:bg-[#222220] px-2.5 py-1 rounded border border-slate-200 dark:border-slate-700 shadow-2xs" title="Waktu Real-Time WIB">
-                    <i data-lucide="clock" class="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 animate-pulse"></i>
+                <!-- Live Real-Time Clock Display (Pill Jam Sesuai Desain) -->
+                <div class="flex items-center space-x-1.5 text-xs sm:text-sm text-slate-900 dark:text-slate-100 font-black font-mono bg-white dark:bg-[#222220] px-2.5 sm:px-3 py-1.5 rounded-xl border-2 border-slate-300 dark:border-slate-700 shadow-2xs shrink-0" title="Waktu Real-Time WIB">
+                    <i data-lucide="clock" class="w-4 h-4 text-indigo-600 dark:text-indigo-400 stroke-[2.2]"></i>
                     <span id="realtime-clock-display">--:--:-- WIB</span>
                 </div>
                 
-                <!-- Quick User Status -->
-                <div class="flex items-center space-x-2.5 pl-2.5 sm:pl-3 border-l border-slate-200 dark:border-slate-700">
+                <!-- Quick User Status (Hidden on Mobile as per wireframe design) -->
+                <div class="hidden sm:flex items-center space-x-2.5 pl-2.5 sm:pl-3 border-l border-slate-200 dark:border-slate-700">
                     <div class="w-8 h-8 rounded-xl bg-[#166876] dark:bg-[#2C2C2C] text-[#E4CC67] dark:text-[#E0C47B] flex items-center justify-center font-extrabold text-xs shadow-2xs">
                         {{ Auth::user()->initials }}
                     </div>
@@ -1886,65 +1882,267 @@
     <!-- ============================================================== -->
     <!-- THUMB-FRIENDLY BOTTOM NAVIGATION BAR (KHUSUS MOBILE ONLY)      -->
     <!-- ============================================================== -->
-    <nav class="fixed bottom-0 inset-x-0 z-40 bg-white/95 dark:bg-[#181818]/95 backdrop-blur-lg border-t border-slate-200/90 dark:border-slate-800 flex items-center justify-around h-14 md:hidden px-2 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] select-none">
+    <nav class="fixed bottom-0 inset-x-0 z-40 bg-white/95 dark:bg-[#181818]/95 backdrop-blur-lg border-t border-slate-200/90 dark:border-slate-800 flex items-center justify-around h-16 md:hidden px-1 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] select-none">
         @if(Auth::user()->role === 'staf_tu')
-            <a href="{{ route('admin.dashboard') }}" class="flex flex-col items-center justify-center flex-1 py-1 text-[10px] font-semibold {{ Route::is('admin.dashboard') ? 'text-[#166876] dark:text-sky-400 font-bold' : 'text-slate-500 dark:text-slate-400' }}">
-                <i data-lucide="layout-dashboard" class="w-4 h-4 mb-0.5"></i>
+            <!-- 1. Beranda -->
+            <a href="{{ route('admin.dashboard') }}" class="flex flex-col items-center justify-center flex-1 py-1 text-[10px] font-bold {{ Route::is('admin.dashboard') ? 'text-[#0284C7] dark:text-sky-400' : 'text-slate-700 dark:text-slate-300' }}">
+                <i data-lucide="shapes" class="w-5 h-5 mb-0.5 {{ Route::is('admin.dashboard') ? 'text-[#0284C7] dark:text-sky-400' : 'text-slate-700 dark:text-slate-300' }}"></i>
                 <span>Beranda</span>
+                @if(Route::is('admin.dashboard'))
+                    <span class="w-8 h-1 bg-[#0284C7] dark:bg-sky-400 rounded-full mt-0.5"></span>
+                @endif
             </a>
-            <a href="{{ route('admin.guru.index') }}" class="flex flex-col items-center justify-center flex-1 py-1 text-[10px] font-semibold {{ Route::is('admin.guru.*') ? 'text-[#166876] dark:text-sky-400 font-bold' : 'text-slate-500 dark:text-slate-400' }}">
-                <i data-lucide="users" class="w-4 h-4 mb-0.5"></i>
-                <span>Guru</span>
+
+            <!-- 2. Data Kelas -->
+            <a href="{{ route('admin.kelas.index') }}" class="flex flex-col items-center justify-center flex-1 py-1 text-[10px] font-bold {{ Route::is('admin.kelas.*') ? 'text-[#0284C7] dark:text-sky-400' : 'text-slate-700 dark:text-slate-300' }}">
+                <i data-lucide="users" class="w-5 h-5 mb-0.5"></i>
+                <span>Data Kelas</span>
+                @if(Route::is('admin.kelas.*'))
+                    <span class="w-8 h-1 bg-[#0284C7] dark:bg-sky-400 rounded-full mt-0.5"></span>
+                @endif
             </a>
-            <a href="{{ route('admin.siswa.index') }}" class="flex flex-col items-center justify-center flex-1 py-1 text-[10px] font-semibold {{ Route::is('admin.siswa.*') ? 'text-[#166876] dark:text-sky-400 font-bold' : 'text-slate-500 dark:text-slate-400' }}">
-                <i data-lucide="graduation-cap" class="w-4 h-4 mb-0.5"></i>
-                <span>Siswa</span>
+
+            <!-- 3. Semua Menu (Di Tengah Sesuai Gambar) -->
+            <button type="button" onclick="openSidebarDrawer()" class="flex flex-col items-center justify-center flex-1 py-1 text-[10px] font-bold text-slate-800 dark:text-slate-200 hover:text-[#0284C7] dark:hover:text-white cursor-pointer">
+                <i data-lucide="menu" class="w-6 h-6 mb-0.5 stroke-[2.5] text-slate-800 dark:text-slate-200"></i>
+                <span>Semua Menu</span>
+            </button>
+
+            <!-- 4. Event -->
+            <a href="{{ route('admin.event.index') }}" class="flex flex-col items-center justify-center flex-1 py-1 text-[10px] font-bold {{ Route::is('admin.event.*') ? 'text-[#0284C7] dark:text-sky-400' : 'text-slate-700 dark:text-slate-300' }}">
+                <i data-lucide="calendar-days" class="w-5 h-5 mb-0.5"></i>
+                <span>Event</span>
+                @if(Route::is('admin.event.*'))
+                    <span class="w-8 h-1 bg-[#0284C7] dark:bg-sky-400 rounded-full mt-0.5"></span>
+                @endif
             </a>
-            <a href="{{ route('admin.rekap.index') }}" class="flex flex-col items-center justify-center flex-1 py-1 text-[10px] font-semibold {{ Route::is('admin.rekap.*') ? 'text-[#166876] dark:text-sky-400 font-bold' : 'text-slate-500 dark:text-slate-400' }}">
-                <i data-lucide="clipboard-list" class="w-4 h-4 mb-0.5"></i>
-                <span>Rekap</span>
+
+            <!-- 5. Recap -->
+            <a href="{{ route('admin.rekap.index') }}" class="flex flex-col items-center justify-center flex-1 py-1 text-[10px] font-bold {{ Route::is('admin.rekap.*') ? 'text-[#0284C7] dark:text-sky-400' : 'text-slate-700 dark:text-slate-300' }}">
+                <i data-lucide="clipboard-check" class="w-5 h-5 mb-0.5"></i>
+                <span>Recap</span>
+                @if(Route::is('admin.rekap.*'))
+                    <span class="w-8 h-1 bg-[#0284C7] dark:bg-sky-400 rounded-full mt-0.5"></span>
+                @endif
             </a>
         @elseif(in_array(Auth::user()->role, ['guru', 'guru_piket', 'wakasis_guru', 'waka_kurikulum', 'waka_sdm']))
-            <a href="{{ route('guru.dashboard') }}" class="flex flex-col items-center justify-center flex-1 py-1 text-[10px] font-semibold {{ Route::is('guru.dashboard') ? 'text-[#166876] dark:text-sky-400 font-bold' : 'text-slate-500 dark:text-slate-400' }}">
-                <i data-lucide="calendar" class="w-4 h-4 mb-0.5"></i>
+            {{-- ROLE GURU & WAKA GURU --}}
+            <!-- 1. Jadwal -->
+            <a href="{{ route('guru.dashboard') }}" class="flex flex-col items-center justify-center flex-1 py-1 text-[10px] font-bold {{ Route::is('guru.dashboard') ? 'text-[#166876] dark:text-sky-400' : 'text-slate-700 dark:text-slate-300' }}">
+                <i data-lucide="calendar" class="w-5 h-5 mb-0.5 {{ Route::is('guru.dashboard') ? 'text-[#166876] dark:text-sky-400' : 'text-slate-700 dark:text-slate-300' }}"></i>
                 <span>Jadwal</span>
+                @if(Route::is('guru.dashboard'))
+                    <span class="w-8 h-1 bg-[#166876] dark:bg-sky-400 rounded-full mt-0.5"></span>
+                @endif
             </a>
-            <a href="{{ route('guru.jurnal.history') }}" class="flex flex-col items-center justify-center flex-1 py-1 text-[10px] font-semibold {{ Route::is('guru.jurnal.history') ? 'text-[#166876] dark:text-sky-400 font-bold' : 'text-slate-500 dark:text-slate-400' }}">
-                <i data-lucide="history" class="w-4 h-4 mb-0.5"></i>
-                <span>Riwayat</span>
-            </a>
-            <a href="{{ route('guru.izin.index') }}" class="flex flex-col items-center justify-center flex-1 py-1 text-[10px] font-semibold {{ Route::is('guru.izin.*') ? 'text-[#166876] dark:text-sky-400 font-bold' : 'text-slate-500 dark:text-slate-400' }}">
-                <i data-lucide="file-text" class="w-4 h-4 mb-0.5"></i>
-                <span>Izin</span>
-            </a>
-            @if(Auth::user()->guru && Auth::user()->guru->isWaliKelas())
-                <a href="{{ route('guru.wali-kelas') }}" class="flex flex-col items-center justify-center flex-1 py-1 text-[10px] font-semibold {{ Route::is('guru.wali-kelas') ? 'text-[#166876] dark:text-sky-400 font-bold' : 'text-slate-500 dark:text-slate-400' }}">
-                    <i data-lucide="users" class="w-4 h-4 mb-0.5"></i>
-                    <span>Kelas</span>
+
+            <!-- 2. Riwayat / Piket -->
+            @if(Auth::user()->role === 'guru_piket' || (Auth::user()->guru && Auth::user()->guru->isPiketHariIni()))
+                <a href="{{ route('piket.dashboard') }}" class="flex flex-col items-center justify-center flex-1 py-1 text-[10px] font-bold {{ Route::is('piket.*') ? 'text-[#166876] dark:text-sky-400' : 'text-slate-700 dark:text-slate-300' }}">
+                    <i data-lucide="clipboard-list" class="w-5 h-5 mb-0.5 {{ Route::is('piket.*') ? 'text-[#166876] dark:text-sky-400' : 'text-slate-700 dark:text-slate-300' }}"></i>
+                    <span>Piket</span>
+                    @if(Route::is('piket.*'))
+                        <span class="w-8 h-1 bg-[#166876] dark:bg-sky-400 rounded-full mt-0.5"></span>
+                    @endif
+                </a>
+            @else
+                <a href="{{ route('guru.jurnal.history') }}" class="flex flex-col items-center justify-center flex-1 py-1 text-[10px] font-bold {{ Route::is('guru.jurnal.history') || Route::is('guru.jurnal.rekap') ? 'text-[#166876] dark:text-sky-400' : 'text-slate-700 dark:text-slate-300' }}">
+                    <i data-lucide="history" class="w-5 h-5 mb-0.5 {{ Route::is('guru.jurnal.history') || Route::is('guru.jurnal.rekap') ? 'text-[#166876] dark:text-sky-400' : 'text-slate-700 dark:text-slate-300' }}"></i>
+                    <span>Riwayat</span>
+                    @if(Route::is('guru.jurnal.history') || Route::is('guru.jurnal.rekap'))
+                        <span class="w-8 h-1 bg-[#166876] dark:bg-sky-400 rounded-full mt-0.5"></span>
+                    @endif
                 </a>
             @endif
-        @elseif(Auth::user()->role === 'satpam')
-            <a href="{{ route('satpam.dashboard') }}" class="flex flex-col items-center justify-center flex-1 py-1 text-[10px] font-semibold {{ Route::is('satpam.dashboard') ? 'text-[#166876] dark:text-sky-400 font-bold' : 'text-slate-500 dark:text-slate-400' }}">
-                <i data-lucide="scan-face" class="w-4 h-4 mb-0.5"></i>
-                <span>Gerbang</span>
-            </a>
+
+            <!-- 3. Semua Menu (Di Tengah Sesuai Gambar) -->
+            <button type="button" onclick="openSidebarDrawer()" class="flex flex-col items-center justify-center flex-1 py-1 text-[10px] font-bold text-slate-800 dark:text-slate-200 hover:text-[#166876] dark:hover:text-white cursor-pointer">
+                <i data-lucide="menu" class="w-6 h-6 mb-0.5 stroke-[2.5] text-slate-800 dark:text-slate-200"></i>
+                <span>Semua Menu</span>
+            </button>
+
+            <!-- 4. Izin / Riwayat (jika piket) -->
+            @if(Auth::user()->role === 'guru_piket' || (Auth::user()->guru && Auth::user()->guru->isPiketHariIni()))
+                <a href="{{ route('guru.jurnal.history') }}" class="flex flex-col items-center justify-center flex-1 py-1 text-[10px] font-bold {{ Route::is('guru.jurnal.history') || Route::is('guru.jurnal.rekap') ? 'text-[#166876] dark:text-sky-400' : 'text-slate-700 dark:text-slate-300' }}">
+                    <i data-lucide="history" class="w-5 h-5 mb-0.5 {{ Route::is('guru.jurnal.history') || Route::is('guru.jurnal.rekap') ? 'text-[#166876] dark:text-sky-400' : 'text-slate-700 dark:text-slate-300' }}"></i>
+                    <span>Riwayat</span>
+                    @if(Route::is('guru.jurnal.history') || Route::is('guru.jurnal.rekap'))
+                        <span class="w-8 h-1 bg-[#166876] dark:bg-sky-400 rounded-full mt-0.5"></span>
+                    @endif
+                </a>
+            @else
+                <a href="{{ route('guru.izin.index') }}" class="flex flex-col items-center justify-center flex-1 py-1 text-[10px] font-bold {{ Route::is('guru.izin.*') ? 'text-[#166876] dark:text-sky-400' : 'text-slate-700 dark:text-slate-300' }}">
+                    <i data-lucide="file-text" class="w-5 h-5 mb-0.5 {{ Route::is('guru.izin.*') ? 'text-[#166876] dark:text-sky-400' : 'text-slate-700 dark:text-slate-300' }}"></i>
+                    <span>Izin</span>
+                    @if(Route::is('guru.izin.*'))
+                        <span class="w-8 h-1 bg-[#166876] dark:bg-sky-400 rounded-full mt-0.5"></span>
+                    @endif
+                </a>
+            @endif
+
+            <!-- 5. Kelas / Izin (jika piket) / Waka / Tertunggak -->
+            @if(Auth::user()->guru && Auth::user()->guru->isWaliKelas())
+                <a href="{{ route('guru.wali-kelas') }}" class="flex flex-col items-center justify-center flex-1 py-1 text-[10px] font-bold {{ Route::is('guru.wali-kelas') ? 'text-[#166876] dark:text-sky-400' : 'text-slate-700 dark:text-slate-300' }}">
+                    <i data-lucide="users" class="w-5 h-5 mb-0.5 {{ Route::is('guru.wali-kelas') ? 'text-[#166876] dark:text-sky-400' : 'text-slate-700 dark:text-slate-300' }}"></i>
+                    <span>Kelas</span>
+                    @if(Route::is('guru.wali-kelas'))
+                        <span class="w-8 h-1 bg-[#166876] dark:bg-sky-400 rounded-full mt-0.5"></span>
+                    @endif
+                </a>
+            @elseif(Auth::user()->role === 'guru_piket' || (Auth::user()->guru && Auth::user()->guru->isPiketHariIni()))
+                <a href="{{ route('guru.izin.index') }}" class="flex flex-col items-center justify-center flex-1 py-1 text-[10px] font-bold {{ Route::is('guru.izin.*') ? 'text-[#166876] dark:text-sky-400' : 'text-slate-700 dark:text-slate-300' }}">
+                    <i data-lucide="file-text" class="w-5 h-5 mb-0.5 {{ Route::is('guru.izin.*') ? 'text-[#166876] dark:text-sky-400' : 'text-slate-700 dark:text-slate-300' }}"></i>
+                    <span>Izin</span>
+                    @if(Route::is('guru.izin.*'))
+                        <span class="w-8 h-1 bg-[#166876] dark:bg-sky-400 rounded-full mt-0.5"></span>
+                    @endif
+                </a>
+            @elseif(in_array(Auth::user()->role, ['wakasis_guru', 'waka_kurikulum', 'waka_sdm']))
+                <a href="{{ route('wakasis.guru.dashboard') }}" class="flex flex-col items-center justify-center flex-1 py-1 text-[10px] font-bold {{ Route::is('wakasis.guru.*') ? 'text-[#166876] dark:text-sky-400' : 'text-slate-700 dark:text-slate-300' }}">
+                    <i data-lucide="users-2" class="w-5 h-5 mb-0.5 {{ Route::is('wakasis.guru.*') ? 'text-[#166876] dark:text-sky-400' : 'text-slate-700 dark:text-slate-300' }}"></i>
+                    <span>Waka</span>
+                    @if(Route::is('wakasis.guru.*'))
+                        <span class="w-8 h-1 bg-[#166876] dark:bg-sky-400 rounded-full mt-0.5"></span>
+                    @endif
+                </a>
+            @else
+                <a href="{{ route('guru.jurnal.tertunggak') }}" class="flex flex-col items-center justify-center flex-1 py-1 text-[10px] font-bold {{ Route::is('guru.jurnal.tertunggak') ? 'text-[#166876] dark:text-sky-400' : 'text-slate-700 dark:text-slate-300' }}">
+                    <i data-lucide="clock" class="w-5 h-5 mb-0.5 {{ Route::is('guru.jurnal.tertunggak') ? 'text-[#166876] dark:text-sky-400' : 'text-slate-700 dark:text-slate-300' }}"></i>
+                    <span>Tertunggak</span>
+                    @if(Route::is('guru.jurnal.tertunggak'))
+                        <span class="w-8 h-1 bg-[#166876] dark:bg-sky-400 rounded-full mt-0.5"></span>
+                    @endif
+                </a>
+            @endif
+
         @elseif(Auth::user()->role === 'kepala_sekolah')
-            <a href="{{ route('kepsek.dashboard') }}" class="flex flex-col items-center justify-center flex-1 py-1 text-[10px] font-semibold {{ Route::is('kepsek.dashboard') ? 'text-[#166876] dark:text-sky-400 font-bold' : 'text-slate-500 dark:text-slate-400' }}">
-                <i data-lucide="layout-dashboard" class="w-4 h-4 mb-0.5"></i>
+            {{-- ROLE KEPALA SEKOLAH --}}
+            <!-- 1. Dashboard -->
+            <a href="{{ route('kepsek.dashboard') }}" class="flex flex-col items-center justify-center flex-1 py-1 text-[10px] font-bold {{ Route::is('kepsek.dashboard') ? 'text-[#166876] dark:text-sky-400' : 'text-slate-700 dark:text-slate-300' }}">
+                <i data-lucide="layout-dashboard" class="w-5 h-5 mb-0.5 {{ Route::is('kepsek.dashboard') ? 'text-[#166876] dark:text-sky-400' : 'text-slate-700 dark:text-slate-300' }}"></i>
                 <span>Dashboard</span>
+                @if(Route::is('kepsek.dashboard'))
+                    <span class="w-8 h-1 bg-[#166876] dark:bg-sky-400 rounded-full mt-0.5"></span>
+                @endif
             </a>
+
+            <!-- 2. Rekap -->
+            <a href="{{ route('admin.rekap.index') }}" class="flex flex-col items-center justify-center flex-1 py-1 text-[10px] font-bold {{ Route::is('admin.rekap.index') ? 'text-[#166876] dark:text-sky-400' : 'text-slate-700 dark:text-slate-300' }}">
+                <i data-lucide="clipboard-check" class="w-5 h-5 mb-0.5 {{ Route::is('admin.rekap.index') ? 'text-[#166876] dark:text-sky-400' : 'text-slate-700 dark:text-slate-300' }}"></i>
+                <span>Rekap</span>
+                @if(Route::is('admin.rekap.index'))
+                    <span class="w-8 h-1 bg-[#166876] dark:bg-sky-400 rounded-full mt-0.5"></span>
+                @endif
+            </a>
+
+            <!-- 3. Semua Menu (Di Tengah Sesuai Gambar) -->
+            <button type="button" onclick="openSidebarDrawer()" class="flex flex-col items-center justify-center flex-1 py-1 text-[10px] font-bold text-slate-800 dark:text-slate-200 hover:text-[#166876] dark:hover:text-white cursor-pointer">
+                <i data-lucide="menu" class="w-6 h-6 mb-0.5 stroke-[2.5] text-slate-800 dark:text-slate-200"></i>
+                <span>Semua Menu</span>
+            </button>
+
+            <!-- 4. Kepatuhan -->
+            <a href="{{ route('admin.rekap.kepatuhan') }}" class="flex flex-col items-center justify-center flex-1 py-1 text-[10px] font-bold {{ Route::is('admin.rekap.kepatuhan') ? 'text-[#166876] dark:text-sky-400' : 'text-slate-700 dark:text-slate-300' }}">
+                <i data-lucide="file-check" class="w-5 h-5 mb-0.5 {{ Route::is('admin.rekap.kepatuhan') ? 'text-[#166876] dark:text-sky-400' : 'text-slate-700 dark:text-slate-300' }}"></i>
+                <span>Kepatuhan</span>
+                @if(Route::is('admin.rekap.kepatuhan'))
+                    <span class="w-8 h-1 bg-[#166876] dark:bg-sky-400 rounded-full mt-0.5"></span>
+                @endif
+            </a>
+
+            <!-- 5. Guru Alpha -->
+            <a href="{{ route('admin.rekap.guruAlpha') }}" class="flex flex-col items-center justify-center flex-1 py-1 text-[10px] font-bold {{ Route::is('admin.rekap.guruAlpha') ? 'text-[#166876] dark:text-sky-400' : 'text-slate-700 dark:text-slate-300' }}">
+                <i data-lucide="user-x" class="w-5 h-5 mb-0.5 {{ Route::is('admin.rekap.guruAlpha') ? 'text-[#166876] dark:text-sky-400' : 'text-slate-700 dark:text-slate-300' }}"></i>
+                <span>Alpha</span>
+                @if(Route::is('admin.rekap.guruAlpha'))
+                    <span class="w-8 h-1 bg-[#166876] dark:bg-sky-400 rounded-full mt-0.5"></span>
+                @endif
+            </a>
+
+        @elseif(Auth::user()->role === 'wakasis_siswa')
+            {{-- ROLE WAKASIS SISWA --}}
+            <!-- 1. Dispen Siswa -->
+            <a href="{{ route('wakasis.siswa.dashboard') }}" class="flex flex-col items-center justify-center flex-1 py-1 text-[10px] font-bold {{ Route::is('wakasis.siswa.*') ? 'text-[#166876] dark:text-sky-400' : 'text-slate-700 dark:text-slate-300' }}">
+                <i data-lucide="shield-alert" class="w-5 h-5 mb-0.5 {{ Route::is('wakasis.siswa.*') ? 'text-[#166876] dark:text-sky-400' : 'text-slate-700 dark:text-slate-300' }}"></i>
+                <span>Dispen</span>
+                @if(Route::is('wakasis.siswa.*'))
+                    <span class="w-8 h-1 bg-[#166876] dark:bg-sky-400 rounded-full mt-0.5"></span>
+                @endif
+            </a>
+
+            <!-- 2. Rekap -->
+            <a href="{{ route('admin.rekap.index') }}" class="flex flex-col items-center justify-center flex-1 py-1 text-[10px] font-bold {{ Route::is('admin.rekap.index') ? 'text-[#166876] dark:text-sky-400' : 'text-slate-700 dark:text-slate-300' }}">
+                <i data-lucide="clipboard-check" class="w-5 h-5 mb-0.5 {{ Route::is('admin.rekap.index') ? 'text-[#166876] dark:text-sky-400' : 'text-slate-700 dark:text-slate-300' }}"></i>
+                <span>Rekap</span>
+                @if(Route::is('admin.rekap.index'))
+                    <span class="w-8 h-1 bg-[#166876] dark:bg-sky-400 rounded-full mt-0.5"></span>
+                @endif
+            </a>
+
+            <!-- 3. Semua Menu (Di Tengah Sesuai Gambar) -->
+            <button type="button" onclick="openSidebarDrawer()" class="flex flex-col items-center justify-center flex-1 py-1 text-[10px] font-bold text-slate-800 dark:text-slate-200 hover:text-[#166876] dark:hover:text-white cursor-pointer">
+                <i data-lucide="menu" class="w-6 h-6 mb-0.5 stroke-[2.5] text-slate-800 dark:text-slate-200"></i>
+                <span>Semua Menu</span>
+            </button>
+
+            <!-- 4. Guru Alpha -->
+            <a href="{{ route('admin.rekap.guruAlpha') }}" class="flex flex-col items-center justify-center flex-1 py-1 text-[10px] font-bold {{ Route::is('admin.rekap.guruAlpha') ? 'text-[#166876] dark:text-sky-400' : 'text-slate-700 dark:text-slate-300' }}">
+                <i data-lucide="user-x" class="w-5 h-5 mb-0.5 {{ Route::is('admin.rekap.guruAlpha') ? 'text-[#166876] dark:text-sky-400' : 'text-slate-700 dark:text-slate-300' }}"></i>
+                <span>Alpha</span>
+                @if(Route::is('admin.rekap.guruAlpha'))
+                    <span class="w-8 h-1 bg-[#166876] dark:bg-sky-400 rounded-full mt-0.5"></span>
+                @endif
+            </a>
+
+            <!-- 5. Bantuan -->
+            <button type="button" onclick="openBantuanModal()" class="flex flex-col items-center justify-center flex-1 py-1 text-[10px] font-bold text-slate-700 dark:text-slate-300 hover:text-[#166876] dark:hover:text-white cursor-pointer">
+                <i data-lucide="help-circle" class="w-5 h-5 mb-0.5"></i>
+                <span>Bantuan</span>
+            </button>
+
+        @elseif(Auth::user()->role === 'satpam')
+            {{-- ROLE SATPAM (3 Item Sempurna Senter) --}}
+            <!-- 1. Gerbang -->
+            <a href="{{ route('satpam.dashboard') }}" class="flex flex-col items-center justify-center flex-1 py-1 text-[10px] font-bold {{ Route::is('satpam.dashboard') ? 'text-[#166876] dark:text-sky-400' : 'text-slate-700 dark:text-slate-300' }}">
+                <i data-lucide="scan-face" class="w-5 h-5 mb-0.5 {{ Route::is('satpam.dashboard') ? 'text-[#166876] dark:text-sky-400' : 'text-slate-700 dark:text-slate-300' }}"></i>
+                <span>Gerbang</span>
+                @if(Route::is('satpam.dashboard'))
+                    <span class="w-8 h-1 bg-[#166876] dark:bg-sky-400 rounded-full mt-0.5"></span>
+                @endif
+            </a>
+
+            <!-- 2. Semua Menu (Di Tengah Sesuai Gambar) -->
+            <button type="button" onclick="openSidebarDrawer()" class="flex flex-col items-center justify-center flex-1 py-1 text-[10px] font-bold text-slate-800 dark:text-slate-200 hover:text-[#166876] dark:hover:text-white cursor-pointer">
+                <i data-lucide="menu" class="w-6 h-6 mb-0.5 stroke-[2.5] text-slate-800 dark:text-slate-200"></i>
+                <span>Semua Menu</span>
+            </button>
+
+            <!-- 3. Bantuan -->
+            <button type="button" onclick="openBantuanModal()" class="flex flex-col items-center justify-center flex-1 py-1 text-[10px] font-bold text-slate-700 dark:text-slate-300 hover:text-[#166876] dark:hover:text-white cursor-pointer">
+                <i data-lucide="help-circle" class="w-5 h-5 mb-0.5"></i>
+                <span>Bantuan</span>
+            </button>
+
         @else
-            <a href="{{ url('/') }}" class="flex flex-col items-center justify-center flex-1 py-1 text-[10px] font-semibold text-slate-500 dark:text-slate-400">
-                <i data-lucide="home" class="w-4 h-4 mb-0.5"></i>
+            {{-- ROLE UMUM / FALLBACK (3 Item Sempurna Senter) --}}
+            <!-- 1. Beranda -->
+            <a href="{{ url('/') }}" class="flex flex-col items-center justify-center flex-1 py-1 text-[10px] font-bold text-slate-700 dark:text-slate-300">
+                <i data-lucide="home" class="w-5 h-5 mb-0.5"></i>
                 <span>Beranda</span>
             </a>
-        @endif
 
-        <!-- Menu Drawer Opener Button (Always on right on bottom nav) -->
-        <button type="button" onclick="openSidebarDrawer()" class="flex flex-col items-center justify-center flex-1 py-1 text-[10px] font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer">
-            <i data-lucide="menu" class="w-4 h-4 mb-0.5 text-slate-600 dark:text-slate-300"></i>
-            <span>Semua Menu</span>
-        </button>
+            <!-- 2. Semua Menu (Di Tengah Sesuai Gambar) -->
+            <button type="button" onclick="openSidebarDrawer()" class="flex flex-col items-center justify-center flex-1 py-1 text-[10px] font-bold text-slate-800 dark:text-slate-200 hover:text-[#166876] dark:hover:text-white cursor-pointer">
+                <i data-lucide="menu" class="w-6 h-6 mb-0.5 stroke-[2.5] text-slate-800 dark:text-slate-200"></i>
+                <span>Semua Menu</span>
+            </button>
+
+            <!-- 3. Bantuan -->
+            <button type="button" onclick="openBantuanModal()" class="flex flex-col items-center justify-center flex-1 py-1 text-[10px] font-bold text-slate-700 dark:text-slate-300 hover:text-[#166876] dark:hover:text-white cursor-pointer">
+                <i data-lucide="help-circle" class="w-5 h-5 mb-0.5"></i>
+                <span>Bantuan</span>
+            </button>
+        @endif
     </nav>
     @endauth
 

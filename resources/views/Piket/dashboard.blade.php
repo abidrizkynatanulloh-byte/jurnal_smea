@@ -44,19 +44,35 @@
         </div>
     @endif
 
-    <!-- NAVIGATION TAB BAR -->
-    <div class="flex border-b border-slate-200 dark:border-slate-800 space-x-2 overflow-x-auto pb-0.5">
-        <button id="tabBtnDispen" onclick="switchTab('dispen')" class="py-2.5 px-4 font-bold text-xs border-b-2 border-blue-600 text-blue-600 dark:border-blue-400 dark:text-blue-400 transition-all flex items-center space-x-2 cursor-pointer shrink-0">
-            <i data-lucide="file-text" class="w-4 h-4"></i>
-            <span>1. Pengajuan Dispensasi Siswa</span>
+    <!-- NAVIGATION TAB BAR (3 Kolom Berjejer Pas 1 Halaman Tanpa Scroll Samping) -->
+    <div class="bg-slate-200/80 dark:bg-[#1E2538] p-1 sm:p-1.5 rounded-2xl border border-slate-300 dark:border-slate-700/80 grid grid-cols-3 gap-1 sm:gap-1.5 shadow-2xs select-none">
+        <!-- Tab 1: Dispensasi -->
+        <button type="button" id="tabBtnDispen" onclick="switchTab('dispen')" 
+            class="h-9 sm:h-10 px-1 sm:px-2 rounded-xl font-bold text-xs bg-white dark:bg-[#2A344A] text-blue-600 dark:text-blue-400 shadow-xs border border-slate-200/80 dark:border-slate-600/80 transition-all flex items-center justify-center space-x-1 sm:space-x-1.5 cursor-pointer">
+            <i data-lucide="file-text" class="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0"></i>
+            <span class="sm:hidden truncate">Dispensasi</span>
+            <span class="hidden sm:inline truncate">1. Dispensasi</span>
         </button>
-        <button id="tabBtnTelat" onclick="switchTab('telat')" class="py-2.5 px-4 font-semibold text-xs border-b-2 border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-all flex items-center space-x-2 cursor-pointer shrink-0">
-            <i data-lucide="clock-alert" class="w-4 h-4"></i>
-            <span>2. Pendataan Siswa Terlambat</span>
+
+        <!-- Tab 2: Siswa Telat -->
+        <button type="button" id="tabBtnTelat" onclick="switchTab('telat')" 
+            class="h-9 sm:h-10 px-1 sm:px-2 rounded-xl font-semibold text-xs text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/5 transition-all flex items-center justify-center space-x-1 sm:space-x-1.5 cursor-pointer">
+            <i data-lucide="clock-alert" class="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0"></i>
+            <span class="sm:hidden truncate">Siswa Telat</span>
+            <span class="hidden sm:inline truncate">2. Siswa Telat</span>
         </button>
-        <button id="tabBtnIzinSiswa" onclick="switchTab('izinSiswa')" class="py-2.5 px-4 font-semibold text-xs border-b-2 border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-all flex items-center space-x-2 cursor-pointer shrink-0">
-            <i data-lucide="shield-check" class="w-4 h-4"></i>
-            <span>3. Persetujuan Izin Siswa / Ortu ({{ count($izinSiswaPending) }})</span>
+
+        <!-- Tab 3: Izin Siswa -->
+        <button type="button" id="tabBtnIzinSiswa" onclick="switchTab('izinSiswa')" 
+            class="h-9 sm:h-10 px-1 sm:px-2 rounded-xl font-semibold text-xs text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/5 transition-all flex items-center justify-center space-x-1 sm:space-x-1.5 cursor-pointer">
+            <i data-lucide="shield-check" class="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0"></i>
+            <span class="sm:hidden truncate">Izin Siswa</span>
+            <span class="hidden sm:inline truncate">3. Izin Siswa</span>
+            @if(count($izinSiswaPending) > 0)
+                <span class="ml-1 px-1.5 py-0.5 bg-rose-500 text-white rounded-full text-[9px] font-black leading-none">
+                    {{ count($izinSiswaPending) }}
+                </span>
+            @endif
         </button>
     </div>
 
@@ -651,21 +667,22 @@
         if (tabTelat) tabTelat.classList.add('hidden');
         if (tabIzinSiswa) tabIzinSiswa.classList.add('hidden');
 
-        const inactiveClass = "py-2.5 px-4 font-semibold text-xs border-b-2 border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-all flex items-center space-x-2 cursor-pointer shrink-0";
+        const baseInactive = "h-9 sm:h-10 px-1 sm:px-2 rounded-xl font-semibold text-xs text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/5 transition-all flex items-center justify-center space-x-1 sm:space-x-1.5 cursor-pointer";
+        const baseActive = "h-9 sm:h-10 px-1 sm:px-2 rounded-xl font-bold text-xs bg-white dark:bg-[#2A344A] shadow-xs border border-slate-200/80 dark:border-slate-600/80 transition-all flex items-center justify-center space-x-1 sm:space-x-1.5 cursor-pointer";
 
-        if (btnDispen) btnDispen.className = inactiveClass;
-        if (btnTelat) btnTelat.className = inactiveClass;
-        if (btnIzinSiswa) btnIzinSiswa.className = inactiveClass;
+        if (btnDispen) btnDispen.className = baseInactive;
+        if (btnTelat) btnTelat.className = baseInactive;
+        if (btnIzinSiswa) btnIzinSiswa.className = baseInactive;
 
         if (tabName === 'dispen' && tabDispen && btnDispen) {
             tabDispen.classList.remove('hidden');
-            btnDispen.className = "py-2.5 px-4 font-bold text-xs border-b-2 border-blue-600 text-blue-600 dark:border-blue-400 dark:text-blue-400 transition-all flex items-center space-x-2 cursor-pointer shrink-0";
+            btnDispen.className = baseActive + " text-blue-600 dark:text-blue-400";
         } else if (tabName === 'telat' && tabTelat && btnTelat) {
             tabTelat.classList.remove('hidden');
-            btnTelat.className = "py-2.5 px-4 font-bold text-xs border-b-2 border-amber-600 text-amber-600 dark:border-amber-400 dark:text-amber-400 transition-all flex items-center space-x-2 cursor-pointer shrink-0";
+            btnTelat.className = baseActive + " text-amber-600 dark:text-amber-400";
         } else if (tabName === 'izinSiswa' && tabIzinSiswa && btnIzinSiswa) {
             tabIzinSiswa.classList.remove('hidden');
-            btnIzinSiswa.className = "py-2.5 px-4 font-bold text-xs border-b-2 border-emerald-600 text-emerald-600 dark:border-emerald-400 dark:text-emerald-400 transition-all flex items-center space-x-2 cursor-pointer shrink-0";
+            btnIzinSiswa.className = baseActive + " text-emerald-600 dark:text-emerald-400";
         }
     }
 </script>
