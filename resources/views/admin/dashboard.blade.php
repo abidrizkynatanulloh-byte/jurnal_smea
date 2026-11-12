@@ -27,62 +27,62 @@
         </div>
     </div>
 
-    <!-- 1. Statistik 3 Kartu Utama (Sesuai Gambar Wireframe: Total Siswa, Total Guru, Total Jadwal) -->
-    <div class="flex overflow-x-auto snap-x snap-mandatory gap-3 pb-1 md:grid md:grid-cols-3 no-scrollbar">
+    <!-- 1. Statistik 3 Kartu Utama (Total Siswa, Total Guru di atas, Total Jadwal di bawah/tengah) -->
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-2.5 sm:gap-3">
         <!-- Card 1: Total Siswa (Pastel Hijau Mint dengan Border Hijau Solid) -->
-        <a href="{{ route('admin.siswa.index') }}" class="min-w-[210px] sm:min-w-0 flex-1 snap-start bg-[#E8F8F5] dark:bg-[#132924] border-2 border-[#34D399] dark:border-[#10B981] rounded-2xl p-3.5 sm:p-4 shadow-xs hover:shadow-sm transition-all flex flex-col justify-between group cursor-pointer">
+        <a href="{{ route('admin.siswa.index') }}" class="col-span-1 bg-[#E8F8F5] dark:bg-[#132924] border-2 border-[#34D399] dark:border-[#10B981] rounded-2xl p-3 sm:p-4 shadow-xs hover:shadow-sm transition-all flex flex-col justify-between group cursor-pointer">
             <div class="flex items-start justify-between">
-                <div class="w-10 h-10 rounded-xl bg-[#A7F3D0] dark:bg-[#1B3B34] text-[#065F46] dark:text-[#34D399] border border-[#6EE7B7] dark:border-[#265349] flex items-center justify-center flex-shrink-0 shadow-2xs">
-                    <i data-lucide="graduation-cap" class="w-5 h-5"></i>
+                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#A7F3D0] dark:bg-[#1B3B34] text-[#065F46] dark:text-[#34D399] border border-[#6EE7B7] dark:border-[#265349] flex items-center justify-center flex-shrink-0 shadow-2xs">
+                    <i data-lucide="graduation-cap" class="w-4.5 h-4.5 sm:w-5 sm:h-5"></i>
                 </div>
-                <div class="flex-1 ml-3 min-w-0">
+                <div class="flex-1 ml-2.5 sm:ml-3 min-w-0">
                     <div class="flex items-center justify-between">
-                        <p class="text-[10.5px] font-black text-[#047857] dark:text-[#6EE7B7] uppercase tracking-wider">TOTAL SISWA</p>
-                        <i data-lucide="chevron-right" class="w-4 h-4 text-[#059669] dark:text-[#A7F3D0] group-hover:translate-x-0.5 transition-all"></i>
+                        <p class="text-[9.5px] sm:text-[10.5px] font-black text-[#047857] dark:text-[#6EE7B7] uppercase tracking-wider truncate">TOTAL SISWA</p>
+                        <i data-lucide="chevron-right" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#059669] dark:text-[#A7F3D0] group-hover:translate-x-0.5 transition-all shrink-0"></i>
                     </div>
-                    <h3 class="text-2xl sm:text-3xl font-black text-[#065F46] dark:text-[#F0FDF4] mt-0.5 tracking-tight tabular-nums">{{ number_format($totalSiswa, 0, ',', '.') }}</h3>
+                    <h3 class="text-xl sm:text-2xl md:text-3xl font-black text-[#065F46] dark:text-[#F0FDF4] mt-0.5 tracking-tight tabular-nums">{{ number_format($totalSiswa, 0, ',', '.') }}</h3>
                 </div>
             </div>
-            <div class="mt-3 pt-2 border-t border-[#A7F3D0]/60 dark:border-[#1D423A]">
-                <p class="text-xs font-bold text-[#059669] dark:text-[#A7F3D0] truncate">Data Siswa & Rombel</p>
+            <div class="mt-2.5 sm:mt-3 pt-2 border-t border-[#A7F3D0]/60 dark:border-[#1D423A]">
+                <p class="text-[11px] sm:text-xs font-bold text-[#059669] dark:text-[#A7F3D0] truncate">Data Siswa & Rombel</p>
             </div>
         </a>
 
         <!-- Card 2: Total Guru & Staf (Pastel Biru Muda dengan Border Biru Solid) -->
-        <a href="{{ route('admin.guru.index') }}" class="min-w-[210px] sm:min-w-0 flex-1 snap-start bg-[#E0F2FE] dark:bg-[#132337] border-2 border-[#38BDF8] dark:border-[#0284C7] rounded-2xl p-3.5 sm:p-4 shadow-xs hover:shadow-sm transition-all flex flex-col justify-between group cursor-pointer">
+        <a href="{{ route('admin.guru.index') }}" class="col-span-1 bg-[#E0F2FE] dark:bg-[#132337] border-2 border-[#38BDF8] dark:border-[#0284C7] rounded-2xl p-3 sm:p-4 shadow-xs hover:shadow-sm transition-all flex flex-col justify-between group cursor-pointer">
             <div class="flex items-start justify-between">
-                <div class="w-10 h-10 rounded-xl bg-[#BAE6FD] dark:bg-[#19334F] text-[#0369A1] dark:text-[#38BDF8] border border-[#7DD3FC] dark:border-[#23456B] flex items-center justify-center flex-shrink-0 shadow-2xs">
-                    <i data-lucide="users" class="w-5 h-5"></i>
+                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#BAE6FD] dark:bg-[#19334F] text-[#0369A1] dark:text-[#38BDF8] border border-[#7DD3FC] dark:border-[#23456B] flex items-center justify-center flex-shrink-0 shadow-2xs">
+                    <i data-lucide="users" class="w-4.5 h-4.5 sm:w-5 sm:h-5"></i>
                 </div>
-                <div class="flex-1 ml-3 min-w-0">
+                <div class="flex-1 ml-2.5 sm:ml-3 min-w-0">
                     <div class="flex items-center justify-between">
-                        <p class="text-[10.5px] font-black text-[#0369A1] dark:text-[#93C5FD] uppercase tracking-wider">TOTAL GURU</p>
-                        <i data-lucide="chevron-right" class="w-4 h-4 text-[#0284C7] dark:text-[#BFDBFE] group-hover:translate-x-0.5 transition-all"></i>
+                        <p class="text-[9.5px] sm:text-[10.5px] font-black text-[#0369A1] dark:text-[#93C5FD] uppercase tracking-wider truncate">TOTAL GURU</p>
+                        <i data-lucide="chevron-right" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#0284C7] dark:text-[#BFDBFE] group-hover:translate-x-0.5 transition-all shrink-0"></i>
                     </div>
-                    <h3 class="text-2xl sm:text-3xl font-black text-[#075985] dark:text-[#EFF6FF] mt-0.5 tracking-tight tabular-nums">{{ number_format($totalPegawai, 0, ',', '.') }}</h3>
+                    <h3 class="text-xl sm:text-2xl md:text-3xl font-black text-[#075985] dark:text-[#EFF6FF] mt-0.5 tracking-tight tabular-nums">{{ number_format($totalPegawai, 0, ',', '.') }}</h3>
                 </div>
             </div>
-            <div class="mt-3 pt-2 border-t border-[#BAE6FD]/60 dark:border-[#1B3654]">
-                <p class="text-xs font-bold text-[#0284C7] dark:text-[#BFDBFE] truncate">{{ $totalGuru }} GURU | {{ $totalStaf }} staf TU</p>
+            <div class="mt-2.5 sm:mt-3 pt-2 border-t border-[#BAE6FD]/60 dark:border-[#1B3654]">
+                <p class="text-[11px] sm:text-xs font-bold text-[#0284C7] dark:text-[#BFDBFE] truncate">{{ $totalGuru }} GURU | {{ $totalStaf }} staf TU</p>
             </div>
         </a>
 
         <!-- Card 3: Total Jadwal (Pastel Kuning Hangat dengan Border Kuning Solid) -->
-        <a href="{{ route('admin.jadwal.index') }}" class="min-w-[210px] sm:min-w-0 flex-1 snap-start bg-[#FEF9C3] dark:bg-[#2C1F0E] border-2 border-[#FBBF24] dark:border-[#D97706] rounded-2xl p-3.5 sm:p-4 shadow-xs hover:shadow-sm transition-all flex flex-col justify-between group cursor-pointer">
+        <a href="{{ route('admin.jadwal.index') }}" class="col-span-2 md:col-span-1 bg-[#FEF9C3] dark:bg-[#2C1F0E] border-2 border-[#FBBF24] dark:border-[#D97706] rounded-2xl p-3 sm:p-4 shadow-xs hover:shadow-sm transition-all flex flex-col justify-between group cursor-pointer">
             <div class="flex items-start justify-between">
-                <div class="w-10 h-10 rounded-xl bg-[#FDE68A] dark:bg-[#3D2C13] text-[#B45309] dark:text-[#FBBF24] border border-[#FCD34D] dark:border-[#573F1C] flex items-center justify-center flex-shrink-0 shadow-2xs">
-                    <i data-lucide="calendar" class="w-5 h-5"></i>
+                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#FDE68A] dark:bg-[#3D2C13] text-[#B45309] dark:text-[#FBBF24] border border-[#FCD34D] dark:border-[#573F1C] flex items-center justify-center flex-shrink-0 shadow-2xs">
+                    <i data-lucide="calendar" class="w-4.5 h-4.5 sm:w-5 sm:h-5"></i>
                 </div>
-                <div class="flex-1 ml-3 min-w-0">
+                <div class="flex-1 ml-2.5 sm:ml-3 min-w-0">
                     <div class="flex items-center justify-between">
-                        <p class="text-[10.5px] font-black text-[#B45309] dark:text-[#FCD34D] uppercase tracking-wider">TOTAL JADWAL</p>
-                        <i data-lucide="chevron-right" class="w-4 h-4 text-[#D97706] dark:text-[#FDE68A] group-hover:translate-x-0.5 transition-all"></i>
+                        <p class="text-[9.5px] sm:text-[10.5px] font-black text-[#B45309] dark:text-[#FCD34D] uppercase tracking-wider truncate">TOTAL JADWAL</p>
+                        <i data-lucide="chevron-right" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#D97706] dark:text-[#FDE68A] group-hover:translate-x-0.5 transition-all shrink-0"></i>
                     </div>
-                    <h3 class="text-2xl sm:text-3xl font-black text-[#92400E] dark:text-[#FFFBEB] mt-0.5 tracking-tight tabular-nums">{{ number_format($totalJadwal, 0, ',', '.') }}</h3>
+                    <h3 class="text-xl sm:text-2xl md:text-3xl font-black text-[#92400E] dark:text-[#FFFBEB] mt-0.5 tracking-tight tabular-nums">{{ number_format($totalJadwal, 0, ',', '.') }}</h3>
                 </div>
             </div>
-            <div class="mt-3 pt-2 border-t border-[#FDE68A]/60 dark:border-[#473216]">
-                <p class="text-xs font-bold text-[#D97706] dark:text-[#FDE68A] truncate">{{ number_format($totalJadwal, 0, ',', '.') }} TERJADWALKAN</p>
+            <div class="mt-2.5 sm:mt-3 pt-2 border-t border-[#FDE68A]/60 dark:border-[#473216]">
+                <p class="text-[11px] sm:text-xs font-bold text-[#D97706] dark:text-[#FDE68A] truncate">{{ number_format($totalJadwal, 0, ',', '.') }} TERJADWALKAN</p>
             </div>
         </a>
     </div>

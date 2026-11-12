@@ -5,6 +5,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
 
+/**
+ * @property int $id
+ * @property string $nama_event
+ * @property string $jenis
+ * @property \Carbon\Carbon $tanggal_mulai
+ * @property \Carbon\Carbon $tanggal_selesai
+ * @property string|null $jam_pulang
+ * @property string|null $keterangan
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ * @property-read string $jenis_label
+ * @property-read int $durasi_hari
+ */
 class EventSekolah extends Model
 {
     protected $table = 'event_sekolah';
@@ -28,8 +41,10 @@ class EventSekolah extends Model
      */
     public function meliputiTanggal(string $tanggal): bool
     {
-        return $tanggal >= $this->tanggal_mulai->toDateString()
-            && $tanggal <= $this->tanggal_selesai->toDateString();
+        $mulai = Carbon::parse($this->tanggal_mulai)->toDateString();
+        $selesai = Carbon::parse($this->tanggal_selesai)->toDateString();
+
+        return $tanggal >= $mulai && $tanggal <= $selesai;
     }
 
     /**
@@ -87,6 +102,6 @@ class EventSekolah extends Model
      */
     public function getDurasiHariAttribute(): int
     {
-        return $this->tanggal_mulai->diffInDays($this->tanggal_selesai) + 1;
+        return Carbon::parse($this->tanggal_mulai)->diffInDays(Carbon::parse($this->tanggal_selesai)) + 1;
     }
 }

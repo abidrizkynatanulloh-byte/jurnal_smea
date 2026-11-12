@@ -218,12 +218,31 @@
             <div class="flex flex-col sm:flex-row gap-4 sm:gap-6 items-stretch sm:items-start">
                 <div id="camera-area" class="w-full max-w-sm space-y-2.5">
                     <div class="rounded-2xl overflow-hidden bg-black border border-slate-200 dark:border-slate-700 aspect-video relative flex items-center justify-center shadow-xs">
-                        <video id="kamera-video" class="w-full h-full object-cover" autoplay playsinline></video>
+                        <video id="kamera-video" class="w-full h-full object-cover transition-transform duration-300" autoplay playsinline></video>
+                        
+                        <!-- Badge Indikator Mode Kamera (Kiri Atas) -->
+                        <div class="absolute top-2.5 left-2.5 px-2.5 py-1 bg-black/60 text-white rounded-lg text-[10px] font-bold backdrop-blur-md flex items-center space-x-1.5 border border-white/10 shadow-xs pointer-events-none select-none">
+                            <span id="camera-mode-dot" class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                            <span id="camera-mode-text">Kamera Belakang</span>
+                        </div>
+
+                        <!-- Tombol Floating Balik Kamera (Kanan Atas) -->
+                        <button type="button" id="btn-switch-camera" class="absolute top-2.5 right-2.5 h-8 px-2.5 bg-black/60 hover:bg-black/80 active:scale-95 text-white rounded-full text-[11px] font-bold backdrop-blur-md transition-all shadow-md flex items-center space-x-1.5 border border-white/20 cursor-pointer" title="Balik Kamera (Selfie / Belakang)">
+                            <i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-sky-300"></i>
+                            <span id="btn-switch-label">Selfie</span>
+                        </button>
                     </div>
-                    <button type="button" id="btn-capture" class="w-full min-h-[44px] py-2.5 px-4 bg-[#1E2538] dark:bg-blue-600 hover:bg-[#121724] dark:hover:bg-blue-700 text-white rounded-xl text-xs sm:text-sm font-bold tracking-wide transition-all shadow-xs hover:shadow-md flex items-center justify-center space-x-2 cursor-pointer">
-                        <i data-lucide="camera" class="w-4 h-4"></i>
-                        <span>Jepret Foto Sekarang</span>
-                    </button>
+
+                    <div class="flex items-center gap-2">
+                        <button type="button" id="btn-capture" class="flex-1 min-h-[44px] py-2.5 px-4 bg-[#1E2538] dark:bg-blue-600 hover:bg-[#121724] dark:hover:bg-blue-700 active:scale-[0.98] text-white rounded-xl text-xs sm:text-sm font-bold tracking-wide transition-all shadow-xs hover:shadow-md flex items-center justify-center space-x-2 cursor-pointer">
+                            <i data-lucide="camera" class="w-4 h-4"></i>
+                            <span>Jepret Foto Sekarang</span>
+                        </button>
+                        <button type="button" id="btn-flip-bottom" class="min-h-[44px] px-3.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 active:scale-95 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold transition-all shadow-xs flex items-center justify-center space-x-1.5 cursor-pointer" title="Balik ke Kamera Depan (Selfie) / Belakang">
+                            <i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-purple-600 dark:text-purple-400"></i>
+                            <span class="text-xs">Balik Kamera</span>
+                        </button>
+                    </div>
                 </div>
                 <div id="result-area" class="w-full max-w-sm space-y-2.5" style="display: none;">
                     <div class="rounded-2xl overflow-hidden bg-black border border-slate-200 dark:border-slate-700 aspect-video relative flex items-center justify-center shadow-xs">
@@ -236,7 +255,8 @@
                 </div>
                 <div class="p-4 bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-2xl text-xs text-slate-600 dark:text-slate-300 space-y-1.5 flex-1">
                     <p class="font-bold text-slate-900 dark:text-slate-100">Petunjuk Dokumentasi:</p>
-                    <p>• Pastikan siswa dan ruang kelas terlihat jelas pada bidikan foto.</p>
+                    <p>• Anda dapat memilih <b>Kamera Belakang</b> atau <b>Kamera Depan (Selfie)</b> dengan menekan tombol <b>Balik Kamera</b>.</p>
+                    <p>• Pastikan diri Anda / siswa dan suasana kelas terlihat pada bidikan foto.</p>
                     <p>• Tombol jepret akan mengunci gambar secara otomatis ke formulir jurnal.</p>
                     <p>• Jika hasil foto kurang jelas, Anda dapat menekan tombol ulangi foto.</p>
                 </div>
